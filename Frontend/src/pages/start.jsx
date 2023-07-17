@@ -1,16 +1,18 @@
-import { PhotoIcon } from "@heroicons/react/20/solid";
+import Layout from "@/components/Layout";
+import NavBar from "@/components/NavBar";
 import { Link } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
-import Layout from "../components/Layout";
 
 function Start() {
   return (
     <Layout>
-      <>
-        <PhotoIcon className="fixed top-4 left-4 w-10 h-10 text-blue-600" />
-        <Sidebar />
-        <Link to="/makebooth">Make Booth</Link>
-      </>
+      <NavBar />
+      <div className="w-[calc(40rem)] flex-col justify-center items-center text-center mx-auto py-40">
+        <div>메인메뉴</div>
+        <div className=" flex-row justify-center items-center text-center">
+          <Link to="/makebooth">방 만들기</Link>
+          <Link to="/makebooth">방 참가하기</Link>
+        </div>
+      </div>
     </Layout>
   );
 }
