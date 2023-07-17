@@ -5,7 +5,7 @@ import UserSideBar from "../components/UserSideBar";
 function MakeBooth() {
   return (
     <Layout>
-      <div className="h-10 w-full text-blue-600">Code : XXX_XXX_XXX</div>
+      <div className="h-10 w-full">Code : XXX_XXX_XXX</div>
       <UserSideBar />
       <Link to="/takepic" className="block relative mx-auto w-fit">
         Take Picture

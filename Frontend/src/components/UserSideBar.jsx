@@ -8,7 +8,7 @@ export default function UserSideBar() {
   return (
     <Card
       id="sideMenu"
-      className="fixed top-0 right-0 h-full p-4 shadow-xl shadow-blue-gray-900/5 text-blue-600 w-60"
+      className="fixed top-0 right-0 h-full p-4 shadow-xl shadow-blue-gray-900/5"
     >
       <div className="mb-2 p-4">
         <Typography variant="h5" color="blue-gray">
@@ -21,16 +21,10 @@ export default function UserSideBar() {
         ))}
       </ul>
       <TextInput type="text" />
-      <button
-        type="button"
-        className="w-full h-10 hover:bg-blue-500 hover:text-white duration-200"
-      >
+      <button type="button" className="w-full h-10">
         이름 변경
       </button>
-      <Link
-        className="w-full h-10 text-center hover:bg-blue-500 hover:text-white duration-200 leading-10"
-        to="/"
-      >
+      <Link className="w-full h-10 text-center leading-10" to="/">
         나가기
       </Link>
     </Card>
