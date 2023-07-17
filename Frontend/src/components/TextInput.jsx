@@ -1,11 +1,12 @@
 import PropTypes from "prop-types";
 
-function TextInput({ type, change, placeholder }) {
+function TextInput({ type, placeholder,value, onChange}) {
   return (
     <input
       type={type}
-      onChange={change}
       placeholder={placeholder}
+      value={value}
+      onChange={onChange}
       className="w-full h-10"
     />
   );
@@ -15,6 +16,7 @@ export default TextInput;
 
 TextInput.propTypes = {
   type: PropTypes.string.isRequired,
-  change: PropTypes.func.isRequired,
   placeholder: PropTypes.string.isRequired,
+  value:PropTypes.string,
+  onChange:PropTypes.func
 };
