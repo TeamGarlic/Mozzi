@@ -1,5 +1,4 @@
 import Layout from "@/components/Layout";
-// import LoginModal from "@/components/LoginModal";
 import useInput from "@/hooks/useInput.js";
 import LoginNav from "@/components/LoginNav.jsx";
 import TextInput from "@/components/TextInput.jsx";
@@ -30,7 +29,11 @@ function LogIn() {
           <div className="flex">
             <TextInput type="password" placeholder="비밀번호" {...pw} />
           </div>
-          <button type="button" onClick={login} className=" mt-20">
+          <button
+            type="button"
+            onClick={login}
+            className="w-80 h-12 leading-3 rounded-2xl mt-20 border border-slate-600"
+          >
             로그인
           </button>
         </div>

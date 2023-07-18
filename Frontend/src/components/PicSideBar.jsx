@@ -33,12 +33,12 @@ export default function PicSideBar() {
     <>
       <Card
         id="sideMenu"
-        className={`float-right top-0 h-screen w-full max-w-[15rem] p-4 shadow-xl shadow-blue-gray-900/5 ${
+        className={`fixed z-10 top-0 right-0 h-screen w-fit shadow-xl shadow-blue-gray-900/5 p-4 overflow-y-scroll ${
           menu === 0 ? "hidden" : ""
         }`}
       >
         {menu === 1 && (
-          <div className="h-full overflow-y-scroll">
+          <div className="h-full">
             대충 사용자 목록
             {objItems.map((item, idx) => (
               <UserCard

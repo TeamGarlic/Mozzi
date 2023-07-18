@@ -1,21 +1,28 @@
 import { Link } from "react-router-dom";
-import { Card, Typography } from "@material-tailwind/react";
+import { Card } from "@material-tailwind/react";
 import UserCard from "./UserCard";
 import TextInput from "./TextInput";
+import SmallCam from "./SmallCam";
 
 export default function UserSideBar() {
-  const users = [{ name: "홍길동" }, { name: "박길동" }, { name: "최길동" }];
+  const users = [
+    { name: "홍길동" },
+    { name: "박길동" },
+    { name: "최길동" },
+    { name: "홍길동" },
+    { name: "홍길동" },
+    { name: "홍길동" },
+  ];
   return (
     <Card
       id="sideMenu"
-      className="fixed top-0 right-0 h-full p-4 shadow-xl shadow-blue-gray-900/5"
+      className=" w-80 h-screen p-4 shadow-xl shadow-blue-gray-900/5"
     >
-      <div className="mb-2 p-4">
-        <Typography variant="h5" color="blue-gray">
-          Users
-        </Typography>
+      <div className="p-4">
+        <span className=" text-xl">사용자</span>
       </div>
-      <ul className="gap-4">
+      <ul className="gap-4 overflow-y-auto">
+        <SmallCam />
         {users.map((user) => (
           <UserCard userName={user.name} key={user.name} />
         ))}

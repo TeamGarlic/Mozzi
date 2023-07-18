@@ -19,7 +19,7 @@ function NavBar() {
   }
 
   return (
-    <div className="w-full p-4 h-14">
+    <div className="fixed w-screen top-0 p-4 px-8 h-14">
       <button className="float-left" onClick={goHome}>
         logo
       </button>
