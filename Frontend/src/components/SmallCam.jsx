@@ -78,7 +78,7 @@ function SmallCam() {
       {/* <span className="z-10">name</span> */}
       <video autoPlay ref={webcamRef} style={{ display: "none" }} />
       <canvas
-        autoPlay
+        // autoPlay
         ref={bgremoveRef}
         width="1920"
         height="1080"
