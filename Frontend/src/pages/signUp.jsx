@@ -68,7 +68,7 @@ function SignUp() {
           <div className="flex-col">
             <TextInput type="text" placeholder="ID" {...id} onBlur={checkId} />
             <div className=" text-red-600 text-sm text-left">
-              {idValid.toString()}
+              {id.value.length > 0 ? idValid.toString() : ""}
             </div>
           </div>
           <div className="flex-col">
@@ -79,7 +79,7 @@ function SignUp() {
               onBlur={checkPw}
             />
             <div className="text-red-600 text-sm text-left">
-              {pwValid.toString()}
+              {pw.value.length > 0 ? pwValid.toString() : ""}
             </div>
           </div>
           <div className="flex-col">
@@ -90,7 +90,7 @@ function SignUp() {
               onBlur={checkPw2}
             />
             <div className="text-red-600 text-sm text-left">
-              {pw2Valid.toString()}
+              {pw2.value.length > 0 ? pw2Valid.toString() : ""}
             </div>
           </div>
           <button

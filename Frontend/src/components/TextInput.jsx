@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-function TextInput({ type, placeholder, value, onChange, onBlur }) {
+function TextInput({ type, placeholder, value, onChange, onBlur, className }) {
   return (
     <input
       type={type}
@@ -8,7 +8,7 @@ function TextInput({ type, placeholder, value, onChange, onBlur }) {
       value={value}
       onChange={onChange}
       onBlur={onBlur}
-      className="w-full h-10"
+      className={`w-full h-10 rounded-lg my-2 ${className}`}
     />
   );
 }
@@ -18,6 +18,7 @@ export default TextInput;
 TextInput.defaultProps = {
   onChange: function () {},
   onBlur: function () {},
+  className: "",
 };
 
 TextInput.propTypes = {
@@ -26,4 +27,5 @@ TextInput.propTypes = {
   value: PropTypes.string,
   onChange: PropTypes.func,
   onBlur: PropTypes.func,
+  className: PropTypes.string,
 };

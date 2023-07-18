@@ -33,7 +33,7 @@ export default function PicSideBar() {
     <>
       <Card
         id="sideMenu"
-        className={`fixed z-10 top-0 right-0 h-screen w-fit shadow-xl shadow-blue-gray-900/5 p-4 overflow-y-scroll ${
+        className={`fixed z-10 top-0 right-0 h-screen w-fit shadow-xl shadow-blue-gray-900/5 p-4 overflow-y-scroll bg-transparent scrollbar-hide ${
           menu === 0 ? "hidden" : ""
         }`}
       >

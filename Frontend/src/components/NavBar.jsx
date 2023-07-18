@@ -29,10 +29,10 @@ function NavBar() {
             {user.name}
           </button>
           {menu && (
-            <ul className="mt-10">
-              <li>마이페이지</li>
-              <li>내정보수정</li>
-              <li>로그아웃</li>
+            <ul className="mt-10 border-4 rounded-lg p-4">
+              <li className=" my-2">마이페이지</li>
+              <li className=" my-2">내정보수정</li>
+              <li className=" my-2">로그아웃</li>
             </ul>
           )}
         </div>
