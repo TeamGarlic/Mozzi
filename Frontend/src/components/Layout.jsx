@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 
 function Layout({ children }) {
-  return <div className="w-screen min-h-screen box-border">{children}</div>;
+  return <div className="w-full h-screen box-border">{children}</div>;
 }
 
 export default Layout;

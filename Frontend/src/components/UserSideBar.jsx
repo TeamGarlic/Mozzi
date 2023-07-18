@@ -20,7 +20,7 @@ export default function UserSideBar() {
           <UserCard userName={user.name} key={user.name} />
         ))}
       </ul>
-      <TextInput type="text" />
+      <TextInput type="text" placeholder="이름 변경..." />
       <button type="button" className="w-full h-10">
         이름 변경
       </button>
