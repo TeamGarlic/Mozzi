@@ -12,7 +12,9 @@ import jakarta.persistence.TemporalType;
 import lombok.Data;
 
 /**
- * 유저 모델 정의.
+ * @see BaseEntity
+ *
+ * 설명 User Model
  */
 @SuppressWarnings("checkstyle:RegexpMultiline")
 @Entity
@@ -27,6 +29,8 @@ public class User extends BaseEntity {
 
     @Temporal(TemporalType.TIMESTAMP)
     Timestamp createdAt;
+
+    boolean deleted = false;
 
     @JsonIgnore
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
