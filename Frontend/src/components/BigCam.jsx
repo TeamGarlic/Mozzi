@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useRef} from "react";
 import { SelfieSegmentation } from '@mediapipe/selfie_segmentation';
 import {Rnd} from "react-rnd";
 
