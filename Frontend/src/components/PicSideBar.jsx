@@ -33,7 +33,7 @@ export default function PicSideBar() {
     <>
       <Card
         id="sideMenu"
-        className={`float-right top-0 h-screen w-full max-w-[15rem] p-4 shadow-xl shadow-blue-gray-900/5 text-blue-600 ${
+        className={`float-right top-0 h-screen w-full max-w-[15rem] p-4 shadow-xl shadow-blue-gray-900/5 ${
           menu === 0 ? "hidden" : ""
         }`}
       >
