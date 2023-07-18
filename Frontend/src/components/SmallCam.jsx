@@ -72,18 +72,11 @@ function SmallCam() {
 
   return (
     <div
-      className="bg-slate-300 mx-auto my-10"
-      style={{ width: "192px", height: "108px" }}
+      className="bg-slate-300 m-auto my-10"
+      style={{ width: "176px", height: "99px" }}
     >
-      {/* <span className="z-10">name</span> */}
       <video autoPlay ref={webcamRef} style={{ display: "none" }} />
-      <canvas
-        autoPlay
-        ref={bgremoveRef}
-        width="1920"
-        height="1080"
-        className={"h-full w-full"}
-      />
+      <canvas autoPlay ref={bgremoveRef} className={"h-full w-full"} />
     </div>
   );
 }
