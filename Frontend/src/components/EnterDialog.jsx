@@ -6,7 +6,7 @@ import { MicrophoneIcon as OutlineMic } from "@heroicons/react/24/outline";
 function EnterDialog({ visibility, onClick, toggleVoice, setVoice }) {
   return (
     visibility && (
-      <div className=" z-10 absolute top-0 left-0 w-full min-h-screen bg-blend-darken justify-center items-center text-center bg-slate-400 bg-opacity-60">
+      <div className=" z-10 absolute top-0 w-full min-h-screen justify-center items-center text-center bg-stone-600 bg-opacity-50 overflow-scroll">
         <div className=" w-[calc(45rem)] flex-col rounded-xl border-2 mx-auto my-32 bg-white bg-opacity-70">
           <div className="h-14 p-4">
             <div className="float-left text-2xl overflow-hidden">입장하기</div>
