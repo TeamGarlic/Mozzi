@@ -34,6 +34,6 @@ public class Frame extends BaseEntity{
 
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "frame", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "frame", fetch = FetchType.EAGER)
     private Set<FrameClip> frameClips = new HashSet<>();
 }
