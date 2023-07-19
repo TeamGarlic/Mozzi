@@ -1,38 +1,47 @@
 package com.ssafy.life4cut.db.entity;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
- * @see BaseEntity
+ * User JPA Entity(Model)
  *
- * 설명 User Model
+ * @see BaseEntity
  */
 @SuppressWarnings("checkstyle:RegexpMultiline")
 @Entity
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class User extends BaseEntity {
 
-    String userId;
-    String nickname;
+    @Column(unique = true)
+    private String userId;
+
+    private String nickname;
 
     @Column(nullable = true)
-    String email;
+    private String email;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    Timestamp createdAt;
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 
-    boolean deleted = false;
+    private boolean deleted = false;
 
     @JsonIgnore
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    String password;
+    private String password;
 }

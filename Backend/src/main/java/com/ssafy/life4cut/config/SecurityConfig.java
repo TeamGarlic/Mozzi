@@ -1,4 +1,4 @@
 package com.ssafy.life4cut.config;
 
-public class Test {
+public class SecurityConfig {
 }
