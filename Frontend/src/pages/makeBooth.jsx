@@ -26,7 +26,7 @@ function MakeBooth() {
           <div className="w-full h-screen p-4 flex-col">
             <span className="text-3xl">Code : XXX_XXX_XXX</span>
             <div className=" text-2xl p-4">프레임 선택</div>
-            <div className="gap-6 p-4 mr-[calc(17rem)]  overflow-x-scroll scrollbar-thumb-gray-900 scrollbar-track-gray-100">
+            <div className="gap-6 p-4 mr-[calc(17rem)]  overflow-x-scroll scrollbar-thumb-gray-900 scrollbar-track-gray-100 scrollbar-hide">
               <div className=" inline-flex flex-nowrap h-[calc(25rem)] gap-4 p-4">
                 <span className="w-96 border-2 float-left">frame 2</span>
                 <div className=" w-96 border-2 float-left">frame 3</div>
@@ -37,7 +37,7 @@ function MakeBooth() {
                 <div className=" w-96 border-2 float-left">frame 8</div>
               </div>
             </div>
-            <div className="w-full pt-10">
+            <div className="w-full pt-32">
               <Link to="/takepic" className=" block relative mx-auto w-fit">
                 촬영 시작
               </Link>

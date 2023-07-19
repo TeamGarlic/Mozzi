@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Card } from "@material-tailwind/react";
 import UserCard from "./UserCard";
 import TextInput from "./TextInput";
-// import SmallCam from "./SmallCam";
+import SmallCam from "./SmallCam";
 
 export default function UserSideBar() {
   const users = [
@@ -22,7 +22,7 @@ export default function UserSideBar() {
         <span className=" text-xl">사용자</span>
       </div>
       <ul className="gap-4 overflow-y-scroll scrollbar-hide">
-        {/* <SmallCam /> */}
+        <SmallCam />
         {users.map((user) => (
           <UserCard userName={user.name} key={user.name} />
           // <>

@@ -22,7 +22,7 @@ function TakePic() {
         <div className="w-full p-4">
           <span className="text-3xl">Code : XXX_XXX_XXX</span>
           <PicSideBar />
-          <div className="float-right mr-10 text-2xl">taken : {taken}/10</div>
+          {/* <div className="float-right mr-10 text-2xl">taken : {taken}/10</div> */}
         </div>
         <BigCam />
         {/* <Link to="/aftertake" className="block relative mx-auto w-fit">
@@ -35,9 +35,15 @@ function TakePic() {
             <li className=" border-r-2 px-5">5s</li>
             <li className=" px-5">10s</li>
           </ul>
-          <button className="w-30" onClick={take}>
-            찰칵
-          </button>
+          <div className="flex rounded-2xl bg-yellow-200 leading-10">
+            <span className=" px-5 ">{taken}/10</span>
+            <button
+              className="w-full leading-10  px-5  bg-red-300 rounded-r-2xl"
+              onClick={take}
+            >
+              찰칵
+            </button>
+          </div>
         </div>
       </>
     </Layout>
