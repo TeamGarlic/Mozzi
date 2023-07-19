@@ -31,17 +31,17 @@ function BigCam() {
   function drawMyVid(canvas, context, result){
     context.current.save();
     context.current.clearRect(
-        0,
-        0,
-        canvas.current.width,
-        canvas.current.height
+      0,
+      0,
+      canvas.current.width,
+      canvas.current.height
     );
     context.current.drawImage(
-        result.segmentationMask,
-        0,
-        0,
-        canvas.current.width,
-        canvas.current.height
+      result.segmentationMask,
+      0,
+      0,
+      canvas.current.width,
+      canvas.current.height
     );
     // Only overwrite existing pixels.
     context.current.globalCompositeOperation = 'source-out';
@@ -53,13 +53,13 @@ function BigCam() {
         canvas.current.height
     );
     // Only overwrite missing pixels.
-    context.current.globalCompositeOperation = 'source-out';
+    context.current.globalCompositeOperation = "source-out";
     context.current.drawImage(
-        result.image,
-        0,
-        0,
-        canvas.current.width,
-        canvas.current.height
+      result.image,
+      0,
+      0,
+      canvas.current.width,
+      canvas.current.height
     );
     context.current.restore();
   }
@@ -121,7 +121,7 @@ function BigCam() {
     });
     const selfieSegmentation = new SelfieSegmentation({
       locateFile: (file) =>
-          `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`,
+        `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`,
     });
     selfieSegmentation.setOptions({
       modelSelection: 1,
