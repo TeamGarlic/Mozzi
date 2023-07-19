@@ -25,8 +25,8 @@ import lombok.NoArgsConstructor;
 public class FrameClip extends BaseEntity{
     private int width;
     private  int height;
-    int x;
-    int y;
+    private int x;
+    private int y;
 
     @ManyToOne
     @JoinColumn(name = "frame_id")
