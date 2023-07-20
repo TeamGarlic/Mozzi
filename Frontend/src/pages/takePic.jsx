@@ -19,7 +19,7 @@ function TakePic() {
     <Layout>
       <>
         <Chat />
-        <div className="w-full p-4">
+        <div className="w-full pt-4 ps-4">
           <span className="text-3xl">Code : XXX_XXX_XXX</span>
           <PicSideBar />
           {/* <div className="float-right mr-10 text-2xl">taken : {taken}/10</div> */}
@@ -28,7 +28,7 @@ function TakePic() {
         {/* <Link to="/aftertake" className="block relative mx-auto w-fit">
         찰칵
       </Link> */}
-        <div className="flex justify-center items-center gap-20 pt-5">
+        <div className="flex justify-center items-center gap-20 fixed bottom-10 ms-[calc(50%)]">
           <ul className="flex rounded-3xl bg-slate-300 leading-10">
             <li className=" border-r-2 px-5">timer</li>
             <li className=" border-r-2 px-5">3s</li>
