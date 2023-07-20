@@ -1,0 +1,40 @@
+package com.ssafy.life4cut.api.controller;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ssafy.life4cut.api.response.ItemBackgroundGetRes;
+import com.ssafy.life4cut.api.service.ItemService;
+
+import lombok.RequiredArgsConstructor;
+
+/**
+ * Item 관련 API 요청을 위한 Controller
+ */
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/items")
+public class ItemController {
+    private final ItemService itemService;
+
+    /**
+     * 배경 화면 GET 응답을 위한 메소드
+     *
+     * @param pageNum int
+     * @param pageSize int
+     * @return ResponseEntity<? extends ItemBackgroundGetRes>
+     * @see ItemService
+     */
+    @GetMapping("/backgrounds")
+    public ResponseEntity<? extends ItemBackgroundGetRes> getBackgrounds(
+        @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+
+        ItemBackgroundGetRes responseBody = itemService.getBackgroundRes(pageNum, pageSize);
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+    }
+}
