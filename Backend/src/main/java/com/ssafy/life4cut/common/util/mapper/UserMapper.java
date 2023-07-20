@@ -2,7 +2,7 @@ package com.ssafy.life4cut.common.util.mapper;
 
 import com.ssafy.life4cut.api.request.UserRegisterPostReq;
 import com.ssafy.life4cut.api.response.UserRegisterPostRes;
-import com.ssafy.life4cut.db.entity.User;
+import com.ssafy.life4cut.db.entity.remote.User;
 
 /**
  *  User와 Request/Response Data Object를 연결해주는 Mapper

@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BaseResponseBody<T> {
-    String message;
-    T data;
+    private String message;
+    private T data;
 
     public BaseResponseBody(T data) {
         this.data = data;
