@@ -55,7 +55,7 @@ export default function PicSideBar() {
         </div>
         <Card
           id="sideMenu"
-          className={`h-screen w-[calc(16rem)] shadow-xl shadow-blue-gray-900/5 p-4 overflow-y-scroll bg-white scrollbar-hide ${
+          className={`h-screen w-[calc(16rem)] shadow-xl shadow-blue-gray-900/5 p-4 overflow-y-scroll bg-white scrollbar-hide rounded-e-none ${
             menu === 0 ? "hidden" : ""
           }`}
         >
@@ -72,7 +72,8 @@ export default function PicSideBar() {
             </div>
           )}
           {menu === 2 && (
-            <div className="h-full w-[calc(16rem)]">
+            <div className="h-full">
+              배경 변경하기
               {bGs.map((bg) => (
                 <BgCard bgName={bg.bgName} key={bg.bgName} />
               ))}

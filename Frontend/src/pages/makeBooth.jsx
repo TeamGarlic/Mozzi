@@ -24,7 +24,7 @@ function MakeBooth() {
       <Layout>
         <div className="flex">
           <div className="w-full h-screen p-4 flex-col">
-            <span className="text-3xl">Code : XXX_XXX_XXX</span>
+            <span className="text-3xl">부스 코드 : XXX_XXX_XXX</span>
             <div className=" text-2xl p-4">프레임 선택</div>
             <div className="gap-6 p-4 mr-[calc(17rem)]  overflow-x-scroll scrollbar-thumb-gray-900 scrollbar-track-gray-100 scrollbar-hide">
               <div className=" inline-flex flex-nowrap h-[calc(25rem)] gap-4 p-4">
@@ -38,7 +38,7 @@ function MakeBooth() {
               </div>
             </div>
             <div className="w-full pt-32">
-              <Link to="/takepic" className=" block relative mx-auto w-fit">
+              <Link to="/0/takepic" className=" block relative mx-auto w-fit">
                 촬영 시작
               </Link>
             </div>

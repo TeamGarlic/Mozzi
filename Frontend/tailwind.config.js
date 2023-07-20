@@ -4,7 +4,7 @@ export const content = ["./src/**/*.{html,js,jsx,ts,tsx}"];
 export const theme = {
   extend: {
     backgroundImage: {
-      backimg: "url('./src/assets/img/background2.png')",
+      backimg: "url('/src/assets/img/background2.png')",
     },
   },
 };

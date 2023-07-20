@@ -1,10 +1,10 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Start from "@/pages/start";
 import MakeBooth from "@/pages/makeBooth";
 import TakePic from "@/pages/takePic";
 import AfterTake from "@/pages/afterfTake";
 import Finish from "@/pages/finish";
-import NoFile from "@/pages/404";
+// import NoFile from "@/pages/404";
 import LogIn from "@/pages/logIn";
 import SignUp from "@/pages/signUp";
 
@@ -17,12 +17,12 @@ function Router() {
         <Route path="/" element={<Start />} />
         <Route path="/login" element={<LogIn />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/makebooth" element={<MakeBooth />} />
-        <Route path="/takepic" element={<TakePic />} />
-        <Route path="/aftertake" element={<AfterTake />} />
-        <Route path="/finish" element={<Finish />} />
-        <Route path="*" element={<NoFile />} />
-        {/* <Route path="*" element={<Navigate to="/" replace />}/> */}
+        <Route path="/:code/makebooth" element={<MakeBooth />} />
+        <Route path="/:code/takepic" element={<TakePic />} />
+        <Route path="/:code/aftertake" element={<AfterTake />} />
+        <Route path="/:code/finish" element={<Finish />} />
+        {/* <Route path="*" element={<NoFile />} /> */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

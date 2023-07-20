@@ -3,10 +3,10 @@ import axios from "axios";
 // 미인증 유저 api axios 객체
 const UserApi = axios.create({
   // baseUrl : 백엔드 서버 IP
-  baseURL: "/",
+  baseURL: "user/",
   headers: {
-      "Content-Type": "application/json",
-  }
+    "Content-Type": "application/json",
+  },
 });
 
 // 인증 유저 api axios 객체
@@ -20,10 +20,9 @@ const UserApi = axios.create({
 // 유저 인증, 정보 관련 API
 const userApi = {
   checkId: async (id) => {
-    const res = await UserApi.get(
-      `check-login-id?id=${id}`,
-      {withCredentials: true},
-    );
+    const res = await UserApi.get(`check-login-id?id=${id}`, {
+      withCredentials: true,
+    });
     return res;
   },
   logIn: async (id, pwd) => {
@@ -52,10 +51,10 @@ const userApi = {
     const res = await UserApi.post(
       "sign-up",
       {
-          id,
-          pwd,
-          nickname,
-          email
+        id,
+        pwd,
+        nickname,
+        email,
       },
       { withCredentials: true }
     );
@@ -75,7 +74,7 @@ const userApi = {
   reIssue: async (accessToken, refreshToken) => {
     console.log("reissue start");
     let res = await UserApi.post(
-      "user/reissue",
+      "reissue",
       {
         accessToken: accessToken,
         refreshToken: refreshToken,
@@ -94,6 +93,15 @@ const userApi = {
     window.sessionStorage.removeItem("refreshToken");
     alert("세션 만료 : 다시 로그인해 주세요");
     location.href = "/";
+  },
+
+  getUser: async (accessToken) => {
+    let res = await UserApi.get("", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return res;
   },
 };
 
