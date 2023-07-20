@@ -113,7 +113,7 @@ function BigCam() {
     canvasContextRef.current = canvasRef.current.getContext('2d');
     bgremoveLayer.image = bgremoveRef.current;
     const constraints = {
-      video: { width: { max: 640 }, height: { max: 480 } },
+      video: { width: { max: 1280 }, height: { max: 720 } },
     };
     navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
       webcamRef.current.srcObject = stream;
@@ -141,7 +141,7 @@ function BigCam() {
   return (
     <div
       className="bg-slate-300 m-auto my-10"
-      style={{ width: "880px", height: "495px" }}
+      style={{"width" : `${W}px`, "height" : `${H}px`}}
     >
       <canvas ref={canvasRef} width="1920" height="1080" style={{"width" : `${W}px`, "height" : `${H}px`}}></canvas>
       <Rnd
@@ -157,8 +157,8 @@ function BigCam() {
           minHeight={H/10}
           ref={rndRef}
           bounds="parent"
+          className={"w-full h-full"} style={{'border':'dashed 1px white'}}
       >
-        <div className={"w-full h-full"} style={{'border':'dashed 1px white'}}></div>
       </Rnd>
       <video autoPlay ref={webcamRef} style={{"display":"none"}}/>
       <canvas ref={bgremoveRef} style={{"display":"none"}}/>
