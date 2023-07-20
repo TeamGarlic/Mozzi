@@ -6,16 +6,16 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.life4cut.api.request.UserRegisterPostReq;
 import com.ssafy.life4cut.api.response.UserRegisterPostRes;
 import com.ssafy.life4cut.common.util.mapper.UserMapper;
-import com.ssafy.life4cut.db.entity.User;
-import com.ssafy.life4cut.db.repository.UserRepository;
+import com.ssafy.life4cut.db.entity.remote.User;
+import com.ssafy.life4cut.db.repository.remote.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
 /**
  *  User 요청에 대한 Service/비즈니스 로직 구현
  *
- * @see com.ssafy.life4cut.db.repository.UserRepository
- * @see com.ssafy.life4cut.db.entity.User
+ * @see UserRepository
+ * @see User
  */
 @Service
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param request UserRegisterPostReq
      * @return UserRegisterPostRes
-     * @see com.ssafy.life4cut.db.repository.UserRepository
+     * @see UserRepository
      */
     @Override
     @Transactional

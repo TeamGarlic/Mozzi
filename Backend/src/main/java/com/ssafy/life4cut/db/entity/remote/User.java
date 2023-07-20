@@ -1,4 +1,4 @@
-package com.ssafy.life4cut.db.entity;
+package com.ssafy.life4cut.db.entity.remote;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.ssafy.life4cut.db.entity.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
