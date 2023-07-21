@@ -6,9 +6,10 @@ import {
   DragStartAction,
   Frame2FrameAction,
 } from "@/modules/clipAction";
+import frame1 from "@/assets/img/frame1.png"
 
 function Frame() {
-  const [frameNum, setFrameNum] = useState([1, 2, 3, 4]);
+  const [frameNum] = useState([1, 2, 3, 4]);
   const frame = useSelector((state) => state.clipReducer.frame);
   const dispatch = useDispatch();
   const drag = useSelector((state) => state.clipReducer.drag);
@@ -61,38 +62,46 @@ function Frame() {
 
   return (
     <div>
-      {frameNum.map((i) => {
-        if (frame[i]["src"]) {
+      <div className="relative">
+        <img src={frame1} alt="frame"></img>
+        {frameNum.map((i) => {
+          const frameStyle = {
+            height: "160px",
+            width: "250px",
+            top:`${frame[i]['top']}px`,
+            left:`${frame[i]['left']}px`
+          }
+          if (frame[i]["src"]) {
+            return (
+              <div key={`frame${i}`} style={frameStyle} className="absolute z-50">
+                <video
+                  src={frame[i]["src"]}
+                  width="250"
+                  onClick={clickVideo}
+                  onDragStart={onDragStart}
+                  onDragEnd={onDragEnd}
+                  onDrop={onDrop}
+                  onDragOver={onDragOver}
+                  onDragEnter={onDragEnter}
+                  draggable
+                  id={`frame${i}`}
+                ></video>
+              </div>
+            );
+          }
           return (
-            <div key={`frame${i}`} style={{ height: "145px" }} className="pb-3">
-              <video
-                src={frame[i]["src"]}
-                width="250"
-                className="pb-3"
-                onClick={clickVideo}
-                onDragStart={onDragStart}
-                onDragEnd={onDragEnd}
-                onDrop={onDrop}
-                onDragOver={onDragOver}
-                onDragEnter={onDragEnter}
-                draggable
-                id={`frame${i}`}
-              ></video>
-            </div>
+            <div
+              key={`frame${i}`}
+              style={frameStyle}
+              className="absolute z-50"
+              onDragOver={onDragOver}
+              onDragEnter={onDragEnter}
+              onDrop={onDrop}
+              id={`frame${i}`}
+            ></div>
           );
-        }
-        return (
-          <div
-            key={`frame${i}`}
-            style={{ height: "145px" }}
-            className="pb-3"
-            onDragOver={onDragOver}
-            onDragEnter={onDragEnter}
-            onDrop={onDrop}
-            id={`frame${i}`}
-          ></div>
-        );
-      })}
+        })}
+      </div>
     </div>
   );
 }
