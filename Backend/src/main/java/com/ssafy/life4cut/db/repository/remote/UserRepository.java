@@ -1,5 +1,7 @@
 package com.ssafy.life4cut.db.repository.remote;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,4 +14,6 @@ import com.ssafy.life4cut.db.entity.remote.User;
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+    // userId에 해당하는 객체가 존재하면 반환하고, 그렇지 않으면 null 을 반환
+    Optional<User> findByUserId(String userId);
 }

@@ -41,7 +41,8 @@ public class RemoteDatasource {
         em.setJpaPropertyMap(
             Map.of(
                 "hibernate.hbm2ddl", "update"
-                , "hibernate.dialect", "org.hibernate.dialect.MariaDB103Dialect"
+                // , "hibernate.dialect", "org.hibernate.dialect.MariaDB103Dialect"
+                , "hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect"
                 , "hibernate.show_sql", "true"
                 , "hibernate.format_sql", "true"
                 , "hibernate.use_sql_comments", "true"
