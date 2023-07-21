@@ -9,6 +9,6 @@ import lombok.Data;
 @Data
 @Builder
 public class SessionRes {
-    String shareCode;
-    String sessionId;
+    private String shareCode;
+    private String sessionId;
 }

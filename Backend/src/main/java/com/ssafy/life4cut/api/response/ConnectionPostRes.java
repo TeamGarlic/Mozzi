@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 @Builder
 public class ConnectionPostRes {
-    String token;
+    private String token;
 }

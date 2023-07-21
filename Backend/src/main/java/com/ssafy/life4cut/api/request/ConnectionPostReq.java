@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class ConnectionPostReq {
-    String sessionId;
+    private String sessionId;
 }

@@ -7,5 +7,5 @@ import lombok.Data;
  */
 @Data
 public class SessionPostReq {
-    String shareCode;
+    private String shareCode;
 }
