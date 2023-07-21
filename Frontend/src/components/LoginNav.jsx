@@ -8,9 +8,9 @@ function LoginNav({ link }) {
     location.href = `/${link}`;
   }
   return (
-    <div className="fixed w-screen top-0 p-4 px-8 h-14">
-      <button className="float-left" onClick={goHome}>
-        logo
+    <div className="fixed w-screen top-0 p-4 px-8 h-fit">
+      <button className="float-left text-3xl" onClick={goHome}>
+        🎞️
       </button>
       <button className="float-right" onClick={goLink}>
         {link}
