@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.ssafy.life4cut.api.response.ItemBackgroundGetRes;
 import com.ssafy.life4cut.common.dto.BackgroundItem;
-import com.ssafy.life4cut.db.entity.Backgroud;
+import com.ssafy.life4cut.db.entity.remote.Backgroud;
 
 /**
  * Item 과 Request/Response Data Object를 연결해주는 Mapper

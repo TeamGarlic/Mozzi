@@ -9,8 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.life4cut.api.response.ItemBackgroundGetRes;
 import com.ssafy.life4cut.common.util.mapper.ItemMapper;
-import com.ssafy.life4cut.db.entity.Backgroud;
-import com.ssafy.life4cut.db.repository.BackgroundRepository;
+import com.ssafy.life4cut.db.entity.remote.Backgroud;
+import com.ssafy.life4cut.db.repository.remote.BackgroundRepository;
 
 import lombok.RequiredArgsConstructor;
 
