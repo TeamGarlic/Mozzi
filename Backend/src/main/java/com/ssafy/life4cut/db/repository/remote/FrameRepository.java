@@ -1,6 +1,6 @@
 package com.ssafy.life4cut.db.repository.remote;
 
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,5 +15,5 @@ import com.ssafy.life4cut.db.entity.remote.Frame;
 public interface FrameRepository extends JpaRepository<Frame, Long> {
     // N+1 문제를 해결하기 위한 JOIN FETCH
     @Query("SELECT frame FROM Frame frame JOIN FETCH frame.frameClips")
-    List<Frame> findAllJoinFetch();
+    Set<Frame> findAllJoinFetch();
 }

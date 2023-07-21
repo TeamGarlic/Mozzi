@@ -1,6 +1,6 @@
 package com.ssafy.life4cut.api.response;
 
-import java.util.Set;
+import java.util.List;
 
 import com.ssafy.life4cut.common.dto.FrameItem;
 
@@ -14,5 +14,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FrameListGetRes {
-    private Set<FrameItem> frames;
+    private List<FrameItem> frames;
 }

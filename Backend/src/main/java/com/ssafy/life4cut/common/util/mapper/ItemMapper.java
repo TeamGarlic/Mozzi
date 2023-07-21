@@ -1,7 +1,6 @@
 package com.ssafy.life4cut.common.util.mapper;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -75,8 +74,8 @@ public class ItemMapper {
      * @param frames List<Frame>
      * @return FrameListGetRes
      */
-    public static FrameListGetRes toFrameListGetRes(List<Frame> frames) {
-        Set<FrameItem> frameList = new HashSet<>();
+    public static FrameListGetRes toFrameListGetRes(Set<Frame> frames) {
+        List<FrameItem> frameList = new ArrayList<>();
         for (Frame frame : frames) {
             frameList.add(FrameItem.builder()
                 .id(frame.getId())
@@ -96,8 +95,8 @@ public class ItemMapper {
      * @param clips Set<FrameClip>
      * @return FrameListGetRes
      */
-    public static Set<FrameClipItem> toFrameClipItem(Set<FrameClip> clips) {
-        Set<FrameClipItem> clipList = new HashSet<>();
+    public static List<FrameClipItem> toFrameClipItem(Set<FrameClip> clips) {
+        List<FrameClipItem> clipList = new ArrayList<>();
 
         for (FrameClip clip : clips) {
             clipList.add(FrameClipItem.builder()

@@ -1,6 +1,6 @@
 package com.ssafy.life4cut.common.dto;
 
-import java.util.Set;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,5 +18,5 @@ import lombok.NoArgsConstructor;
 public class FrameItem {
     private Long id;
     private String url;
-    private Set<FrameClipItem> rects;
+    private List<FrameClipItem> rects;
 }

@@ -1,6 +1,7 @@
 package com.ssafy.life4cut.api.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -59,7 +60,7 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     public FrameListGetRes getFrameList() {
-        List<Frame> frames = frameRepository.findAllJoinFetch();
+        Set<Frame> frames = frameRepository.findAllJoinFetch();
 
         return ItemMapper.toFrameListGetRes(frames);
     }
