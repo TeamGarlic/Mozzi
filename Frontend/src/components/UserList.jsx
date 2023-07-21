@@ -20,20 +20,23 @@ function UserList(){
   let height = 0;
   let moveY = 0;
   let movePosition = height / 2;
+  const borderTop = "border-t-2";
+  const borderBottom = "border-b-2";
+  const borderColor = "border-blue-500";
 
   function onDragOver(event){
     event.preventDefault();
     height = event.currentTarget.offsetHeight;
     moveY = event.nativeEvent.offsetY;
     movePosition = height / 2;
-    event.currentTarget.classList.add("border-blue-500");
+    event.currentTarget.classList.add(borderColor);
 
     if (movePosition > moveY){
-      event.currentTarget.classList.add("border-t-4");
-      event.currentTarget.classList.remove("border-b-4");
+      event.currentTarget.classList.add(borderTop);
+      event.currentTarget.classList.remove(borderBottom);
     } else {
-      event.currentTarget.classList.add("border-b-4");
-      event.currentTarget.classList.remove("border-t-4");
+      event.currentTarget.classList.add(borderBottom);
+      event.currentTarget.classList.remove(borderTop);
     }
   }
 
@@ -41,18 +44,18 @@ function UserList(){
     const dragIdx = drag.dataset.index;
     const targetIdx = event.target.dataset.index;
     if (dragIdx < targetIdx){
-      event.currentTarget.classList.add("border-b-4");
-      event.currentTarget.classList.add("border-blue-500");
+      event.currentTarget.classList.add(borderBottom);
+      event.currentTarget.classList.add(borderColor);
     } else {
-      event.currentTarget.classList.add("border-b-4");
-      event.currentTarget.classList.add("border-blue-500");
+      event.currentTarget.classList.add(borderBottom);
+      event.currentTarget.classList.add(borderColor);
     }
   }
 
   function onDragLeave(event){
-    event.currentTarget.classList.remove("border-b-4")
-    event.currentTarget.classList.remove("border-t-4")
-    event.currentTarget.classList.remove("border-blue-500")
+    event.currentTarget.classList.remove(borderBottom)
+    event.currentTarget.classList.remove(borderTop)
+    event.currentTarget.classList.remove(borderColor)
   }
 
   function onDragStart(event){
@@ -71,9 +74,9 @@ function UserList(){
     const _userList = [...userList];
     const _user = _userList[dragIdx];
 
-    event.currentTarget.classList.remove("border-b-4");
-    event.currentTarget.classList.remove("border-t-4");
-    event.currentTarget.classList.remove("border-blue-500");
+    event.currentTarget.classList.remove(borderBottom);
+    event.currentTarget.classList.remove(borderTop);
+    event.currentTarget.classList.remove(borderColor);
 
     if (dragIdx === targetIdx) return;
 
