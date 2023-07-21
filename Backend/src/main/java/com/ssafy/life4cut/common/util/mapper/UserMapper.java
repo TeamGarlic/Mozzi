@@ -1,6 +1,7 @@
 package com.ssafy.life4cut.common.util.mapper;
 
 import com.ssafy.life4cut.api.request.UserRegisterPostReq;
+import com.ssafy.life4cut.api.response.UserLoginPostRes;
 import com.ssafy.life4cut.api.response.UserRegisterPostRes;
 import com.ssafy.life4cut.db.entity.remote.User;
 
@@ -23,6 +24,12 @@ public class UserMapper {
 
     public static UserRegisterPostRes toRegistRes(User user) {
         return UserRegisterPostRes.builder()
+            .id(user.getId())
+            .build();
+    }
+
+    public static UserLoginPostRes toLoginRes(User user) {
+        return UserLoginPostRes.builder()
             .id(user.getId())
             .build();
     }

@@ -1,6 +1,8 @@
 package com.ssafy.life4cut.api.service;
 
+import com.ssafy.life4cut.api.request.UserLoginPostReq;
 import com.ssafy.life4cut.api.request.UserRegisterPostReq;
+import com.ssafy.life4cut.api.response.UserLoginPostRes;
 import com.ssafy.life4cut.api.response.UserRegisterPostRes;
 
 /**
@@ -10,4 +12,6 @@ import com.ssafy.life4cut.api.response.UserRegisterPostRes;
  */
 public interface UserService {
     UserRegisterPostRes register(UserRegisterPostReq userRegisterInfo);
+
+    UserLoginPostRes login(UserLoginPostReq userLoginInfo);
 }

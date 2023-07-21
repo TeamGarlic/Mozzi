@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.life4cut.api.request.UserLoginPostReq;
 import com.ssafy.life4cut.api.request.UserRegisterPostReq;
+import com.ssafy.life4cut.api.response.UserLoginPostRes;
 import com.ssafy.life4cut.api.response.UserRegisterPostRes;
 import com.ssafy.life4cut.api.service.UserService;
 import com.ssafy.life4cut.common.model.response.BaseResponseBody;
@@ -48,6 +50,23 @@ public class UserController {
                 .message("success")
                 .data(response)
                 .build(), HttpStatus.CREATED);
+    }
+
+    /**
+     * 로그인을 위한 POST 메소드
+     *
+     * @param request UserLoginPostReq
+     * @return ResponseEntity<? extends BaseResponseBody> with UserLoginPostRes
+     * @see UserService
+     */
+    @PostMapping("/login")
+    public ResponseEntity<? extends BaseResponseBody> login(@RequestBody UserLoginPostReq request) {
+        UserLoginPostRes response = userService.login(request);
+        return new ResponseEntity<>(
+            BaseResponseBody.<UserLoginPostRes>builder()
+                .message("")
+                .data(response)
+                .build(), HttpStatus.OK);
     }
 }
 
