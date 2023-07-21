@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Card } from "@material-tailwind/react";
-import UserCard from "./UserCard";
+import UserList from "./UserList";
 import BgCard from "./BgCard";
 import { UsersIcon } from "@heroicons/react/24/outline";
 import { ComputerDesktopIcon } from "@heroicons/react/24/outline";
@@ -13,21 +13,6 @@ export default function PicSideBar() {
   // ];
 
   const bGs = [{ bgName: "산" }, { bgName: "바다" }, { bgName: "우주" }];
-
-  const objItems = [
-    { item: "🦜", name: "Parrot" },
-    { item: "🦖", name: "Dinosaur" },
-    { item: "🦆", name: "Duck" },
-    { item: "🦔", name: "Porkypine" },
-    { item: "🐤", name: "Chick" },
-    { item: "🐧", name: "Penguin" },
-    { item: "🦜", name: "Parrot" },
-    { item: "🦖", name: "Dinosaur" },
-    { item: "🦆", name: "Duck" },
-    { item: "🦔", name: "Porkypine" },
-    { item: "🐤", name: "Chick" },
-    { item: "🐧", name: "Penguin" },
-  ];
 
   const [menu, setMenu] = useState(0);
 
@@ -61,14 +46,7 @@ export default function PicSideBar() {
         >
           {menu === 1 && (
             <div className="h-full">
-              대충 사용자 목록
-              {objItems.map((item, idx) => (
-                <UserCard
-                  userName={item.name}
-                  isHost={idx === 0}
-                  key={item.name}
-                />
-              ))}
+              <UserList />
             </div>
           )}
           {menu === 2 && (
