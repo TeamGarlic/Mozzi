@@ -5,10 +5,12 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.life4cut.api.response.ItemBackgroundGetRes;
 import com.ssafy.life4cut.api.response.ItemStickerGetRes;
 import com.ssafy.life4cut.common.util.mapper.ItemMapper;
+import com.ssafy.life4cut.db.datasource.LocalDatasource;
 import com.ssafy.life4cut.db.entity.remote.Backgroud;
 import com.ssafy.life4cut.db.entity.remote.Sticker;
 import com.ssafy.life4cut.db.repository.remote.BackgroundRepository;
@@ -36,6 +38,7 @@ public class ItemServiceImpl implements ItemService {
      * @see Backgroud
      */
     @Override
+    @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     public ItemBackgroundGetRes getBackgroundRes(int pageNum, int pageSize) {
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);  // Page 객체를 갖고오기 위한 PageRequest 객체 생성
         Page<Backgroud> page = backgroundRepository.findAll(pageRequest);  // Page 객체 생성
@@ -53,6 +56,7 @@ public class ItemServiceImpl implements ItemService {
      * @see Sticker
      */
     @Override
+    @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     public ItemStickerGetRes getStickerRes(int pageNum, int pageSize) {
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);  // Page 객체를 갖고오기 위한 PageRequest 객체 생성
         Page<Sticker> page = stickerRepository.findAll(pageRequest);  // Page 객체 생성
