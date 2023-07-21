@@ -11,6 +11,7 @@ import com.ssafy.life4cut.api.request.UserLoginPostReq;
 import com.ssafy.life4cut.api.request.UserRegisterPostReq;
 import com.ssafy.life4cut.api.response.UserLoginPostRes;
 import com.ssafy.life4cut.api.response.UserRegisterPostRes;
+import com.ssafy.life4cut.common.exception.handler.DuplicatedUserIdException;
 import com.ssafy.life4cut.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.life4cut.common.exception.handler.UserLoginFailException;
 import com.ssafy.life4cut.common.util.mapper.UserMapper;
@@ -47,7 +48,7 @@ public class UserServiceImpl implements UserService {
         try {
             userRepository.save(user);
         } catch (Exception e) {
-            System.out.println(e);
+            throw new DuplicatedUserIdException("Duplicated user id");
         }
         return UserMapper.toRegistRes(user);
     }
