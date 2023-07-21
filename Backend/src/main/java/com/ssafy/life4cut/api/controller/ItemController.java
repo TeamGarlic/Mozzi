@@ -60,7 +60,7 @@ public class ItemController {
         ItemStickerGetRes responseData = itemService.getStickerRes(pageNum, pageSize);
         return new ResponseEntity<>(
             BaseResponseBody.<ItemStickerGetRes>builder()
-                .message("")
+                .message("sticker list page " + String.valueOf(pageNum))
                 .data(responseData)
                 .build(), HttpStatus.OK);
     }
