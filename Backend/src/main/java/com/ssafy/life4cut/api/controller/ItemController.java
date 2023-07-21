@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.life4cut.api.response.ItemBackgroundGetRes;
+import com.ssafy.life4cut.api.response.ItemStickerGetRes;
 import com.ssafy.life4cut.api.service.ItemService;
 
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,23 @@ public class ItemController {
         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
         ItemBackgroundGetRes responseBody = itemService.getBackgroundRes(pageNum, pageSize);
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+    }
+
+    /**
+     * 스티커 GET 응답을 위한 메소드
+     *
+     * @param pageNum int
+     * @param pageSize int
+     * @return ResponseEntity<? extends ItemStickerGetRes>
+     * @see ItemService
+     */
+    @GetMapping("/stickers")
+    public ResponseEntity<? extends ItemStickerGetRes> getStickers(
+        @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+
+        ItemStickerGetRes responseBody = itemService.getStickerRes(pageNum, pageSize);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 }
