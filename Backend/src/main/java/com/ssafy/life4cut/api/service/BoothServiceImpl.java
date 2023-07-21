@@ -14,8 +14,8 @@ import com.ssafy.life4cut.api.request.ConnectionPostReq;
 import com.ssafy.life4cut.api.request.SessionPostReq;
 import com.ssafy.life4cut.api.response.ConnectionPostRes;
 import com.ssafy.life4cut.api.response.SessionRes;
-import com.ssafy.life4cut.common.exception.DuplicateShareCodeException;
-import com.ssafy.life4cut.common.exception.ShareCodeNotExistException;
+import com.ssafy.life4cut.common.exception.handler.DuplicateShareCodeException;
+import com.ssafy.life4cut.common.exception.handler.ShareCodeNotExistException;
 import com.ssafy.life4cut.common.model.response.BaseResponseBody;
 import com.ssafy.life4cut.db.datasource.LocalDatasource;
 import com.ssafy.life4cut.db.entity.local.Booth;
@@ -62,7 +62,7 @@ public class BoothServiceImpl implements BoothService {
         } else {
             booth = boothRepository.findByShareCode(shareCode);
             if (booth != null) {
-                throw new DuplicateShareCodeException();
+                throw new DuplicateShareCodeException("Duplicated booth share code");
             }
         }
 
@@ -104,7 +104,7 @@ public class BoothServiceImpl implements BoothService {
     public BaseResponseBody<SessionRes> joinBooth(String shareCode) {
         Booth booth = boothRepository.findByShareCode(shareCode);
         if (booth == null) {
-            throw new ShareCodeNotExistException();
+            throw new ShareCodeNotExistException("Requested booth not exist");
         }
         return BaseResponseBody.<SessionRes>builder()
             .message("Requested booth exits")
