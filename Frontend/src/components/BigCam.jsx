@@ -1,7 +1,7 @@
 import {useEffect, useRef} from "react";
 import { SelfieSegmentation } from '@mediapipe/selfie_segmentation';
 import {Rnd} from "react-rnd";
-import {drawCanvas, drawMyVid} from "@/modules/videoUtil.js";
+import {drawCanvas, drawMyVid} from "@/utils/videoUtil.js";
 
 function BigCam() {
   const W = 1024, H = 560;
