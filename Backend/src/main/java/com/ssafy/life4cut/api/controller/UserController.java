@@ -12,11 +12,16 @@ import com.ssafy.life4cut.api.response.UserRegisterPostRes;
 import com.ssafy.life4cut.api.service.UserService;
 import com.ssafy.life4cut.common.model.response.BaseResponseBody;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 /**
  * 유저 관련 API 요청을 위한 Controller
  */
+@Tag(name = "User", description = "유저 관련 api 입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
@@ -30,6 +35,11 @@ public class UserController {
      * @return ResponseEntity<? extends BaseResponseBody> with UserRegisterPostRes
      * @see UserService
      */
+    @Operation(summary = "회원 가입 API", description = "회원 가입을 위한 POST 메소드")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "success"),
+        @ApiResponse(responseCode = "400", description = "bad request")
+    })
     @PostMapping("/register")
     public ResponseEntity<? extends BaseResponseBody> register(@RequestBody UserRegisterPostReq request) {
         UserRegisterPostRes response = userService.register(request);
