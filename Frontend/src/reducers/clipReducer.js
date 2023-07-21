@@ -3,10 +3,10 @@ import { Clip2Frame, AddClip, Frame2Clip, DragStart, DragEnd, DragClear, Frame2F
 
 const clipState = {
   frame: {
-    1: {clipIdx: 0, src: "", top:49, left:55},
-    2: {clipIdx: 0, src: "", top:208, left:55},
-    3: {clipIdx: 0, src: "", top:366, left:55},
-    4: {clipIdx: 0, src: "", top:525, left:55}},
+    1: {clipIdx: 0, src: "", top:60, left:55},
+    2: {clipIdx: 0, src: "", top:275, left:55},
+    3: {clipIdx: 0, src: "", top:490, left:55},
+    4: {clipIdx: 0, src: "", top:705, left:55}},
   clipList: {1: "https://www.kmdb.or.kr/trailer/play/MK041673_P02.mp4"},
   drag: {
     start: "",

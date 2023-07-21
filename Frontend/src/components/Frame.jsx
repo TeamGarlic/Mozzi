@@ -66,8 +66,8 @@ function Frame() {
         <img src={frame1} alt="frame"></img>
         {frameNum.map((i) => {
           const frameStyle = {
-            height: "160px",
-            width: "250px",
+            height: "250px",
+            width: "350px",
             top:`${frame[i]['top']}px`,
             left:`${frame[i]['left']}px`
           }
@@ -76,7 +76,6 @@ function Frame() {
               <div key={`frame${i}`} style={frameStyle} className="absolute z-50">
                 <video
                   src={frame[i]["src"]}
-                  width="250"
                   onClick={clickVideo}
                   onDragStart={onDragStart}
                   onDragEnd={onDragEnd}

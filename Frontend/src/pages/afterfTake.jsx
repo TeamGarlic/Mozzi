@@ -10,7 +10,7 @@ function AfterTake() {
         <div className="w-full h-screen p-4 flex-col">
           <ClipLog />
         </div>
-        <div className="float-right w-[calc(32rem)] h-screen bg-white flex-col rounded-s-xl p-4 justify-center items-center text-center overflow-y-scroll scrollbar-hide">
+        <div className="float-right min-w-[calc(32rem)] w-[calc(32rem)] h-screen bg-white flex-col rounded-s-xl p-4 justify-center items-center text-center overflow-y-scroll scrollbar-hide">
           프레임
           <div className="mx-auto bottom-5 justify-center items-center text-center">
             <Frame />
