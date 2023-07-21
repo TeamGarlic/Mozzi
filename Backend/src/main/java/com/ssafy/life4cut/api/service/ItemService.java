@@ -1,5 +1,6 @@
 package com.ssafy.life4cut.api.service;
 
+import com.ssafy.life4cut.api.response.FrameListGetRes;
 import com.ssafy.life4cut.api.response.ItemBackgroundGetRes;
 
 /**
@@ -9,4 +10,6 @@ import com.ssafy.life4cut.api.response.ItemBackgroundGetRes;
  */
 public interface ItemService {
     ItemBackgroundGetRes getBackgroundRes(int pageNum, int pageSize);
+
+    FrameListGetRes getFrameList();
 }

@@ -1,12 +1,11 @@
 package com.ssafy.life4cut.db.entity.remote;
 
-import java.time.LocalDateTime;
+import java.util.Objects;
 
-import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.ColumnDefault;
 
 import com.ssafy.life4cut.db.entity.BaseEntity;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -25,18 +24,20 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FrameClip extends BaseEntity {
-    private int width;
-    private int height;
-    private int x;
-    private int y;
+    private double width;
+    private double height;
+    private double x;
+    private double y;
 
     @ManyToOne
-    @JoinColumn(name = "frame_id")
+    @JoinColumn(name = "frameId")
     private Frame frame;
 
-    @CreationTimestamp
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
+    @ColumnDefault("false")
+    private boolean deleted;
 
-    private boolean deleted = false;
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), super.getId());
+    }
 }

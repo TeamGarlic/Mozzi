@@ -7,10 +7,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.life4cut.api.response.FrameListGetRes;
 import com.ssafy.life4cut.api.response.ItemBackgroundGetRes;
 import com.ssafy.life4cut.common.util.mapper.ItemMapper;
 import com.ssafy.life4cut.db.entity.remote.Backgroud;
+import com.ssafy.life4cut.db.entity.remote.Frame;
 import com.ssafy.life4cut.db.repository.remote.BackgroundRepository;
+import com.ssafy.life4cut.db.repository.remote.FrameRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final BackgroundRepository backgroundRepository;
+    private final FrameRepository frameRepository;
 
     /**
      * Background Get 요청에 대한 응답을 반환하는 비즈니스 로직
@@ -40,5 +44,18 @@ public class ItemServiceImpl implements ItemService {
         List<Backgroud> backgrounds = page.getContent();  // Page 의 Method 를 이용하여 Background 객체들의 리스트를 만듦
 
         return ItemMapper.toItemBackgroundGetRes(backgrounds, page.getTotalPages());
+    }
+
+    /**
+     * Frame List Get 요청에 대한 응답을 반환하는 비즈니스 로직
+     * @return FrameListGetRes
+     * @see Frame
+     * @see com.ssafy.life4cut.db.entity.remote.FrameClip
+     */
+    @Override
+    public FrameListGetRes getFrameList() {
+        List<Frame> frames = frameRepository.findAllJoinFetch();
+
+        return ItemMapper.toFrameListGetRes(frames);
     }
 }

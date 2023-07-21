@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.life4cut.api.response.FrameListGetRes;
 import com.ssafy.life4cut.api.response.ItemBackgroundGetRes;
 import com.ssafy.life4cut.api.service.ItemService;
+import com.ssafy.life4cut.common.model.response.BaseResponseBody;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,5 +38,21 @@ public class ItemController {
 
         ItemBackgroundGetRes responseBody = itemService.getBackgroundRes(pageNum, pageSize);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
+    }
+
+    /**
+     * 프레임 리스트 GET 응답을 위한 메소드
+     *
+     * @return ResponseEntity<? extends BaseResponseBody>
+     * @see ItemService
+     */
+    @GetMapping("/frames")
+    public ResponseEntity<? extends BaseResponseBody> getFrames() {
+        FrameListGetRes response = itemService.getFrameList();
+        return new ResponseEntity<>(
+            BaseResponseBody.<FrameListGetRes>builder()
+                .message("success")
+                .data(response)
+                .build(), HttpStatus.OK);
     }
 }
