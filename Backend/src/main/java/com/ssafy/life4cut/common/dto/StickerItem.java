@@ -6,14 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Background 응답을 위한 DTD Object
- * @see com.ssafy.life4cut.db.entity.remote.Backgroud
+ * Sticker 응답을 위한 DTD Object
+ * @see com.ssafy.life4cut.db.entity.remote.Sticker
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BackgroundItem {
+public class StickerItem {
     private long id;
     private String url;
 }
