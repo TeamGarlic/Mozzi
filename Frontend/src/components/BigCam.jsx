@@ -1,9 +1,10 @@
 import {useEffect, useRef} from "react";
 import { SelfieSegmentation } from '@mediapipe/selfie_segmentation';
 import {Rnd} from "react-rnd";
+import {drawCanvas, drawMyVid} from "@/modules/videoUtil.js";
 
 function BigCam() {
-  const W = 880, H = 495;
+  const W = 1024, H = 560;
   // 영상 위치 조절 컴포넌트
   const rndRef = useRef();
   // 소스 웹캠 video
@@ -27,79 +28,23 @@ function BigCam() {
   // 캔버스에 그릴 레이어들
   const layers = [bgremoveLayer];
 
-  // 로컬 웹캠에서 누끼딴거 캔버스에 그리는 함수
-  function drawMyVid(canvas, context, result){
-    context.current.save();
-    context.current.clearRect(
-        0,
-        0,
-        canvas.current.width,
-        canvas.current.height
-    );
-    context.current.drawImage(
-        result.segmentationMask,
-        0,
-        0,
-        canvas.current.width,
-        canvas.current.height
-    );
-    // Only overwrite existing pixels.
-    context.current.globalCompositeOperation = 'source-out';
-    context.current.fillStyle = '#00FF00';
-    context.current.fillRect(
-        0,
-        0,
-        canvas.current.width,
-        canvas.current.height
-    );
-    // Only overwrite missing pixels.
-    context.current.globalCompositeOperation = 'source-out';
-    context.current.drawImage(
-        result.image,
-        0,
-        0,
-        canvas.current.width,
-        canvas.current.height
-    );
-    context.current.restore();
-  }
-  // 합성 캔버스에 그리는 함수
-  function drawCanvas(canvas, context){
-    context.current.save();
-    // TODO : 배경사진 변경 기능 추가
-    context.current.drawImage(
-        bgImg,
-        0,
-        0,
-        canvas.current.width,
-        canvas.current.height
-    );
-    context.current.globalCompositeOperation = 'source-over';
-    layers.forEach(item=>{
-      context.current.drawImage(
-          item.image,
-          canvas.current.width*item.dx,
-          canvas.current.height*item.dy,
-          canvas.current.width*item.w,
-          canvas.current.height*item.h
-      );
-    })
-    context.current.restore();
-  }
-
   // 로컬 웹캠의 한 프레임이 처리될 때 마다 실행되는 함수들
   const onResults = (results) => {
     // 내 웹캠을 담을 canvas (화면에 표시 x)
     drawMyVid(bgremoveRef,bgremoveContextRef,results);
-    drawCanvas(canvasRef,canvasContextRef);
+    drawCanvas(canvasRef,canvasContextRef,bgImg,layers);
   };
 
   const moveWebcam = () =>{
+    console.log(bgremoveLayer);
+    console.log(bgremoveRef.current);
+    bgremoveLayer.image = bgremoveRef.current;
     bgremoveLayer.dx = (rndRef.current.draggable.state.x - canvasRef.current.offsetLeft)/W
     bgremoveLayer.dy = (rndRef.current.draggable.state.y - canvasRef.current.offsetTop)/H
   }
 
   const resizeWebcam = () =>{
+    bgremoveLayer.image = bgremoveRef.current;
     bgremoveLayer.dx = (rndRef.current.draggable.state.x - canvasRef.current.offsetLeft)/W
     bgremoveLayer.dy = (rndRef.current.draggable.state.y - canvasRef.current.offsetTop)/H
     bgremoveLayer.w = rndRef.current.resizable.state.width/W;
