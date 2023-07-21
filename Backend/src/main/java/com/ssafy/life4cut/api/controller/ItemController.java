@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.life4cut.api.response.ItemBackgroundGetRes;
 import com.ssafy.life4cut.api.response.ItemStickerGetRes;
 import com.ssafy.life4cut.api.service.ItemService;
+import com.ssafy.life4cut.common.model.response.BaseResponseBody;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,12 +32,16 @@ public class ItemController {
      * @see ItemService
      */
     @GetMapping("/backgrounds")
-    public ResponseEntity<? extends ItemBackgroundGetRes> getBackgrounds(
+    public ResponseEntity<? extends BaseResponseBody> getBackgrounds(
         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
-        ItemBackgroundGetRes responseBody = itemService.getBackgroundRes(pageNum, pageSize);
-        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+        ItemBackgroundGetRes responseData = itemService.getBackgroundRes(pageNum, pageSize);
+        return new ResponseEntity<>(
+            BaseResponseBody.<ItemBackgroundGetRes>builder()
+                .message("")
+                .data(responseData)
+                .build(), HttpStatus.OK);
     }
 
     /**
@@ -48,11 +53,15 @@ public class ItemController {
      * @see ItemService
      */
     @GetMapping("/stickers")
-    public ResponseEntity<? extends ItemStickerGetRes> getStickers(
+    public ResponseEntity<? extends BaseResponseBody> getStickers(
         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
-        ItemStickerGetRes responseBody = itemService.getStickerRes(pageNum, pageSize);
-        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+        ItemStickerGetRes responseData = itemService.getStickerRes(pageNum, pageSize);
+        return new ResponseEntity<>(
+            BaseResponseBody.<ItemStickerGetRes>builder()
+                .message("")
+                .data(responseData)
+                .build(), HttpStatus.OK);
     }
 }
