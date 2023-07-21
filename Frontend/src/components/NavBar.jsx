@@ -19,13 +19,16 @@ function NavBar() {
   }
 
   return (
-    <div className="fixed w-screen top-0 p-4 px-8 h-14">
-      <button className="float-left" onClick={goHome}>
-        logo
+    <div className="fixed w-screen top-0 p-4 px-8 h-fit">
+      <button className="float-left text-3xl" onClick={goHome}>
+        🎞️
       </button>
       {user ? (
         <div className=" float-right flex-col">
-          <button onClick={showMenu} className=" float-right">
+          <button
+            onClick={showMenu}
+            className=" float-right leading-[calc(1.875rem)]"
+          >
             {user.name}
           </button>
           {menu && (
@@ -37,7 +40,10 @@ function NavBar() {
           )}
         </div>
       ) : (
-        <button className="float-right" onClick={goLogin}>
+        <button
+          className="float-right  leading-[calc(1.875rem)]"
+          onClick={goLogin}
+        >
           login
         </button>
       )}

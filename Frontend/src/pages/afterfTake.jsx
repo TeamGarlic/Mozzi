@@ -1,7 +1,7 @@
 // import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import ClipLog from "@/components/ClipLog";
-import Frame from "@/components/Frame"
+import Frame from "@/components/Frame";
 
 function AfterTake() {
   return (
@@ -11,16 +11,16 @@ function AfterTake() {
           <ClipLog />
         </div>
         <div className="float-right w-[calc(32rem)] h-screen bg-white flex-col rounded-s-xl p-4 justify-center items-center text-center overflow-y-scroll scrollbar-hide">
-          frame
+          프레임
           <div className="mx-auto bottom-5 justify-center items-center text-center">
             <Frame />
             <button
               className="w-1/2 h-10 rounded-3xl bg-yellow-100 shadow-[5px_5px_5px_0px_rgba(0,0,0,0.5)]"
               onClick={() => {
-                location.href = "/finish";
+                location.href = "/0/finish";
               }}
             >
-              finish
+              공유하기
             </button>
           </div>
         </div>
