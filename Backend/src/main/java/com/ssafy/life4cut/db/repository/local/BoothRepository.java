@@ -12,4 +12,7 @@ import com.ssafy.life4cut.db.entity.local.Booth;
  */
 @Repository
 public interface BoothRepository extends JpaRepository<Booth, Long> {
+    Booth findByShareCode(String shareCode);
+
+    Booth findBySessionId(String sessionId);
 }

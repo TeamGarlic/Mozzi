@@ -1,5 +1,9 @@
 package com.ssafy.life4cut.db.entity.local;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import com.ssafy.life4cut.db.entity.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -15,6 +19,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Booth extends BaseEntity {
-    @Column(length = 30, nullable = true) // TODO: ERD에 Nullable로 되있는데 그게 맞는지 확인 필요..
+
+    /**
+     * Openvidu 연결에 사용되는 Session 값
+     */
+    @Column(unique = true)
     private String sessionId;
+
+    @Column(unique = true)
+    private String shareCode;
+
+    @CreationTimestamp
+    private LocalDateTime createAt;
 }
