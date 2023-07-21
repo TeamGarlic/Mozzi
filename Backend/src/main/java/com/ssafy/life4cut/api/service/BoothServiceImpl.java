@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.life4cut.api.request.ConnectionPostReq;
 import com.ssafy.life4cut.api.request.SessionPostReq;
@@ -16,6 +17,7 @@ import com.ssafy.life4cut.api.response.SessionRes;
 import com.ssafy.life4cut.common.exception.DuplicateShareCodeException;
 import com.ssafy.life4cut.common.exception.ShareCodeNotExistException;
 import com.ssafy.life4cut.common.model.response.BaseResponseBody;
+import com.ssafy.life4cut.db.datasource.LocalDatasource;
 import com.ssafy.life4cut.db.entity.local.Booth;
 import com.ssafy.life4cut.db.repository.local.BoothRepository;
 
@@ -47,8 +49,8 @@ public class BoothServiceImpl implements BoothService {
      * @see Session
      * @see SessionPostReq
      */
-
     @Override
+    @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     public BaseResponseBody<SessionRes> createBooth(SessionPostReq request) throws Exception {
         String shareCode = request.getShareCode();
         Booth booth = null;
@@ -98,6 +100,7 @@ public class BoothServiceImpl implements BoothService {
      * @see Session
      */
     @Override
+    @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     public BaseResponseBody<SessionRes> joinBooth(String shareCode) {
         Booth booth = boothRepository.findByShareCode(shareCode);
         if (booth == null) {
@@ -121,7 +124,7 @@ public class BoothServiceImpl implements BoothService {
      * @see Session
      * @see Connection
      */
-
+    @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     @Override
     public BaseResponseBody<ConnectionPostRes> getConnectionToken(ConnectionPostReq request) throws Exception {
         Session session = openVidu.getActiveSession(request.getSessionId());
