@@ -2,6 +2,8 @@ package com.ssafy.life4cut.api.service;
 
 import java.util.Optional;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,7 +11,9 @@ import com.ssafy.life4cut.api.request.UserLoginPostReq;
 import com.ssafy.life4cut.api.request.UserRegisterPostReq;
 import com.ssafy.life4cut.api.response.UserLoginPostRes;
 import com.ssafy.life4cut.api.response.UserRegisterPostRes;
+import com.ssafy.life4cut.common.exception.handler.DuplicatedUserIdException;
 import com.ssafy.life4cut.common.exception.handler.UserIdNotExistsException;
+import com.ssafy.life4cut.common.exception.handler.UserLoginFailException;
 import com.ssafy.life4cut.common.util.mapper.UserMapper;
 import com.ssafy.life4cut.db.datasource.LocalDatasource;
 import com.ssafy.life4cut.db.entity.remote.User;
@@ -27,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     /**
      *  회원 가입 Service/비즈니스 로직
@@ -39,8 +44,12 @@ public class UserServiceImpl implements UserService {
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     public UserRegisterPostRes register(UserRegisterPostReq request) {
         User user = UserMapper.toEntity(request);
-        // TODO: Excpetion 구현하기
-        userRepository.save(user);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        try {
+            userRepository.save(user);
+        } catch (Exception e) {
+            throw new DuplicatedUserIdException("Duplicated user id");
+        }
         return UserMapper.toRegistRes(user);
     }
 
@@ -54,12 +63,16 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     public UserLoginPostRes login(UserLoginPostReq request) {
-        Optional<User> user = userRepository.findByUserId(request.getId());
-
+        Optional<User> user = userRepository.findByUserId(request.getUserId());
         if (user.isPresent()) {
-            return UserMapper.toLoginRes(user.get());
+            if (passwordEncoder.matches(
+                request.getPassword(), user.get().getPassword())) {
+                return UserMapper.toLoginRes(user.get());
+            } else {
+                throw new UserLoginFailException("Login Fail");
+            }
         } else {
-            throw new UserIdNotExistsException("User ID already exists.");
+            throw new UserIdNotExistsException("User ID not exist");
         }
     }
 }
