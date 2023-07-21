@@ -3,6 +3,7 @@ package com.ssafy.life4cut.common.util.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ssafy.life4cut.api.response.ItemBackgroundGetRes;
 import com.ssafy.life4cut.common.dto.BackgroundItem;
 import com.ssafy.life4cut.db.entity.Backgroud;
 
@@ -18,16 +19,20 @@ public class ItemMapper {
      * @see Backgroud
      * @see BackgroundItem
      */
-    public static List<BackgroundItem> toBackgrounds(List<Backgroud> request) {
-        List<BackgroundItem> backgrounds = new ArrayList<>();  // 반환 할 List 객체
 
-        for (Backgroud backgroud : request) {
-            backgrounds.add(BackgroundItem.builder()
+    public static ItemBackgroundGetRes toItemBackgroundGetRes(List<Backgroud> backgrounds, int pages) {
+        List<BackgroundItem> backgroundItems = new ArrayList<>();  // 반환 할 List 객체
+
+        for (Backgroud backgroud : backgrounds) {
+            backgroundItems.add(BackgroundItem.builder()
                 .id(backgroud.getId())
                 .url(backgroud.getUrl())
                 .build());
         }
 
-        return backgrounds;
+        return ItemBackgroundGetRes.builder()
+            .backgrounds(backgroundItems)
+            .pages(pages)
+            .build();
     }
 }

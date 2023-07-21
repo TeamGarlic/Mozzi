@@ -39,9 +39,6 @@ public class ItemServiceImpl implements ItemService {
         Page<Backgroud> page = backgroundRepository.findAll(pageRequest);  // Page 객체 생성
         List<Backgroud> backgrounds = page.getContent();  // Page 의 Method 를 이용하여 Background 객체들의 리스트를 만듦
 
-        return ItemBackgroundGetRes.builder()
-            .backgrounds(ItemMapper.toBackgrounds(backgrounds))
-            .pages(page.getTotalPages())
-            .build();
+        return ItemMapper.toItemBackgroundGetRes(backgrounds, page.getTotalPages());
     }
 }
