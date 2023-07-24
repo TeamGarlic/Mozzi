@@ -19,11 +19,12 @@ function MyPage() {
     <Layout>
       <>
         <NavBar user={user} />
-        <div className="relative w-[calc(30rem)] flex-col rounded-lg  justify-center items-center text-center mx-auto pt-60">
+        <div className="flex-col">
           <div className="w-full h-10">
             <span className=" float-left text-lg">{username}</span>
           </div>
-          {/* <div className="flex">
+        </div>
+        {/* <div className="flex">
             <TextInput type="text" placeholder="ID" {...newID} />
           </div>
           <div className="flex">
@@ -53,7 +54,6 @@ function MyPage() {
               회원 탈퇴
             </button>
           </div> */}
-        </div>
       </>
     </Layout>
   );
