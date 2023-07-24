@@ -42,6 +42,7 @@ function Booth() {
     // 내 웹캠을 담을 canvas (화면에 표시 x)
     drawMyVid(bgRemovedRef, bgRemovedContextRef, results, bgMaskRef, bgMaskContextRef);
     camCanvases.forEach((e) => {
+      console.log(e);
       drawMyVid(e.canvas, e.context, results);
     });
 

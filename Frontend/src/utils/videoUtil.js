@@ -1,5 +1,6 @@
 export const drawMyVid = function(canvas, context, result, bgcanvas = null, bgcontext = null) {
   // 로컬 웹캠에서 누끼딴거 캔버스에 그리는 함수
+  if(!canvas.current) return;
   context.current.save();
   context.current.clearRect(
     0,
