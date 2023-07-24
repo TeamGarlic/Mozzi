@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
-function NavBar() {
-  const [user, setUser] = useState(null);
+function NavBar({ user }) {
+  // const [user, setUser] = useState(null);
   const [menu, setMenu] = useState(false);
-  useEffect(() => {
-    setUser(null);
-  }, []);
+  // useEffect(() => {
+  //   setUser(null);
+  // }, []);
 
   function goLogin() {
     location.href = "/login";
@@ -16,6 +18,12 @@ function NavBar() {
 
   function showMenu() {
     setMenu(!menu);
+  }
+
+  function logOut() {
+    localStorage.removeItem("accessToken");
+    alert("로그아웃되었습니다!");
+    location.href = "/";
   }
 
   return (
@@ -33,9 +41,15 @@ function NavBar() {
           </button>
           {menu && (
             <ul className="mt-10 border-4 rounded-lg p-4">
-              <li className=" my-2">마이페이지</li>
-              <li className=" my-2">내정보수정</li>
-              <li className=" my-2">로그아웃</li>
+              <li className=" my-2">
+                <Link to={`/mypage/${user.name}`}>마이페이지</Link>
+              </li>
+              <li className=" my-2">
+                <Link to="/modify">내정보수정</Link>
+              </li>
+              <li className=" my-2 hover:cursor-pointer" onClick={logOut}>
+                로그아웃
+              </li>
             </ul>
           )}
         </div>
@@ -52,3 +66,13 @@ function NavBar() {
 }
 
 export default NavBar;
+
+NavBar.dafaultProps = {
+  user: null,
+};
+
+NavBar.propTypes = {
+  user: PropTypes.shape({
+    name: PropTypes.string,
+  }),
+};

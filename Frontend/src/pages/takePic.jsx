@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 // import { Link } from "react-router-dom";
 import PicSideBar from "../components/PicSideBar";
 import Layout from "../components/Layout";
@@ -12,6 +12,7 @@ function TakePic() {
   const [timer, setTimer] = useState(3);
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
+  var interval;
   function timeChange(e) {
     setTimer(e.target.value);
     console.log(timer + "로 설정");
@@ -20,9 +21,17 @@ function TakePic() {
   function take() {
     setTimerVisible(true);
     console.log(timer + "초 후 촬영");
-    const interval = setInterval(() => {
+    interval = setInterval(() => {
+      console.log(interval);
       setCount((prev) => {
-        return prev - 1;
+        let next = prev - 1;
+        if (next === 0) {
+          alert("찰칵!");
+          clearInterval(interval);
+          setTimerVisible(false);
+          return timer;
+        }
+        return next;
       });
     }, 1000);
 
@@ -32,12 +41,26 @@ function TakePic() {
       setTaken(taken + 1);
     }
   }
+
+  useEffect(() => {
+    if (count === 0) {
+      alert("찰칵!");
+      clearInterval(interval);
+      setCount(timer);
+      setTimerVisible(false);
+    }
+  }, [count]);
   return (
     <Layout>
       <>
         <Chat />
         <div className="w-full pt-4 ps-4">
-          <span className="text-3xl">부스 코드 : XXX_XXX_XXX</span>
+          <div>
+            <div className=" text-sm text-gray-500">
+              초대 코드 : XXX_XXX_XXX
+            </div>
+            <div className="text-2xl">MOZZI</div>
+          </div>
           <PicSideBar />
           {/* <div className="float-right mr-10 text-2xl">taken : {taken}/10</div> */}
         </div>

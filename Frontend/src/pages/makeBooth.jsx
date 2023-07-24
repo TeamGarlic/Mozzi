@@ -1,10 +1,10 @@
-import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import UserSideBar from "../components/UserSideBar";
 import EnterDialog from "@/components/EnterDialog";
+import PropTypes from "prop-types";
 import { useState } from "react";
 
-function MakeBooth() {
+function MakeBooth({ startTake }) {
   const [visibility, setVisibility] = new useState(true);
   const [toggleVoice, setToggleVoice] = new useState(true);
   const closeDialog = () => {
@@ -24,7 +24,12 @@ function MakeBooth() {
       <Layout>
         <div className="flex">
           <div className="w-full h-screen p-4 flex-col">
-            <span className="text-3xl">부스 코드 : XXX_XXX_XXX</span>
+            <div>
+              <div className=" text-sm text-gray-500">
+                초대 코드 : XXX_XXX_XXX
+              </div>
+              <div className="text-2xl">MOZZI</div>
+            </div>
             <div className=" text-2xl p-4">프레임 선택</div>
             <div className="gap-6 p-4 mr-[calc(17rem)]  overflow-x-scroll scrollbar-thumb-gray-900 scrollbar-track-gray-100 scrollbar-hide">
               <div className=" inline-flex flex-nowrap h-[calc(25rem)] gap-4 p-4">
@@ -38,9 +43,12 @@ function MakeBooth() {
               </div>
             </div>
             <div className="w-full pt-32">
-              <Link to="/0/takepic" className=" block relative mx-auto w-fit">
+              <button
+                onClick={startTake}
+                className=" block relative mx-auto w-fit"
+              >
                 촬영 시작
-              </Link>
+              </button>
             </div>
           </div>
           <UserSideBar />
@@ -51,3 +59,7 @@ function MakeBooth() {
 }
 
 export default MakeBooth;
+
+MakeBooth.propTypes = {
+  startTake: PropTypes.func,
+};
