@@ -28,9 +28,11 @@ function NavBar({ user }) {
 
   return (
     <div className="fixed w-screen top-0 p-4 px-8 h-fit">
-      <button className="float-left text-3xl" onClick={goHome}>
-        🎞️
-      </button>
+      <img
+        src="/src/assets/img/mozzi.png"
+        className=" float-left w-20 h-20 hover:cursor-pointer"
+        onClick={goHome}
+      />
       {user ? (
         <div className=" float-right flex-col">
           <button
