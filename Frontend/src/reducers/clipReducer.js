@@ -1,13 +1,19 @@
-import { Clip2Frame, AddClip, Frame2Clip, DragStart, DragEnd, DragClear, Frame2Frame } from "@/modules/clipAction"
+import { Clip2Frame, AddClip, Frame2Clip, DragStart, DragEnd, DragClear, Frame2Frame, setFrame, setClipList } from "@/modules/clipAction"
 
 
 const clipState = {
   frame: {
-    1: {clipIdx: 0, src: "", top:60, left:55},
-    2: {clipIdx: 0, src: "", top:275, left:55},
-    3: {clipIdx: 0, src: "", top:490, left:55},
-    4: {clipIdx: 0, src: "", top:705, left:55}},
-  clipList: {1: "https://www.kmdb.or.kr/trailer/play/MK041673_P02.mp4"},
+    n: 0,
+    src: "",
+    1: {clipIdx: 0, src: "", top:60, left:55, width: 0, height: 0},
+    2: {clipIdx: 0, src: "", top:275, left:55, width: 0, height: 0},
+    3: {clipIdx: 0, src: "", top:490, left:55, width: 0, height: 0},
+    4: {clipIdx: 0, src: "", top:705, left:55, width: 0, height: 0}
+  },
+  clipList: {
+    n: 0,
+    1: "https://www.kmdb.or.kr/trailer/play/MK041673_P02.mp4"
+  },
   drag: {
     start: "",
     end: "",
@@ -18,6 +24,16 @@ const clipState = {
 
 const clipReducer = (state = clipState, action) => {
   switch(action.type){
+    case setFrame: {
+      return {
+        ...state,
+      }
+    }
+    case setClipList: {
+      return {
+        ...state,
+      }
+    }
     case Clip2Frame: {
       if (!action.payload.frameIdx){
         for (let idx = 1; idx < 5; idx++) {
