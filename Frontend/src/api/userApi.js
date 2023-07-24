@@ -3,7 +3,7 @@ import axios from "axios";
 // 미인증 유저 api axios 객체
 const UserApi = axios.create({
   // baseUrl : 백엔드 서버 IP
-  baseURL: "user/",
+  baseURL: "/users",
   headers: {
     "Content-Type": "application/json",
   },
@@ -20,17 +20,18 @@ const UserApi = axios.create({
 // 유저 인증, 정보 관련 API
 const userApi = {
   checkId: async (id) => {
-    const res = await UserApi.get(`check-login-id?id=${id}`, {
+    const res = await UserApi.get(`check-login-id?userId=${id}`, {
       withCredentials: true,
     });
     return res;
   },
+
   logIn: async (id, pwd) => {
     const res = await UserApi.post(
       "login",
       {
-        id,
-        pwd,
+        userId: id,
+        password: pwd,
       },
       { withCredentials: true }
     );
@@ -49,12 +50,12 @@ const userApi = {
   // },
   signUp: async (id, pwd, nickname, email) => {
     const res = await UserApi.post(
-      "sign-up",
+      "register",
       {
-        id,
-        pwd,
-        nickname,
-        email,
+        userId: id,
+        nickname: nickname,
+        email: email,
+        password: pwd,
       },
       { withCredentials: true }
     );

@@ -2,15 +2,23 @@ import Layout from "@/components/Layout";
 import useInput from "@/hooks/useInput.js";
 import LoginNav from "@/components/LoginNav.jsx";
 import TextInput from "@/components/TextInput.jsx";
+import userApi from "@/api/userApi";
 
 function LogIn() {
   const id = useInput();
   const pw = useInput();
 
-  function login() {
+  async function login() {
     alert(`id : ${id.value}, pw : ${pw.value}`);
-    id.reset();
-    pw.reset();
+    try {
+      let res = await userApi.logIn(id.value, pw.value);
+      console.log(res);
+    } catch {
+      alert("통신 오류!");
+    } finally {
+      id.reset();
+      pw.reset();
+    }
   }
   return (
     <Layout>
