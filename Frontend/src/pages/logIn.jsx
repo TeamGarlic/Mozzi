@@ -2,15 +2,23 @@ import Layout from "@/components/Layout";
 import useInput from "@/hooks/useInput.js";
 import LoginNav from "@/components/LoginNav.jsx";
 import TextInput from "@/components/TextInput.jsx";
+import userApi from "@/api/userApi";
 
 function LogIn() {
   const id = useInput();
   const pw = useInput();
 
-  function login() {
+  async function login() {
     alert(`id : ${id.value}, pw : ${pw.value}`);
-    id.reset();
-    pw.reset();
+    try {
+      let res = await userApi.logIn(id.value, pw.value);
+      console.log(res);
+    } catch {
+      alert("통신 오류!");
+    } finally {
+      id.reset();
+      pw.reset();
+    }
   }
   return (
     <Layout>
@@ -32,7 +40,7 @@ function LogIn() {
           <button
             type="button"
             onClick={login}
-            className="w-80 h-12 leading-3 rounded-2xl mt-10 border bg-yellow-300"
+            className="w-80 h-12 leading-3 rounded-2xl mt-10 bg-yellow-300"
           >
             로그인
           </button>
