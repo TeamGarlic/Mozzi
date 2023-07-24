@@ -3,13 +3,28 @@ import { Clip2Frame, AddClip, Frame2Clip, DragStart, DragEnd, DragClear, Frame2F
 
 const clipState = {
   frame: {
-    n: 0,
+    n: 4,
     src: "",
-    1: {clipIdx: 0, src: "", top:60, left:55, width: 0, height: 0},
-    2: {clipIdx: 0, src: "", top:275, left:55, width: 0, height: 0},
-    3: {clipIdx: 0, src: "", top:490, left:55, width: 0, height: 0},
-    4: {clipIdx: 0, src: "", top:705, left:55, width: 0, height: 0}
-  },
+    1: {clipIdx: 0, src: "",
+      width : 0.9119170984455959,
+      height : 0.20057471264367815,
+      x : 0.041191773093426164,
+      y : 0.014367816091954023},
+    2: {clipIdx: 0, src: "",
+      width : 0.9136442141623489,
+      height : 0.20057471264367815,
+      x : 0.03773754165992012,
+      y : 0.22988505747126436},
+    3: {clipIdx: 0, src: "",
+      width : 0.9136442141623489,
+      height : 0.20057471264367815,
+      x : 0.039464657376673144,
+      y : 0.4454022988505747},
+    4: {clipIdx: 0, src: "",
+      width : 0.9136442141623489,
+      height : 0.20057471264367815,
+      x : 0.039464657376673144,
+      y : 0.6603448275862069}},
   clipList: {
     n: 0,
     1: "https://www.kmdb.or.kr/trailer/play/MK041673_P02.mp4"
