@@ -19,10 +19,32 @@ function MyPage() {
     <Layout>
       <>
         <NavBar user={user} />
-        <div className="flex-col">
-          <div className="w-full h-10">
-            <span className=" float-left text-lg">{username}</span>
+        <div className="flex-col mt-20 px-20">
+          <div className="w-full flex-col">
+            <div className="text-2 text-gray-600">프로필</div>
+            <div className="text-4xl">{username}</div>
           </div>
+          <div className="py-5">
+            <h1>내 사진</h1>
+          </div>
+          <hr />
+          <div className="py-5">
+            <h1>내 영상</h1>
+          </div>
+          <hr />
+          <div className="py-5">
+            <h1>친구 목록</h1>
+          </div>
+          <hr />
+          {/* 정보를 보는 대상과 현재 사용자가 같을 경우 내정보수정 열림 */}
+
+          {username === user.name ? (
+            <button className="w-32 h-12 float-right leading-3 rounded-2xl mt-10 bg-yellow-300">
+              내정보수정
+            </button>
+          ) : (
+            <></>
+          )}
         </div>
         {/* <div className="flex">
             <TextInput type="text" placeholder="ID" {...newID} />

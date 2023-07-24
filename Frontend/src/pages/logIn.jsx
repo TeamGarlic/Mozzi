@@ -32,7 +32,7 @@ function LogIn() {
           <button
             type="button"
             onClick={login}
-            className="w-80 h-12 leading-3 rounded-2xl mt-10 border bg-yellow-300"
+            className="w-80 h-12 leading-3 rounded-2xl mt-10 bg-yellow-300"
           >
             로그인
           </button>
