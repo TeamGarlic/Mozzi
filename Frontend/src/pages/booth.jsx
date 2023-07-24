@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  setCamStreamActaion,
+  setCamStreamAction,
   setMaskStreamAction,
 } from "@/modules/canvasAction.js";
 import MakeBooth from './makeBooth';
@@ -85,7 +85,7 @@ function Booth() {
       }
     };
     dispatch(
-      setCamStreamActaion({
+      setCamStreamAction({
         canvas:bgRemovedRef,
         stream:bgRemovedRef.current.captureStream(30).getVideoTracks()[0],
       })
