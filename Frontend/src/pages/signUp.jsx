@@ -96,7 +96,7 @@ function SignUp() {
           <button
             type="button"
             onClick={sign}
-            className="w-80 h-12 leading-3 rounded-2xl mt-20 border border-slate-600"
+            className="w-80 h-12 leading-3 rounded-2xl mt-10 border bg-blue-400"
           >
             회원가입
           </button>
