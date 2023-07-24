@@ -1,5 +1,6 @@
 package com.ssafy.life4cut.api.controller;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -62,11 +63,15 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<? extends BaseResponseBody> login(@RequestBody UserLoginPostReq request) {
         UserLoginPostRes response = userService.login(request);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + response.getToken());
+
         return new ResponseEntity<>(
             BaseResponseBody.<UserLoginPostRes>builder()
                 .message("")
                 .data(response)
-                .build(), HttpStatus.OK);
+                .build(), headers, HttpStatus.OK);
     }
 }
 

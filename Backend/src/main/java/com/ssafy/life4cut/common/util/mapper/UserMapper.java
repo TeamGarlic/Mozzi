@@ -28,9 +28,10 @@ public class UserMapper {
             .build();
     }
 
-    public static UserLoginPostRes toLoginRes(User user) {
+    public static UserLoginPostRes toLoginRes(User user, String token) {
         return UserLoginPostRes.builder()
             .id(user.getId())
+            .token(token)
             .build();
     }
 }

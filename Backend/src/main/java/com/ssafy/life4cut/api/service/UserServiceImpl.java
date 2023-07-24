@@ -11,6 +11,7 @@ import com.ssafy.life4cut.api.request.UserLoginPostReq;
 import com.ssafy.life4cut.api.request.UserRegisterPostReq;
 import com.ssafy.life4cut.api.response.UserLoginPostRes;
 import com.ssafy.life4cut.api.response.UserRegisterPostRes;
+import com.ssafy.life4cut.common.auth.JwtTokenProvider;
 import com.ssafy.life4cut.common.exception.handler.DuplicatedUserIdException;
 import com.ssafy.life4cut.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.life4cut.common.exception.handler.UserLoginFailException;
@@ -32,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      *  회원 가입 Service/비즈니스 로직
@@ -67,7 +69,7 @@ public class UserServiceImpl implements UserService {
         if (user.isPresent()) {
             if (passwordEncoder.matches(
                 request.getPassword(), user.get().getPassword())) {
-                return UserMapper.toLoginRes(user.get());
+                return UserMapper.toLoginRes(user.get(), jwtTokenProvider.createToken(user.get().getUserId()));
             } else {
                 throw new UserLoginFailException("Login Fail");
             }
