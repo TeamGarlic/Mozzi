@@ -5,6 +5,22 @@ export const DragStart = "DragStart";
 export const DragEnd = "DragEnd";
 export const DragClear = "DragClear";
 export const Frame2Frame = "Frame2Frame";
+export const setFrame = "setFrame";
+export const setClipList = "setClipList";
+
+export const setClipListAction = (res) => {
+  return {
+    type: setClipList,
+    payload: res,
+  }
+};
+
+export const setFrameAction = (res) => {
+  return {
+    type: setFrame,
+    payload: res,
+  }
+};
 
 export const Clip2FrameAction = (res) => {
   return {
