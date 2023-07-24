@@ -20,9 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 @Slf4j
 public class ControllerAdviceHandler {
-    // TODO: General 한 exception 추가
-    // TODO: exception/handler에 정의된 Exception 마다 처리
-
     /**
      * 이미 존재하는 Id일 경우의 응답을 반환한다.
      * @see UserIdNotExistsException

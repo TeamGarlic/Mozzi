@@ -74,6 +74,8 @@ public class BoothServiceImpl implements BoothService {
                 booth = Booth.builder()
                     .sessionId(sessionId)
                     .shareCode(shareCode)
+                    // TODO: JWT 추가한 이후에 메서드 parameter로 creator 추가하고 아래 부분 수정해야함
+                    .creator(1L)
                     .build();
                 boothRepository.save(booth);
 
@@ -108,7 +110,7 @@ public class BoothServiceImpl implements BoothService {
             throw new ShareCodeNotExistException(String.format("Requested booth(%s) not exist", shareCode));
         }
         return BaseResponseBody.<SessionRes>builder()
-            .message("Requested booth exits")
+            .message("Requested booth exists")
             .data(
                 SessionRes.builder()
                     .shareCode(shareCode)
@@ -125,7 +127,6 @@ public class BoothServiceImpl implements BoothService {
      * @see Session
      * @see Connection
      */
-    @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     @Override
     public BaseResponseBody<ConnectionPostRes> getConnectionToken(ConnectionPostReq request) throws Exception {
         Session session = openVidu.getActiveSession(request.getSessionId());
