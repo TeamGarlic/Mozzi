@@ -40,7 +40,7 @@ public class ItemController {
         ItemBackgroundGetRes responseData = itemService.getBackgroundRes(pageNum, pageSize);
         return new ResponseEntity<>(
             BaseResponseBody.<ItemBackgroundGetRes>builder()
-                .message("")
+                .message("Background fetched")
                 .data(responseData)
                 .build(), HttpStatus.OK);
     }

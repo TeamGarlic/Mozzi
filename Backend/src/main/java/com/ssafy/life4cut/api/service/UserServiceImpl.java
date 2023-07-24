@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
         try {
             userRepository.save(user);
         } catch (Exception e) {
-            throw new DuplicatedUserIdException("Duplicated user id");
+            throw new DuplicatedUserIdException(String.format("Duplicated user id(%s)", request.getUserId()));
         }
         return UserMapper.toRegistRes(user);
     }
@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
                 request.getPassword(), user.get().getPassword())) {
                 return UserMapper.toLoginRes(user.get());
             } else {
-                throw new UserLoginFailException("Login Fail");
+                throw new UserLoginFailException(String.format("Login Fail on %s", request.getUserId()));
             }
         } else {
             throw new UserIdNotExistsException("User ID not exist");

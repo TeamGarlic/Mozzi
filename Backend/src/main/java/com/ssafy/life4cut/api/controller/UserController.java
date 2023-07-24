@@ -47,7 +47,7 @@ public class UserController {
         UserRegisterPostRes response = userService.register(request);
         return new ResponseEntity<>(
             BaseResponseBody.<UserRegisterPostRes>builder()
-                .message("success")
+                .message("User register success")
                 .data(response)
                 .build(), HttpStatus.CREATED);
     }
@@ -64,7 +64,7 @@ public class UserController {
         UserLoginPostRes response = userService.login(request);
         return new ResponseEntity<>(
             BaseResponseBody.<UserLoginPostRes>builder()
-                .message("")
+                .message("User login success")
                 .data(response)
                 .build(), HttpStatus.OK);
     }
