@@ -41,7 +41,7 @@ public class User extends BaseEntity {
 
     @NotNull
     @Size(max = 16)
-    @Column(unique = true)
+    @Column(name = "user_id", unique = true)
     private String userId;
 
     @JsonIgnore
@@ -59,7 +59,7 @@ public class User extends BaseEntity {
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @CreationTimestamp
-    @Column(updatable = false, nullable = false)
+    @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
     @Builder.Default

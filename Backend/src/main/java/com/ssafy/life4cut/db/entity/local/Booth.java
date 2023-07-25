@@ -30,17 +30,17 @@ public class Booth extends BaseEntity {
      */
     @NotNull
     @Size(max = 20)
-    @Column(unique = true)
+    @Column(name = "session_id", unique = true)
     private String sessionId;
 
     @NotNull
     @Size(max = 20)
-    @Column(unique = true)
+    @Column(name = "share_code", unique = true)
     private String shareCode;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @CreationTimestamp
-    @Column(updatable = false, nullable = false)
+    @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
     @Override

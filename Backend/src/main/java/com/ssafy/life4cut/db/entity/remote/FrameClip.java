@@ -13,6 +13,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +29,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "frame_clip")
 public class FrameClip extends BaseEntity {
     @NotNull
     private double width;
@@ -43,7 +45,7 @@ public class FrameClip extends BaseEntity {
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @CreationTimestamp
-    @Column(updatable = false, nullable = false)
+    @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
     @Builder.Default
@@ -52,7 +54,7 @@ public class FrameClip extends BaseEntity {
     private Boolean deleted = false;
 
     @ManyToOne
-    @JoinColumn(name = "frameId")
+    @JoinColumn(name = "frame_id")
     private Frame frame;
 
     @Override
