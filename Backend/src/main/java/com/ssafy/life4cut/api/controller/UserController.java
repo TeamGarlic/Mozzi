@@ -1,5 +1,6 @@
 package com.ssafy.life4cut.api.controller;
 
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,11 +50,15 @@ public class UserController {
     public ResponseEntity<? extends BaseResponseBody<UserRegisterPostRes>> register(
         @RequestBody UserRegisterPostReq request) {
         UserRegisterPostRes response = userService.register(request);
-        return new ResponseEntity<>(
-            BaseResponseBody.<UserRegisterPostRes>builder()
-                .message("User register success")
-                .data(response)
-                .build(), HttpStatus.CREATED);
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .cacheControl(CacheControl.noCache())
+            .body(
+                BaseResponseBody.<UserRegisterPostRes>builder()
+                    .message("User register success")
+                    .data(response)
+                    .build()
+            );
     }
 
     /**
@@ -66,11 +71,14 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<? extends BaseResponseBody<UserLoginPostRes>> login(@RequestBody UserLoginPostReq request) {
         UserLoginPostRes response = userService.login(request);
-        return new ResponseEntity<>(
-            BaseResponseBody.<UserLoginPostRes>builder()
-                .message("User login success")
-                .data(response)
-                .build(), HttpStatus.OK);
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.noCache())
+            .body(
+                BaseResponseBody.<UserLoginPostRes>builder()
+                    .message("User login success")
+                    .data(response)
+                    .build()
+            );
     }
 
     /**
@@ -80,8 +88,10 @@ public class UserController {
      */
     @GetMapping("/check-login-id")
     public ResponseEntity<? extends BaseResponseBody<UserIdCheckRes>> userIdCheck(@RequestParam String userId) {
-        return new ResponseEntity<>(
-            userService.userIdCheck(userId), HttpStatus.OK
-        );
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.noCache())
+            .body(
+                userService.userIdCheck(userId)
+            );
     }
 }

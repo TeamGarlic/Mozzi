@@ -1,6 +1,6 @@
 package com.ssafy.life4cut.api.controller;
 
-import org.springframework.http.HttpStatus;
+import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +36,11 @@ public class BoothController {
     public ResponseEntity<? extends BaseResponseBody<SessionRes>> createBooth(
         @RequestBody SessionPostReq request) throws
         Exception {
-        return new ResponseEntity<>(boothService.createBooth(request), HttpStatus.OK);
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.noCache())
+            .body(
+                boothService.createBooth(request)
+            );
     }
 
     /**
@@ -49,7 +53,11 @@ public class BoothController {
     @GetMapping("/{shareCode}")
     public ResponseEntity<? extends BaseResponseBody<SessionRes>> joinBooth(@PathVariable String shareCode) throws
         Exception {
-        return new ResponseEntity<>(boothService.joinBooth(shareCode), HttpStatus.OK);
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.noCache())
+            .body(
+                boothService.joinBooth(shareCode)
+            );
     }
 
     /**
@@ -62,6 +70,10 @@ public class BoothController {
     @PostMapping("/connections")
     public ResponseEntity<? extends BaseResponseBody<ConnectionPostRes>> createConnection(
         @RequestBody ConnectionPostReq request) throws Exception {
-        return new ResponseEntity<>(boothService.getConnectionToken(request), HttpStatus.OK);
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.noCache())
+            .body(
+                boothService.getConnectionToken(request)
+            );
     }
 }
