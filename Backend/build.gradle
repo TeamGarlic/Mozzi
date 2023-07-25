@@ -42,6 +42,8 @@ dependencies {
     implementation group: 'io.openvidu', name: 'openvidu-java-client', version: '2.28.0'
     // https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.1.0'
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '3.1.0'
 }
 
 tasks.named('test') {
