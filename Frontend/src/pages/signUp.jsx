@@ -7,7 +7,7 @@ import userApi from "@/api/userApi";
 
 function SignUp() {
   const id = useInput();
-  const idRegex = /^(?=.*[a-z])(?=.*\d)[a-z\d]{8,16}$/;
+  const idRegex = /^(?=.*[a-z])(?=.*\d)[a-z\d]{4,16}$/;
   const email = useInput();
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const pw = useInput();
