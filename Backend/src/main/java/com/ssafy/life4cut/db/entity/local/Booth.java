@@ -34,6 +34,9 @@ public class Booth extends BaseEntity {
     @CreationTimestamp
     private LocalDateTime createAt;
 
+    @Column(nullable = false)
+    private long creator;
+
     @Override
     public final boolean equals(Object o) {
         if (this == o)
