@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 // import { Link } from "react-router-dom";
 import PicSideBar from "../components/PicSideBar";
 import Layout from "../components/Layout";
@@ -12,7 +12,7 @@ function TakePic() {
   const [timer, setTimer] = useState(3);
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
-  var interval;
+  let interval;
   function timeChange(e) {
     setTimer(e.target.value);
     console.log(timer + "로 설정");
@@ -29,27 +29,26 @@ function TakePic() {
           alert("찰칵!");
           clearInterval(interval);
           setTimerVisible(false);
+          if (taken === 10) {
+            location.href = "/0/aftertake";
+          } else {
+            setTaken(taken + 1);
+          }
           return timer;
         }
         return next;
       });
     }, 1000);
-
-    if (taken == 10) {
-      location.href = "/0/aftertake";
-    } else {
-      setTaken(taken + 1);
-    }
   }
 
-  useEffect(() => {
-    if (count === 0) {
-      alert("찰칵!");
-      clearInterval(interval);
-      setCount(timer);
-      setTimerVisible(false);
-    }
-  }, [count]);
+  // useEffect(() => {
+  //   if (count === 0) {
+  //     alert("찰칵!");
+  //     clearInterval(interval);
+  //     setCount(timer);
+  //     setTimerVisible(false);
+  //   }
+  // }, [count]);
   return (
     <Layout>
       <>
@@ -69,13 +68,15 @@ function TakePic() {
         찰칵
       </Link> */}
         <div className="flex justify-center items-center gap-20 fixed bottom-10 ms-[calc(25%)] w-1/2">
-          <MyRadioGroup
-            arr={timers}
-            name="timer"
-            onChange={timeChange}
-            nowState={Number(timer)}
-            text={"⏲️"}
-          />
+          {!timerVisible && (
+            <MyRadioGroup
+              arr={timers}
+              name="timer"
+              onChange={timeChange}
+              nowState={Number(timer)}
+              text={"⏲️"}
+            />
+          )}
           <div className="flex rounded-2xl bg-yellow-200 leading-10">
             <span className=" px-5 ">{taken}/10</span>
             <button

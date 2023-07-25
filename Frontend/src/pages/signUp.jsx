@@ -33,19 +33,21 @@ function SignUp() {
       setIdComment("사용 불가능한 ID입니다.");
       return;
     }
-    try {
-      let res = await userApi.checkId(id.value);
-      if (!res.data.result) {
-        setIdValid(false);
-        setIdComment("중복된 ID입니다.");
-        return;
-      }
-      setIdValid(true);
-      setIdComment("사용 가능한 ID입니다.");
-    } catch {
-      setIdValid(true);
-      setIdComment("대충 형식은 맞췄는데 API구현이 안됨.");
+    let res = await userApi.checkId(id.value);
+    console.log(res);
+    const {
+      data: {
+        data: { result },
+      },
+    } = res;
+    console.log(result);
+    if (!result) {
+      setIdValid(false);
+      setIdComment("중복된 ID입니다.");
+      return;
     }
+    setIdValid(true);
+    setIdComment("사용 가능한 ID입니다.");
   }
 
   function checkEmail() {
@@ -113,6 +115,11 @@ function SignUp() {
     );
 
     console.log(res);
+
+    if (res.status === 201) {
+      alert("회원가입 완료!");
+      location.href = "/";
+    } else alert("오류가 발생했습니다.");
 
     id.reset();
     email.reset();
