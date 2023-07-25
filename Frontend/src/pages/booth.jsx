@@ -89,7 +89,7 @@ function Booth() {
       }
     };
     dispatch(
-      setCamStreamActaion({
+      setCamStreamAction({
         canvas:bgRemovedRef,
         stream:bgRemovedRef.current.captureStream(30).getVideoTracks()[0],
       })
