@@ -1,8 +1,7 @@
 import {useEffect, useRef} from "react";
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {Rnd} from "react-rnd";
 import {
-  resetCamCanvasesAction,
   resizeMyLayerAction,
   setMainCanvasAction,
   setMyLayerAction,
@@ -28,7 +27,6 @@ function BigCam() {
 
   useEffect(() => {
     canvasContextRef.current = canvasRef.current.getContext('2d');
-    dispatch(resetCamCanvasesAction());
     dispatch(setMainCanvasAction({
       canvas:canvasRef,
       context:canvasContextRef,

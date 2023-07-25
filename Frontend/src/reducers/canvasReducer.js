@@ -16,7 +16,13 @@ const canvasState = {
     context : undefined,
   },
   camCanvases : [],
-  myLayer : undefined
+  myLayer : {
+    image : undefined,
+    x:undefined,
+    y:undefined,
+    width:undefined,
+    height:undefined,
+  }
 }
 
 const canvasReducer = (state=canvasState, action) => {
@@ -42,38 +48,40 @@ const canvasReducer = (state=canvasState, action) => {
       }
     }
     case setMainCanvas: {
+      state.mainCanvas.canvas = action.payload.canvas;
+      state.mainCanvas.context = action.payload.context;
       return  {
-        ...state,
-        mainCanvas : {
-          canvas : action.payload.canvas,
-          context : action.payload.context,
-        }
+        ...state
       }
     }
     case addCamCanvas: {
+      console.log(action.payload)
       state.camCanvases.push({
         canvas : action.payload.canvas,
         context : action.payload.context,
       })
-      console.log(action.payload)
       return  {
-        ...state
+        ...state,
       }
     }
     case resetCamCanvases: {
-      state.camCanvases = []
       return  {
-        ...state
+        ...state,
       }
     }
     case setMyLayer: {
-      state.myLayer = {
-        image : state.camStream.canvas,
-        x:action.payload.x,
-        y:action.payload.y,
-        width:action.payload.width,
-        height:action.payload.height,
-      }
+      // state.myLayer = {
+      //   image : state.camStream.canvas,
+      //   x:action.payload.x,
+      //   y:action.payload.y,
+      //   width:action.payload.width,
+      //   height:action.payload.height,
+      // }
+      state.myLayer.image = state.camStream.canvas
+      state.myLayer.x = action.payload.x
+      state.myLayer.y = action.payload.y
+      state.myLayer.width = action.payload.width
+      state.myLayer.height = action.payload.height
       return  {
         ...state
       }
@@ -88,7 +96,7 @@ const canvasReducer = (state=canvasState, action) => {
       }
     }
     default:
-      return state
+      return {...state}
   }
 }
 
