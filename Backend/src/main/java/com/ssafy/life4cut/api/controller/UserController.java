@@ -1,6 +1,5 @@
 package com.ssafy.life4cut.api.controller;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,8 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.life4cut.api.request.UserLoginPostReq;
 import com.ssafy.life4cut.api.request.UserRegisterPostReq;
+import com.ssafy.life4cut.api.request.reissuePostReq;
 import com.ssafy.life4cut.api.response.UserLoginPostRes;
 import com.ssafy.life4cut.api.response.UserRegisterPostRes;
+import com.ssafy.life4cut.api.response.reissuePostRes;
 import com.ssafy.life4cut.api.service.UserService;
 import com.ssafy.life4cut.common.model.response.BaseResponseBody;
 
@@ -64,14 +65,21 @@ public class UserController {
     public ResponseEntity<? extends BaseResponseBody> login(@RequestBody UserLoginPostReq request) {
         UserLoginPostRes response = userService.login(request);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + response.getToken());
-
         return new ResponseEntity<>(
             BaseResponseBody.<UserLoginPostRes>builder()
                 .message("")
                 .data(response)
-                .build(), headers, HttpStatus.OK);
+                .build(), HttpStatus.OK);
+    }
+
+    @PostMapping("/reissue")
+    public ResponseEntity<? extends BaseResponseBody<reissuePostRes>> reissue(@RequestBody reissuePostReq request) {
+        reissuePostRes response = userService.reissue(request);
+        return new ResponseEntity<>(
+            BaseResponseBody.<reissuePostRes>builder()
+                .message("reissue access token by refresh token")
+                .data(response)
+                .build(), HttpStatus.OK);
     }
 }
 

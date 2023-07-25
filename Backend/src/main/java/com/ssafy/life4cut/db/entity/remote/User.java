@@ -60,4 +60,7 @@ public class User extends BaseEntity {
         inverseJoinColumns = {@JoinColumn(name = "clip_id", referencedColumnName = "id")}
     )
     private Set<Clip> clips = new HashSet<>();
+
+    @Column(length = 150)
+    private String refreshToken;
 }
