@@ -9,14 +9,16 @@ import {
 } from "@/modules/clipAction";
 
 function ClipLog() {
-  const clipNum = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const clipList = useSelector((state) => state.clipReducer.clipList);
   const drag = useSelector((state) => state.clipReducer.drag);
   const dispatch = useDispatch();
+  const clipNum = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  // const clipNum = Array.from({length: clipList['n']}, (v, i) => i+1);
+
 
   // clip 추가를 위한 연습용 이벤트
   const [idx, setIdx] = useState(3);
-  function addVideo(event) {
+  function addVideo() {
     dispatch(
       AddClipAction({
         idx: idx,
