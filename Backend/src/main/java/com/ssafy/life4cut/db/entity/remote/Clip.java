@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.proxy.HibernateProxy;
 
 import com.ssafy.life4cut.db.entity.BaseEntity;
 
@@ -50,23 +49,18 @@ public class Clip extends BaseEntity {
     private Set<User> users = new HashSet<>();
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null)
+        if (!(o instanceof Clip clip))
             return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ?
-            ((HibernateProxy)o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ?
-            ((HibernateProxy)this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass)
+        if (!super.equals(o))
             return false;
-        Clip clip = (Clip)o;
-        return getId() != null && Objects.equals(getId(), clip.getId());
+        return Objects.equals(getId(), clip.getId());
     }
 
     @Override
-    public final int hashCode() {
-        return getClass().hashCode();
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

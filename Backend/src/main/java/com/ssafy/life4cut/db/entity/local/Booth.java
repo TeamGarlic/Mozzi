@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.proxy.HibernateProxy;
 
 import com.ssafy.life4cut.db.entity.BaseEntity;
 
@@ -47,23 +46,18 @@ public class Booth extends BaseEntity {
     private long creator;
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (o == null)
+        if (!(o instanceof Booth booth))
             return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ?
-            ((HibernateProxy)o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ?
-            ((HibernateProxy)this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass)
+        if (!super.equals(o))
             return false;
-        Booth booth = (Booth)o;
-        return getId() != null && Objects.equals(getId(), booth.getId());
+        return Objects.equals(getId(), booth.getId());
     }
 
     @Override
-    public final int hashCode() {
-        return getClass().hashCode();
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }
