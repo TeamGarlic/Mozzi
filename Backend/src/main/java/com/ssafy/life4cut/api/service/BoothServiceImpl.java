@@ -15,6 +15,7 @@ import com.ssafy.life4cut.api.request.SessionPostReq;
 import com.ssafy.life4cut.api.response.ConnectionPostRes;
 import com.ssafy.life4cut.api.response.SessionRes;
 import com.ssafy.life4cut.common.exception.handler.DuplicateShareCodeException;
+import com.ssafy.life4cut.common.exception.handler.InvalidSessionIdException;
 import com.ssafy.life4cut.common.exception.handler.ShareCodeNotExistException;
 import com.ssafy.life4cut.common.model.response.BaseResponseBody;
 import com.ssafy.life4cut.db.datasource.LocalDatasource;
@@ -62,7 +63,7 @@ public class BoothServiceImpl implements BoothService {
         } else {
             booth = boothRepository.findByShareCode(shareCode);
             if (booth != null) {
-                throw new DuplicateShareCodeException("Duplicated booth share code");
+                throw new DuplicateShareCodeException(String.format("Duplicated booth share code(%s)", shareCode));
             }
         }
 
@@ -73,6 +74,8 @@ public class BoothServiceImpl implements BoothService {
                 booth = Booth.builder()
                     .sessionId(sessionId)
                     .shareCode(shareCode)
+                    // TODO: JWT 추가한 이후에 메서드 parameter로 creator 추가하고 아래 부분 수정해야함
+                    .creator(1L)
                     .build();
                 boothRepository.save(booth);
 
@@ -104,10 +107,10 @@ public class BoothServiceImpl implements BoothService {
     public BaseResponseBody<SessionRes> joinBooth(String shareCode) {
         Booth booth = boothRepository.findByShareCode(shareCode);
         if (booth == null) {
-            throw new ShareCodeNotExistException("Requested booth not exist");
+            throw new ShareCodeNotExistException(String.format("Requested booth(%s) not exist", shareCode));
         }
         return BaseResponseBody.<SessionRes>builder()
-            .message("Requested booth exits")
+            .message("Requested booth exists")
             .data(
                 SessionRes.builder()
                     .shareCode(shareCode)
@@ -124,12 +127,12 @@ public class BoothServiceImpl implements BoothService {
      * @see Session
      * @see Connection
      */
-    @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     @Override
     public BaseResponseBody<ConnectionPostRes> getConnectionToken(ConnectionPostReq request) throws Exception {
         Session session = openVidu.getActiveSession(request.getSessionId());
         if (session == null) {
-            throw new RuntimeException();
+            throw new InvalidSessionIdException(
+                String.format("You requested invalid session(%s). It could be destroyed.", request.getSessionId()));
         }
         Connection connection = session.createConnection();
         return BaseResponseBody.<ConnectionPostRes>builder()

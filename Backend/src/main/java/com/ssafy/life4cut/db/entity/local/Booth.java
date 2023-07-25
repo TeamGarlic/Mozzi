@@ -31,4 +31,7 @@ public class Booth extends BaseEntity {
 
     @CreationTimestamp
     private LocalDateTime createAt;
+
+    @Column(nullable = false)
+    private long creator;
 }

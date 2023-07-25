@@ -2,13 +2,16 @@ package com.ssafy.life4cut.api.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.life4cut.api.request.UserLoginPostReq;
 import com.ssafy.life4cut.api.request.UserRegisterPostReq;
+import com.ssafy.life4cut.api.response.UserIdCheckRes;
 import com.ssafy.life4cut.api.response.UserLoginPostRes;
 import com.ssafy.life4cut.api.response.UserRegisterPostRes;
 import com.ssafy.life4cut.api.service.UserService;
@@ -43,11 +46,12 @@ public class UserController {
         @ApiResponse(responseCode = "400", description = "bad request")
     })
     @PostMapping("/register")
-    public ResponseEntity<? extends BaseResponseBody> register(@RequestBody UserRegisterPostReq request) {
+    public ResponseEntity<? extends BaseResponseBody<UserRegisterPostRes>> register(
+        @RequestBody UserRegisterPostReq request) {
         UserRegisterPostRes response = userService.register(request);
         return new ResponseEntity<>(
             BaseResponseBody.<UserRegisterPostRes>builder()
-                .message("success")
+                .message("User register success")
                 .data(response)
                 .build(), HttpStatus.CREATED);
     }
@@ -60,13 +64,24 @@ public class UserController {
      * @see UserService
      */
     @PostMapping("/login")
-    public ResponseEntity<? extends BaseResponseBody> login(@RequestBody UserLoginPostReq request) {
+    public ResponseEntity<? extends BaseResponseBody<UserLoginPostRes>> login(@RequestBody UserLoginPostReq request) {
         UserLoginPostRes response = userService.login(request);
         return new ResponseEntity<>(
             BaseResponseBody.<UserLoginPostRes>builder()
-                .message("")
+                .message("User login success")
                 .data(response)
                 .build(), HttpStatus.OK);
     }
-}
 
+    /**
+     * 사용자에게 입력 받은 user id가 사용 가능한지 확인하여 반환합니다.
+     * @param userId 사용자가 입력한 id
+     * @see UserService
+     */
+    @GetMapping("/check-login-id")
+    public ResponseEntity<? extends BaseResponseBody<UserIdCheckRes>> userIdCheck(@RequestParam String userId) {
+        return new ResponseEntity<>(
+            userService.userIdCheck(userId), HttpStatus.OK
+        );
+    }
+}
