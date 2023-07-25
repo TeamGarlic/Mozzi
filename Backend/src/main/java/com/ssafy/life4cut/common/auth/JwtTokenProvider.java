@@ -1,19 +1,16 @@
 package com.ssafy.life4cut.common.auth;
 
 import java.util.Base64;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import com.ssafy.life4cut.common.util.mapper.UserMapper;
 import com.ssafy.life4cut.db.entity.remote.User;
 import com.ssafy.life4cut.db.repository.remote.UserRepository;
 
@@ -36,7 +33,6 @@ public class JwtTokenProvider {
     private long tokenValidTime = 1000L * 60 * 30; // 30분
     private long refreshTokenValidTime = 1000L * 60 * 60 * 24 * 7; // 7일
 
-    private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
 
     @PostConstruct
@@ -44,6 +40,11 @@ public class JwtTokenProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
+    /**
+     * Spting Security를 이용하기 위해 id를 String 형태로 받아온다.
+     * @param id String
+     * @return Jwt accessToken
+     */
     public String createToken(String id) {
         Claims claims = Jwts.claims().setSubject(id);
         Date now = new Date();
@@ -56,6 +57,10 @@ public class JwtTokenProvider {
             .compact();
     }
 
+    /**
+     * refreshToken을 생성해준다.
+     * @return refreshToken
+     */
     public String createRefreshToken() {
         Date now = new Date();
 
@@ -66,53 +71,29 @@ public class JwtTokenProvider {
             .compact();
     }
 
+    /**
+     * accessToken을 입력받아 해당 유저의 Spring Security 에서 제공하는 Authentication 객체를 생성한다.
+     * @param token String
+     * @return Authentication 객체
+     * @see CustomUserDetails
+     * @see JwtAuthenticationFilter
+     */
     public Authentication getAuthentication(String token) {
         Optional<User> user = userRepository.findById(Long.parseLong(getUserId(token)));
 
         if (user.isPresent()) {
-            UserDetails userDetails = new UserDetails() {
-                @Override
-                public Collection<? extends GrantedAuthority> getAuthorities() {
-                    return null;
-                }
-
-                @Override
-                public String getPassword() {
-                    return user.get().getPassword();
-                }
-
-                @Override
-                public String getUsername() {
-                    return user.get().getUserId();
-                }
-
-                @Override
-                public boolean isAccountNonExpired() {
-                    return false;
-                }
-
-                @Override
-                public boolean isAccountNonLocked() {
-                    return false;
-                }
-
-                @Override
-                public boolean isCredentialsNonExpired() {
-                    return false;
-                }
-
-                @Override
-                public boolean isEnabled() {
-                    return false;
-                }
-            };
-
+            CustomUserDetails userDetails = UserMapper.toCustomUserDetails(user.get());
             return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
         } else {
             throw new UsernameNotFoundException("not found login id");
         }
     }
 
+    /**
+     * accessToken을 만들때 이용했던 id
+     * @param token String
+     * @return User의 pk를 String 형태로 반환
+     */
     public String getUserId(String token) {
         try {
             return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
@@ -121,10 +102,17 @@ public class JwtTokenProvider {
         }
     }
 
+    /**
+     * 헤더에 전송된 Authorization에서 token을 가져옴
+     * */
     public String resolveToken(HttpServletRequest req) {
-        return req.getHeader("X-AUTH-TOKEN");
+        return req.getHeader("Authorization");
     }
 
+    /**
+     * 해당 토큰이 만료되었으면 true 아니면 false 반환
+     * @param token String
+     */
     public boolean validateTokenExceptExpiration(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);

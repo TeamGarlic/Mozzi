@@ -17,6 +17,7 @@ import com.ssafy.life4cut.api.response.UserRegisterPostRes;
 import com.ssafy.life4cut.api.response.reissuePostRes;
 import com.ssafy.life4cut.common.auth.JwtTokenProvider;
 import com.ssafy.life4cut.common.exception.handler.DuplicatedUserIdException;
+import com.ssafy.life4cut.common.exception.handler.InvalidRefreshTokenException;
 import com.ssafy.life4cut.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.life4cut.common.exception.handler.UserLoginFailException;
 import com.ssafy.life4cut.common.util.mapper.UserMapper;
@@ -85,16 +86,24 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    /**
+     *  accessToken 재발급 Service/비즈니스 로직
+     *
+     * @param reissueInfo reissuePostReq
+     * @return reissuePostRes
+     * @see UserRepository
+     * @see JwtTokenProvider
+     */
     @Override
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     public reissuePostRes reissue(reissuePostReq reissueInfo) {
-        // if (!jwtTokenProvider.validateTokenExceptExpiration(reissueInfo.getRefreshToken()))
-        //     throw new InvalidRefreshTokenException();
+        if (!jwtTokenProvider.validateTokenExceptExpiration(reissueInfo.getRefreshToken()))
+            throw new InvalidRefreshTokenException("expired refreshToken");
 
         User user = findUserByToken(reissueInfo);
 
-        // if (!user.getRefreshToken().equals(reissueInfo.getRefreshToken()))
-        //     throw new InvalidRefreshTokenException();
+        if (!user.getRefreshToken().equals(reissueInfo.getRefreshToken()))
+            throw new InvalidRefreshTokenException("refresh token is not validated");
 
         String accessToken = jwtTokenProvider.createToken(user.getId().toString());
         String refreshToken = jwtTokenProvider.createRefreshToken();
@@ -103,8 +112,16 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toReissueRes(accessToken, refreshToken);
     }
 
-    public User findUserByToken(reissuePostReq reissueinfo) {
-        Authentication auth = jwtTokenProvider.getAuthentication(reissueinfo.getAccessToken());
+    /**
+     *  Token으로 User를 찾는 Service/비즈니스 로직
+     * @param reissueInfo reissuePostReq
+     * @return User
+     * @see UserRepository
+     * @see JwtTokenProvider
+     */
+
+    public User findUserByToken(reissuePostReq reissueInfo) {
+        Authentication auth = jwtTokenProvider.getAuthentication(reissueInfo.getAccessToken());
         UserDetails userDetails = (UserDetails)auth.getPrincipal();
         String id = userDetails.getUsername();
         return userRepository.findById(Long.parseLong(id)).orElseThrow();

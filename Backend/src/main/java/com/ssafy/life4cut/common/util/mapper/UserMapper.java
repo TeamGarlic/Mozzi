@@ -4,6 +4,7 @@ import com.ssafy.life4cut.api.request.UserRegisterPostReq;
 import com.ssafy.life4cut.api.response.UserLoginPostRes;
 import com.ssafy.life4cut.api.response.UserRegisterPostRes;
 import com.ssafy.life4cut.api.response.reissuePostRes;
+import com.ssafy.life4cut.common.auth.CustomUserDetails;
 import com.ssafy.life4cut.db.entity.remote.User;
 
 /**
@@ -41,6 +42,15 @@ public class UserMapper {
         return reissuePostRes.builder()
             .accessToken(accessToken)
             .refreshToken(refreshToken)
+            .build();
+    }
+
+    public static CustomUserDetails toCustomUserDetails(User user) {
+        return new CustomUserDetails().builder()
+            .id(user.getId().toString())
+            .userId(user.getUserId())
+            .password(user.getPassword())
+            .email(user.getEmail())
             .build();
     }
 }

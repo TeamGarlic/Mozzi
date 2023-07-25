@@ -72,6 +72,13 @@ public class UserController {
                 .build(), HttpStatus.OK);
     }
 
+    /**
+     * 토큰 재발급을 위한 POST 메소드
+     *
+     * @param request reissuePostReq
+     * @return ResponseEntity<? extends BaseResponseBody> with reissuePostRes
+     * @see com.ssafy.life4cut.common.auth.JwtTokenProvider
+     */
     @PostMapping("/reissue")
     public ResponseEntity<? extends BaseResponseBody<reissuePostRes>> reissue(@RequestBody reissuePostReq request) {
         reissuePostRes response = userService.reissue(request);

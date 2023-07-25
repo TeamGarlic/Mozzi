@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.ssafy.life4cut.common.exception.handler.InvalidRefreshTokenException;
 import com.ssafy.life4cut.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.life4cut.common.model.response.BaseResponseBody;
 
@@ -28,5 +29,14 @@ public class ControllerAdviceHandler {
             BaseResponseBody.builder()
                 .message("User ID not exists.")
                 .build(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ResponseEntity<BaseResponseBody> handleInvalidRefreshTokenException(InvalidRefreshTokenException ex) {
+        String errorMessage = "Invalid Refresh Token: " + ex.getMessage();
+        return new ResponseEntity<>(
+            BaseResponseBody.builder()
+                .message(errorMessage)
+                .build(), HttpStatus.BAD_REQUEST);
     }
 }
