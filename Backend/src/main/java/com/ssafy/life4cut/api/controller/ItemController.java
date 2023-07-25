@@ -1,6 +1,5 @@
 package com.ssafy.life4cut.api.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +10,7 @@ import com.ssafy.life4cut.api.response.FrameListGetRes;
 import com.ssafy.life4cut.api.response.ItemBackgroundGetRes;
 import com.ssafy.life4cut.api.response.ItemStickerGetRes;
 import com.ssafy.life4cut.api.service.ItemService;
+import com.ssafy.life4cut.common.model.ItemCacheControl;
 import com.ssafy.life4cut.common.model.response.BaseResponseBody;
 
 import lombok.RequiredArgsConstructor;
@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/items")
 public class ItemController {
     private final ItemService itemService;
+    private final ItemCacheControl cacheControl;
 
     /**
      * 배경 화면 GET 응답을 위한 메소드
@@ -33,16 +34,19 @@ public class ItemController {
      * @see ItemService
      */
     @GetMapping("/backgrounds")
-    public ResponseEntity<? extends BaseResponseBody> getBackgrounds(
+    public ResponseEntity<? extends BaseResponseBody<ItemBackgroundGetRes>> getBackgrounds(
         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
         ItemBackgroundGetRes responseData = itemService.getBackgroundRes(pageNum, pageSize);
-        return new ResponseEntity<>(
-            BaseResponseBody.<ItemBackgroundGetRes>builder()
-                .message("")
+
+        return ResponseEntity.ok()
+            .cacheControl(cacheControl.getCacheControl())
+            .body(BaseResponseBody.<ItemBackgroundGetRes>builder()
+                .message("Background fetched")
                 .data(responseData)
-                .build(), HttpStatus.OK);
+                .build()
+            );
     }
 
     /**
@@ -54,16 +58,19 @@ public class ItemController {
      * @see ItemService
      */
     @GetMapping("/stickers")
-    public ResponseEntity<? extends BaseResponseBody> getStickers(
+    public ResponseEntity<? extends BaseResponseBody<ItemStickerGetRes>> getStickers(
         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
         ItemStickerGetRes responseData = itemService.getStickerRes(pageNum, pageSize);
-        return new ResponseEntity<>(
-            BaseResponseBody.<ItemStickerGetRes>builder()
-                .message("sticker list page " + String.valueOf(pageNum))
-                .data(responseData)
-                .build(), HttpStatus.OK);
+        return ResponseEntity.ok()
+            .cacheControl(cacheControl.getCacheControl())
+            .body(
+                BaseResponseBody.<ItemStickerGetRes>builder()
+                    .message("sticker list page " + String.valueOf(pageNum))
+                    .data(responseData)
+                    .build()
+            );
     }
 
     /**
@@ -73,12 +80,15 @@ public class ItemController {
      * @see ItemService
      */
     @GetMapping("/frames")
-    public ResponseEntity<? extends BaseResponseBody> getFrames() {
+    public ResponseEntity<? extends BaseResponseBody<FrameListGetRes>> getFrames() {
         FrameListGetRes response = itemService.getFrameList();
-        return new ResponseEntity<>(
-            BaseResponseBody.<FrameListGetRes>builder()
-                .message("success")
-                .data(response)
-                .build(), HttpStatus.OK);
+        return ResponseEntity.ok()
+            .cacheControl(cacheControl.getCacheControl())
+            .body(
+                BaseResponseBody.<FrameListGetRes>builder()
+                    .message("success")
+                    .data(response)
+                    .build()
+            );
     }
 }
