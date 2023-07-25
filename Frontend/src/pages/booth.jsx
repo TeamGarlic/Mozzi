@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
+  resetCamCanvasesAction,
   setCamStreamActaion,
   setMaskStreamAction,
-} from "@/modules/canvasAction.js";
+} from '@/modules/canvasAction.js';
 import MakeBooth from './makeBooth';
 import TakePic from './takePic';
 import { useParams } from 'react-router-dom';
@@ -32,6 +33,7 @@ function Booth() {
   const bgImg = new Image();
 
   function startTake() {
+    dispatch(resetCamCanvasesAction());
     console.log('take!');
     setTaking(true);
   }
@@ -41,12 +43,14 @@ function Booth() {
   const onResults = (results) => {
     // 내 웹캠을 담을 canvas (화면에 표시 x)
     drawMyVid(bgRemovedRef, bgRemovedContextRef, results, bgMaskRef, bgMaskContextRef);
+    // console.log(camCanvases)
     camCanvases.forEach((e) => {
-      console.log(e);
       drawMyVid(e.canvas, e.context, results);
     });
 
     // TODO : 한 레이어만 그리는 샘플 코드 지우기
+    // console.log(mainCanvas.canvas)
+    // console.log(myLayer);
     if(mainCanvas.canvas) drawCanvas(mainCanvas.canvas,mainCanvas.context,bgImg,[myLayer]);
 
     // TODO : 캔버스에 그리기
