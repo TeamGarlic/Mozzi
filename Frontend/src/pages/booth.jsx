@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   resetCamCanvasesAction,
-  setCamStreamActaion,
+  setCamStreamAction,
   setMaskStreamAction,
 } from '@/modules/canvasAction.js';
 import MakeBooth from './makeBooth';
@@ -44,13 +44,12 @@ function Booth() {
     // 내 웹캠을 담을 canvas (화면에 표시 x)
     drawMyVid(bgRemovedRef, bgRemovedContextRef, results, bgMaskRef, bgMaskContextRef);
     // console.log(camCanvases)
+    // TODO : camCanvases 리렌더링 안되는 오류 수정
     camCanvases.forEach((e) => {
       drawMyVid(e.canvas, e.context, results);
     });
 
     // TODO : 한 레이어만 그리는 샘플 코드 지우기
-    // console.log(mainCanvas.canvas)
-    // console.log(myLayer);
     if(mainCanvas.canvas) drawCanvas(mainCanvas.canvas,mainCanvas.context,bgImg,[myLayer]);
 
     // TODO : 캔버스에 그리기

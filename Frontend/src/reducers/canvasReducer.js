@@ -55,7 +55,7 @@ const canvasReducer = (state=canvasState, action) => {
       }
     }
     case addCamCanvas: {
-      console.log(action.payload)
+      // console.log(action.payload)
       state.camCanvases.push({
         canvas : action.payload.canvas,
         context : action.payload.context,
@@ -65,6 +65,7 @@ const canvasReducer = (state=canvasState, action) => {
       }
     }
     case resetCamCanvases: {
+      state.camCanvases = [];
       return  {
         ...state,
       }
