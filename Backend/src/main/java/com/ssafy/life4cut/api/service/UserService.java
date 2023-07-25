@@ -3,9 +3,11 @@ package com.ssafy.life4cut.api.service;
 import com.ssafy.life4cut.api.request.UserLoginPostReq;
 import com.ssafy.life4cut.api.request.UserRegisterPostReq;
 import com.ssafy.life4cut.api.request.reissuePostReq;
+import com.ssafy.life4cut.api.response.UserIdCheckRes;
 import com.ssafy.life4cut.api.response.UserLoginPostRes;
 import com.ssafy.life4cut.api.response.UserRegisterPostRes;
 import com.ssafy.life4cut.api.response.reissuePostRes;
+import com.ssafy.life4cut.common.model.response.BaseResponseBody;
 
 /**
  *  User 요청에 대한 Service/비즈니스 로직 인터페이스
@@ -18,4 +20,6 @@ public interface UserService {
     UserLoginPostRes login(UserLoginPostReq userLoginInfo);
 
     reissuePostRes reissue(reissuePostReq reissueInfo);
+
+    BaseResponseBody<UserIdCheckRes> userIdCheck(String userId);
 }

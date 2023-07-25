@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.life4cut.api.request.UserLoginPostReq;
 import com.ssafy.life4cut.api.request.UserRegisterPostReq;
 import com.ssafy.life4cut.api.request.reissuePostReq;
+import com.ssafy.life4cut.api.response.UserIdCheckRes;
 import com.ssafy.life4cut.api.response.UserLoginPostRes;
 import com.ssafy.life4cut.api.response.UserRegisterPostRes;
 import com.ssafy.life4cut.api.response.reissuePostRes;
@@ -20,8 +21,10 @@ import com.ssafy.life4cut.common.exception.handler.DuplicatedUserIdException;
 import com.ssafy.life4cut.common.exception.handler.InvalidRefreshTokenException;
 import com.ssafy.life4cut.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.life4cut.common.exception.handler.UserLoginFailException;
+import com.ssafy.life4cut.common.model.response.BaseResponseBody;
 import com.ssafy.life4cut.common.util.mapper.UserMapper;
 import com.ssafy.life4cut.db.datasource.LocalDatasource;
+import com.ssafy.life4cut.db.datasource.RemoteDatasource;
 import com.ssafy.life4cut.db.entity.remote.User;
 import com.ssafy.life4cut.db.repository.remote.UserRepository;
 
@@ -48,14 +51,14 @@ public class UserServiceImpl implements UserService {
      * @see UserRepository
      */
     @Override
-    @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
+    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     public UserRegisterPostRes register(UserRegisterPostReq request) {
         User user = UserMapper.toEntity(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         try {
             userRepository.save(user);
         } catch (Exception e) {
-            throw new DuplicatedUserIdException("Duplicated user id");
+            throw new DuplicatedUserIdException(String.format("Duplicated user id(%s)", request.getUserId()));
         }
         return UserMapper.toRegistRes(user);
     }
@@ -68,7 +71,6 @@ public class UserServiceImpl implements UserService {
      * @see UserRepository
      */
     @Override
-    @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     public UserLoginPostRes login(UserLoginPostReq request) {
         Optional<User> user = userRepository.findByUserId(request.getUserId());
         if (user.isPresent()) {
@@ -79,11 +81,28 @@ public class UserServiceImpl implements UserService {
                     , jwtTokenProvider.createToken(user.get().getId().toString())
                     , jwtTokenProvider.createRefreshToken());
             } else {
-                throw new UserLoginFailException("Login Fail");
+                throw new UserLoginFailException(String.format("Login Fail on %s", request.getUserId()));
             }
         } else {
             throw new UserIdNotExistsException("User ID not exist");
         }
+    }
+
+    /**
+     * 요청 받은 User Id가 시용 가능한지 여부를 반환하는 메소드입니다.
+     * @param userId 사용자에게 입력 받은 user id
+     * @return user id 사용 가능 여부를 반환
+     */
+    @Override
+    public BaseResponseBody<UserIdCheckRes> userIdCheck(String userId) {
+        Optional<User> user = userRepository.findByUserId(userId);
+        boolean result = user.isEmpty();
+        return BaseResponseBody.<UserIdCheckRes>builder()
+            .message(String.format("Requested User ID%s available", (result ? "" : " not")))
+            .data(
+                new UserIdCheckRes(result)
+            )
+            .build();
     }
 
     /**
