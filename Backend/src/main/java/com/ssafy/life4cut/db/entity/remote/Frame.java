@@ -17,6 +17,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -32,22 +34,37 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Frame extends BaseEntity {
-    @Column(length = 500)
+    @NotNull
+    @Size(max = 500)
     private String url;
 
+    @ColumnDefault("CURRENT_TIMESTAMP")
     @CreationTimestamp
-    @Column(updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
+    @Builder.Default
     @ColumnDefault("false")
-    private boolean deleted;
+    @Column(nullable = false)
+    private Boolean deleted = false;
 
     @Fetch(FetchMode.SUBSELECT)
     @OneToMany(mappedBy = "frame", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<FrameClip> frameClips = new HashSet<>();
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Frame frame))
+            return false;
+        if (!super.equals(o))
+            return false;
+        return Objects.equals(getId(), frame.getId());
+    }
+
+    @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), super.getId());
+        return Objects.hash(getId());
     }
 }
