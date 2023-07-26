@@ -25,7 +25,7 @@ const canvasState = {
   }
 }
 
-const canvasReducer = (state=canvasState, action) => {
+const canvasReducer = (state = canvasState, action) => {
   switch (action.type){
     case setCamStream: {
       return  {
@@ -65,7 +65,7 @@ const canvasReducer = (state=canvasState, action) => {
       }
     }
     case resetCamCanvases: {
-      state.camCanvases = [];
+      while(state.camCanvases.length) state.camCanvases.shift();
       return  {
         ...state,
       }
