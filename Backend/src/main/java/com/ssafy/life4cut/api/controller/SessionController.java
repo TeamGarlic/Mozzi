@@ -3,6 +3,7 @@ package com.ssafy.life4cut.api.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -48,7 +49,9 @@ public class SessionController {
         throws OpenViduJavaClientException, OpenViduHttpException {
         SessionProperties properties = SessionProperties.fromJson(params).build();
         Session session = openvidu.createSession(properties);
-        return new ResponseEntity<>(session.getSessionId(), HttpStatus.OK);
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.noCache())
+            .body(session.getSessionId());
     }
 
     /**
@@ -68,6 +71,10 @@ public class SessionController {
         }
         ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
         Connection connection = session.createConnection(properties);
-        return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.noCache())
+            .body(
+                connection.getToken()
+            );
     }
 }

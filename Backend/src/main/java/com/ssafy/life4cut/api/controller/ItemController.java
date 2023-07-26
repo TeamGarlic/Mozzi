@@ -67,7 +67,7 @@ public class ItemController {
             .cacheControl(cacheControl.getCacheControl())
             .body(
                 BaseResponseBody.<ItemStickerGetRes>builder()
-                    .message("sticker list page " + String.valueOf(pageNum))
+                    .message("sticker list page " + pageNum)
                     .data(responseData)
                     .build()
             );
