@@ -11,8 +11,8 @@ function MakeBooth({ startTake }) {
   const [toggleVoice, setToggleVoice] = new useState(true);
   const dispatch = useDispatch();
   const closeDialog = () => {
-    dispatch(resetCamCanvasesAction());
     setVisibility(false);
+    dispatch(resetCamCanvasesAction());
   };
   function setVoice() {
     setToggleVoice(!toggleVoice);
