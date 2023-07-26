@@ -1,4 +1,0 @@
-node {
-  stage 'Checkout'
-  git branch: 'feat/S09P12A109-178', credentialsId: 'ssafy', url: 'https://lab.ssafy.com/s09-webmobile1-sub2/S09P12A109.git'
-}
