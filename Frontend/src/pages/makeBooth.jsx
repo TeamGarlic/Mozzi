@@ -3,12 +3,16 @@ import UserSideBar from "../components/UserSideBar";
 import EnterDialog from "@/components/EnterDialog";
 import PropTypes from "prop-types";
 import { useState } from "react";
+import { resetCamCanvasesAction } from '@/modules/canvasAction.js';
+import { useDispatch } from 'react-redux';
 
 function MakeBooth({ startTake }) {
   const [visibility, setVisibility] = new useState(true);
   const [toggleVoice, setToggleVoice] = new useState(true);
+  const dispatch = useDispatch();
   const closeDialog = () => {
     setVisibility(false);
+    dispatch(resetCamCanvasesAction());
   };
   function setVoice() {
     setToggleVoice(!toggleVoice);

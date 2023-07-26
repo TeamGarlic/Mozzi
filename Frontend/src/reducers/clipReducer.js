@@ -40,13 +40,27 @@ const clipState = {
 const clipReducer = (state = clipState, action) => {
   switch(action.type){
     case setFrame: {
+      // params로 frame 객체 그대로 입력
+      const frame = {
+        n: action.payload.frame.rects.length,
+        src: action.payload.frame.url,
+      };
+      for (let i = 0; i < action.payload.frame.rects.length; i++) {
+        frame[i+1] = {
+          clipIdx: 0,
+          src: "",
+          ...action.payload.frame.rects[i]
+        };
+      }
       return {
         ...state,
+        frame
       }
     }
     case setClipList: {
       return {
         ...state,
+        n: action.payload.n
       }
     }
     case Clip2Frame: {

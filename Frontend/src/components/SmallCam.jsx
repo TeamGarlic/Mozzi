@@ -7,6 +7,7 @@ function SmallCam() {
   const dispatch = useDispatch();
   useEffect(() => {
     camCanvasContextRef.current = camCanvasRef.current.getContext('2d');
+    // console.log("캠 잡힘");
     dispatch(
       addCamCanvasAction({
         canvas : camCanvasRef,

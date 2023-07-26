@@ -1,20 +1,23 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  setCamStreamActaion,
+  resetCamCanvasesAction,
+  setCamStreamAction,
   setMaskStreamAction,
-} from "@/modules/canvasAction.js";
+} from '@/modules/canvasAction.js';
 import MakeBooth from './makeBooth';
 import TakePic from './takePic';
 import { useParams } from 'react-router-dom';
 import { SelfieSegmentation } from '@mediapipe/selfie_segmentation';
 import { drawCanvas, drawMyVid } from '@/utils/videoUtil.js';
+import useSession from '@/hooks/useSession.js';
 
 function Booth() {
   const [taking, setTaking] = useState(false);
   const { code: sessionID } = useParams();
   const dispatch = useDispatch();
-  console.log(sessionID);
+  // console.log(sessionID);
+  const {session, mainStreamManager, publisher, subscribers, userName, sessionId } = useSession();
 
   // 소스 웹캠 video
   const webcamRef = useRef();
@@ -32,17 +35,19 @@ function Booth() {
   const bgImg = new Image();
 
   function startTake() {
-    console.log('take!');
+    dispatch(resetCamCanvasesAction());
     setTaking(true);
   }
 
 
-  // 로컬 웹캠의 한 프레임이 처리될 때 마다 실행되는 함수들
   const onResults = (results) => {
+    // 로컬 웹캠의 한 프레임이 처리될 때 마다 실행되는 함수들
+
     // 내 웹캠을 담을 canvas (화면에 표시 x)
     drawMyVid(bgRemovedRef, bgRemovedContextRef, results, bgMaskRef, bgMaskContextRef);
+    // console.log(camCanvases)
+    // TODO : camCanvases 리렌더링 안되는 오류 수정
     camCanvases.forEach((e) => {
-      console.log(e);
       drawMyVid(e.canvas, e.context, results);
     });
 
@@ -57,6 +62,7 @@ function Booth() {
   useEffect(() => {
     // TODO : bgImg를 Redux에서 관리
     bgImg.src = 'https://picsum.photos/880/495';
+    bgImg.crossOrigin = "anonymous"
 
     bgRemovedContextRef.current = bgRemovedRef.current.getContext('2d');
     bgMaskContextRef.current = bgMaskRef.current.getContext('2d');
@@ -74,31 +80,32 @@ function Booth() {
     selfieSegmentation.setOptions({
       modelSelection: 1,
       selfieMode: true,
-    });
-    selfieSegmentation.onResults(onResults);
-    const sendToMediaPipe = async () => {
-      if (!webcamRef.current.videoWidth) {
-        requestAnimationFrame(sendToMediaPipe);
-      } else {
-        await selfieSegmentation.send({ image: webcamRef.current });
-        requestAnimationFrame(sendToMediaPipe);
-      }
-    };
-    dispatch(
-      setCamStreamActaion({
-        canvas:bgRemovedRef,
-        stream:bgRemovedRef.current.captureStream(30).getVideoTracks()[0],
-      })
-    );
-    dispatch(
-      setMaskStreamAction({
-        canvas:bgMaskRef,
-        stream:bgMaskRef.current.captureStream(30).getVideoTracks()[0],
-      })
-    );
+  });
+  selfieSegmentation.onResults(onResults);
+  const sendToMediaPipe = async () => {
+    if (!webcamRef.current.videoWidth) {
+      requestAnimationFrame(sendToMediaPipe);
+    } else {
+      await selfieSegmentation.send({ image: webcamRef.current });
+      requestAnimationFrame(sendToMediaPipe);
+    }
+  };
+  dispatch(
+    setCamStreamAction({
+      canvas:bgRemovedRef,
+      context:bgRemovedRef.current.getContext('2d'),
+      stream:bgRemovedRef.current.captureStream(30).getVideoTracks()[0],
+    })
+  );
+  dispatch(
+    setMaskStreamAction({
+      canvas:bgMaskRef,
+      context:bgMaskRef.current.getContext('2d'),
+      stream:bgMaskRef.current.captureStream(30).getVideoTracks()[0],
+    })
+  );
 
   }, []);
-
 
   return (
     <>
