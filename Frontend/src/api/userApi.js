@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const UserApi = axios.create({
-  baseURL: "http://localhost:8080/users",
+  baseURL: "https://api.mozzi.lol/users",
   headers: {
     "Content-Type": "application/json",
   },
@@ -79,9 +79,10 @@ const userApi = {
   },
 
   getUser: async (accessToken) => {
-    let res = await UserApi.get("", {
+    let res = await UserApi.get("userinfo", {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+        Authorization: accessToken,
       },
     });
     return res;

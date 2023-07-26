@@ -3,7 +3,7 @@ import axios from "axios";
 // booth api axios 객체
 const BoothApi = axios.create({
   // baseUrl : 백엔드 서버 IP
-  baseURL: "http://localhost:8080/sessions",
+  baseURL: "https://api.mozzi.lol/sessions",
 });
 
 const boothApi = {
@@ -13,17 +13,26 @@ const boothApi = {
   },
 
   createBooth: async (accessToken) => {
-    const res = await BoothApi.post("", {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: accessToken,
-      },
-    });
+    const res = await BoothApi.post(
+      "",
+      {},
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: accessToken,
+        },
+      }
+    );
+    console.log(res);
     return res;
   }, // 완
 
-  joinBooth: async (sessionId) => {
-    const res = await BoothApi.get(`/${sessionId}`, { withCredentials: true });
+  joinBooth: async (shareCode) => {
+    const res = await BoothApi.get(`${shareCode}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     return res;
   },
 

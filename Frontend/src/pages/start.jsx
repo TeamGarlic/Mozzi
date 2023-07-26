@@ -6,18 +6,32 @@ import useInput from "@/hooks/useInput";
 import { useState } from "react";
 import TextInput from "@/components/TextInput";
 import boothApi from "@/api/boothApi";
+import { useNavigate } from "react-router-dom";
 
 function Start() {
   const [showCode, setShowCode] = useState(false);
   const { user } = useUser();
   const code = useInput();
+  const navigate = useNavigate();
   function showCodeLine() {
     code.reset();
     setShowCode(!showCode);
   }
 
   async function makeBooth() {
-    user ? (location.href = `/0/booth`) : alert("로그인해주세요!");
+    if (!user) {
+      alert("로그인해주세요!");
+      return;
+    }
+
+    let res = await boothApi.createBooth(localStorage.getItem("accessToken"));
+    console.log(res);
+    const {
+      data: {
+        data: { shareCode },
+      },
+    } = res;
+    navigate(`/${shareCode}/booth`);
   }
 
   async function gotoBooth() {

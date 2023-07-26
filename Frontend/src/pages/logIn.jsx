@@ -4,9 +4,11 @@ import LoginNav from "@/components/LoginNav.jsx";
 import TextInput from "@/components/TextInput.jsx";
 import userApi from "@/api/userApi";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function LogIn() {
   const [error, setError] = useState("");
+  const navigate = useNavigate();
   const id = useInput();
   const pw = useInput();
 
@@ -15,8 +17,15 @@ function LogIn() {
     try {
       let res = await userApi.logIn(id.value, pw.value);
       console.log(res);
+      if (res.status === 200) {
+        alert(res.data.message);
+        localStorage.setItem("accessToken", res.data.data.accessToken);
+        localStorage.setItem("refreshToken", res.data.data.refreshToken);
+        navigate("/");
+      }
     } catch (e) {
       const status = e.response.status;
+      console.log(status);
       if (status === 404) {
         setError("존재하지 않는 아이디입니다!");
       } else if (status === 400) {
