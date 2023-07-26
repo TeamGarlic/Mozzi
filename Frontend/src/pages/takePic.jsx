@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 // import { Link } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import PicSideBar from "../components/PicSideBar";
 import Layout from "../components/Layout";
 import BigCam from "../components/BigCam";
 import Chat from "@/components/Chat";
 import MyRadioGroup from "@/components/MyRadioGroup";
+import {useSelector, useDispatch} from "react-redux";
+import {AddClipAction} from "@/modules/clipAction";
 
 function TakePic() {
   const [taken, setTaken] = new useState(1);
@@ -13,20 +16,66 @@ function TakePic() {
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
   var interval;
+  const mainCanvas = useSelector(state => state.canvasReducer.mainCanvas);
+  let mediaRecorder = null;
+  const arrClipData = [];
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const clipList = useSelector(state => state.clipReducer.clipList)
+
+  function recordClip(idx){
+    const mediaStream = mainCanvas.canvas.current.captureStream();
+    mediaRecorder = new MediaRecorder(mediaStream);
+    mediaRecorder.ondataavailable = (event)=>{
+      arrClipData.push(event.data);
+    }
+    mediaRecorder.onstop = ()=>{
+      const blob = new Blob(arrClipData);
+
+      // blob 데이터를 활용해 webm 파일로 변환
+      const ClipFile = new File(
+        [blob],
+        `clip${idx}.webm`,
+        {type: 'video/webm'}
+      )
+      // Todo: webm file url => 백엔드와 통신해서 url 주소를 재설정 해야함
+      const fileURL = window.URL.createObjectURL(ClipFile);
+      dispatch(AddClipAction({idx, src:fileURL}));
+      arrClipData.splice(0);
+    }
+
+    // 녹화 시작
+    mediaRecorder.start();
+    // Todo: 현재는 시간에 dependent => 프레임 단위로 전환 필요함
+    setTimeout(()=>{
+      // 녹화 종료
+      mediaRecorder.stop();
+      console.log(idx);
+      // Todo: taken에 따른 로직 take 함수에 넣기(비동기 필요)
+      if (taken == 10) {
+        console.log(clipList);
+        navigate("/0/aftertake");
+      } else {
+        console.log(clipList);
+        setTaken(taken + 1);
+      }
+    }, 5000)
+
+  }
   function timeChange(e) {
     setTimer(e.target.value);
-    console.log(timer + "로 설정");
+    // console.log(timer + "로 설정");
     setCount(e.target.value);
   }
+
   function take() {
     setTimerVisible(true);
-    console.log(timer + "초 후 촬영");
+    // console.log(timer + "초 후 촬영");
     interval = setInterval(() => {
-      console.log(interval);
+      // console.log(interval);
       setCount((prev) => {
         let next = prev - 1;
         if (next === 0) {
-          alert("찰칵!");
           clearInterval(interval);
           setTimerVisible(false);
           return timer;
@@ -35,11 +84,7 @@ function TakePic() {
       });
     }, 1000);
 
-    if (taken == 10) {
-      location.href = "/0/aftertake";
-    } else {
-      setTaken(taken + 1);
-    }
+    recordClip(taken);
   }
 
   useEffect(() => {

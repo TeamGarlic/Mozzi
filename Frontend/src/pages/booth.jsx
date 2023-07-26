@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   resetCamCanvasesAction,
-  setCamStreamActaion,
+  setCamStreamAction,
   setMaskStreamAction,
 } from '@/modules/canvasAction.js';
 import MakeBooth from './makeBooth';
@@ -61,6 +61,7 @@ function Booth() {
   useEffect(() => {
     // TODO : bgImg를 Redux에서 관리
     bgImg.src = 'https://picsum.photos/880/495';
+    bgImg.crossOrigin = "anonymous"
 
     bgRemovedContextRef.current = bgRemovedRef.current.getContext('2d');
     bgMaskContextRef.current = bgMaskRef.current.getContext('2d');
