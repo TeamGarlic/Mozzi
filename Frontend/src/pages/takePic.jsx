@@ -78,11 +78,6 @@ function TakePic() {
         if (next === 0) {
           clearInterval(interval);
           setTimerVisible(false);
-          if (taken === 10) {
-            location.href = "/0/aftertake";
-          } else {
-            setTaken(taken + 1);
-          }
           return timer;
         }
         return next;
