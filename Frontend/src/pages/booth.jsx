@@ -14,10 +14,10 @@ import useSession from '@/hooks/useSession.js';
 
 function Booth() {
   const [taking, setTaking] = useState(false);
-  const { code: sessionID } = useParams();
+  const { code: shareCode } = useParams();
   const dispatch = useDispatch();
   // console.log(sessionID);
-  const {session, mainStreamManager, publisher, subscribers, userName, sessionId } = useSession();
+  const {session, mainStreamManager, publisher, subscribers } = useSession("aaa", shareCode);
 
   // 소스 웹캠 video
   const webcamRef = useRef();

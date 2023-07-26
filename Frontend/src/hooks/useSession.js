@@ -1,27 +1,16 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
-import {
-  setMainStreamManagerAction,
-  setPublisherAction,
-  setSessionAction,
-  setSubscribersAction,
-} from '@/modules/sessionAction.js';
+import { useEffect, useState } from 'react';
 import { OpenVidu } from 'openvidu-browser';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 // TODO : APPLICATION_SERVER_URL 삭제하고 boothApi.js 안의 메소드 사용
 const APPLICATION_SERVER_URL = 'https://ssafyscheduler.ddns.net:40000/';
 
-function useSession() {
-  const dispatch = useDispatch();
-  const {session, mainStreamManager, publisher, subscribers, userName, sessionId } = useSelector((state) => ({
-    session : state.sessionReducer.session,
-    mainStreamManager : state.sessionReducer.mainStreamManager,
-    publisher : state.sessionReducer.publisher,
-    subscribers : state.sessionReducer.subscribers,
-    userName : state.sessionReducer.userName,
-    sessionId : state.sessionReducer.sessionId,
-  }));
+function useSession(userName, shareCode) {
+  const [session, setSession] = useState(undefined);
+  const [mainStreamManager, setMainStreamManager] = useState(undefined);
+  const [publisher, setPublisher] = useState(undefined);
+  const [subscribers, setSubscribers] = useState([]);
   const {camStream, maskStream} = useSelector((state)=>({
     camStream : state.canvasReducer.camStream,
     maskStream : state.canvasReducer.maskStream,
@@ -30,10 +19,10 @@ function useSession() {
     if (session) {
       session.disconnect();
     }
-    dispatch(setSessionAction(undefined));
-    dispatch(setSubscribersAction([]));
-    dispatch(setMainStreamManagerAction(undefined));
-    dispatch(setPublisherAction(undefined));
+    setSession(undefined);
+    setMainStreamManager(undefined);
+    setPublisher(undefined);
+    setSubscribers([]);
   };
 
 
@@ -41,12 +30,12 @@ function useSession() {
     try {
       const OV = new OpenVidu();
       const mySession = OV.initSession();
-      dispatch(setSessionAction(mySession));
+      setSession(mySession);
 
       // 생성시 이벤트
       mySession.on('streamCreated', (event) => {
         const subscriber = mySession.subscribe(event.stream, undefined);
-        dispatch(setSubscribersAction([...subscribers, subscriber]));
+        setSubscribers([...subscribers, subscriber]);
       });
 
       // 언마운트시 이벤트
@@ -80,8 +69,8 @@ function useSession() {
       mySession.publish(publisher);
 
 
-      dispatch(setMainStreamManagerAction(publisher));
-      dispatch(setPublisherAction(publisher));
+      setMainStreamManager(publisher);
+      setPublisher(publisher);
     } catch (error) {
       console.log('There was an error connecting to the session:', error.code, error.message);
     }
@@ -92,12 +81,12 @@ function useSession() {
     const newSubscribers = [...subscribers];
     const idx = newSubscribers.indexOf(streamManager);
     if (idx > -1) newSubscribers.splice(idx, 1);
-    dispatch(setSubscribersAction(newSubscribers));
+    setSubscribers(newSubscribers);
   };
 
 
   const getToken = async () => {
-    const receivedId = await createSession(sessionId);
+    const receivedId = await createSession(shareCode);
     return await createToken(receivedId);
   };
 
@@ -146,7 +135,7 @@ function useSession() {
 
   },[]);
 
-  return {session, mainStreamManager, publisher, subscribers, userName, sessionId } ;
+  return {session, mainStreamManager, publisher, subscribers } ;
 }
 
 export default useSession;
