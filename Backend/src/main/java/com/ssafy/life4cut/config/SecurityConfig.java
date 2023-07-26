@@ -7,14 +7,26 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.ssafy.life4cut.common.auth.JwtAuthenticationFilter;
+import com.ssafy.life4cut.common.auth.JwtTokenProvider;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtTokenProvider jwtTokenProvider;
+
     // TODO: Need to add path after adding anonymous mapping.
     private static final String[] AUTH_WHITELIST = {
-        "/", "/users/**", "/sessions/**", "/items/**"
+        "/users/**", "/items/**"
         , "/h2-console/**" // TODO: remove before deploy
+        // , "/sessions/**"
+        // ,"/"
     };
 
     @Bean
@@ -27,11 +39,13 @@ public class SecurityConfig {
                 .requestMatchers(AUTH_WHITELIST)
                 .permitAll()
                 .anyRequest()
-                .anonymous()
+                // .anonymous()
+                .authenticated()
             )
             .headers(headers ->
                 headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
             )
+            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
             .getOrBuild();
     }
 }

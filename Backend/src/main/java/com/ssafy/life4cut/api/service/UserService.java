@@ -2,9 +2,11 @@ package com.ssafy.life4cut.api.service;
 
 import com.ssafy.life4cut.api.request.UserLoginPostReq;
 import com.ssafy.life4cut.api.request.UserRegisterPostReq;
+import com.ssafy.life4cut.api.request.reissuePostReq;
 import com.ssafy.life4cut.api.response.UserIdCheckRes;
 import com.ssafy.life4cut.api.response.UserLoginPostRes;
 import com.ssafy.life4cut.api.response.UserRegisterPostRes;
+import com.ssafy.life4cut.api.response.reissuePostRes;
 import com.ssafy.life4cut.common.model.response.BaseResponseBody;
 
 /**
@@ -16,6 +18,8 @@ public interface UserService {
     UserRegisterPostRes register(UserRegisterPostReq userRegisterInfo);
 
     UserLoginPostRes login(UserLoginPostReq userLoginInfo);
+
+    reissuePostRes reissue(reissuePostReq reissueInfo);
 
     BaseResponseBody<UserIdCheckRes> userIdCheck(String userId);
 }

@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.life4cut.api.request.UserLoginPostReq;
 import com.ssafy.life4cut.api.request.UserRegisterPostReq;
+import com.ssafy.life4cut.api.request.reissuePostReq;
 import com.ssafy.life4cut.api.response.UserIdCheckRes;
 import com.ssafy.life4cut.api.response.UserLoginPostRes;
 import com.ssafy.life4cut.api.response.UserRegisterPostRes;
+import com.ssafy.life4cut.api.response.reissuePostRes;
 import com.ssafy.life4cut.api.service.UserService;
 import com.ssafy.life4cut.common.model.response.BaseResponseBody;
 
@@ -79,6 +81,23 @@ public class UserController {
                     .data(response)
                     .build()
             );
+    }
+
+    /**
+     * 토큰 재발급을 위한 POST 메소드
+     *
+     * @param request reissuePostReq
+     * @return ResponseEntity<? extends BaseResponseBody> with reissuePostRes
+     * @see com.ssafy.life4cut.common.auth.JwtTokenProvider
+     */
+    @PostMapping("/reissue")
+    public ResponseEntity<? extends BaseResponseBody<reissuePostRes>> reissue(@RequestBody reissuePostReq request) {
+        reissuePostRes response = userService.reissue(request);
+        return new ResponseEntity<>(
+            BaseResponseBody.<reissuePostRes>builder()
+                .message("reissue access token by refresh token")
+                .data(response)
+                .build(), HttpStatus.OK);
     }
 
     /**

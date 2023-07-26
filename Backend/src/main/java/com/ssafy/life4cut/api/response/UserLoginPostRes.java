@@ -17,4 +17,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserLoginPostRes {
     private Long id;
+    private String accessToken;
+    private String refreshToken;
 }

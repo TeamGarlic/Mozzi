@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.ssafy.life4cut.common.exception.handler.DuplicateShareCodeException;
 import com.ssafy.life4cut.common.exception.handler.DuplicatedUserIdException;
+import com.ssafy.life4cut.common.exception.handler.InvalidRefreshTokenException;
 import com.ssafy.life4cut.common.exception.handler.ShareCodeNotExistException;
 import com.ssafy.life4cut.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.life4cut.common.exception.handler.UserLoginFailException;
@@ -32,6 +33,15 @@ public class ControllerAdviceHandler {
             BaseResponseBody.builder()
                 .message("User ID not exists.")
                 .build(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ResponseEntity<BaseResponseBody> handleInvalidRefreshTokenException(InvalidRefreshTokenException ex) {
+        String errorMessage = "Invalid Refresh Token: " + ex.getMessage();
+        return new ResponseEntity<>(
+            BaseResponseBody.builder()
+                .message(errorMessage)
+                .build(), HttpStatus.BAD_REQUEST);
     }
 
     /**
