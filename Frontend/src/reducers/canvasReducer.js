@@ -25,7 +25,7 @@ const canvasState = {
   }
 }
 
-const canvasReducer = (state=canvasState, action) => {
+const canvasReducer = (state = canvasState, action) => {
   switch (action.type){
     case setCamStream: {
       return  {
@@ -55,7 +55,7 @@ const canvasReducer = (state=canvasState, action) => {
       }
     }
     case addCamCanvas: {
-      console.log(action.payload)
+      // console.log(action.payload)
       state.camCanvases.push({
         canvas : action.payload.canvas,
         context : action.payload.context,
@@ -65,6 +65,7 @@ const canvasReducer = (state=canvasState, action) => {
       }
     }
     case resetCamCanvases: {
+      while(state.camCanvases.length) state.camCanvases.shift();
       return  {
         ...state,
       }
