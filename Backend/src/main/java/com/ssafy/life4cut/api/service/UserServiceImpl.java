@@ -23,7 +23,6 @@ import com.ssafy.life4cut.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.life4cut.common.exception.handler.UserLoginFailException;
 import com.ssafy.life4cut.common.model.response.BaseResponseBody;
 import com.ssafy.life4cut.common.util.mapper.UserMapper;
-import com.ssafy.life4cut.db.datasource.LocalDatasource;
 import com.ssafy.life4cut.db.datasource.RemoteDatasource;
 import com.ssafy.life4cut.db.entity.remote.User;
 import com.ssafy.life4cut.db.repository.remote.UserRepository;
@@ -114,7 +113,7 @@ public class UserServiceImpl implements UserService {
      * @see JwtTokenProvider
      */
     @Override
-    @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
+    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     public reissuePostRes reissue(reissuePostReq reissueInfo) {
         if (!jwtTokenProvider.validateTokenExceptExpiration(reissueInfo.getRefreshToken()))
             throw new InvalidRefreshTokenException("expired refreshToken");

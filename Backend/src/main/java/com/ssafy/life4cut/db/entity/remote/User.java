@@ -74,7 +74,7 @@ public class User extends BaseEntity {
     )
     private Set<Clip> clips = new HashSet<>();
 
-    @Column(length = 150)
+    @Size(max = 150)
     private String refreshToken;
 
     @Override
