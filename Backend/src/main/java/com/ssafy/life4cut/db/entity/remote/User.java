@@ -74,6 +74,9 @@ public class User extends BaseEntity {
     )
     private Set<Clip> clips = new HashSet<>();
 
+    @Size(max = 150)
+    private String refreshToken;
+
     @Override
     public boolean equals(Object o) {
         if (this == o)

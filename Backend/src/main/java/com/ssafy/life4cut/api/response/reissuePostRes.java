@@ -6,17 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- *  회원 가입 응답 data Object
- *
- * @see com.ssafy.life4cut.common.util.mapper.UserMapper
- * @see com.ssafy.life4cut.api.service.UserServiceImpl
+ * 토큰 재발급 응답 Object
+ * @see com.ssafy.life4cut.common.auth.JwtTokenProvider
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserLoginPostRes {
-    private Long id;
+public class reissuePostRes {
     private String accessToken;
     private String refreshToken;
 }
