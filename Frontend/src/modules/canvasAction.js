@@ -6,7 +6,7 @@ export const resetCamCanvases = "resetCamCanvases";
 export const setMyLayer = "setMyLayer";
 export const resizeMyLayer = "resizeMyLayer";
 
-export const setCamStreamActaion = (res) => {
+export const setCamStreamAction = (res) => {
   return {
     type: setCamStream,
     payload: res,
