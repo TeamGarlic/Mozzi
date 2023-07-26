@@ -1,48 +1,48 @@
 import axios from "axios";
 
-const UserApi = axios.create({
-  baseURL: "http://localhost:8080/users",
+// 미인증 유저 api axios 객체
+const BgApi = axios.create({
+  // baseUrl : 백엔드 서버 IP
+  baseURL: "/items",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 // 유저 인증, 정보 관련 API
-const userApi = {
+const bgApi = {
   checkId: async (id) => {
-    const res = await UserApi.get(`check-login-id?userId=${id}`);
+    const res = await BgApi.get(`check-login-id?userId=${id}`, {
+      withCredentials: true,
+    });
     return res;
-  }, //완
+  },
 
   logIn: async (id, pwd) => {
-    const res = await UserApi.post("login", {
-      userId: id,
-      password: pwd,
-    });
+    const res = await BgApi.post(
+      "login",
+      {
+        userId: id,
+        password: pwd,
+      },
+      { withCredentials: true }
+    );
     return res;
-  }, //완
+  },
 
-  // logOut: async (id, pwd) => {
-  //   const res = await UserApi.post(
-  //     "logout",
-  //     {
-  //       id,
-  //       pwd,
-  //     },
-  //     { withCredentials: true }
-  //   );
-  //   return res;
-  // },
   signUp: async (id, pwd, nickname, email) => {
-    const res = await UserApi.post("register", {
-      userId: id,
-      nickname: nickname,
-      email: email,
-      password: pwd,
-    });
+    const res = await BgApi.post(
+      "register",
+      {
+        userId: id,
+        nickname: nickname,
+        email: email,
+        password: pwd,
+      },
+      { withCredentials: true }
+    );
     return res;
-  }, // 완
-
+  },
   // signOut: async (id, pwd) => {
   //   const res = await UserApi.post(
   //     "signout",
@@ -56,7 +56,7 @@ const userApi = {
   // },
   reIssue: async (accessToken, refreshToken) => {
     console.log("reissue start");
-    let res = await UserApi.post(
+    let res = await BgApi.post(
       "reissue",
       {
         accessToken: accessToken,
@@ -79,7 +79,7 @@ const userApi = {
   },
 
   getUser: async (accessToken) => {
-    let res = await UserApi.get("", {
+    let res = await BgApi.get("", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -88,4 +88,4 @@ const userApi = {
   },
 };
 
-export default userApi;
+export default bgApi;

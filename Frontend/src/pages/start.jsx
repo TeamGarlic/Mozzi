@@ -51,11 +51,12 @@ function Start() {
               <div className="mt-4 h-14 leading-10 text-lg">부스 만들기</div>
             </div>
             <div className="w-48 h-fit flex-col p-4">
-              <img
-                src="./src/assets/img/gotobooth.png"
-                className=" w-20 h-20 mx-auto hover:ring-2 rounded-xl ring-offset-2 ring-offset-transparent"
-                onClick={showCodeLine}
-              />
+              <button onClick={showCodeLine} className="text-center">
+                <img
+                  src="./src/assets/img/gotobooth.png"
+                  className=" w-20 h-20 mx-auto hover:ring-2 rounded-xl ring-offset-2 ring-offset-transparent"
+                />
+              </button>
               {!showCode ? (
                 <div className="mt-4 h-14 leading-10 text-lg">
                   부스 참여하기

@@ -3,23 +3,32 @@ import useInput from "@/hooks/useInput.js";
 import LoginNav from "@/components/LoginNav.jsx";
 import TextInput from "@/components/TextInput.jsx";
 import userApi from "@/api/userApi";
+import { useState } from "react";
 
 function LogIn() {
+  const [error, setError] = useState("");
   const id = useInput();
   const pw = useInput();
 
   async function login() {
-    alert(`id : ${id.value}, pw : ${pw.value}`);
+    console.log(`id : ${id.value}, pw : ${pw.value}`);
     try {
       let res = await userApi.logIn(id.value, pw.value);
       console.log(res);
-    } catch {
-      alert("통신 오류!");
-    } finally {
-      id.reset();
-      pw.reset();
+    } catch (e) {
+      const status = e.response.status;
+      if (status === 404) {
+        setError("존재하지 않는 아이디입니다!");
+      } else if (status === 400) {
+        setError("로그인에 실패했습니다.");
+      } else {
+        setError("다시 시도해 주세요.");
+      }
     }
+    id.reset();
+    pw.reset();
   }
+
   return (
     <Layout>
       <>
@@ -37,6 +46,7 @@ function LogIn() {
           <div className="flex">
             <TextInput type="password" placeholder="비밀번호" {...pw} />
           </div>
+          <span className=" float-left text-sm text-red-500">{error}</span>
           <button
             type="button"
             onClick={login}
