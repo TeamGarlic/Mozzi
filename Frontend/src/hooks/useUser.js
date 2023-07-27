@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import userApi from "@/api/userApi";
 
-function useUser(initialState = { name: "dummy user" }) {
+function useUser(initialState = null) {
   const [user, setUser] = useState(initialState);
   const accessToken = localStorage.getItem("accessToken");
 
