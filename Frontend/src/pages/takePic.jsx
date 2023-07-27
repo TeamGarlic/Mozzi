@@ -21,8 +21,7 @@ function TakePic() {
   const arrClipData = [];
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const clipList = useSelector(state => state.clipReducer.clipList)
-
+  // const clipList = useSelector(state => state.clipReducer.clipList);
   function recordClip(idx){
     const mediaStream = mainCanvas.canvas.current.captureStream();
     mediaRecorder = new MediaRecorder(mediaStream);
@@ -53,10 +52,10 @@ function TakePic() {
       console.log(idx);
       // Todo: taken에 따른 로직 take 함수에 넣기(비동기 필요)
       if (taken == 10) {
-        console.log(clipList);
+        // console.log(clipList);
         navigate("/0/aftertake");
       } else {
-        console.log(clipList);
+        // console.log(clipList);
         setTaken(taken + 1);
       }
     }, 5000)
