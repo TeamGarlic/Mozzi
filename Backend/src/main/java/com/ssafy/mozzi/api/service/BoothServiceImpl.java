@@ -146,6 +146,40 @@ public class BoothServiceImpl implements BoothService {
     }
 
     /**
+     * SessionId 를 입력받아 해당 SessionId에 해당하는 h2 Booth 와 openvidu Booth 를 삭제합니다.
+     * @param sessionId session id 요청
+     * @return SessionRes
+     * @see Session
+     * @see Connection
+     */
+    @Override
+    @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
+    public BaseResponseBody<SessionRes> deleteBooth(String sessionId) throws Exception {
+        Session session = openVidu.getActiveSession(sessionId);
+        Booth booth = boothRepository.findBySessionId(sessionId);
+
+        if (session == null) {
+            throw new InvalidSessionIdException(
+                String.format("You requested invalid session(%s). It could be destroyed.", sessionId));
+        }
+        session.close();
+
+        if (booth != null) {
+            boothRepository.delete(booth);
+        }
+
+        return BaseResponseBody.<SessionRes>builder()
+            .message("deleted exist booth")
+            .data(
+                SessionRes.builder()
+                    .shareCode("")
+                    .sessionId(booth.getSessionId())
+                    .build()
+            )
+            .build();
+    }
+
+    /**
      * 영문자/숫자로 구성된 length 만큼의 랜덤한 문자열을 만듭니다.
      * @param length 생성할 문자열의 길이
      * @return 생성된 랜덤한 문자열
@@ -166,4 +200,5 @@ public class BoothServiceImpl implements BoothService {
         }
         return sb.toString();
     }
+
 }

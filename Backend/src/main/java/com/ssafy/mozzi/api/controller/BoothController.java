@@ -3,6 +3,7 @@ package com.ssafy.mozzi.api.controller;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -76,6 +77,23 @@ public class BoothController {
             .cacheControl(CacheControl.noCache())
             .body(
                 boothService.getConnectionToken(request)
+            );
+    }
+
+    /**
+     * Session ID를 기준으로, 해당 Booth 를 삭제합니다.
+     * @param sessionId 접속하고자 하는 부스의 session id를 담고 있습니다.
+     * @return SessionRes 를 반환합니다.
+     * @see com.ssafy.mozzi.api.service.BoothServiceImpl
+     * @see io.openvidu.java.client.Session
+     */
+    @DeleteMapping("/{sessionId}")
+    public ResponseEntity<? extends BaseResponseBody<SessionRes>> deleteBooth(@PathVariable String sessionId) throws
+        Exception {
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.noCache())
+            .body(
+                boothService.deleteBooth(sessionId)
             );
     }
 }

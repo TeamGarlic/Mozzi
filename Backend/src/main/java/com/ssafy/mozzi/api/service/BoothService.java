@@ -12,4 +12,6 @@ public interface BoothService {
     BaseResponseBody<SessionRes> joinBooth(String shareCode);
 
     BaseResponseBody<ConnectionPostRes> getConnectionToken(ConnectionPostReq request) throws Exception;
+
+    BaseResponseBody<SessionRes> deleteBooth(String sessionId) throws Exception;
 }
