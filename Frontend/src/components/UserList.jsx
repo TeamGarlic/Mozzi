@@ -100,6 +100,14 @@ function UserList(){
     setUserList(_userList);
   }
 
+  function setTool(idx, tool){
+    if (tool === "onMic"){
+      userList[idx].onMic = 1-userList[idx].onMic
+    } else if (tool === "onCam"){
+      userList[idx].onCam = 1-userList[idx].onCam
+    }
+  }
+
   return (
     <>
       대충 사용자 목록
@@ -115,6 +123,10 @@ function UserList(){
              onDrop={onDrop}
              draggable>
           <UserCard
+            setTool={setTool}
+            onMic={item.onMic}
+            onCam={item.onCam}
+            idx={idx}
             userName={item.name}
             isHost={idx === 0}
           />
