@@ -2,6 +2,7 @@ package com.ssafy.life4cut.api.controller;
 
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,7 @@ import com.ssafy.life4cut.common.model.response.BaseResponseBody;
 
 import lombok.RequiredArgsConstructor;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/sessions")
 @RequiredArgsConstructor

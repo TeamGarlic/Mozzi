@@ -69,6 +69,7 @@ public class UserServiceImpl implements UserService {
      * @return UserLoginPostRes
      * @see UserRepository
      */
+    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     @Override
     public UserLoginPostRes login(UserLoginPostReq request) {
         Optional<User> user = userRepository.findByUserId(request.getUserId());
