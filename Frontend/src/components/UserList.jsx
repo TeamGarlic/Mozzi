@@ -101,11 +101,13 @@ function UserList(){
   }
 
   function setTool(idx, tool){
+    const _userList = [...userList];
     if (tool === "onMic"){
-      userList[idx].onMic = 1-userList[idx].onMic
+      _userList[idx].onMic = 1-userList[idx].onMic;
     } else if (tool === "onCam"){
-      userList[idx].onCam = 1-userList[idx].onCam
+      _userList[idx].onCam = 1-userList[idx].onCam;
     }
+    setUserList(_userList);
   }
 
   return (
