@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   resetCamCanvasesAction,
-  setCamStreamAction,
-  setMaskStreamAction,
 } from '@/modules/canvasAction.js';
 import MakeBooth from './makeBooth';
 import TakePic from './takePic';
@@ -17,7 +15,7 @@ function Booth() {
   const { code: shareCode } = useParams();
   const dispatch = useDispatch();
   // console.log(sessionID);
-  const {session, mainStreamManager, publisher, subscribers } = useSession("aaa", shareCode);
+  const {session, mainStreamManager, publisher, subscribers, joinSession } = useSession("Testing", shareCode);
 
   // 소스 웹캠 video
   const webcamRef = useRef();
@@ -90,21 +88,7 @@ function Booth() {
       requestAnimationFrame(sendToMediaPipe);
     }
   };
-  dispatch(
-    setCamStreamAction({
-      canvas:bgRemovedRef,
-      context:bgRemovedRef.current.getContext('2d'),
-      stream:bgRemovedRef.current.captureStream(30).getVideoTracks()[0],
-    })
-  );
-  dispatch(
-    setMaskStreamAction({
-      canvas:bgMaskRef,
-      context:bgMaskRef.current.getContext('2d'),
-      stream:bgMaskRef.current.captureStream(30).getVideoTracks()[0],
-    })
-  );
-
+  joinSession([bgRemovedRef,bgMaskRef]);
   }, []);
 
   return (

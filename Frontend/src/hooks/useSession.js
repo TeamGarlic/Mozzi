@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { OpenVidu } from 'openvidu-browser';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
 
 // TODO : APPLICATION_SERVER_URL 삭제하고 boothApi.js 안의 메소드 사용
 const APPLICATION_SERVER_URL = 'https://ssafyscheduler.ddns.net:40000/';
@@ -11,10 +10,6 @@ function useSession(userName, shareCode) {
   const [mainStreamManager, setMainStreamManager] = useState(undefined);
   const [publisher, setPublisher] = useState(undefined);
   const [subscribers, setSubscribers] = useState([]);
-  const {camStream, maskStream} = useSelector((state)=>({
-    camStream : state.canvasReducer.camStream,
-    maskStream : state.canvasReducer.maskStream,
-  }));
   const leaveSession = () => {
     if (session) {
       session.disconnect();
@@ -26,7 +21,7 @@ function useSession(userName, shareCode) {
   };
 
 
-  const joinSession = async () => {
+  const joinSession = async (canvases) => {
     try {
       const OV = new OpenVidu();
       const mySession = OV.initSession();
@@ -57,7 +52,7 @@ function useSession(userName, shareCode) {
 
       const publisher = await OV.initPublisherAsync(undefined, {
         audioSource: undefined,
-        videoSource: camStream.stream,
+        videoSource: canvases[1].current.captureStream(30).getVideoTracks()[0],
         publishAudio: true,
         publishVideo: true,
         frameRate: 30,
@@ -125,9 +120,6 @@ function useSession(userName, shareCode) {
     // TODO : 라이프사이클 확인
     window.addEventListener('beforeunload', leaveSession);
 
-    joinSession();
-    console.log("joined!!!");
-
     // TODO : 라이프사이클 확인
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
@@ -135,7 +127,7 @@ function useSession(userName, shareCode) {
 
   },[]);
 
-  return {session, mainStreamManager, publisher, subscribers } ;
+  return {session, mainStreamManager, publisher, subscribers, joinSession } ;
 }
 
 export default useSession;
