@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom';
 import { SelfieSegmentation } from '@mediapipe/selfie_segmentation';
 import { drawCanvas, drawMyVid } from '@/utils/videoUtil.js';
 import useSession from '@/hooks/useSession.js';
+import {changeBgAction} from "@/modules/bgAction.js"
 
 function Booth() {
   const [taking, setTaking] = useState(false);
@@ -32,7 +33,7 @@ function Booth() {
   const mainCanvas = useSelector((state) => state.canvasReducer.mainCanvas);
   const myLayer = useSelector((state) => state.canvasReducer.myLayer);
   // TODO : bgImg를 Redux에서 관리
-  const bgImg = new Image();
+  const bgNow = useSelector((state) => state.bgReducer.bgNow);
 
   function startTake() {
     dispatch(resetCamCanvasesAction());
@@ -52,7 +53,7 @@ function Booth() {
     });
 
     // TODO : 한 레이어만 그리는 샘플 코드 지우기
-    if(mainCanvas.canvas) drawCanvas(mainCanvas.canvas,mainCanvas.context,bgImg,[myLayer]);
+    if(mainCanvas.canvas) drawCanvas(mainCanvas.canvas,mainCanvas.context,bgNow.img,[myLayer]);
 
     // TODO : 캔버스에 그리기
     // drawCanvas(canvasRef,canvasContextRef,bgImg,layers);
@@ -61,8 +62,10 @@ function Booth() {
 
   useEffect(() => {
     // TODO : bgImg를 Redux에서 관리
+    const bgImg = new Image();
     bgImg.src = 'https://picsum.photos/880/495';
-    bgImg.crossOrigin = "anonymous"
+    bgImg.crossOrigin = "anonymous";
+    dispatch(changeBgAction({img: bgImg}))
 
     bgRemovedContextRef.current = bgRemovedRef.current.getContext('2d');
     bgMaskContextRef.current = bgMaskRef.current.getContext('2d');

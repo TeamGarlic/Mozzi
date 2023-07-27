@@ -12,7 +12,10 @@ export default function PicSideBar() {
   //   // {word:"스티커", idx:3}
   // ];
 
-  const bGs = [{ bgName: "산" }, { bgName: "바다" }, { bgName: "우주" }];
+  const bGs = [
+    { bgName: "피사의 사탑", src: "/src/assets/img/bg1.jpg" },
+    { bgName: "싸움수준", src: "/src/assets/img/bg2.jpg" },
+    { bgName: "러쉬모어 산", src: "/src/assets/img/bg3.jpg" }];
 
   const [menu, setMenu] = useState(0);
 
@@ -53,7 +56,7 @@ export default function PicSideBar() {
             <div className="h-full">
               배경 변경하기
               {bGs.map((bg) => (
-                <BgCard bgName={bg.bgName} key={bg.bgName} />
+                <BgCard bgName={bg.bgName} key={bg.bgName} bgSrc={bg.src}/>
               ))}
             </div>
           )}
