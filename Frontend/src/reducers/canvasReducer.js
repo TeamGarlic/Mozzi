@@ -1,4 +1,11 @@
-import {setMainCanvas, addCamCanvas, resetCamCanvases, setMyLayer, resizeMyLayer} from "@/modules/canvasAction"
+import {
+  setMainCanvas,
+  addCamCanvas,
+  resetCamCanvases,
+  setMyLayer,
+  resizeMyLayer,
+  setMyLayerSource,
+} from '@/modules/canvasAction';
 
 const canvasState = {
   mainCanvas : {
@@ -48,11 +55,23 @@ const canvasReducer = (state = canvasState, action) => {
       //   width:action.payload.width,
       //   height:action.payload.height,
       // }
-      state.myLayer.image = state.camStream.canvas
       state.myLayer.x = action.payload.x
       state.myLayer.y = action.payload.y
       state.myLayer.width = action.payload.width
       state.myLayer.height = action.payload.height
+      return  {
+        ...state
+      }
+    }
+    case setMyLayerSource: {
+      // state.myLayer = {
+      //   image : state.camStream.canvas,
+      //   x:action.payload.x,
+      //   y:action.payload.y,
+      //   width:action.payload.width,
+      //   height:action.payload.height,
+      // }
+      state.myLayer.image = action.payload.canvas
       return  {
         ...state
       }

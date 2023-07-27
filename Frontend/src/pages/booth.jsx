@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  resetCamCanvasesAction,
+  resetCamCanvasesAction, setMyLayerSourceAction,
 } from '@/modules/canvasAction.js';
 import MakeBooth from './makeBooth';
 import TakePic from './takePic';
@@ -61,7 +61,7 @@ function Booth() {
   useEffect(() => {
     // TODO : bgImg를 Redux에서 관리
     const bgImg = new Image();
-    bgImg.src = 'https://picsum.photos/880/495';
+    bgImg.src = '/src/assets/img/bg1.jpg';
     bgImg.crossOrigin = "anonymous";
     dispatch(changeBgAction({img: bgImg}))
 
@@ -91,6 +91,9 @@ function Booth() {
       requestAnimationFrame(sendToMediaPipe);
     }
   };
+  dispatch(setMyLayerSourceAction({
+    canvas:bgRemovedRef
+  }))
   joinSession([bgRemovedRef,bgMaskRef]);
   }, []);
 

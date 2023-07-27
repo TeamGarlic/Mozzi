@@ -66,6 +66,7 @@ function useSession(userName, shareCode) {
 
       setMainStreamManager(publisher);
       setPublisher(publisher);
+      console.log(subscribers)
     } catch (error) {
       console.log('There was an error connecting to the session:', error.code, error.message);
     }
