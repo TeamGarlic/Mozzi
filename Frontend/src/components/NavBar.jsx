@@ -1,19 +1,20 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 
 function NavBar({ user }) {
   // const [user, setUser] = useState(null);
   const [menu, setMenu] = useState(false);
+  const navigate = useNavigate();
   // useEffect(() => {
   //   setUser(null);
   // }, []);
 
   function goLogin() {
-    location.href = "/login";
+    navigate("/login");
   }
   function goHome() {
-    location.href = "/";
+    navigate("/");
   }
 
   function showMenu() {
@@ -23,7 +24,7 @@ function NavBar({ user }) {
   function logOut() {
     localStorage.removeItem("accessToken");
     alert("로그아웃되었습니다!");
-    location.href = "/";
+    navigate("/");
   }
 
   return (
