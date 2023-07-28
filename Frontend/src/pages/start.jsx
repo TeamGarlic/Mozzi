@@ -21,7 +21,8 @@ function Start() {
   async function makeBooth() {
     if (!user) {
       alert("로그인해주세요!");
-      return;
+      // TODO : 로그인 정보 긁어오는데 성공하면 return
+      // return;
     }
 
     let res = await boothApi.createBooth(localStorage.getItem("accessToken"));

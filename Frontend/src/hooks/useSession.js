@@ -1,52 +1,36 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
-import {
-  setMainStreamManagerAction,
-  setPublisherAction,
-  setSessionAction,
-  setSubscribersAction,
-} from '@/modules/sessionAction.js';
+import { useEffect, useState } from 'react';
 import { OpenVidu } from 'openvidu-browser';
 import axios from 'axios';
 
 // TODO : APPLICATION_SERVER_URL 삭제하고 boothApi.js 안의 메소드 사용
 const APPLICATION_SERVER_URL = 'https://ssafyscheduler.ddns.net:40000/';
 
-function useSession() {
-  const dispatch = useDispatch();
-  const {session, mainStreamManager, publisher, subscribers, userName, sessionId } = useSelector((state) => ({
-    session : state.sessionReducer.session,
-    mainStreamManager : state.sessionReducer.mainStreamManager,
-    publisher : state.sessionReducer.publisher,
-    subscribers : state.sessionReducer.subscribers,
-    userName : state.sessionReducer.userName,
-    sessionId : state.sessionReducer.sessionId,
-  }));
-  const {camStream, maskStream} = useSelector((state)=>({
-    camStream : state.canvasReducer.camStream,
-    maskStream : state.canvasReducer.maskStream,
-  }));
+function useSession(userName, shareCode) {
+  const [session, setSession] = useState(undefined);
+  const [mainStreamManager, setMainStreamManager] = useState(undefined);
+  const [publisher, setPublisher] = useState(undefined);
+  const [subscribers, setSubscribers] = useState([]);
   const leaveSession = () => {
     if (session) {
       session.disconnect();
     }
-    dispatch(setSessionAction(undefined));
-    dispatch(setSubscribersAction([]));
-    dispatch(setMainStreamManagerAction(undefined));
-    dispatch(setPublisherAction(undefined));
+    setSession(undefined);
+    setMainStreamManager(undefined);
+    setPublisher(undefined);
+    setSubscribers([]);
   };
 
 
-  const joinSession = async () => {
+  const joinSession = async (canvases) => {
     try {
       const OV = new OpenVidu();
       const mySession = OV.initSession();
-      dispatch(setSessionAction(mySession));
+      setSession(mySession);
 
       // 생성시 이벤트
       mySession.on('streamCreated', (event) => {
         const subscriber = mySession.subscribe(event.stream, undefined);
-        dispatch(setSubscribersAction([...subscribers, subscriber]));
+        setSubscribers([...subscribers, subscriber]);
       });
 
       // 언마운트시 이벤트
@@ -68,7 +52,7 @@ function useSession() {
 
       const publisher = await OV.initPublisherAsync(undefined, {
         audioSource: undefined,
-        videoSource: camStream.stream,
+        videoSource: canvases[1].current.captureStream(30).getVideoTracks()[0],
         publishAudio: true,
         publishVideo: true,
         frameRate: 30,
@@ -80,8 +64,9 @@ function useSession() {
       mySession.publish(publisher);
 
 
-      dispatch(setMainStreamManagerAction(publisher));
-      dispatch(setPublisherAction(publisher));
+      setMainStreamManager(publisher);
+      setPublisher(publisher);
+      console.log(subscribers)
     } catch (error) {
       console.log('There was an error connecting to the session:', error.code, error.message);
     }
@@ -92,12 +77,12 @@ function useSession() {
     const newSubscribers = [...subscribers];
     const idx = newSubscribers.indexOf(streamManager);
     if (idx > -1) newSubscribers.splice(idx, 1);
-    dispatch(setSubscribersAction(newSubscribers));
+    setSubscribers(newSubscribers);
   };
 
 
   const getToken = async () => {
-    const receivedId = await createSession(sessionId);
+    const receivedId = await createSession(shareCode);
     return await createToken(receivedId);
   };
 
@@ -136,9 +121,6 @@ function useSession() {
     // TODO : 라이프사이클 확인
     window.addEventListener('beforeunload', leaveSession);
 
-    joinSession();
-    console.log("joined!!!");
-
     // TODO : 라이프사이클 확인
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
@@ -146,7 +128,7 @@ function useSession() {
 
   },[]);
 
-  return {session, mainStreamManager, publisher, subscribers, userName, sessionId } ;
+  return {session, mainStreamManager, publisher, subscribers, joinSession } ;
 }
 
 export default useSession;

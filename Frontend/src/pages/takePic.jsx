@@ -51,7 +51,7 @@ function TakePic() {
       mediaRecorder.stop();
       console.log(idx);
       // Todo: taken에 따른 로직 take 함수에 넣기(비동기 필요)
-      if (taken == 10) {
+      if (taken == 4) {
         // console.log(clipList);
         navigate("/0/aftertake");
       } else {
@@ -123,7 +123,7 @@ function TakePic() {
             />
           )}
           <div className="flex rounded-2xl bg-yellow-200 leading-10">
-            <span className=" px-5 ">{taken}/10</span>
+            <span className=" px-5 ">{taken}/4</span>
             <button
               className={`w-full leading-10  px-5  bg-red-300 rounded-r-2xl`}
               onClick={take}

@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-  resetCamCanvasesAction,
-  setCamStreamAction,
-  setMaskStreamAction,
+  resetCamCanvasesAction, setMyLayerSourceAction,
 } from '@/modules/canvasAction.js';
 import MakeBooth from './makeBooth';
 import TakePic from './takePic';
@@ -15,10 +13,10 @@ import {changeBgAction} from "@/modules/bgAction.js"
 
 function Booth() {
   const [taking, setTaking] = useState(false);
-  const { code: sessionID } = useParams();
+  const { code: shareCode } = useParams();
   const dispatch = useDispatch();
   // console.log(sessionID);
-  const {session, mainStreamManager, publisher, subscribers, userName, sessionId } = useSession();
+  const {session, mainStreamManager, publisher, subscribers, joinSession } = useSession("Testing", shareCode);
 
   // 소스 웹캠 video
   const webcamRef = useRef();
@@ -63,7 +61,7 @@ function Booth() {
   useEffect(() => {
     // TODO : bgImg를 Redux에서 관리
     const bgImg = new Image();
-    bgImg.src = 'https://picsum.photos/880/495';
+    bgImg.src = '/src/assets/img/bg1.jpg';
     bgImg.crossOrigin = "anonymous";
     dispatch(changeBgAction({img: bgImg}))
 
@@ -93,21 +91,10 @@ function Booth() {
       requestAnimationFrame(sendToMediaPipe);
     }
   };
-  dispatch(
-    setCamStreamAction({
-      canvas:bgRemovedRef,
-      context:bgRemovedRef.current.getContext('2d'),
-      stream:bgRemovedRef.current.captureStream(30).getVideoTracks()[0],
-    })
-  );
-  dispatch(
-    setMaskStreamAction({
-      canvas:bgMaskRef,
-      context:bgMaskRef.current.getContext('2d'),
-      stream:bgMaskRef.current.captureStream(30).getVideoTracks()[0],
-    })
-  );
-
+  dispatch(setMyLayerSourceAction({
+    canvas:bgRemovedRef
+  }))
+  joinSession([bgRemovedRef,bgMaskRef]);
   }, []);
 
   return (
