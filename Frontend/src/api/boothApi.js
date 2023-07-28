@@ -3,38 +3,45 @@ import axios from "axios";
 // booth api axios 객체
 const BoothApi = axios.create({
   // baseUrl : 백엔드 서버 IP
-  baseURL: "/",
-  headers: {
-    "Content-Type": "application/json",
-  }
+  baseURL: "https://api.mozzi.lol/sessions",
 });
 
-
 const boothApi = {
-  createBooth: async (customSessionId) => {
+  startConnect: async () => {
+    const res = await BoothApi.post("connections");
+    return res;
+  },
+
+  createBooth: async (accessToken) => {
     const res = await BoothApi.post(
       "",
+      {},
       {
-          customSessionId,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: accessToken,
+        },
+      }
+    );
+    console.log(res);
+    return res;
+  }, // 완
+
+  joinBooth: async (shareCode) => {
+    const res = await BoothApi.get(`${shareCode}`, {
+      headers: {
+        "Content-Type": "application/json",
       },
-      {withCredentials: true},
-    );
+    });
     return res;
   },
-  joinBooth: async (sessionId) => {
-    const res = await BoothApi.get(
-      `${sessionId}`,
-      {withCredentials: true}
-    );
+
+  getBackground: async (pageNumber = 1) => {
+    const res = await BoothApi.get(`backgrounds?pageNum=${pageNumber}`, {
+      withCredentials: true,
+    });
     return res;
   },
-  getBackground: async (pageNumber= 1) => {
-    const res = await BoothApi.get(
-      `backgrounds?pageNum=${pageNumber}`,
-      {withCredentials: true}
-    );
-    return res;
-  },
-}
+};
 
 export default boothApi;

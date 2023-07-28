@@ -2,16 +2,42 @@ import Layout from "@/components/Layout";
 import useInput from "@/hooks/useInput.js";
 import LoginNav from "@/components/LoginNav.jsx";
 import TextInput from "@/components/TextInput.jsx";
+import userApi from "@/api/userApi";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function LogIn() {
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
   const id = useInput();
   const pw = useInput();
 
-  function login() {
-    alert(`id : ${id.value}, pw : ${pw.value}`);
+  async function login() {
+    console.log(`id : ${id.value}, pw : ${pw.value}`);
+    try {
+      let res = await userApi.logIn(id.value, pw.value);
+      console.log(res);
+      if (res.status === 200) {
+        alert(res.data.message);
+        localStorage.setItem("accessToken", res.data.data.accessToken);
+        localStorage.setItem("refreshToken", res.data.data.refreshToken);
+        navigate("/");
+      }
+    } catch (e) {
+      const status = e.response.status;
+      console.log(status);
+      if (status === 404) {
+        setError("존재하지 않는 아이디입니다!");
+      } else if (status === 400) {
+        setError("로그인에 실패했습니다.");
+      } else {
+        setError("다시 시도해 주세요.");
+      }
+    }
     id.reset();
     pw.reset();
   }
+
   return (
     <Layout>
       <>
@@ -29,10 +55,11 @@ function LogIn() {
           <div className="flex">
             <TextInput type="password" placeholder="비밀번호" {...pw} />
           </div>
+          <span className=" float-left text-sm text-red-500">{error}</span>
           <button
             type="button"
             onClick={login}
-            className="w-80 h-12 leading-3 rounded-2xl mt-20 border border-slate-600"
+            className="w-80 h-12 leading-3 rounded-2xl mt-10 bg-yellow-300"
           >
             로그인
           </button>

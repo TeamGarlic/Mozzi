@@ -1,28 +1,39 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
 
-function NavBar() {
-  const [user, setUser] = useState(null);
+function NavBar({ user }) {
+  // const [user, setUser] = useState(null);
   const [menu, setMenu] = useState(false);
-  useEffect(() => {
-    setUser(null);
-  }, []);
+  const navigate = useNavigate();
+  // useEffect(() => {
+  //   setUser(null);
+  // }, []);
 
   function goLogin() {
-    location.href = "/login";
+    navigate("/login");
   }
   function goHome() {
-    location.href = "/";
+    navigate("/");
   }
 
   function showMenu() {
     setMenu(!menu);
   }
 
+  function logOut() {
+    localStorage.removeItem("accessToken");
+    alert("로그아웃되었습니다!");
+    navigate("/");
+  }
+
   return (
     <div className="fixed w-screen top-0 p-4 px-8 h-fit">
-      <button className="float-left text-3xl" onClick={goHome}>
-        🎞️
-      </button>
+      <img
+        src="/src/assets/img/mozzi.png"
+        className=" float-left w-20 h-20 hover:cursor-pointer"
+        onClick={goHome}
+      />
       {user ? (
         <div className=" float-right flex-col">
           <button
@@ -33,9 +44,15 @@ function NavBar() {
           </button>
           {menu && (
             <ul className="mt-10 border-4 rounded-lg p-4">
-              <li className=" my-2">마이페이지</li>
-              <li className=" my-2">내정보수정</li>
-              <li className=" my-2">로그아웃</li>
+              <li className=" my-2">
+                <Link to={`/mypage/${user.name}`}>마이페이지</Link>
+              </li>
+              <li className=" my-2">
+                <Link to="/modify">내정보수정</Link>
+              </li>
+              <li className=" my-2 hover:cursor-pointer" onClick={logOut}>
+                로그아웃
+              </li>
             </ul>
           )}
         </div>
@@ -52,3 +69,13 @@ function NavBar() {
 }
 
 export default NavBar;
+
+NavBar.dafaultProps = {
+  user: null,
+};
+
+NavBar.propTypes = {
+  user: PropTypes.shape({
+    name: PropTypes.string,
+  }),
+};
