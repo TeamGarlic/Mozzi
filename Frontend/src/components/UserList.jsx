@@ -3,18 +3,18 @@ import {useState} from "react"
 
 function UserList(){
   const [userList, setUserList] = useState([
-    { item: "🦜", name: "Parrot", onMic: 1, onCam: 1 },
-    { item: "🦖", name: "Dinosaur", onMic: 1, onCam: 1 },
-    { item: "🦆", name: "Duck", onMic: 1, onCam: 1 },
-    { item: "🦔", name: "Porkypine", onMic: 1, onCam: 1 },
-    { item: "🐤", name: "Chick", onMic: 1, onCam: 1 },
-    { item: "🐧", name: "Penguin", onMic: 1, onCam: 1 },
-    { item: "🦜", name: "Parrot", onMic: 1, onCam: 1 },
-    { item: "🦖", name: "Dinosaur", onMic: 1, onCam: 1 },
-    { item: "🦆", name: "Duck", onMic: 1, onCam: 1 },
-    { item: "🦔", name: "Porkypine", onMic: 1, onCam: 1 },
-    { item: "🐤", name: "Chick", onMic: 1, onCam: 1 },
-    { item: "🐧", name: "Penguin", onMic: 1, onCam: 1 },
+    { item: "🦜", name: "Parrot", onMic: 1, onCam: 1, isHost: 1 },
+    { item: "🦖", name: "Dinosaur", onMic: 1, onCam: 1, isHost: 0 },
+    { item: "🦆", name: "Duck", onMic: 1, onCam: 1, isHost: 0 },
+    { item: "🦔", name: "Porkypine", onMic: 1, onCam: 1, isHost: 0 },
+    { item: "🐤", name: "Chick", onMic: 1, onCam: 1, isHost: 0 },
+    { item: "🐧", name: "Penguin", onMic: 1, onCam: 1, isHost: 0 },
+    { item: "🦜", name: "Parrot", onMic: 1, onCam: 1, isHost: 0 },
+    { item: "🦖", name: "Dinosaur", onMic: 1, onCam: 1, isHost: 0 },
+    { item: "🦆", name: "Duck", onMic: 1, onCam: 1, isHost: 0 },
+    { item: "🦔", name: "Porkypine", onMic: 1, onCam: 1, isHost: 0 },
+    { item: "🐤", name: "Chick", onMic: 1, onCam: 1, isHost: 0 },
+    { item: "🐧", name: "Penguin", onMic: 1, onCam: 1, isHost: 0 },
   ]);
   const [drag, setDrag] = useState(null);
   let height = 0;
@@ -130,7 +130,7 @@ function UserList(){
             onCam={item.onCam}
             idx={idx}
             userName={item.name}
-            isHost={idx === 0}
+            isHost={item.isHost}
           />
         </div>
       ))}
