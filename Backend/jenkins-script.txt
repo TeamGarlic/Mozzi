@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+    stages {
+        stage('Git Clone') {
+            steps {
+                git branch: 'develop-back', credentialsId : 'GitLab_Personal_Access_Token' ,url: 'https://lab.ssafy.com/s09-webmobile1-sub2/S09P12A109.git'
+            }
+        }
+        stage('BE-build') {
+            steps {
+                dir("./Backend") {
+                    sh 'ln -f -s /opt/mozzi/application-keys.properties ./src/main/resources/application-keys.properties'
+                    sh 'chmod +x gradlew'
+                    sh './gradlew clean bootJar'
+                }
+            }
+        }
+        stage('BE-deploy'){
+            steps {
+                dir("./Backend") {
+                    sh 'cp -f ./build/libs/mozzi*.jar /opt/mozzi/mozzi.jar'
+                    sh '' +
+                     'CURRENT_PID=$(ps -ef | grep java | grep mozzi | awk \'{print \$2}\')\n' +
+                     'echo \'$CURRENT_PID\'\n' +
+                     'if [ -z ${CURRENT_PID} ]\n' +
+                     'then\n' +
+                     '   echo "> 현재 안 켜져 있는 상태입니다!"\n' +
+                     'else \n' +
+                     '    echo "> kill -9 $CURRENTPID"\n' +
+                     '    kill -9 $CURRENT_PID\n' +
+                     '    sleep 5\n' +
+                     'fi\n'
+                    
+                    sh 'java -version'
+                    sh 'BUILD_ID=dontKillMe JENKINS_NODE_COOKIE=dontKillMe nohup java -Dhudson.util.ProcessTree.disable=true -jar /opt/mozzi/mozzi.jar >> /opt/mozzi/mozzi.log > /dev/null 2 >&1 & '
+                }
+            }
+        }
+    }
+}

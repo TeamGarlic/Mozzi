@@ -1,0 +1,81 @@
+package com.ssafy.mozzi.api.service;
+
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+
+import com.ssafy.mozzi.api.response.FrameListGetRes;
+import com.ssafy.mozzi.api.response.ItemBackgroundGetRes;
+import com.ssafy.mozzi.api.response.ItemStickerGetRes;
+import com.ssafy.mozzi.common.util.mapper.ItemMapper;
+import com.ssafy.mozzi.db.entity.remote.Backgroud;
+import com.ssafy.mozzi.db.entity.remote.Frame;
+import com.ssafy.mozzi.db.entity.remote.Sticker;
+import com.ssafy.mozzi.db.repository.remote.BackgroundRepository;
+import com.ssafy.mozzi.db.repository.remote.FrameRepository;
+import com.ssafy.mozzi.db.repository.remote.StickerRepository;
+
+import lombok.RequiredArgsConstructor;
+
+/**
+ * Item 요청에 대한 비즈니스 로직 구현
+ *
+ * @see BackgroundRepository
+ */
+@Service
+@RequiredArgsConstructor
+public class ItemServiceImpl implements ItemService {
+    private final BackgroundRepository backgroundRepository;
+    private final FrameRepository frameRepository;
+    private final StickerRepository stickerRepository;
+
+    /**
+     * Background Get 요청에 대한 응답을 반환하는 비즈니스 로직
+     * @param pageNum int
+     * @param pageSize int
+     * @return ItemBackgroundGetRes
+     * @see ItemBackgroundGetRes
+     * @see Backgroud
+     */
+    @Override
+    public ItemBackgroundGetRes getBackgroundRes(int pageNum, int pageSize) {
+        PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);  // Page 객체를 갖고오기 위한 PageRequest 객체 생성
+        Page<Backgroud> page = backgroundRepository.findAll(pageRequest);  // Page 객체 생성
+        List<Backgroud> backgrounds = page.getContent();  // Page 의 Method 를 이용하여 Background 객체들의 리스트를 만듦
+
+        return ItemMapper.toItemBackgroundGetRes(backgrounds, page.getTotalPages());
+    }
+
+    /**
+     * Frame List Get 요청에 대한 응답을 반환하는 비즈니스 로직
+     * @return FrameListGetRes
+     * @see Frame
+     * @see com.ssafy.mozzi.db.entity.remote.FrameClip
+     */
+    @Override
+    public FrameListGetRes getFrameList() {
+        Set<Frame> frames = frameRepository.findAllJoinFetch();
+
+        return ItemMapper.toFrameListGetRes(frames);
+    }
+
+    /**
+     * Sticker Get 요청에 대한 응답을 반환하는 비즈니스 로직
+     * @param pageNum int
+     * @param pageSize int
+     * @return ItemStickerGetRes
+     * @see ItemStickerGetRes
+     * @see Sticker
+     */
+    @Override
+    public ItemStickerGetRes getStickerRes(int pageNum, int pageSize) {
+        PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);  // Page 객체를 갖고오기 위한 PageRequest 객체 생성
+        Page<Sticker> page = stickerRepository.findAll(pageRequest);  // Page 객체 생성
+        List<Sticker> stickers = page.getContent();  // Page 의 Method 를 이용하여 Background 객체들의 리스트를 만듦
+
+        return ItemMapper.toItemStickerGetRes(stickers, page.getTotalPages());
+    }
+}
