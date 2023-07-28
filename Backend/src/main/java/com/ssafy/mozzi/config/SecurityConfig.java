@@ -26,8 +26,8 @@ public class SecurityConfig {
     private static final String[] AUTH_WHITELIST = {
         "/users/**", "/items/**"
         , "/h2-console/**" // TODO: remove before deploy
-        // , "/sessions/**"
-        // ,"/"
+        , "/"
+        , "sessions/connections"
     };
 
     private static final String[] OPTION_WHITELIST = {
@@ -37,17 +37,21 @@ public class SecurityConfig {
         , "/"
     };
 
+    private static final String[] AUTH_LIST = {
+        "/sessions"
+    };
+
     @Bean
     protected SecurityFilterChain config(HttpSecurity http) throws Exception {
         // TODO: Need to make authorization and authentication policy, when building community component
         return http.csrf(AbstractHttpConfigurer::disable) // TODO: CSRF setting if need
             .cors(AbstractHttpConfigurer::disable) // TODO: Should determine whether CORS needed or not
             .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                    // .dispatcherTypeMatchers(DispatcherType.ERROR)
-                    .requestMatchers(AUTH_WHITELIST).permitAll()
-                    .anyRequest().authenticated()
-                // .anonymous()
+                .requestMatchers(HttpMethod.OPTIONS).permitAll()  // preflight 로 보내는 요청을 해결
+                .requestMatchers(AUTH_WHITELIST).permitAll()
+                .requestMatchers(HttpMethod.POST, "/sessions").authenticated()  // accessToken 이 필요한 경우
+                .requestMatchers(HttpMethod.GET, "/sessions/**").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "sessions/**").authenticated()
             )
             .headers(headers ->
                 headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
