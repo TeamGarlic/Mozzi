@@ -1,13 +1,34 @@
-import { Clip2Frame, AddClip, Frame2Clip, DragStart, DragEnd, DragClear, Frame2Frame } from "@/modules/clipAction"
+import { Clip2Frame, AddClip, Frame2Clip, DragStart, DragEnd, DragClear, Frame2Frame, setFrame, setClipList } from "@/modules/clipAction"
 
 
 const clipState = {
   frame: {
-    1: {clipIdx: 0, src: "", top:60, left:55},
-    2: {clipIdx: 0, src: "", top:275, left:55},
-    3: {clipIdx: 0, src: "", top:490, left:55},
-    4: {clipIdx: 0, src: "", top:705, left:55}},
-  clipList: {1: "https://www.kmdb.or.kr/trailer/play/MK041673_P02.mp4"},
+    n: 4,
+    src: "",
+    1: {clipIdx: 0, src: "",
+      width : 0.9119170984455959,
+      height : 0.20057471264367815,
+      x : 0.041191773093426164,
+      y : 0.014367816091954023},
+    2: {clipIdx: 0, src: "",
+      width : 0.9136442141623489,
+      height : 0.20057471264367815,
+      x : 0.03773754165992012,
+      y : 0.22988505747126436},
+    3: {clipIdx: 0, src: "",
+      width : 0.9136442141623489,
+      height : 0.20057471264367815,
+      x : 0.039464657376673144,
+      y : 0.4454022988505747},
+    4: {clipIdx: 0, src: "",
+      width : 0.9136442141623489,
+      height : 0.20057471264367815,
+      x : 0.039464657376673144,
+      y : 0.6603448275862069}},
+  clipList: {
+    n: 0,
+    1: "https://www.kmdb.or.kr/trailer/play/MK041673_P02.mp4"
+  },
   drag: {
     start: "",
     end: "",
@@ -18,6 +39,30 @@ const clipState = {
 
 const clipReducer = (state = clipState, action) => {
   switch(action.type){
+    case setFrame: {
+      // params로 frame 객체 그대로 입력
+      const frame = {
+        n: action.payload.frame.rects.length,
+        src: action.payload.frame.url,
+      };
+      for (let i = 0; i < action.payload.frame.rects.length; i++) {
+        frame[i+1] = {
+          clipIdx: 0,
+          src: "",
+          ...action.payload.frame.rects[i]
+        };
+      }
+      return {
+        ...state,
+        frame
+      }
+    }
+    case setClipList: {
+      return {
+        ...state,
+        n: action.payload.n
+      }
+    }
     case Clip2Frame: {
       if (!action.payload.frameIdx){
         for (let idx = 1; idx < 5; idx++) {

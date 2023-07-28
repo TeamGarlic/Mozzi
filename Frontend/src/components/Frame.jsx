@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   Frame2ClipAction,
@@ -6,13 +6,26 @@ import {
   DragStartAction,
   Frame2FrameAction,
 } from "@/modules/clipAction";
-import frame1 from "@/assets/img/frame1.png"
+import frame1 from "@/assets/img/frame6.jpg"
 
 function Frame() {
-  const [frameNum] = useState([1, 2, 3, 4]);
   const frame = useSelector((state) => state.clipReducer.frame);
   const dispatch = useDispatch();
   const drag = useSelector((state) => state.clipReducer.drag);
+  const imgRef = useRef();
+  const frameRef = useRef({});
+  const frameNum = Array.from({length: frame['n']}, (v, i) => i+1);
+  const videoRef = useRef({});
+
+
+  useEffect(() => {
+    frameNum.forEach((i) => {
+      frameRef.current[i].style.height = `${imgRef.current.height*frame[i]['height']}px`;
+      frameRef.current[i].style.width = `${imgRef.current.width*frame[i]['width']}px`;
+      frameRef.current[i].style.top = `${frame[i]['y']*imgRef.current.height}px`;
+      frameRef.current[i].style.left = `${frame[i]['x']*imgRef.current.width}px`;
+    })
+  }, [frame])
 
   function clickVideo(event) {
     dispatch(
@@ -29,7 +42,7 @@ function Frame() {
     );
   }
 
-  function onDragEnd(event) {
+  function onDragEnd() {
     if (drag["end"] === "clip") {
       dispatch(
         Frame2ClipAction({
@@ -38,12 +51,10 @@ function Frame() {
       );
     } else if (drag["end"] === "frame") {
       dispatch(Frame2FrameAction());
-      console.log(event);
     }
   }
 
   function onDrop(event) {
-    console.log(event.target.id.slice(0, 5));
     dispatch(
       DragEndAction({
         end: event.target.id.slice(0, 5),
@@ -60,21 +71,25 @@ function Frame() {
     event.preventDefault();
   }
 
+  function playTogether(){
+    frameNum.forEach((i) => {
+      if (videoRef.current[i]){
+        videoRef.current[i].load();
+      }
+    })
+  }
+
   return (
     <div>
       <div className="relative">
-        <img src={frame1} alt="frame"></img>
+        <img src={frame1} alt="frame" ref={imgRef}></img>
         {frameNum.map((i) => {
-          const frameStyle = {
-            height: "250px",
-            width: "350px",
-            top:`${frame[i]['top']}px`,
-            left:`${frame[i]['left']}px`
-          }
           if (frame[i]["src"]) {
             return (
-              <div key={`frame${i}`} style={frameStyle} className="absolute z-50">
+              <div key={`frame${i}`} className="absolute z-50" ref={(el) => frameRef.current[i] = el}>
                 <video
+                  autoPlay
+                  ref={(el) => videoRef.current[i] = el}
                   src={frame[i]["src"]}
                   onClick={clickVideo}
                   onDragStart={onDragStart}
@@ -91,16 +106,21 @@ function Frame() {
           return (
             <div
               key={`frame${i}`}
-              style={frameStyle}
               className="absolute z-50"
               onDragOver={onDragOver}
               onDragEnter={onDragEnter}
               onDrop={onDrop}
               id={`frame${i}`}
+              ref={(el) => frameRef.current[i] = el}
             ></div>
           );
         })}
       </div>
+
+      <button className="w-1/2 h-10 rounded-3xl bg-yellow-100 shadow-[5px_5px_5px_0px_rgba(0,0,0,0.5)]"
+              onClick={playTogether}>
+        동시재생
+      </button>
     </div>
   );
 }

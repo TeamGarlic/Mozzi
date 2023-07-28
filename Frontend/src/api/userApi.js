@@ -1,41 +1,27 @@
 import axios from "axios";
 
-// 미인증 유저 api axios 객체
 const UserApi = axios.create({
-  // baseUrl : 백엔드 서버 IP
-  baseURL: "user/",
+  baseURL: "https://api.mozzi.lol/users",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// 인증 유저 api axios 객체
-// const UserAuthApi = axios.create({
-//   baseURL: "/",
-//   headers: {
-//       "Content-Type": "application/json"
-//   }
-// });
-
 // 유저 인증, 정보 관련 API
 const userApi = {
   checkId: async (id) => {
-    const res = await UserApi.get(`check-login-id?id=${id}`, {
-      withCredentials: true,
+    const res = await UserApi.get(`check-login-id?userId=${id}`);
+    return res;
+  }, //완
+
+  logIn: async (id, pwd) => {
+    const res = await UserApi.post("login", {
+      userId: id,
+      password: pwd,
     });
     return res;
-  },
-  logIn: async (id, pwd) => {
-    const res = await UserApi.post(
-      "login",
-      {
-        id,
-        pwd,
-      },
-      { withCredentials: true }
-    );
-    return res;
-  },
+  }, //완
+
   // logOut: async (id, pwd) => {
   //   const res = await UserApi.post(
   //     "logout",
@@ -48,18 +34,15 @@ const userApi = {
   //   return res;
   // },
   signUp: async (id, pwd, nickname, email) => {
-    const res = await UserApi.post(
-      "sign-up",
-      {
-        id,
-        pwd,
-        nickname,
-        email,
-      },
-      { withCredentials: true }
-    );
+    const res = await UserApi.post("register", {
+      userId: id,
+      nickname: nickname,
+      email: email,
+      password: pwd,
+    });
     return res;
-  },
+  }, // 완
+
   // signOut: async (id, pwd) => {
   //   const res = await UserApi.post(
   //     "signout",
@@ -96,9 +79,10 @@ const userApi = {
   },
 
   getUser: async (accessToken) => {
-    let res = await UserApi.get("", {
+    let res = await UserApi.get("userinfo", {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+        Authorization: accessToken,
       },
     });
     return res;
