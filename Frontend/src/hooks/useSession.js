@@ -3,51 +3,82 @@ import { OpenVidu } from 'openvidu-browser';
 import boothApi from '@/api/boothApi.js';
 
 function useSession(userName, shareCode) {
-  const [session, setSession] = useState(undefined);
-  const [mainStreamManager, setMainStreamManager] = useState(undefined);
-  const [publisher, setPublisher] = useState(undefined);
+  const [mainSession, setMainSession] = useState(undefined);
+  const [maskSession, setMaskSession] = useState(undefined);
+  const [mainPublisher, setMainPublisher] = useState(undefined);
+  const [maskPublisher, setMaskPublisher] = useState(undefined);
   const [subscribers, setSubscribers] = useState([]);
   const leaveSession = () => {
-    if (session) {
-      session.disconnect();
+    if (mainSession) {
+      mainSession.disconnect();
     }
-    setSession(undefined);
-    setMainStreamManager(undefined);
-    setPublisher(undefined);
+    if (maskSession) {
+      maskSession.disconnect();
+    }
+    setMainSession(undefined);
+    setMaskSession(undefined);
+    setMainPublisher(undefined);
+    setMaskPublisher(undefined);
     setSubscribers([]);
   };
 
 
   const joinSession = async (canvases) => {
     try {
-      const OV = new OpenVidu();
-      const mySession = OV.initSession();
-      setSession(mySession);
+      const mainOV = new OpenVidu();
+      const maskOV = new OpenVidu();
+      const mainSession = mainOV.initSession();
+      const maskSession = maskOV.initSession();
+      setMainSession(mainSession);
+      setMaskSession(maskSession);
 
       // 생성시 이벤트
-      mySession.on('streamCreated', (event) => {
-        const subscriber = mySession.subscribe(event.stream, undefined);
+      mainSession.on('streamCreated', (event) => {
+        const subscriber = mainSession.subscribe(event.stream, undefined);
+        setSubscribers([...subscribers, subscriber]);
+      });
+      // TODO : mask subscribe 필요한지 확인
+      maskSession.on('streamCreated', (event) => {
+        const subscriber = maskSession.subscribe(event.stream, undefined);
         setSubscribers([...subscribers, subscriber]);
       });
 
       // 언마운트시 이벤트
-      mySession.on('streamDestroyed', (event) => {
+      mainSession.on('streamDestroyed', (event) => {
+        deleteSubscriber(event.stream.streamManager);
+      });
+      // TODO : mask unsubscribe 필요한지 확인
+      maskSession.on('streamDestroyed', (event) => {
         deleteSubscriber(event.stream.streamManager);
       });
 
       // 예외 처리
-      mySession.on('exception', (exception) => {
+      mainSession.on('exception', (exception) => {
+        console.warn(exception);
+      });
+      maskSession.on('exception', (exception) => {
         console.warn(exception);
       });
 
 
-      const token = await getToken(shareCode);
+      const mainToken = await getToken(shareCode);
+      const maskToken = await getToken(shareCode);
 
 
-      mySession.connect(token, { clientData: userName });
+      mainSession.connect(mainToken, { clientData: userName });
+      maskSession.connect(maskToken, { clientData: userName+"_mask" });
 
 
-      const publisher = await OV.initPublisherAsync(undefined, {
+      const mainPublisher = await mainOV.initPublisherAsync(undefined, {
+        audioSource: undefined,
+        videoSource: canvases[1].current.captureStream(30).getVideoTracks()[0],
+        publishAudio: true,
+        publishVideo: true,
+        frameRate: 30,
+        insertMode: 'APPEND',
+        mirror: false,
+      });
+      const maskPublisher = await maskOV.initPublisherAsync(undefined, {
         audioSource: undefined,
         videoSource: canvases[1].current.captureStream(30).getVideoTracks()[0],
         publishAudio: true,
@@ -58,12 +89,10 @@ function useSession(userName, shareCode) {
       });
 
 
-      mySession.publish(publisher);
-
-
-      setMainStreamManager(publisher);
-      setPublisher(publisher);
-      console.log(subscribers)
+      mainSession.publish(mainPublisher);
+      maskSession.publish(maskPublisher);
+      setMainPublisher(mainPublisher);
+      setMaskPublisher(maskPublisher);
     } catch (error) {
       console.log('There was an error connecting to the session:', error.code, error.message);
     }
@@ -112,7 +141,7 @@ function useSession(userName, shareCode) {
 
   },[]);
 
-  return {session, mainStreamManager, publisher, subscribers, joinSession } ;
+  return { mainSession, maskSession, subscribers, joinSession } ;
 }
 
 export default useSession;
