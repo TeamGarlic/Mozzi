@@ -7,6 +7,7 @@ build/
 
 ### Keys ###
 application-keys.properties
+oci_api_config
 
 ### STS ###
 .apt_generated
