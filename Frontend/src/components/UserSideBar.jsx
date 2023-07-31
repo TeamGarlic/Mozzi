@@ -9,9 +9,9 @@ export default function UserSideBar() {
     { name: "홍길동" },
     { name: "박길동" },
     { name: "최길동" },
-    { name: "홍길동" },
-    { name: "홍길동" },
-    { name: "홍길동" },
+    { name: "김길동" },
+    { name: "곽길동" },
+    { name: "정길동" },
   ];
   return (
     <Card
