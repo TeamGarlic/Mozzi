@@ -7,7 +7,7 @@ function Chat({sendMessage, chatLists}) {
   const [visible, setVisible] = useState(false);
   console.log(chatLists);
 
-    const [user, setUser] = useState("ssumthingood");
+    const [user, setUser] = useState("junhong");
   return (
     <div className="fixed bottom-5 right-5">
       {visible &&

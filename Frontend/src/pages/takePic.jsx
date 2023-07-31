@@ -1,6 +1,6 @@
 import { useState } from "react";
 // import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import PicSideBar from "../components/PicSideBar";
 import Layout from "../components/Layout";
 import BigCam from "../components/BigCam";
@@ -53,7 +53,7 @@ function TakePic({ shareCode, sendMessage, chatLists }) {
       // Todo: taken에 따른 로직 take 함수에 넣기(비동기 필요)
       if (taken == 4) {
         // console.log(clipList);
-        navigate("/0/aftertake");
+        navigate(`/${shareCode}/aftertake`);
       } else {
         // console.log(clipList);
         setTaken(taken + 1);
