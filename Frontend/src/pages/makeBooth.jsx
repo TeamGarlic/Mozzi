@@ -3,10 +3,10 @@ import UserSideBar from "../components/UserSideBar";
 import EnterDialog from "@/components/EnterDialog";
 import PropTypes from "prop-types";
 import { useState } from "react";
-import { resetCamCanvasesAction } from '@/modules/canvasAction.js';
-import { useDispatch } from 'react-redux';
+import { resetCamCanvasesAction } from "@/modules/canvasAction.js";
+import { useDispatch } from "react-redux";
 
-function MakeBooth({ startTake }) {
+function MakeBooth({ startTake, shareCode }) {
   const [visibility, setVisibility] = new useState(true);
   const [toggleVoice, setToggleVoice] = new useState(true);
   const dispatch = useDispatch();
@@ -30,7 +30,7 @@ function MakeBooth({ startTake }) {
           <div className="w-full h-screen p-4 flex-col">
             <div>
               <div className=" text-sm text-gray-500">
-                초대 코드 : XXX_XXX_XXX
+                초대 코드 : {shareCode}
               </div>
               <div className="text-2xl">MOZZI</div>
             </div>
@@ -66,4 +66,5 @@ export default MakeBooth;
 
 MakeBooth.propTypes = {
   startTake: PropTypes.func,
+  shareCode: PropTypes.string,
 };

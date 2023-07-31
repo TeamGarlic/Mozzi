@@ -39,9 +39,14 @@ function Start() {
     try {
       let res = await boothApi.joinBooth(code.value);
       console.log(res);
+      const {
+        data: {
+          data: { shareCode },
+        },
+      } = res;
+      navigate(`/${shareCode}/booth`);
     } catch {
-      alert("대충 부스가 있다 침");
-      location.href = `/${code.value}/booth`;
+      alert("존재하지 않는 부스입니다.");
     }
   }
   return (

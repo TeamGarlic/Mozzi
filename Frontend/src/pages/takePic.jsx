@@ -1,52 +1,51 @@
 import { useState } from "react";
 // import { Link } from "react-router-dom";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PicSideBar from "../components/PicSideBar";
 import Layout from "../components/Layout";
 import BigCam from "../components/BigCam";
 import Chat from "@/components/Chat";
+import PropTypes from "prop-types";
 import MyRadioGroup from "@/components/MyRadioGroup";
-import {useSelector, useDispatch} from "react-redux";
-import {AddClipAction} from "@/modules/clipAction";
+import { useSelector, useDispatch } from "react-redux";
+import { AddClipAction } from "@/modules/clipAction";
 
-function TakePic() {
+function TakePic({ shareCode }) {
   const [taken, setTaken] = new useState(1);
   const timers = [3, 5, 10];
   const [timer, setTimer] = useState(3);
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
   var interval;
-  const mainCanvas = useSelector(state => state.canvasReducer.mainCanvas);
+  const mainCanvas = useSelector((state) => state.canvasReducer.mainCanvas);
   let mediaRecorder = null;
   const arrClipData = [];
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // const clipList = useSelector(state => state.clipReducer.clipList);
-  function recordClip(idx){
+  function recordClip(idx) {
     const mediaStream = mainCanvas.canvas.current.captureStream();
     mediaRecorder = new MediaRecorder(mediaStream);
-    mediaRecorder.ondataavailable = (event)=>{
+    mediaRecorder.ondataavailable = (event) => {
       arrClipData.push(event.data);
-    }
-    mediaRecorder.onstop = ()=>{
+    };
+    mediaRecorder.onstop = () => {
       const blob = new Blob(arrClipData);
 
       // blob 데이터를 활용해 webm 파일로 변환
-      const ClipFile = new File(
-        [blob],
-        `clip${idx}.webm`,
-        {type: 'video/webm'}
-      )
+      const ClipFile = new File([blob], `clip${idx}.webm`, {
+        type: "video/webm",
+      });
       // Todo: webm file url => 백엔드와 통신해서 url 주소를 재설정 해야함
       const fileURL = window.URL.createObjectURL(ClipFile);
-      dispatch(AddClipAction({idx, src:fileURL}));
+      dispatch(AddClipAction({ idx, src: fileURL }));
       arrClipData.splice(0);
-    }
+    };
 
     // 녹화 시작
     mediaRecorder.start();
     // Todo: 현재는 시간에 dependent => 프레임 단위로 전환 필요함
-    setTimeout(()=>{
+    setTimeout(() => {
       // 녹화 종료
       mediaRecorder.stop();
       console.log(idx);
@@ -58,8 +57,7 @@ function TakePic() {
         // console.log(clipList);
         setTaken(taken + 1);
       }
-    }, 5000)
-
+    }, 5000);
   }
   function timeChange(e) {
     setTimer(e.target.value);
@@ -101,7 +99,7 @@ function TakePic() {
         <div className="w-full pt-4 ps-4">
           <div>
             <div className=" text-sm text-gray-500">
-              초대 코드 : XXX_XXX_XXX
+              초대 코드 : {shareCode}
             </div>
             <div className="text-2xl">MOZZI</div>
           </div>
@@ -139,3 +137,8 @@ function TakePic() {
 }
 
 export default TakePic;
+
+TakePic.propTypes = {
+  startTake: PropTypes.func,
+  shareCode: PropTypes.string,
+};

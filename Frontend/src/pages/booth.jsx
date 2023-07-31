@@ -1,22 +1,28 @@
-import { useEffect, useRef, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useEffect, useRef, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
-  resetCamCanvasesAction, setMyLayerSourceAction,
-} from '@/modules/canvasAction.js';
-import MakeBooth from './makeBooth';
-import TakePic from './takePic';
-import { useParams } from 'react-router-dom';
-import { SelfieSegmentation } from '@mediapipe/selfie_segmentation';
-import { drawCanvas, drawMyVid } from '@/utils/videoUtil.js';
-import useSession from '@/hooks/useSession.js';
-import {changeBgAction} from "@/modules/bgAction.js"
+  resetCamCanvasesAction,
+  setMyLayerSourceAction,
+} from "@/modules/canvasAction.js";
+import MakeBooth from "./makeBooth";
+import TakePic from "./takePic";
+import { useParams } from "react-router-dom";
+import { SelfieSegmentation } from "@mediapipe/selfie_segmentation";
+import { drawCanvas, drawMyVid } from "@/utils/videoUtil.js";
+import useSession from "@/hooks/useSession.js";
+import { changeBgAction } from "@/modules/bgAction.js";
+import useUser from "@/hooks/useUser";
 
 function Booth() {
   const [taking, setTaking] = useState(false);
   const { code: shareCode } = useParams();
   const dispatch = useDispatch();
   // console.log(sessionID);
-  const {session, mainStreamManager, publisher, subscribers, joinSession } = useSession("Testing", shareCode);
+  const { user, checkUser } = useUser();
+  console.log(user);
+  checkUser();
+  const { session, mainStreamManager, publisher, subscribers, joinSession } =
+    useSession(user, shareCode);
 
   // 소스 웹캠 video
   const webcamRef = useRef();
@@ -38,12 +44,17 @@ function Booth() {
     setTaking(true);
   }
 
-
   const onResults = (results) => {
     // 로컬 웹캠의 한 프레임이 처리될 때 마다 실행되는 함수들
 
     // 내 웹캠을 담을 canvas (화면에 표시 x)
-    drawMyVid(bgRemovedRef, bgRemovedContextRef, results, bgMaskRef, bgMaskContextRef);
+    drawMyVid(
+      bgRemovedRef,
+      bgRemovedContextRef,
+      results,
+      bgMaskRef,
+      bgMaskContextRef
+    );
     // console.log(camCanvases)
     // TODO : camCanvases 리렌더링 안되는 오류 수정
     camCanvases.forEach((e) => {
@@ -51,22 +62,22 @@ function Booth() {
     });
 
     // TODO : 한 레이어만 그리는 샘플 코드 지우기
-    if(mainCanvas.canvas) drawCanvas(mainCanvas.canvas,mainCanvas.context,bgNow.img,[myLayer]);
+    if (mainCanvas.canvas)
+      drawCanvas(mainCanvas.canvas, mainCanvas.context, bgNow.img, [myLayer]);
 
     // TODO : 캔버스에 그리기
     // drawCanvas(canvasRef,canvasContextRef,bgImg,layers);
   };
 
-
   useEffect(() => {
     // TODO : bgImg를 Redux에서 관리
     const bgImg = new Image();
-    bgImg.src = '/src/assets/img/bg1.jpg';
+    bgImg.src = "/src/assets/img/bg1.jpg";
     bgImg.crossOrigin = "anonymous";
-    dispatch(changeBgAction({img: bgImg}))
+    dispatch(changeBgAction({ img: bgImg }));
 
-    bgRemovedContextRef.current = bgRemovedRef.current.getContext('2d');
-    bgMaskContextRef.current = bgMaskRef.current.getContext('2d');
+    bgRemovedContextRef.current = bgRemovedRef.current.getContext("2d");
+    bgMaskContextRef.current = bgMaskRef.current.getContext("2d");
     const constraints = {
       video: { width: { max: 1280 }, height: { max: 720 } },
     };
@@ -81,28 +92,34 @@ function Booth() {
     selfieSegmentation.setOptions({
       modelSelection: 1,
       selfieMode: true,
-  });
-  selfieSegmentation.onResults(onResults);
-  const sendToMediaPipe = async () => {
-    if (!webcamRef.current.videoWidth) {
-      requestAnimationFrame(sendToMediaPipe);
-    } else {
-      await selfieSegmentation.send({ image: webcamRef.current });
-      requestAnimationFrame(sendToMediaPipe);
-    }
-  };
-  dispatch(setMyLayerSourceAction({
-    canvas:bgRemovedRef
-  }))
-  joinSession([bgRemovedRef,bgMaskRef]);
+    });
+    selfieSegmentation.onResults(onResults);
+    const sendToMediaPipe = async () => {
+      if (!webcamRef.current.videoWidth) {
+        requestAnimationFrame(sendToMediaPipe);
+      } else {
+        await selfieSegmentation.send({ image: webcamRef.current });
+        requestAnimationFrame(sendToMediaPipe);
+      }
+    };
+    dispatch(
+      setMyLayerSourceAction({
+        canvas: bgRemovedRef,
+      })
+    );
+    joinSession([bgRemovedRef, bgMaskRef]);
   }, []);
 
   return (
     <>
-      {!taking ? <MakeBooth startTake={startTake} /> : <TakePic />}
-      <video autoPlay ref={webcamRef} className='hidden' />
-      <canvas ref={bgRemovedRef} className='hidden' />
-      <canvas ref={bgMaskRef} className='hidden' />
+      {!taking ? (
+        <MakeBooth startTake={startTake} shareCode={shareCode} />
+      ) : (
+        <TakePic shareCode={shareCode} />
+      )}
+      <video autoPlay ref={webcamRef} className="hidden" />
+      <canvas ref={bgRemovedRef} className="hidden" />
+      <canvas ref={bgMaskRef} className="hidden" />
     </>
   );
 }
