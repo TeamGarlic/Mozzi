@@ -24,18 +24,8 @@ export default function PicSideBar() {
   const [menu, setMenu] = useState(0);
 
   return (
-    <div className="fixed z-10 top-0 right-0">
-      <div className="flex">
-        <div className="flex flex-col float-right gap-3 p-4">
-          {/* {buttons.map((btn) => (
-            <button
-              type="button"
-              onClick={() => (menu === btn.idx ? setMenu(0) : setMenu(btn.idx))}
-              key={btn.word}
-            >
-              {btn.word}
-            </button>
-          ))} */}
+      <>
+        <div className={`fixed z-10 flex-col gap-3 p-4 h-fit top-5 ${menu === 0 ? "right-0" : "right-64"}`}>
           <div className=" w-10 h-10">
             <UsersIcon onClick={() => (menu === 1 ? setMenu(0) : setMenu(1))} />
           </div>
@@ -45,6 +35,7 @@ export default function PicSideBar() {
             />
           </div>
         </div>
+    <div className="fixed z-10 top-0 right-0 flex">
         <Card
           id="sideMenu"
           className={`h-screen w-[calc(16rem)] shadow-xl shadow-blue-gray-900/5 p-4 overflow-y-scroll bg-white scrollbar-hide rounded-e-none ${
@@ -66,7 +57,7 @@ export default function PicSideBar() {
           )}
           {menu === 3 && <div>대충 스티커</div>}
         </Card>
-      </div>
     </div>
+        </>
   );
 }
