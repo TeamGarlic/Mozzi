@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import { OpenVidu } from 'openvidu-browser';
-import axios from 'axios';
-
-// TODO : APPLICATION_SERVER_URL 삭제하고 boothApi.js 안의 메소드 사용
-const APPLICATION_SERVER_URL = 'https://ssafyscheduler.ddns.net:40000/';
+import boothApi from '@/api/boothApi.js';
 
 function useSession(userName, shareCode) {
   const [session, setSession] = useState(undefined);
@@ -44,7 +41,7 @@ function useSession(userName, shareCode) {
       });
 
 
-      const token = await getToken();
+      const token = await getToken(shareCode);
 
 
       mySession.connect(token, { clientData: userName });
@@ -81,36 +78,23 @@ function useSession(userName, shareCode) {
   };
 
 
-  const getToken = async () => {
-    const receivedId = await createSession(shareCode);
-    return await createToken(receivedId);
+  const getToken = async (code) => {
+    let idRes = await boothApi.getSessionID(code);
+    // console.log(idRes);
+    const {
+      data: {
+        data: { sessionId },
+      },
+    } = idRes;
+    let tokenRes = await boothApi.getToken(sessionId);
+    // console.log(tokenRes);
+    const {
+      data: {
+        data: { token },
+      },
+    } = tokenRes;
+    return token;
   };
-
-
-  // TODO : @/api/boothApi.js 에 합치기
-  const createSession = async (sessionId) => {
-    const response = await axios.post(
-      APPLICATION_SERVER_URL + 'api/sessions',
-      { customSessionId: sessionId },
-      {
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
-    return response.data; // The sessionId
-  };
-
-  // TODO : @/api/boothApi.js 에 합치기
-  const createToken = async (sessionId) => {
-    const response = await axios.post(
-      APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
-      {},
-      {
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
-    return response.data; // The token
-  };
-
 
   useEffect(()=>{
     // TODO : userName, sessionId 설정 (이 위치에서 할 필요는 없음)
