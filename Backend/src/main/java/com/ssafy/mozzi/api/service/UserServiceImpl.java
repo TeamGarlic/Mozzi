@@ -185,6 +185,7 @@ public class UserServiceImpl implements UserService {
 
         return BaseResponseBody.<String>builder()
             .message("logout success")
+            .data("")
             .build();
     }
 }
