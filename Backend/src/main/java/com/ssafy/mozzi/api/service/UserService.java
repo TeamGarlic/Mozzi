@@ -25,4 +25,6 @@ public interface UserService {
     BaseResponseBody<UserIdCheckRes> userIdCheck(String userId);
 
     BaseResponseBody<UserInfoRes> getUserInfo(String accessToken);
+
+    BaseResponseBody<String> logout(String accessToken);
 }

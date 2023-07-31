@@ -166,4 +166,25 @@ public class UserServiceImpl implements UserService {
             .data(UserMapper.toUserInfoRes(user))
             .build();
     }
+
+    /**
+     *  헤더에서 입력받은 accessToken 으로 유저의 리프레쉬 토큰을 null 값으로 변경하는 로직
+     * @param accessToken String
+     * @return BaseResponseBody<String>
+     */
+    @Override
+    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
+    public BaseResponseBody<String> logout(String accessToken) {
+        User user = findUserByToken(accessToken);
+
+        if (user == null) {
+            throw new UserIdNotExistsException("user not exists");
+        }
+
+        user.setRefreshToken(null);
+
+        return BaseResponseBody.<String>builder()
+            .message("logout success")
+            .build();
+    }
 }
