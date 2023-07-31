@@ -21,7 +21,7 @@ function Booth() {
   const { user, checkUser } = useUser();
   console.log(user);
   checkUser();
-  const { mainSession, maskSession, subscribers, joinSession } =
+  const { mainSession, maskSession, subscribers, joinSession, sendMessage, chatLists } =
     useSession(user, shareCode);
 
   // 소스 웹캠 video
@@ -103,17 +103,12 @@ function Booth() {
     joinSession([bgRemovedRef, bgMaskRef]);
   }, []);
 
-  useEffect(() => {
-    console.log(subscribers);
-  }, [subscribers]);
-
-
   return (
     <>
       {!taking ? (
         <MakeBooth startTake={startTake} shareCode={shareCode} />
       ) : (
-        <TakePic shareCode={shareCode} />
+        <TakePic shareCode={shareCode} sendMessage={sendMessage} chatLists={chatLists}/>
       )}
       <video autoPlay ref={webcamRef} className="hidden" />
       <canvas ref={bgRemovedRef} className="hidden" />
