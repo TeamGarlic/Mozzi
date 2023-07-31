@@ -1,25 +1,13 @@
 import { useState } from "react";
 import { ChatBubbleOvalLeftEllipsisIcon as ShowChat } from "@heroicons/react/24/outline";
 import { ChatBubbleOvalLeftEllipsisIcon as HideChat } from "@heroicons/react/24/solid";
-function Chat() {
+import PropTypes from "prop-types";
+
+function Chat({sendMessage, chatLists}) {
   const [visible, setVisible] = useState(false);
-  const messageList = [
-      {name:"junhong", text:"msg1"},
-      {name:"ssumthingood", text:"msg1"},
-      {name:"minjung", text:"msg1"},
-      {name:"changjae", text:"msg1"},
-      {name:"woojung", text:"msg1"},
-      {name:"taeyoung", text:"msg1"},
-      {name:"minkyu", text:"msg1"},
-      {name:"guest1", text:"msg1"},
-      {name:"guest1", text:"msg1"},
-      {name:"guest2", text:"msg1"},
-      {name:"guest2", text:"msg1"},
-      {name:"guest2", text:"msg1"},
-      {name:"guest2", text:"msg1"},
-      {name:"guest2", text:"msg1"},
-  ]
-    const [user] = useState("ssumthingood");
+  console.log(chatLists);
+
+    const [user, setUser] = useState("junhong");
   return (
     <div className="fixed bottom-5 right-5">
       {visible &&
@@ -27,24 +15,25 @@ function Chat() {
           <div className="text-2xl p-5">채팅</div>
           <hr/>
           <div className="overflow-scroll p-5 h-72 scrollbar-hide">
-              {messageList.map(item=>{
-                  return(item.name === user ?
+              {chatLists && chatLists.map(item=>{
+                  return(item.from === user ?
                       <div>
                           <div className="text-right flex-col pb-2">
-                              <div className="text-sm text-gray-500">{item.name}</div>
-                              <div>{item.text}</div>
+                              <div className="text-sm text-gray-500">{item.from}</div>
+                              <div>{item.message}</div>
                           </div>
                       </div>
                       :
                       <div>
                           <div className="text-left flex-col pb-2">
-                              <div className="text-sm text-gray-500">{item.name}</div>
-                              <div>{item.text}</div>
+                              <div className="text-sm text-gray-500">{item.from}</div>
+                              <div>{item.message}</div>
                           </div>
                       </div>)
               })
           }
           </div>
+              <button onClick={()=>sendMessage("ssumthingood")}>send</button>
         </div>
       }
       <div className=" w-10 h-10 float-right">
@@ -67,3 +56,8 @@ function Chat() {
 }
 
 export default Chat;
+
+Chat.propTypes = {
+    sendMessage: PropTypes.func,
+    chatLists : PropTypes.array
+};

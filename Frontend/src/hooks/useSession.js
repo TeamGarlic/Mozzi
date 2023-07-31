@@ -8,6 +8,7 @@ function useSession(userName, shareCode) {
   const [mainPublisher, setMainPublisher] = useState(undefined);
   const [maskPublisher, setMaskPublisher] = useState(undefined);
   const [subscribers, setSubscribers] = useState([]);
+  const [chatLists, setChatLists] = useState([]);
   const leaveSession = () => {
     if (mainSession) {
       mainSession.disconnect();
@@ -39,8 +40,19 @@ function useSession(userName, shareCode) {
       });
       // TODO : mask subscribe 필요한지 확인
       maskSession.on('streamCreated', (event) => {
-        const subscriber = maskSession.subscribe(event.stream, undefined);
-        setSubscribers([...subscribers, subscriber]);
+          const subscriber = maskSession.subscribe(event.stream, undefined);
+          setSubscribers([...subscribers, subscriber]);
+        });
+
+        // 채팅 수신
+        mainSession.on('signal:chat',event=>{
+          console.log(event);
+          let data = {...JSON.parse(event.data), id:event.from.connectionId};
+          setChatLists((prev)=>{
+            return [...prev, data]
+        }).then(()=>{
+          console.log(chatLists);
+          })
       });
 
       // 언마운트시 이벤트
@@ -98,6 +110,15 @@ function useSession(userName, shareCode) {
     }
   };
 
+  const sendMessage=(message)=>{
+    mainSession.signal({
+      data: JSON.stringify({from : userName,
+      message : message}),  // Any string (optional)
+      to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
+      type: 'chat'            // The type of message (optional)
+    })
+  }
+
 
   const deleteSubscriber = (streamManager) => {
     const newSubscribers = [...subscribers];
@@ -141,7 +162,7 @@ function useSession(userName, shareCode) {
 
   },[]);
 
-  return { mainSession, maskSession, subscribers, joinSession } ;
+  return { mainSession, maskSession, subscribers, joinSession, sendMessage, chatLists} ;
 }
 
 export default useSession;

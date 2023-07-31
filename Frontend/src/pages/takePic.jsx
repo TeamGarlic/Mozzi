@@ -1,6 +1,6 @@
 import { useState } from "react";
 // import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import PicSideBar from "../components/PicSideBar";
 import Layout from "../components/Layout";
 import BigCam from "../components/BigCam";
@@ -10,12 +10,13 @@ import MyRadioGroup from "@/components/MyRadioGroup";
 import { useSelector, useDispatch } from "react-redux";
 import { AddClipAction } from "@/modules/clipAction";
 
-function TakePic({ shareCode }) {
-  const [taken, setTaken] = new useState(1);
+function TakePic({ shareCode, sendMessage, chatLists }) {
   const timers = [3, 5, 10];
+  const [taken, setTaken] = new useState(1);
   const [timer, setTimer] = useState(3);
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
+
   var interval;
   const mainCanvas = useSelector((state) => state.canvasReducer.mainCanvas);
   let mediaRecorder = null;
@@ -52,7 +53,7 @@ function TakePic({ shareCode }) {
       // Todo: taken에 따른 로직 take 함수에 넣기(비동기 필요)
       if (taken == 4) {
         // console.log(clipList);
-        navigate("/0/aftertake");
+        navigate(`/${shareCode}/aftertake`);
       } else {
         // console.log(clipList);
         setTaken(taken + 1);
@@ -95,7 +96,7 @@ function TakePic({ shareCode }) {
   return (
     <Layout>
       <>
-        <Chat />
+        <Chat sendMessage = {sendMessage} chatLists={chatLists}/>
         <div className="w-full pt-4 ps-4">
           <div>
             <div className=" text-sm text-gray-500">
@@ -141,4 +142,6 @@ export default TakePic;
 TakePic.propTypes = {
   startTake: PropTypes.func,
   shareCode: PropTypes.string,
+  sendMessage: PropTypes.func,
+  chatLists : PropTypes.array
 };
