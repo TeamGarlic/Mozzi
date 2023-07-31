@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.mozzi.api.request.UserLoginPostReq;
 import com.ssafy.mozzi.api.request.UserRegisterPostReq;
+import com.ssafy.mozzi.api.request.UserUpdatePutReq;
 import com.ssafy.mozzi.api.request.reissuePostReq;
 import com.ssafy.mozzi.api.response.UserIdCheckRes;
 import com.ssafy.mozzi.api.response.UserInfoRes;
@@ -146,5 +148,10 @@ public class UserController {
             .body(
                 userService.logout(accessToken)
             );
+    }
+
+    @PutMapping
+    public ResponseEntity<String> update(@RequestBody UserUpdatePutReq request) {
+        return userService.update(request);
     }
 }

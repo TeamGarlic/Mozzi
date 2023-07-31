@@ -1,7 +1,10 @@
 package com.ssafy.mozzi.api.service;
 
+import org.springframework.http.ResponseEntity;
+
 import com.ssafy.mozzi.api.request.UserLoginPostReq;
 import com.ssafy.mozzi.api.request.UserRegisterPostReq;
+import com.ssafy.mozzi.api.request.UserUpdatePutReq;
 import com.ssafy.mozzi.api.request.reissuePostReq;
 import com.ssafy.mozzi.api.response.UserIdCheckRes;
 import com.ssafy.mozzi.api.response.UserInfoRes;
@@ -27,4 +30,6 @@ public interface UserService {
     BaseResponseBody<UserInfoRes> getUserInfo(String accessToken);
 
     BaseResponseBody<String> logout(String accessToken);
+
+    ResponseEntity<String> update(UserUpdatePutReq request);
 }
