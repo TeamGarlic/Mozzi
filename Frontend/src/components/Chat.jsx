@@ -1,20 +1,37 @@
-import { useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import { ChatBubbleOvalLeftEllipsisIcon as ShowChat } from "@heroicons/react/24/outline";
 import { ChatBubbleOvalLeftEllipsisIcon as HideChat } from "@heroicons/react/24/solid";
 import PropTypes from "prop-types";
+import useInput from "@/hooks/useInput.js";
+import TextInput from "@/components/TextInput.jsx";
 
 function Chat({sendMessage, chatLists}) {
   const [visible, setVisible] = useState(false);
-  console.log(chatLists);
+    const chattingLog = useRef();
+    const msg  = useInput();
+  function send(){
+      if(msg.value.length ===0) return;
+      sendMessage(msg.value);
+      msg.reset();
+      setTimeout(() => {
+          chattingLog.current.scrollTop = chattingLog.current.scrollHeight
+      }, 100)
+  }
+
+  // useEffect(()=>{
+  //     setTimeout(() => {
+  //         chattingLog.current.scrollTop = chattingLog.current.scrollHeight
+  //     }, 20)
+  // },[chatLists])
 
     const [user, setUser] = useState("junhong");
   return (
-    <div className="fixed bottom-5 right-5">
+    <div className="fixed bottom-5 right-5 z-20">
       {visible &&
-          <div className="flex-col w-80 h-96 rounded-xl bg-white">
-          <div className="text-2xl p-5">채팅</div>
+          <div className="flex-col w-80 h-fit rounded-xl bg-white">
+          <div className=" text-lg p-3">채팅</div>
           <hr/>
-          <div className="overflow-scroll p-5 h-72 scrollbar-hide">
+          <div className="overflow-scroll p-3 h-72 scrollbar-hide" ref={chattingLog}>
               {chatLists && chatLists.map(item=>{
                   return(item.from === user ?
                       <div>
@@ -33,7 +50,10 @@ function Chat({sendMessage, chatLists}) {
               })
           }
           </div>
-              <button onClick={()=>sendMessage("ssumthingood")}>send</button>
+              <div className="flex p-3 border-t-2 gap-1">
+                  <TextInput placeholder="채팅 입력..." type="text" {...msg}/>
+                  <button onClick={send} className="rounded-xl bg-blue-500 text-white w-1/3 my-2">보내기</button>
+          </div>
         </div>
       }
       <div className=" w-10 h-10 float-right">
