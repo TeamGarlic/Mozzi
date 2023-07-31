@@ -7,11 +7,6 @@ const BoothApi = axios.create({
 });
 
 const boothApi = {
-  startConnect: async () => {
-    const res = await BoothApi.post("connections");
-    return res;
-  },
-
   createBooth: async (accessToken) => {
     const res = await BoothApi.post(
       "",
@@ -27,8 +22,19 @@ const boothApi = {
     return res;
   }, // 완
 
-  joinBooth: async (shareCode) => {
+  getSessionID: async (shareCode) => {
     const res = await BoothApi.get(`${shareCode}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return res;
+  },
+
+  getToken: async (sessionID) => {
+    const res = await BoothApi.post(`connections`, {
+      "sessionId" : sessionID,
+    },{
       headers: {
         "Content-Type": "application/json",
       },
