@@ -26,7 +26,7 @@ function Start() {
     }
 
     let res = await boothApi.createBooth(localStorage.getItem("accessToken"));
-    console.log(res);
+    // console.log(res);
     const {
       data: {
         data: { shareCode },
@@ -37,11 +37,16 @@ function Start() {
 
   async function gotoBooth() {
     try {
-      let res = await boothApi.joinBooth(code.value);
-      console.log(res);
+      let res = await boothApi.getSessionID(code.value);
+      // console.log(res);
+      const {
+        data: {
+          data: { shareCode },
+        },
+      } = res;
+      navigate(`/${shareCode}/booth`);
     } catch {
-      alert("대충 부스가 있다 침");
-      location.href = `/${code.value}/booth`;
+      alert("부스가 없습니다.");
     }
   }
   return (
