@@ -14,10 +14,7 @@ import com.ssafy.mozzi.db.entity.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -28,7 +25,7 @@ import lombok.NoArgsConstructor;
 /**
  * User JPA Entity(Model)
  *
- * @see Clip
+ * @see Mozzilol
  */
 @SuppressWarnings("checkstyle:RegexpMultiline")
 @Entity
@@ -66,13 +63,11 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Boolean deleted = false;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "user_clip",
-        joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-        inverseJoinColumns = {@JoinColumn(name = "clip_id", referencedColumnName = "id")}
-    )
-    private Set<Clip> clips = new HashSet<>();
+    @OneToMany(mappedBy = "user")
+    private Set<UserMozzilol> userMozzilols = new HashSet<>();
+
+    @OneToMany(mappedBy = "likedUser")
+    private Set<MozzilolLike> likedMozzilols = new HashSet<>();
 
     @Size(max = 150)
     private String refreshToken;
