@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { Card } from "@material-tailwind/react";
 import { useRef, useEffect } from "react";
-import UserCard from "./UserCard";
+// import UserCard from "./UserCard";
 import TextInput from "./TextInput";
+import UserVideoComponent from "./UserVideoComponents";
 import PropTypes from "prop-types";
-// import SmallCam from "./SmallCam";
 
 export default function UserSideBar({ subscribers, mainPublisher }) {
   const myRef = useRef();
@@ -30,12 +30,19 @@ export default function UserSideBar({ subscribers, mainPublisher }) {
         <video autoPlay ref={myRef} />
         <hr />
         {/* <SmallCam /> */}
-        {subscribers.map((item) => (
-          <UserCard
-            userName={item.stream.connection.connectionId}
-            key={item.stream.connection.connectionId}
-          />
-        ))}
+        {subscribers &&
+          subscribers.map((sub) => (
+            <>
+              {/* <UserCard
+              userName={sub.stream.connection.connectionId}
+              key={sub.stream.connection.connectionId}
+            /> */}
+              <div key={sub.id} className="stream-container col-md-6 col-xs-6">
+                <span>{sub.id}</span>
+                <UserVideoComponent sub={sub} />
+              </div>
+            </>
+          ))}
       </ul>
       <div className="px-4">
         <TextInput type="text" placeholder="이름 변경..." className="" />

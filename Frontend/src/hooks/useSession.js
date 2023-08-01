@@ -49,8 +49,6 @@ function useSession(userName, shareCode) {
         let data = { ...JSON.parse(event.data), id: event.from.connectionId };
         setChatLists((prev) => {
           return [...prev, data];
-        }).then(() => {
-          console.log(chatLists);
         });
       });
 
