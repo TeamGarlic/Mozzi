@@ -1,6 +1,7 @@
 package com.ssafy.mozzi.common.util.mapper;
 
 import com.ssafy.mozzi.api.request.UserRegisterPostReq;
+import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
 import com.ssafy.mozzi.api.response.reissuePostRes;
@@ -50,6 +51,15 @@ public class UserMapper {
             .id(user.getId().toString())
             .userId(user.getUserId())
             .password(user.getPassword())
+            .email(user.getEmail())
+            .build();
+    }
+
+    public static UserInfoRes toUserInfoRes(User user) {
+        return UserInfoRes.builder()
+            .Id(user.getId())
+            .userId(user.getUserId())
+            .userNickName(user.getNickname())
             .email(user.getEmail())
             .build();
     }

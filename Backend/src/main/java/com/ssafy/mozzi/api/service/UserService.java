@@ -4,6 +4,7 @@ import com.ssafy.mozzi.api.request.UserLoginPostReq;
 import com.ssafy.mozzi.api.request.UserRegisterPostReq;
 import com.ssafy.mozzi.api.request.reissuePostReq;
 import com.ssafy.mozzi.api.response.UserIdCheckRes;
+import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
 import com.ssafy.mozzi.api.response.reissuePostRes;
@@ -22,4 +23,6 @@ public interface UserService {
     reissuePostRes reissue(reissuePostReq reissueInfo);
 
     BaseResponseBody<UserIdCheckRes> userIdCheck(String userId);
+
+    BaseResponseBody<UserInfoRes> getUserInfo(String accessToken);
 }

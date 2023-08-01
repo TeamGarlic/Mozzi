@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +16,7 @@ import com.ssafy.mozzi.api.request.UserLoginPostReq;
 import com.ssafy.mozzi.api.request.UserRegisterPostReq;
 import com.ssafy.mozzi.api.request.reissuePostReq;
 import com.ssafy.mozzi.api.response.UserIdCheckRes;
+import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
 import com.ssafy.mozzi.api.response.reissuePostRes;
@@ -113,6 +115,21 @@ public class UserController {
             .cacheControl(CacheControl.noCache())
             .body(
                 userService.userIdCheck(userId)
+            );
+    }
+
+    /**
+     * 입력 받은 Token 에 해당하는 정보룰 반환합니다.
+     * @param accessToken 사용자의 Token
+     * @see UserService
+     */
+    @GetMapping()
+    public ResponseEntity<? extends BaseResponseBody<UserInfoRes>> userInfo(
+        @RequestHeader("Authorization") String accessToken) {
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.noCache())
+            .body(
+                userService.getUserInfo(accessToken)
             );
     }
 }
