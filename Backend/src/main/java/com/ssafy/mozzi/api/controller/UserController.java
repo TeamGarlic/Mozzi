@@ -132,4 +132,19 @@ public class UserController {
                 userService.getUserInfo(accessToken)
             );
     }
+
+    /**
+     * 입력 받은 Token 에 해당하는 유저의 리프레쉬 토큰을 초기화 합니다.
+     * @param accessToken 사용자의 Token
+     * @see UserService
+     */
+    @GetMapping("/logout")
+    public ResponseEntity<? extends BaseResponseBody<String>> logout(
+        @RequestHeader("Authorization") String accessToken) {
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.noCache())
+            .body(
+                userService.logout(accessToken)
+            );
+    }
 }
