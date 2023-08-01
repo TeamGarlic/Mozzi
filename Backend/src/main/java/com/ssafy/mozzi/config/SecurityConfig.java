@@ -49,6 +49,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.OPTIONS).permitAll()  // preflight 로 보내는 요청을 해결
                 .requestMatchers(AUTH_WHITELIST).permitAll()
+                .requestMatchers(HttpMethod.POST, "/files/**").authenticated()
                 .requestMatchers(HttpMethod.POST, "/sessions").authenticated()  // accessToken 이 필요한 경우
                 .requestMatchers(HttpMethod.GET, "/sessions/**").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "sessions/**").authenticated()
