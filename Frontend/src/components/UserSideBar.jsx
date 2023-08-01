@@ -1,18 +1,22 @@
 import { Link } from "react-router-dom";
 import { Card } from "@material-tailwind/react";
+import { useRef, useEffect } from "react";
 import UserCard from "./UserCard";
 import TextInput from "./TextInput";
+import PropTypes from "prop-types";
 // import SmallCam from "./SmallCam";
 
-export default function UserSideBar() {
-  const users = [
-    { name: "홍길동" },
-    { name: "박길동" },
-    { name: "최길동" },
-    { name: "김길동" },
-    { name: "곽길동" },
-    { name: "정길동" },
-  ];
+export default function UserSideBar({ subscribers, mainPublisher }) {
+  const myRef = useRef();
+  console.log(subscribers);
+  console.log(mainPublisher);
+
+  useEffect(() => {
+    if (mainPublisher) {
+      mainPublisher.addVideoElement(myRef.current);
+    }
+  }, [mainPublisher]);
+
   return (
     <Card
       id="sideMenu"
@@ -22,13 +26,15 @@ export default function UserSideBar() {
         <span className=" text-xl">사용자</span>
       </div>
       <ul className="gap-4 overflow-y-scroll scrollbar-hide">
+        {/* <canvas ref={myRef} /> */}
+        <video autoPlay ref={myRef} />
+        <hr />
         {/* <SmallCam /> */}
-        {users.map((user) => (
-          <UserCard userName={user.name} key={user.name} />
-          // <>
-          //   {/* <SmallCam /> */}
-          //   {user.name}
-          // </>
+        {subscribers.map((item) => (
+          <UserCard
+            userName={item.stream.connection.connectionId}
+            key={item.stream.connection.connectionId}
+          />
         ))}
       </ul>
       <div className="px-4">
@@ -43,3 +49,8 @@ export default function UserSideBar() {
     </Card>
   );
 }
+
+UserSideBar.propTypes = {
+  subscribers: PropTypes.array,
+  mainPublisher: PropTypes.object,
+};

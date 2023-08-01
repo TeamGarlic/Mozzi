@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { OpenVidu } from 'openvidu-browser';
-import boothApi from '@/api/boothApi.js';
+import { useEffect, useState } from "react";
+import { OpenVidu } from "openvidu-browser";
+import boothApi from "@/api/boothApi.js";
 
 function useSession(userName, shareCode) {
   const [mainSession, setMainSession] = useState(undefined);
@@ -23,7 +23,6 @@ function useSession(userName, shareCode) {
     setSubscribers([]);
   };
 
-
   const joinSession = async (canvases) => {
     try {
       const mainOV = new OpenVidu();
@@ -34,9 +33,9 @@ function useSession(userName, shareCode) {
       setMaskSession(maskSession);
 
       // 생성시 이벤트
-      mainSession.on('streamCreated', (event) => {
+      mainSession.on("streamCreated", (event) => {
         const subscriber = mainSession.subscribe(event.stream, undefined);
-        setSubscribers((prev)=>[...prev, subscriber]);
+        setSubscribers((prev) => [...prev, subscriber]);
       });
       // TODO : mask subscribe 필요한지 확인
       // maskSession.on('streamCreated', (event) => {
@@ -44,19 +43,19 @@ function useSession(userName, shareCode) {
       //     setSubscribers([...subscribers, subscriber]);
       //   });
 
-        // 채팅 수신
-        mainSession.on('signal:chat',event=>{
-          console.log(event);
-          let data = {...JSON.parse(event.data), id:event.from.connectionId};
-          setChatLists((prev)=>{
-            return [...prev, data]
-        }).then(()=>{
+      // 채팅 수신
+      mainSession.on("signal:chat", (event) => {
+        console.log(event);
+        let data = { ...JSON.parse(event.data), id: event.from.connectionId };
+        setChatLists((prev) => {
+          return [...prev, data];
+        }).then(() => {
           console.log(chatLists);
-          })
+        });
       });
 
       // 언마운트시 이벤트
-      mainSession.on('streamDestroyed', (event) => {
+      mainSession.on("streamDestroyed", (event) => {
         deleteSubscriber(event.stream.streamManager);
       });
       // // TODO : mask unsubscribe 필요한지 확인
@@ -65,21 +64,18 @@ function useSession(userName, shareCode) {
       // });
 
       // 예외 처리
-      mainSession.on('exception', (exception) => {
+      mainSession.on("exception", (exception) => {
         console.warn(exception);
       });
-      maskSession.on('exception', (exception) => {
+      maskSession.on("exception", (exception) => {
         console.warn(exception);
       });
-
 
       const mainToken = await getToken(shareCode);
       const maskToken = await getToken(shareCode);
 
-
       mainSession.connect(mainToken, { clientData: userName });
-      maskSession.connect(maskToken, { clientData: userName+"_mask" });
-
+      maskSession.connect(maskToken, { clientData: userName + "_mask" });
 
       const mainPublisher = await mainOV.initPublisherAsync(undefined, {
         audioSource: undefined,
@@ -87,7 +83,7 @@ function useSession(userName, shareCode) {
         publishAudio: true,
         publishVideo: true,
         frameRate: 30,
-        insertMode: 'APPEND',
+        insertMode: "APPEND",
         mirror: false,
       });
       const maskPublisher = await maskOV.initPublisherAsync(undefined, {
@@ -96,29 +92,30 @@ function useSession(userName, shareCode) {
         publishAudio: false,
         publishVideo: true,
         frameRate: 30,
-        insertMode: 'APPEND',
+        insertMode: "APPEND",
         mirror: false,
       });
-
 
       mainSession.publish(mainPublisher);
       maskSession.publish(maskPublisher);
       setMainPublisher(mainPublisher);
       setMaskPublisher(maskPublisher);
     } catch (error) {
-      console.log('There was an error connecting to the session:', error.code, error.message);
+      console.log(
+        "There was an error connecting to the session:",
+        error.code,
+        error.message
+      );
     }
   };
 
-  const sendMessage=(message)=>{
+  const sendMessage = (message) => {
     mainSession.signal({
-      data: JSON.stringify({from : userName,
-      message : message}),  // Any string (optional)
-      to: [],                     // Array of Connection objects (optional. Broadcast to everyone if empty)
-      type: 'chat'            // The type of message (optional)
-    })
-  }
-
+      data: JSON.stringify({ from: userName, message: message }), // Any string (optional)
+      to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
+      type: "chat", // The type of message (optional)
+    });
+  };
 
   const deleteSubscriber = (streamManager) => {
     const newSubscribers = [...subscribers];
@@ -126,7 +123,6 @@ function useSession(userName, shareCode) {
     if (idx > -1) newSubscribers.splice(idx, 1);
     setSubscribers(newSubscribers);
   };
-
 
   const getToken = async (code) => {
     let idRes = await boothApi.getSessionID(code);
@@ -146,23 +142,30 @@ function useSession(userName, shareCode) {
     return token;
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     // TODO : userName, sessionId 설정 (이 위치에서 할 필요는 없음)
 
     const handleBeforeUnload = () => {
       leaveSession();
     };
     // TODO : 라이프사이클 확인
-    window.addEventListener('beforeunload', leaveSession);
+    window.addEventListener("beforeunload", leaveSession);
 
     // TODO : 라이프사이클 확인
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
+  }, []);
 
-  },[]);
-
-  return { mainSession, maskSession, subscribers, joinSession, sendMessage, chatLists} ;
+  return {
+    mainSession,
+    maskSession,
+    subscribers,
+    joinSession,
+    sendMessage,
+    chatLists,
+    mainPublisher,
+  };
 }
 
 export default useSession;
