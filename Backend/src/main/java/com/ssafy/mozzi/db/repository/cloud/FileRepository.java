@@ -1,17 +1,17 @@
 package com.ssafy.mozzi.db.repository.cloud;
 
+import com.oracle.bmc.objectstorage.ObjectStorage;
+import com.oracle.bmc.objectstorage.model.StorageTier;
+import com.oracle.bmc.objectstorage.requests.GetObjectRequest;
+import com.oracle.bmc.objectstorage.requests.PutObjectRequest;
+import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
+import com.oracle.bmc.objectstorage.responses.PutObjectResponse;
+import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
 import java.io.InputStream;
 import java.util.Objects;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
-
-import com.oracle.bmc.objectstorage.ObjectStorage;
-import com.oracle.bmc.objectstorage.model.StorageTier;
-import com.oracle.bmc.objectstorage.requests.PutObjectRequest;
-import com.oracle.bmc.objectstorage.responses.PutObjectResponse;
-import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
 
 @Repository
 public class FileRepository {
@@ -42,5 +42,16 @@ public class FileRepository {
         if (putObjectRequest == null)
             throw new CloudStorageSaveFailException("파일 Object 변환 실패");
         return client.putObject(putObjectRequest);
+    }
+
+    public GetObjectResponse getObject(ObjectStorage client, String objectName) {
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+            .bucketName(ORACLE_BUCKET)
+            .namespaceName(ORACLE_NAMESPACE)
+            .objectName(objectName).build();
+
+        if (getObjectRequest==null) throw new CloudStorageSaveFailException("파일 Get 실패");
+
+        return client.getObject(getObjectRequest);
     }
 }

@@ -1,22 +1,14 @@
 package com.ssafy.mozzi.api.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.oracle.bmc.Region;
 import com.oracle.bmc.http.ResteasyClientConfigurator;
 import com.oracle.bmc.objectstorage.ObjectStorage;
 import com.oracle.bmc.objectstorage.ObjectStorageClient;
+import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
 import com.oracle.bmc.objectstorage.responses.PutObjectResponse;
 import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
 import com.ssafy.mozzi.common.auth.AuthentificationProvider;
+import com.ssafy.mozzi.common.dto.MozzirollFileItem;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
 import com.ssafy.mozzi.common.util.mapper.FileMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
@@ -26,6 +18,15 @@ import com.ssafy.mozzi.db.entity.remote.UserMozziroll;
 import com.ssafy.mozzi.db.repository.cloud.FileRepository;
 import com.ssafy.mozzi.db.repository.remote.MozzirollRepository;
 import com.ssafy.mozzi.db.repository.remote.UserMozzirollRepository;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @PropertySource("classpath:application-keys.properties")
@@ -101,6 +102,14 @@ public class FileServiceImpl implements FileService {
             throw new CloudStorageSaveFailException("파일 업로드 실패");
 
         return FileMapper.toFileMozzirollPostRes(mozziroll);
+    }
+
+    @Override
+    public MozzirollFileItem downloadMozziroll(String mozzirollId) {
+        Optional<Mozziroll> mozziroll=mozzirollRepository.findById(Long.parseLong(mozzirollId));
+        GetObjectResponse getObjectResponse=fileRepository.getObject(client, mozziroll.get().getObjectName());
+
+        return FileMapper.toMozzirollItem(getObjectResponse, mozziroll);
     }
 
     /**
