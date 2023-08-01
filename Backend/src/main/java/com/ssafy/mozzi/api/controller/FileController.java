@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.mozzi.api.response.FileMozziRollPostRes;
+import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
 import com.ssafy.mozzi.api.service.FileService;
+import com.ssafy.mozzi.common.model.ItemCacheControl;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
 import lombok.RequiredArgsConstructor;
@@ -23,18 +24,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class FileController {
     private final FileService fileService;
+    private final ItemCacheControl cacheControl;
 
-    @PostMapping(value = "/mozziroll") //, produces = MediaType.APPLICATION_JSON_VALUE
-    public ResponseEntity<? extends BaseResponseBody<FileMozziRollPostRes>> saveMozziRoll(
+    @PostMapping(value = "/mozziroll")
+    public ResponseEntity<? extends BaseResponseBody<FileMozzirollPostRes>> saveMozziroll(
         @RequestHeader("Authorization") String accessToken,
         @RequestParam("file") MultipartFile file) {
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .cacheControl(CacheControl.noStore())
             .body(
-                BaseResponseBody.<FileMozziRollPostRes>builder()
+                BaseResponseBody.<FileMozzirollPostRes>builder()
                     .message("Save mozziroll success")
-                    .data(fileService.saveMozziRoll(file, accessToken))
+                    .data(fileService.saveMozziroll(file, accessToken))
                     .build()
             );
     }

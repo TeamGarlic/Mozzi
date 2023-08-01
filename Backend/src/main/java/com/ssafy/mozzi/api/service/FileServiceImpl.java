@@ -15,7 +15,7 @@ import com.oracle.bmc.http.ResteasyClientConfigurator;
 import com.oracle.bmc.objectstorage.ObjectStorage;
 import com.oracle.bmc.objectstorage.ObjectStorageClient;
 import com.oracle.bmc.objectstorage.responses.PutObjectResponse;
-import com.ssafy.mozzi.api.response.FileMozziRollPostRes;
+import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
 import com.ssafy.mozzi.common.auth.AuthentificationProvider;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
 import com.ssafy.mozzi.common.util.mapper.FileMapper;
@@ -54,7 +54,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
-    public FileMozziRollPostRes saveMozziRoll(MultipartFile file, String accessToken) {
+    public FileMozzirollPostRes saveMozziroll(MultipartFile file, String accessToken) {
         final String OBJECT_NAME = String.format("%s_%s", System.currentTimeMillis(), file.getOriginalFilename());
         String contentType = "multipart/form-data";
 
@@ -88,7 +88,7 @@ public class FileServiceImpl implements FileService {
         if (response.getLastModified() == null)
             throw new CloudStorageSaveFailException("파일 업로드 실패");
 
-        return FileMapper.toFileMozziRollPostRes(mozziroll);
+        return FileMapper.toFileMozzirollPostRes(mozziroll);
     }
 
     public static InputStream generateStreamFromFile(MultipartFile file) throws IOException {

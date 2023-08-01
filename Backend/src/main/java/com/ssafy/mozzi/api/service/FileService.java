@@ -2,8 +2,8 @@ package com.ssafy.mozzi.api.service;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.mozzi.api.response.FileMozziRollPostRes;
+import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
 
 public interface FileService {
-    FileMozziRollPostRes saveMozziRoll(MultipartFile file, String accessToken);
+    FileMozzirollPostRes saveMozziroll(MultipartFile file, String accessToken);
 }

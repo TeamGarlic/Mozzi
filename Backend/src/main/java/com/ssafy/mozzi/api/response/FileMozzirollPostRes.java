@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FileMozziRollPostRes {
+public class FileMozzirollPostRes {
     private Long id; // mozziroll의 id
 }
