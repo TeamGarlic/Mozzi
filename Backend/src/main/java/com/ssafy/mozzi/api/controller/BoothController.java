@@ -16,6 +16,7 @@ import com.ssafy.mozzi.api.request.SessionPostReq;
 import com.ssafy.mozzi.api.response.ConnectionPostRes;
 import com.ssafy.mozzi.api.response.SessionRes;
 import com.ssafy.mozzi.api.service.BoothService;
+import com.ssafy.mozzi.common.exception.handler.DuplicateShareCodeException;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
 import lombok.RequiredArgsConstructor;
@@ -94,6 +95,29 @@ public class BoothController {
             .cacheControl(CacheControl.noCache())
             .body(
                 boothService.deleteBooth(sessionId)
+            );
+    }
+
+    // TODO: 배포시 삭제
+    @GetMapping("/testpath/{shareCode}")
+    public ResponseEntity<? extends BaseResponseBody<ConnectionPostRes>> testConnection(
+        @PathVariable String shareCode) throws Exception {
+        String sessionId;
+        try {
+            SessionPostReq req = new SessionPostReq();
+            req.setShareCode(shareCode);
+            sessionId = boothService.createBooth(req).getData().getSessionId();
+        } catch (DuplicateShareCodeException exception) {
+            sessionId = boothService.joinBooth(shareCode).getData().getSessionId();
+        }
+
+        ConnectionPostReq connectionPostReq = new ConnectionPostReq();
+        connectionPostReq.setSessionId(sessionId);
+
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.noCache())
+            .body(
+                boothService.getConnectionToken(connectionPostReq)
             );
     }
 }
