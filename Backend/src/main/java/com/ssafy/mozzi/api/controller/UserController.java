@@ -156,7 +156,9 @@ public class UserController {
      * @see UserService
      */
     @PatchMapping
-    public BaseResponseBody<Long> update(@RequestBody UserUpdatePutReq request) {
-        return userService.update(request);
+    public ResponseEntity<? extends BaseResponseBody<Long>> update(@RequestBody UserUpdatePutReq request) {
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.noCache())
+            .body(userService.update(request));
     }
 }
