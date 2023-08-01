@@ -2,7 +2,6 @@ package com.ssafy.mozzi.api.service;
 
 import java.util.Optional;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -13,15 +12,16 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.mozzi.api.request.ReIssuePostReq;
 import com.ssafy.mozzi.api.request.UserLoginPostReq;
 import com.ssafy.mozzi.api.request.UserRegisterPostReq;
-import com.ssafy.mozzi.api.request.reissuePostReq;
+import com.ssafy.mozzi.api.request.UserUpdatePutReq;
+import com.ssafy.mozzi.api.response.ReIssuePostRes;
 import com.ssafy.mozzi.api.response.UserIdCheckRes;
 import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
-import com.ssafy.mozzi.api.response.reissuePostRes;
 import com.ssafy.mozzi.common.auth.JwtTokenProvider;
 import com.ssafy.mozzi.common.exception.handler.DuplicatedUserIdException;
 import com.ssafy.mozzi.common.exception.handler.InvalidRefreshTokenException;
+import com.ssafy.mozzi.common.exception.handler.NoDataException;
 import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.UserLoginFailException;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
@@ -196,13 +196,35 @@ public class UserServiceImpl implements UserService {
             .build();
     }
 
+    /**
+     * 유저 데이터 변경 요청을 받아 유저 데이터를 수정합니다.
+     * @param request
+     * @return BaseResponseBody<Long> 성공시 User Id를 같이 반환합니다.
+     * @throws UserIdNotExistsException
+     */
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     @Override
-    public ResponseEntity<String> update(UserUpdatePutReq request) {
-        User user = this.findUserByToken(request.getAccessToken());
-        user.setPassword(request.getPassword());
-        user.setNickname(request.getNickname());
-        user.setEmail(request.getEmail());
-        return ResponseEntity.ok("User data modified");
+    public BaseResponseBody<Long> update(UserUpdatePutReq request) {
+        User user = findUserByToken(request.getAccessToken());
+
+        if (request.getEmail() == null && request.getNickname() == null && request.getPassword() == null) {
+            throw new NoDataException("There is no data for update");
+        }
+
+        if (request.getPassword() != null && !request.getPassword().equals(user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        if (request.getNickname() != null) {
+            user.setNickname(request.getNickname());
+        }
+        if (request.getEmail() != null) {
+            user.setEmail(request.getEmail());
+        }
+
+        return BaseResponseBody.<Long>builder()
+            .message(String.format("User(%s) data updated.", user.getUserId()))
+            .data(user.getId())
+            .build();
     }
 }

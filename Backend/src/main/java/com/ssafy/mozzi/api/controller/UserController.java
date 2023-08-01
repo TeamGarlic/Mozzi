@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -12,14 +13,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.mozzi.api.request.ReIssuePostReq;
 import com.ssafy.mozzi.api.request.UserLoginPostReq;
 import com.ssafy.mozzi.api.request.UserRegisterPostReq;
-import com.ssafy.mozzi.api.request.reissuePostReq;
+import com.ssafy.mozzi.api.request.UserUpdatePutReq;
+import com.ssafy.mozzi.api.response.ReIssuePostRes;
 import com.ssafy.mozzi.api.response.UserIdCheckRes;
 import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
-import com.ssafy.mozzi.api.response.reissuePostRes;
 import com.ssafy.mozzi.api.service.UserService;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
@@ -95,10 +97,10 @@ public class UserController {
      * @see com.ssafy.mozzi.common.auth.JwtTokenProvider
      */
     @PostMapping("/reissue")
-    public ResponseEntity<? extends BaseResponseBody<reissuePostRes>> reissue(@RequestBody reissuePostReq request) {
-        reissuePostRes response = userService.reissue(request);
+    public ResponseEntity<? extends BaseResponseBody<ReIssuePostRes>> reissue(@RequestBody ReIssuePostReq request) {
+        ReIssuePostRes response = userService.reissue(request);
         return new ResponseEntity<>(
-            BaseResponseBody.<reissuePostRes>builder()
+            BaseResponseBody.<ReIssuePostRes>builder()
                 .message("reissue access token by refresh token")
                 .data(response)
                 .build(), HttpStatus.OK);
@@ -148,8 +150,13 @@ public class UserController {
             );
     }
 
-    @PutMapping
-    public ResponseEntity<String> update(@RequestBody UserUpdatePutReq request) {
+    /**
+     * 유저 정보 변경 요청을 받아 존재하는 데이터에 대해 데이터를 갱신합니다.
+     * @param request
+     * @see UserService
+     */
+    @PatchMapping
+    public BaseResponseBody<Long> update(@RequestBody UserUpdatePutReq request) {
         return userService.update(request);
     }
 }

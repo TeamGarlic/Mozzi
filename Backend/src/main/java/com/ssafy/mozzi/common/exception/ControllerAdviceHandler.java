@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.ssafy.mozzi.common.exception.handler.DuplicateShareCodeException;
 import com.ssafy.mozzi.common.exception.handler.DuplicatedUserIdException;
 import com.ssafy.mozzi.common.exception.handler.InvalidRefreshTokenException;
+import com.ssafy.mozzi.common.exception.handler.NoDataException;
 import com.ssafy.mozzi.common.exception.handler.ShareCodeNotExistException;
 import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.UserLoginFailException;
@@ -27,19 +28,19 @@ public class ControllerAdviceHandler {
      * @see com.ssafy.mozzi.api.service.UserService
      */
     @ExceptionHandler(UserIdNotExistsException.class)
-    public ResponseEntity<BaseResponseBody> handleUserIdNotExistsException(UserIdNotExistsException exception) {
+    public ResponseEntity<BaseResponseBody<Void>> handleUserIdNotExistsException(UserIdNotExistsException exception) {
         log.error("[UserIdNotExistsException] : {}", exception.getMessage());
         return new ResponseEntity<>(
-            BaseResponseBody.builder()
+            BaseResponseBody.<Void>builder()
                 .message("User ID not exists.")
                 .build(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(InvalidRefreshTokenException.class)
-    public ResponseEntity<BaseResponseBody> handleInvalidRefreshTokenException(InvalidRefreshTokenException ex) {
+    public ResponseEntity<BaseResponseBody<Void>> handleInvalidRefreshTokenException(InvalidRefreshTokenException ex) {
         String errorMessage = "Invalid Refresh Token: " + ex.getMessage();
         return new ResponseEntity<>(
-            BaseResponseBody.builder()
+            BaseResponseBody.<Void>builder()
                 .message(errorMessage)
                 .build(), HttpStatus.BAD_REQUEST);
     }
@@ -50,10 +51,10 @@ public class ControllerAdviceHandler {
      * @see com.ssafy.mozzi.api.service.UserService
      */
     @ExceptionHandler(DuplicatedUserIdException.class)
-    public ResponseEntity<BaseResponseBody> handleDuplicateUserIdException(DuplicatedUserIdException exception) {
+    public ResponseEntity<BaseResponseBody<Void>> handleDuplicateUserIdException(DuplicatedUserIdException exception) {
         log.error("[DuplicatedUserIdException] : {}", exception.getMessage());
         return new ResponseEntity<>(
-            BaseResponseBody.builder()
+            BaseResponseBody.<Void>builder()
                 .message("You requested duplicated User ID")
                 .build(), HttpStatus.BAD_REQUEST
         );
@@ -65,10 +66,10 @@ public class ControllerAdviceHandler {
      * @see com.ssafy.mozzi.api.service.UserService
      */
     @ExceptionHandler(UserLoginFailException.class)
-    public ResponseEntity<BaseResponseBody> handleUserLoginFailException(UserLoginFailException exception) {
+    public ResponseEntity<BaseResponseBody<Void>> handleUserLoginFailException(UserLoginFailException exception) {
         log.error("[UserLoginFailException] : {}", exception.getMessage());
         return new ResponseEntity<>(
-            BaseResponseBody.builder()
+            BaseResponseBody.<Void>builder()
                 .message("User login failure")
                 .build(), HttpStatus.BAD_REQUEST
         );
@@ -80,10 +81,11 @@ public class ControllerAdviceHandler {
      * @see com.ssafy.mozzi.api.service.BoothService
      */
     @ExceptionHandler(DuplicateShareCodeException.class)
-    public ResponseEntity<BaseResponseBody> handleDuplicatedShareCodeException(DuplicateShareCodeException exception) {
+    public ResponseEntity<BaseResponseBody<Void>> handleDuplicatedShareCodeException(
+        DuplicateShareCodeException exception) {
         log.error("[DuplicateShareCodeException] : {}", exception.getMessage());
         return new ResponseEntity<>(
-            BaseResponseBody.builder()
+            BaseResponseBody.<Void>builder()
                 .message("You requested duplicated share code")
                 .build(), HttpStatus.BAD_REQUEST
         );
@@ -95,10 +97,11 @@ public class ControllerAdviceHandler {
      * @see com.ssafy.mozzi.api.service.BoothService
      */
     @ExceptionHandler(ShareCodeNotExistException.class)
-    public ResponseEntity<BaseResponseBody> handleShareCodeNotExistException(ShareCodeNotExistException exception) {
+    public ResponseEntity<BaseResponseBody<Void>> handleShareCodeNotExistException(
+        ShareCodeNotExistException exception) {
         log.error("[ShareCodeNotExistException] : {}", exception.getMessage());
         return new ResponseEntity<>(
-            BaseResponseBody.builder()
+            BaseResponseBody.<Void>builder()
                 .message("Requested share code not exist")
                 .build(), HttpStatus.BAD_REQUEST
         );
@@ -108,7 +111,7 @@ public class ControllerAdviceHandler {
      * 처리 되지 않은 모든 예외에 대한 응답을 반환합니다.
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<BaseResponseBody> handleGenerealException(Exception exception) {
+    public ResponseEntity<BaseResponseBody<Void>> handleGenerealException(Exception exception) {
         log.error("Uncaught Exception : {}", exception.getMessage());
         StringBuilder stackTrace = new StringBuilder();
         for (StackTraceElement element : exception.getStackTrace()) {
@@ -116,9 +119,24 @@ public class ControllerAdviceHandler {
         }
         log.error("{}", stackTrace);
         return new ResponseEntity<>(
-            BaseResponseBody.builder()
+            BaseResponseBody.<Void>builder()
                 .message("Internal Server Error")
                 .build(), HttpStatus.INTERNAL_SERVER_ERROR
         );
+    }
+
+    /**
+     * 요청을 처리하는데 필요한 데이터가 존재 하지 않는 경우의 응답입니다.
+     * @see com.ssafy.mozzi.api.service.UserServiceImpl
+     */
+    @ExceptionHandler(NoDataException.class)
+    public ResponseEntity<BaseResponseBody<String>> noDataException(NoDataException exception) {
+        return ResponseEntity.badRequest()
+            .body(
+                BaseResponseBody.<String>builder()
+                    .message("There is no data to perform your request")
+                    .data(exception.getMessage())
+                    .build()
+            );
     }
 }
