@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.FileUtils;
+import org.springframework.core.io.ClassPathResource;
+
 import com.google.common.base.Supplier;
 import com.oracle.bmc.ConfigFileReader;
 import com.oracle.bmc.ConfigFileReader.ConfigFile;
@@ -25,14 +28,20 @@ public class AuthentificationProvider implements AbstractAuthenticationDetailsPr
      */
     public AuthenticationDetailsProvider getAuthenticationDetailsProvider(final String ORACLE_CLOUD_PUBLIC_KEY) throws
         IOException {
-        ClassLoader classLoader = AuthentificationProvider.class.getClassLoader();
-        File tempConfigFile = new File(classLoader.getResource("config/oci_api_config").getFile());
-        File tempOCIAPIKey = new File(
-            classLoader.getResource("config/" + ORACLE_CLOUD_PUBLIC_KEY).getFile());
 
-        ConfigFile config = ConfigFileReader.parse(tempConfigFile.getPath(), "DEFAULT");
+        // OCI 구성 파일 읽기
 
-        Supplier<InputStream> privateKeySupplier = new SimplePrivateKeySupplier(tempOCIAPIKey.getPath());
+        InputStream configInputStream = new ClassPathResource("config/oci_api_config").getInputStream();
+        File ConfigFileResource = File.createTempFile("oci_api_config", "");
+
+        FileUtils.copyInputStreamToFile(configInputStream, ConfigFileResource);
+        ConfigFile config = ConfigFileReader.parse(ConfigFileResource.getPath(), "DEFAULT");
+
+        InputStream keyInputStream = new ClassPathResource("config/" + ORACLE_CLOUD_PUBLIC_KEY).getInputStream();
+        File privateKeyResource = File.createTempFile(ORACLE_CLOUD_PUBLIC_KEY, ".pem");
+
+        FileUtils.copyInputStreamToFile(keyInputStream, privateKeyResource);
+        Supplier<InputStream> privateKeySupplier = new SimplePrivateKeySupplier(privateKeyResource.getPath());
 
         return SimpleAuthenticationDetailsProvider.builder()
             .tenantId(config.get("tenancy")).userId(config.get("user")).fingerprint(config.get("fingerprint"))
