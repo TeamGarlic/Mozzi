@@ -26,6 +26,14 @@ public class FileController {
     private final FileService fileService;
     private final ItemCacheControl cacheControl;
 
+    /**
+     * 모찌롤 파일을 ObjectStorage에 저장 및 방장의 마이페이지에 추가
+     *
+     * @param accessToken String
+     * @param file MultipartFile
+     * @return ResponseEntity<? extends ItemBackgroundGetRes>
+     * @see FileService
+     */
     @PostMapping(value = "/mozziroll/upload")
     public ResponseEntity<? extends BaseResponseBody<FileMozzirollPostRes>> saveMozziroll(
         @RequestHeader("Authorization") String accessToken,

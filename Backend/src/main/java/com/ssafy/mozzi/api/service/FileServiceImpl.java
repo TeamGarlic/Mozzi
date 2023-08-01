@@ -45,6 +45,7 @@ public class FileServiceImpl implements FileService {
         this.userMozzirollRepository = userMozzirollRepository;
         this.userService = userService;
 
+        // ObjectStorage의 Client 생성
         this.client = ObjectStorageClient.builder()
             .additionalClientConfigurator(new ResteasyClientConfigurator())
             .build((new AuthentificationProvider()).getAuthenticationDetailsProvider(
@@ -52,6 +53,17 @@ public class FileServiceImpl implements FileService {
         this.client.setRegion(Region.AP_CHUNCHEON_1);
     }
 
+    /**
+     * 모찌롤 파일을 ObjectStorage에 저장하고 해당 유저(방장)의 마이 페이지에 추가합니다.
+     * @param file MultipartFile
+     * @param accessToken String
+     * @return 저장한 파일의 index Id
+     * @see MozzirollRepository
+     * @see UserMozzirollRepository
+     * @see FileRepository
+     * @see FileMozzirollPostRes
+     * @see CloudStorageSaveFailException
+     */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     public FileMozzirollPostRes saveMozziroll(MultipartFile file, String accessToken) {
@@ -91,6 +103,12 @@ public class FileServiceImpl implements FileService {
         return FileMapper.toFileMozzirollPostRes(mozziroll);
     }
 
+    /**
+     * MultipartFile을 InputStream으로 변환해주는 함수
+     * @param file MultipartFile
+     * @return InputStream 형태의 파일
+     * @see FileRepository
+     */
     public static InputStream generateStreamFromFile(MultipartFile file) throws IOException {
         return file.getInputStream();
     }

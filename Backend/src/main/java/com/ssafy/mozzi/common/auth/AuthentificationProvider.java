@@ -14,6 +14,15 @@ import com.oracle.bmc.auth.SimpleAuthenticationDetailsProvider;
 import com.oracle.bmc.auth.SimplePrivateKeySupplier;
 
 public class AuthentificationProvider implements AbstractAuthenticationDetailsProvider {
+    /**
+     * Oracle Cloud 연결 시 필요한 Authentication을 설정하는 함수
+     * @param ORACLE_CLOUD_PUBLIC_KEY String
+     * @return 저장한 파일의 index Id
+     * @see AuthentificationProvider
+     * @see ConfigFileReader
+     * @see Supplier
+     * @see SimpleAuthenticationDetailsProvider
+     */
     public AuthenticationDetailsProvider getAuthenticationDetailsProvider(final String ORACLE_CLOUD_PUBLIC_KEY) throws
         IOException {
         ClassLoader classLoader = AuthentificationProvider.class.getClassLoader();
