@@ -26,7 +26,7 @@ public class FileController {
     private final FileService fileService;
     private final ItemCacheControl cacheControl;
 
-    @PostMapping(value = "/mozziroll")
+    @PostMapping(value = "/mozziroll/upload")
     public ResponseEntity<? extends BaseResponseBody<FileMozzirollPostRes>> saveMozziroll(
         @RequestHeader("Authorization") String accessToken,
         @RequestParam("file") MultipartFile file) {
