@@ -15,7 +15,7 @@ function LoginNav({ link }) {
         onClick={goHome}
       />
       <button className="float-right" onClick={goLink}>
-        {link}
+        {(link==='login')?"로그인":"회원가입"}
       </button>
     </div>
   );
