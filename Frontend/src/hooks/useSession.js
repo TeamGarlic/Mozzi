@@ -36,13 +36,13 @@ function useSession(userName, shareCode) {
       // 생성시 이벤트
       mainSession.on('streamCreated', (event) => {
         const subscriber = mainSession.subscribe(event.stream, undefined);
-        setSubscribers([...subscribers, subscriber]);
+        setSubscribers((prev)=>[...prev, subscriber]);
       });
       // TODO : mask subscribe 필요한지 확인
-      maskSession.on('streamCreated', (event) => {
-          const subscriber = maskSession.subscribe(event.stream, undefined);
-          setSubscribers([...subscribers, subscriber]);
-        });
+      // maskSession.on('streamCreated', (event) => {
+      //     const subscriber = maskSession.subscribe(event.stream, undefined);
+      //     setSubscribers([...subscribers, subscriber]);
+      //   });
 
         // 채팅 수신
         mainSession.on('signal:chat',event=>{
@@ -59,10 +59,10 @@ function useSession(userName, shareCode) {
       mainSession.on('streamDestroyed', (event) => {
         deleteSubscriber(event.stream.streamManager);
       });
-      // TODO : mask unsubscribe 필요한지 확인
-      maskSession.on('streamDestroyed', (event) => {
-        deleteSubscriber(event.stream.streamManager);
-      });
+      // // TODO : mask unsubscribe 필요한지 확인
+      // maskSession.on('streamDestroyed', (event) => {
+      //   deleteSubscriber(event.stream.streamManager);
+      // });
 
       // 예외 처리
       mainSession.on('exception', (exception) => {
@@ -83,7 +83,7 @@ function useSession(userName, shareCode) {
 
       const mainPublisher = await mainOV.initPublisherAsync(undefined, {
         audioSource: undefined,
-        videoSource: canvases[1].current.captureStream(30).getVideoTracks()[0],
+        videoSource: canvases[0].current.captureStream(30).getVideoTracks()[0],
         publishAudio: true,
         publishVideo: true,
         frameRate: 30,
@@ -93,7 +93,7 @@ function useSession(userName, shareCode) {
       const maskPublisher = await maskOV.initPublisherAsync(undefined, {
         audioSource: undefined,
         videoSource: canvases[1].current.captureStream(30).getVideoTracks()[0],
-        publishAudio: true,
+        publishAudio: false,
         publishVideo: true,
         frameRate: 30,
         insertMode: 'APPEND',
