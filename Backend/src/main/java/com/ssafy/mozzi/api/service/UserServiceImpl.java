@@ -9,14 +9,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.mozzi.api.request.ReIssuePostReq;
 import com.ssafy.mozzi.api.request.UserLoginPostReq;
 import com.ssafy.mozzi.api.request.UserRegisterPostReq;
-import com.ssafy.mozzi.api.request.reissuePostReq;
+import com.ssafy.mozzi.api.response.ReIssuePostRes;
 import com.ssafy.mozzi.api.response.UserIdCheckRes;
 import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
-import com.ssafy.mozzi.api.response.reissuePostRes;
 import com.ssafy.mozzi.common.auth.JwtTokenProvider;
 import com.ssafy.mozzi.common.exception.handler.DuplicatedUserIdException;
 import com.ssafy.mozzi.common.exception.handler.InvalidRefreshTokenException;
@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
-    public reissuePostRes reissue(reissuePostReq reissueInfo) {
+    public ReIssuePostRes reissue(ReIssuePostReq reissueInfo) {
         if (!jwtTokenProvider.validateTokenExceptExpiration(reissueInfo.getRefreshToken()))
             throw new InvalidRefreshTokenException("expired refreshToken");
 
@@ -140,6 +140,7 @@ public class UserServiceImpl implements UserService {
      * @see JwtTokenProvider
      */
 
+    @Override
     public User findUserByToken(String accessToken) {
         Authentication auth = jwtTokenProvider.getAuthentication(accessToken);
         UserDetails userDetails = (UserDetails)auth.getPrincipal();
