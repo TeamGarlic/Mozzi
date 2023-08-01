@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.mozzi.api.request.ReIssuePostReq;
 import com.ssafy.mozzi.api.request.UserLoginPostReq;
 import com.ssafy.mozzi.api.request.UserRegisterPostReq;
-import com.ssafy.mozzi.api.request.reissuePostReq;
+import com.ssafy.mozzi.api.response.ReIssuePostRes;
 import com.ssafy.mozzi.api.response.UserIdCheckRes;
 import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
-import com.ssafy.mozzi.api.response.reissuePostRes;
 import com.ssafy.mozzi.api.service.UserService;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
@@ -95,10 +95,10 @@ public class UserController {
      * @see com.ssafy.mozzi.common.auth.JwtTokenProvider
      */
     @PostMapping("/reissue")
-    public ResponseEntity<? extends BaseResponseBody<reissuePostRes>> reissue(@RequestBody reissuePostReq request) {
-        reissuePostRes response = userService.reissue(request);
+    public ResponseEntity<? extends BaseResponseBody<ReIssuePostRes>> reissue(@RequestBody ReIssuePostReq request) {
+        ReIssuePostRes response = userService.reissue(request);
         return new ResponseEntity<>(
-            BaseResponseBody.<reissuePostRes>builder()
+            BaseResponseBody.<ReIssuePostRes>builder()
                 .message("reissue access token by refresh token")
                 .data(response)
                 .build(), HttpStatus.OK);

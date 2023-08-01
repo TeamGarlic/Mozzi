@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class reissuePostRes {
+public class ReIssuePostRes {
     private String accessToken;
     private String refreshToken;
 }
