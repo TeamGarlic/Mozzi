@@ -29,7 +29,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Mozzilol extends BaseEntity {
+public class Mozziroll extends BaseEntity {
 
     @NotNull
     @Size(max = 500)
@@ -45,21 +45,21 @@ public class Mozzilol extends BaseEntity {
     @Column(nullable = false)
     private Boolean deleted = false;
 
-    @OneToMany(mappedBy = "mozzilol")
-    private Set<UserMozzilol> mozzilolUsers = new HashSet<>();
+    @OneToMany(mappedBy = "mozziroll")
+    private Set<UserMozziroll> mozzirollUsers = new HashSet<>();
 
-    @OneToMany(mappedBy = "likedMozzilol")
-    private Set<MozzilolLike> likedUsers = new HashSet<>();
+    @OneToMany(mappedBy = "likedMozziroll")
+    private Set<MozzirollLike> likedUsers = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (!(o instanceof Mozzilol mozzilol))
+        if (!(o instanceof Mozziroll mozziroll))
             return false;
         if (!super.equals(o))
             return false;
-        return Objects.equals(getId(), mozzilol.getId());
+        return Objects.equals(getId(), mozziroll.getId());
     }
 
     @Override

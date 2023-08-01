@@ -16,14 +16,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "user_mozzilol")
-public class UserMozzilol extends BaseEntity {
+@Table(name = "mozziroll_like")
+public class MozzirollLike extends BaseEntity {
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "liked_user_id")
+    private User likedUser;
 
     @ManyToOne
-    @JoinColumn(name = "mozzilol_id")
-    private Mozzilol mozzilol;
+    @JoinColumn(name = "liked_mozziroll_id")
+    private Mozziroll likedMozziroll;
 }

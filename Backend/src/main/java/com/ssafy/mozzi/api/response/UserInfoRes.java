@@ -12,8 +12,8 @@ import lombok.Data;
 @Data
 @Builder
 public class UserInfoRes {
-    long Id;
+    long id;
     String userId;
-    String userNickName;
+    String userNickname;
     String email;
 }

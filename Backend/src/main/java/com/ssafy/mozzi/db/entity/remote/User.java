@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 /**
  * User JPA Entity(Model)
  *
- * @see Mozzilol
+ * @see Mozziroll
  */
 @SuppressWarnings("checkstyle:RegexpMultiline")
 @Entity
@@ -63,11 +63,12 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Boolean deleted = false;
 
+    // TODO: 양방향 관계를 이후에 삭제할 지 고민 해야 됨
     @OneToMany(mappedBy = "user")
-    private Set<UserMozzilol> userMozzilols = new HashSet<>();
+    private Set<UserMozziroll> userMozzirolls = new HashSet<>();
 
     @OneToMany(mappedBy = "likedUser")
-    private Set<MozzilolLike> likedMozzilols = new HashSet<>();
+    private Set<MozzirollLike> likedMozzirolls = new HashSet<>();
 
     @Size(max = 150)
     private String refreshToken;
