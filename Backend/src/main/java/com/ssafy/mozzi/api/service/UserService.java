@@ -9,6 +9,7 @@ import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
 import com.ssafy.mozzi.api.response.reissuePostRes;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
+import com.ssafy.mozzi.db.entity.remote.User;
 
 /**
  *  User 요청에 대한 Service/비즈니스 로직 인터페이스
@@ -27,4 +28,6 @@ public interface UserService {
     BaseResponseBody<UserInfoRes> getUserInfo(String accessToken);
 
     BaseResponseBody<String> logout(String accessToken);
+
+    User findUserByToken(String accessToken);
 }

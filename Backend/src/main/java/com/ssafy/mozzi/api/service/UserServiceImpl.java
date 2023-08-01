@@ -140,6 +140,7 @@ public class UserServiceImpl implements UserService {
      * @see JwtTokenProvider
      */
 
+    @Override
     public User findUserByToken(String accessToken) {
         Authentication auth = jwtTokenProvider.getAuthentication(accessToken);
         UserDetails userDetails = (UserDetails)auth.getPrincipal();
