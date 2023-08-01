@@ -9,6 +9,7 @@ function useSession(userName, shareCode) {
   const [maskPublisher, setMaskPublisher] = useState(undefined);
   const [subscribers, setSubscribers] = useState([]);
   const [chatLists, setChatLists] = useState([]);
+  const [clipBlob, setClipBlob] = useState(undefined);
   const leaveSession = () => {
     if (mainSession) {
       mainSession.disconnect();
@@ -44,16 +45,22 @@ function useSession(userName, shareCode) {
       //     setSubscribers([...subscribers, subscriber]);
       //   });
 
-        // 채팅 수신
-        mainSession.on('signal:chat',event=>{
-          console.log(event);
-          let data = {...JSON.parse(event.data), id:event.from.connectionId};
-          setChatLists((prev)=>{
-            return [...prev, data]
+      // 채팅 수신
+      mainSession.on('signal:chat',event=>{
+        console.log(event);
+        let data = {...JSON.parse(event.data), id:event.from.connectionId};
+        setChatLists((prev)=>{
+          return [...prev, data]
         }).then(()=>{
           console.log(chatLists);
-          })
+        })
       });
+
+      mainSession.on('signal:blob', event => {
+        console.log(event);
+        let data = {...JSON.parse(event.data)}
+        setClipBlob(data)
+      })
 
       // 언마운트시 이벤트
       mainSession.on('streamDestroyed', (event) => {
@@ -119,6 +126,17 @@ function useSession(userName, shareCode) {
     })
   }
 
+  const sendBlob = (fileBlob, fileId) => {
+    mainSession.signal({
+      data: JSON.stringify({
+        fileId,
+        fileBlob,
+        type: 'blob'
+      })
+    })
+
+  }
+
 
   const deleteSubscriber = (streamManager) => {
     const newSubscribers = [...subscribers];
@@ -162,7 +180,7 @@ function useSession(userName, shareCode) {
 
   },[]);
 
-  return { mainSession, maskSession, subscribers, joinSession, sendMessage, chatLists} ;
+  return { mainSession, maskSession, subscribers, joinSession, sendMessage, chatLists, sendBlob, clipBlob} ;
 }
 
 export default useSession;
