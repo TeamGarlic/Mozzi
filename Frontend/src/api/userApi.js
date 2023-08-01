@@ -55,18 +55,18 @@ const userApi = {
   //   return res;
   // },
   reIssue: async (accessToken, refreshToken) => {
-    console.log("reissue start");
+    alert("reissue start");
     let res = await UserApi.post(
-      "reissue",
-      {
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-      },
-      { withCredentials: true }
+        "reissue",
+        {
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        },
+        { withCredentials: true }
     );
 
-    if (res.status === 201) {
-      console.log("reissue complete");
+    if (res.status === 200) {
+      alert("reissue complete");
       window.sessionStorage.setItem("accessToken", res.data.accessToken);
       window.sessionStorage.setItem("refreshToken", res.data.refreshToken);
       return;
@@ -86,7 +86,20 @@ const userApi = {
         Authorization: accessToken,
       },
     });
-    // console.log(res);
+
+    if(res.status===200){
+      return res;
+    }
+
+    await userApi.reIssue(accessToken, window.localStorage.getItem("refreshToken"));
+
+    res = await UserApi.get("", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: window.localStorage.getItem("accessToken"),
+      },
+    });
+
     return res;
   },
 };
