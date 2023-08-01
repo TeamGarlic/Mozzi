@@ -79,12 +79,14 @@ const userApi = {
   },
 
   getUser: async (accessToken) => {
-    let res = await UserApi.get("userinfo", {
+    if(!accessToken) return;
+    let res = await UserApi.get("", {
       headers: {
         "Content-Type": "application/json",
         Authorization: accessToken,
       },
     });
+    // console.log(res);
     return res;
   },
 };

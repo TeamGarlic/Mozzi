@@ -20,16 +20,8 @@ function Booth() {
   // console.log(sessionID);
   const { user, checkUser } = useUser();
   console.log(user);
-  checkUser();
-  const {
-    // mainSession,
-    // maskSession,
-    subscribers,
-    joinSession,
-    sendMessage,
-    chatLists,
-    mainPublisher,
-  } = useSession(user, shareCode);
+  const { mainSession, maskSession, subscribers, joinSession, sendMessage, chatLists } =
+    useSession(user, shareCode);
 
   // 소스 웹캠 video
   const webcamRef = useRef();
@@ -81,6 +73,8 @@ function Booth() {
   };
 
   useEffect(() => {
+
+    checkUser();
     // TODO : bgImg를 Redux에서 관리
     const bgImg = new Image();
     bgImg.src = "/src/assets/img/bg1.jpg";
