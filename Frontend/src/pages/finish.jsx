@@ -12,29 +12,6 @@ function Finish() {
             <div className="w-full justify-center text-center">
               <video autoPlay src={location.state.clip}></video>
             </div>
-            {/* <div className=" w-1/2 flex-col justify-center items-center text-center">
-              <div>
-                {new Date().toLocaleDateString()}의 추억
-                <br />
-                with
-                <br />
-                user1
-                <br />
-                user2
-                <br />
-                user3
-                <br />
-                user4
-              </div>
-              <ul className="flex gap-5 text-center justify-center">
-                <li>다운받기</li>
-                <li>카톡공유</li>
-                <li>인스타공유</li>
-                <li>
-                  <Link to="/">홈으로</Link>
-                </li>
-              </ul>
-            </div> */}
           </div>
           <div className=" w-1/2 flex-col justify-center items-center text-center m-auto">
             <div>

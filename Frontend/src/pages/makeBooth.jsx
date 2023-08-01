@@ -6,9 +6,10 @@ import { useState } from "react";
 import { resetCamCanvasesAction } from "@/modules/canvasAction.js";
 import { useDispatch } from "react-redux";
 
-function MakeBooth({ startTake, shareCode }) {
+function MakeBooth({ startTake, shareCode, subscribers, mainPublisher }) {
   const [visibility, setVisibility] = new useState(true);
   const [toggleVoice, setToggleVoice] = new useState(true);
+
   const dispatch = useDispatch();
   const closeDialog = () => {
     setVisibility(false);
@@ -30,6 +31,7 @@ function MakeBooth({ startTake, shareCode }) {
         onClick={closeDialog}
         toggleVoice={toggleVoice}
         setVoice={setVoice}
+        mainPublisher={mainPublisher}
       />
       <Layout>
         <div className="flex">
@@ -76,7 +78,10 @@ function MakeBooth({ startTake, shareCode }) {
               </button>
             </div>
           </div>
-          <UserSideBar />
+          <UserSideBar
+            subscribers={subscribers}
+            mainPublisher={mainPublisher}
+          />
         </div>
       </Layout>
     </>
@@ -88,4 +93,7 @@ export default MakeBooth;
 MakeBooth.propTypes = {
   startTake: PropTypes.func,
   shareCode: PropTypes.string,
+  subscribers: PropTypes.array,
+  myRef: PropTypes.object,
+  mainPublisher: PropTypes.object,
 };
