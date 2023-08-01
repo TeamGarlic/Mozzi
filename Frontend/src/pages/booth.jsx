@@ -45,9 +45,9 @@ function Booth() {
   // TODO : bgImg를 Redux에서 관리
   const bgNow = useSelector((state) => state.bgReducer.bgNow);
 
-  const testRef = useRef();
-  const testRef2 = useRef();
-  const testRef3 = useRef();
+  // const testRef = useRef();
+  // const testRef2 = useRef();
+  // const testRef3 = useRef();
 
   function startTake() {
     dispatch(resetCamCanvasesAction());
@@ -121,14 +121,14 @@ function Booth() {
     joinSession([bgRemovedRef, bgMaskRef]);
   }, []);
 
-  useEffect(() => {
-    console.log(subscribers);
-    if (subscribers.length > 0) subscribers[0].addVideoElement(testRef.current);
-    if (subscribers.length > 1)
-      subscribers[1].addVideoElement(testRef2.current);
-    if (subscribers.length > 2)
-      subscribers[2].addVideoElement(testRef3.current);
-  }, [subscribers]);
+  // useEffect(() => {
+  //   console.log(subscribers);
+  //   if (subscribers.length > 0) subscribers[0].addVideoElement(testRef.current);
+  //   if (subscribers.length > 1)
+  //     subscribers[1].addVideoElement(testRef2.current);
+  //   if (subscribers.length > 2)
+  //     subscribers[2].addVideoElement(testRef3.current);
+  // }, [subscribers]);
 
   return (
     <>
@@ -150,9 +150,9 @@ function Booth() {
       <video autoPlay ref={webcamRef} className="hidden" />
       <canvas ref={bgRemovedRef} className="hidden" />
       <canvas ref={bgMaskRef} className="hidden" />
-      <video autoPlay ref={testRef} className="" />
+      {/* <video autoPlay ref={testRef} className="" />
       <video autoPlay ref={testRef2} className="" />
-      <video autoPlay ref={testRef3} className="" />
+      <video autoPlay ref={testRef3} className="" /> */}
     </>
   );
 }
