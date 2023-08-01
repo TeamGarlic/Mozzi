@@ -1,9 +1,10 @@
 package com.ssafy.mozzi.common.util.mapper;
 
 import com.ssafy.mozzi.api.request.UserRegisterPostReq;
+import com.ssafy.mozzi.api.response.ReIssuePostRes;
+import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
-import com.ssafy.mozzi.api.response.reissuePostRes;
 import com.ssafy.mozzi.common.auth.CustomUserDetails;
 import com.ssafy.mozzi.db.entity.remote.User;
 
@@ -38,8 +39,8 @@ public class UserMapper {
             .build();
     }
 
-    public static reissuePostRes toReissueRes(String accessToken, String refreshToken) {
-        return reissuePostRes.builder()
+    public static ReIssuePostRes toReissueRes(String accessToken, String refreshToken) {
+        return ReIssuePostRes.builder()
             .accessToken(accessToken)
             .refreshToken(refreshToken)
             .build();
@@ -50,6 +51,15 @@ public class UserMapper {
             .id(user.getId().toString())
             .userId(user.getUserId())
             .password(user.getPassword())
+            .email(user.getEmail())
+            .build();
+    }
+
+    public static UserInfoRes toUserInfoRes(User user) {
+        return UserInfoRes.builder()
+            .id(user.getId())
+            .userId(user.getUserId())
+            .userNickname(user.getNickname())
             .email(user.getEmail())
             .build();
     }
