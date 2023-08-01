@@ -2,6 +2,7 @@ package com.ssafy.mozzi.api.service;
 
 import java.util.Optional;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,11 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.mozzi.api.request.ReIssuePostReq;
 import com.ssafy.mozzi.api.request.UserLoginPostReq;
 import com.ssafy.mozzi.api.request.UserRegisterPostReq;
-import com.ssafy.mozzi.api.response.ReIssuePostRes;
+import com.ssafy.mozzi.api.request.reissuePostReq;
 import com.ssafy.mozzi.api.response.UserIdCheckRes;
 import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
+import com.ssafy.mozzi.api.response.reissuePostRes;
 import com.ssafy.mozzi.common.auth.JwtTokenProvider;
 import com.ssafy.mozzi.common.exception.handler.DuplicatedUserIdException;
 import com.ssafy.mozzi.common.exception.handler.InvalidRefreshTokenException;
@@ -145,7 +147,11 @@ public class UserServiceImpl implements UserService {
         Authentication auth = jwtTokenProvider.getAuthentication(accessToken);
         UserDetails userDetails = (UserDetails)auth.getPrincipal();
         String id = userDetails.getUsername();
-        return userRepository.findById(Long.parseLong(id)).orElseThrow();
+        Optional<User> user = userRepository.findById(Long.parseLong(id));
+        if (user.isEmpty()) {
+            throw new UserIdNotExistsException("Valid Access Token, No user matched");
+        }
+        return user.get();
     }
 
     /**
@@ -188,5 +194,15 @@ public class UserServiceImpl implements UserService {
             .message("logout success")
             .data("")
             .build();
+    }
+
+    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
+    @Override
+    public ResponseEntity<String> update(UserUpdatePutReq request) {
+        User user = this.findUserByToken(request.getAccessToken());
+        user.setPassword(request.getPassword());
+        user.setNickname(request.getNickname());
+        user.setEmail(request.getEmail());
+        return ResponseEntity.ok("User data modified");
     }
 }

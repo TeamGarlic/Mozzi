@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ControllerAdviceHandler {
     /**
-     * 이미 존재하는 Id일 경우의 응답을 반환한다.
+     * 존재하지 않는 Id일 경우의 응답을 반환한다.
      * @see UserIdNotExistsException
      * @see com.ssafy.mozzi.api.service.UserService
      */
