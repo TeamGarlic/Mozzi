@@ -1,10 +1,17 @@
 package com.ssafy.mozzi.api.controller;
 
+import java.nio.charset.StandardCharsets;
+
+import org.springframework.core.io.Resource;
 import org.springframework.http.CacheControl;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,6 +62,28 @@ public class ItemController {
                 .data(responseData)
                 .build()
             );
+    }
+
+    /**
+     * 배경 화면 ObjectName으로 배경 이미지 반환하는 메소드
+     *
+     * @param backgroundId String\
+     * @return ResponseEntity<Resource>
+     * @see ItemService
+     */
+    @GetMapping("/background/{backgroundId}")
+    public ResponseEntity<Resource> getBackground(
+        @PathVariable("backgroundId") String backgroundId) {
+        Resource resource = itemService.getBackgroundImg(backgroundId);
+
+        return ResponseEntity.ok()
+            .cacheControl(cacheControl.getCacheControl())
+            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+            .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment() // (6)
+                .filename(resource.getFilename(), StandardCharsets.UTF_8)
+                .build()
+                .toString())
+            .body(resource);
     }
 
     /**
