@@ -12,6 +12,7 @@ export default function UserSideBar({ subscribers, mainPublisher }) {
   console.log(mainPublisher);
 
   useEffect(() => {
+    console.log(subscribers)
     if (mainPublisher) {
       mainPublisher.addVideoElement(myRef.current);
     }
@@ -37,10 +38,12 @@ export default function UserSideBar({ subscribers, mainPublisher }) {
               userName={sub.stream.connection.connectionId}
               key={sub.stream.connection.connectionId}
             /> */}
-              <div key={sub.id} className="stream-container col-md-6 col-xs-6">
-                <span>{sub.id}</span>
+              {!JSON.parse(sub.stream.connection.data).isMask?(
+              <div key={JSON.parse(sub.stream.connection.data).uid} className="stream-container col-md-6 col-xs-6">
+                {/*<span>{JSON.parse(sub.stream.connection.data).clientData}</span>*/}
                 <UserVideoComponent sub={sub} />
               </div>
+              ):null}
             </>
           ))}
       </ul>
