@@ -8,7 +8,7 @@ import MakeBooth from "./makeBooth";
 import TakePic from "./takePic";
 import { useParams } from "react-router-dom";
 import { SelfieSegmentation } from "@mediapipe/selfie_segmentation";
-import { drawCanvas, drawMyVid } from "@/utils/videoUtil.js";
+import { drawCanvas, drawMask } from '@/utils/videoUtil.js';
 import useSession from "@/hooks/useSession.js";
 import { changeBgAction } from "@/modules/bgAction.js";
 import useUser from "@/hooks/useUser";
@@ -57,19 +57,19 @@ function Booth() {
   const onResults = (results) => {
     // 로컬 웹캠의 한 프레임이 처리될 때 마다 실행되는 함수들
 
-    // 내 웹캠을 담을 canvas (화면에 표시 x)
-    drawMyVid(
-      bgRemovedRef,
-      bgRemovedContextRef,
-      results,
-      bgMaskRef,
-      bgMaskContextRef
-    );
+    drawMask(bgMaskRef, bgMaskContextRef, results)
+
+    // // 내 웹캠을 담을 canvas (화면에 표시 x)
+    // drawMyVid(
+    //   bgRemovedRef,
+    //   bgRemovedContextRef,
+    //   results,
+    // );
     // console.log(camCanvases)
-    // TODO : camCanvases 리렌더링 안되는 오류 수정
-    camCanvases.forEach((e) => {
-      drawMyVid(e.canvas, e.context, results);
-    });
+    // // TODO : camCanvases 리렌더링 안되는 오류 수정
+    // camCanvases.forEach((e) => {
+    //   drawMyVid(e.canvas, e.context, results);
+    // });
 
     // TODO : 한 레이어만 그리는 샘플 코드 지우기
     if (mainCanvas.canvas)
@@ -87,7 +87,6 @@ function Booth() {
     bgImg.crossOrigin = "anonymous";
     dispatch(changeBgAction({ img: bgImg }));
 
-    bgRemovedContextRef.current = bgRemovedRef.current.getContext("2d");
     bgMaskContextRef.current = bgMaskRef.current.getContext("2d");
     const constraints = {
       video: { width: { max: 1280 }, height: { max: 720 } },
@@ -121,14 +120,9 @@ function Booth() {
     joinSession([bgRemovedRef, bgMaskRef]);
   }, []);
 
-  // useEffect(() => {
-  //   console.log(subscribers);
-  //   if (subscribers.length > 0) subscribers[0].addVideoElement(testRef.current);
-  //   if (subscribers.length > 1)
-  //     subscribers[1].addVideoElement(testRef2.current);
-  //   if (subscribers.length > 2)
-  //     subscribers[2].addVideoElement(testRef3.current);
-  // }, [subscribers]);
+  useEffect(() => {
+    console.log(subscribers);
+  }, [subscribers]);
 
   return (
     <>
@@ -148,11 +142,8 @@ function Booth() {
         />
       )}
       <video autoPlay ref={webcamRef} className="hidden" />
-      <canvas ref={bgRemovedRef} className="hidden" />
+      {/*<canvas ref={bgRemovedRef} className="hidden" />*/}
       <canvas ref={bgMaskRef} className="hidden" />
-      {/* <video autoPlay ref={testRef} className="" />
-      <video autoPlay ref={testRef2} className="" />
-      <video autoPlay ref={testRef3} className="" /> */}
     </>
   );
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { OpenVidu } from "openvidu-browser";
+import { v4 } from "uuid";
 import boothApi from "@/api/boothApi.js";
 
 function useSession(userName, shareCode) {
@@ -62,17 +63,26 @@ function useSession(userName, shareCode) {
       const mainToken = await getToken(shareCode);
       const maskToken = await getToken(shareCode);
 
-      mainSession.connect(mainToken, { clientData: userName });
-      maskSession.connect(maskToken, { clientData: userName + "_mask" });
+      const uid = v4();
+      mainSession.connect(mainToken, {
+        clientData: userName,
+        isMask : false,
+        uid : uid,
+      });
+      maskSession.connect(maskToken, {
+        clientData: userName,
+        isMask : true,
+        uid : uid,
+      });
 
       const mainPublisher = await mainOV.initPublisherAsync(undefined, {
         audioSource: undefined,
-        videoSource: canvases[0].current.captureStream(30).getVideoTracks()[0],
+        videoSource: undefined,
         publishAudio: true,
         publishVideo: true,
         frameRate: 30,
         insertMode: "APPEND",
-        mirror: false,
+        mirror: true,
       });
       const maskPublisher = await maskOV.initPublisherAsync(undefined, {
         audioSource: undefined,

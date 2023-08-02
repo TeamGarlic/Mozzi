@@ -23,7 +23,8 @@
     "react-rnd": "^10.4.1",
     "react-router-dom": "^6.14.1",
     "redux": "^4.2.1",
-    "tailwind-scrollbar-hide": "^1.1.7"
+    "tailwind-scrollbar-hide": "^1.1.7",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.14",
