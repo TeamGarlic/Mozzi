@@ -16,7 +16,7 @@ export default function UserSideBar({ subscribers, mainPublisher }) {
     if (mainPublisher) {
       mainPublisher.addVideoElement(myRef.current);
     }
-  }, [mainPublisher]);
+  }, [mainPublisher, subscribers]);
 
   return (
     <Card

@@ -20,7 +20,7 @@ function Booth() {
   const dispatch = useDispatch();
   // console.log(sessionID);
   const location = useLocation();
-  const { user, checkUser } = useUser({isHost: location.state.isHost});
+  const { user, checkUser } = useUser({isHost: location.state?location.state.isHost:0});
 
   const {
     mainSession,
@@ -139,14 +139,14 @@ function Booth() {
       )}
       <video autoPlay ref={webcamRef} className="hidden" />
       <canvas ref={bgMaskRef} className="hidden" />
-      {/*{*/}
-      {/*  subscribers.map((sub) => {*/}
-      {/*    return (*/}
-      {/*      <video key={JSON.parse(sub.stream.connection.data).uid} ref={(elem) =>*/}
-      {/*        subCanvasRefs.current[JSON.parse(sub.stream.connection.data).uid] = elem}></video>*/}
-      {/*    )*/}
-      {/*  })*/}
-      {/*}*/}
+    {/*  {subscribers&&*/}
+    {/*  subscribers.map((sub) => {*/}
+    {/*    return (*/}
+    {/*      <video key={JSON.parse(sub.stream.connection.data).uid} ref={(elem) =>*/}
+    {/*        subCanvasRefs.current[JSON.parse(sub.stream.connection.data).uid] = elem}></video>*/}
+    {/*    )*/}
+    {/*  })*/}
+    {/*}*/}
     </>
   );
 }
