@@ -20,7 +20,9 @@ function Booth() {
   const dispatch = useDispatch();
   // console.log(sessionID);
   const location = useLocation();
-  const { user, checkUser } = useUser({isHost: location.state?location.state.isHost:0});
+  const { user, checkUser } = useUser({
+    isHost: location.state?location.state.isHost:0
+  });
 
   const {
     mainSession,
@@ -30,7 +32,7 @@ function Booth() {
     sendMessage,
     chatLists,
     mainPublisher,
-  } = useSession(user, shareCode);
+  } = useSession(shareCode);
 
   // 소스 웹캠 video
   const webcamRef = useRef();
@@ -113,7 +115,7 @@ function Booth() {
         canvas: bgRemovedRef,
       })
     );
-    joinSession([bgRemovedRef, bgMaskRef]);
+    joinSession(user.userNickname,[bgRemovedRef, bgMaskRef]);
   }, []);
 
   useEffect(() => {
