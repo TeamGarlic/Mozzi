@@ -61,7 +61,6 @@ function UserList({user}){
   }
 
   function onDragStart(event){
-    console.log(isHost);
     setDrag(event.target);
     event.dataTransfer.effectAllowed = "move";
     event.dataTransfer.setData("text/html", event.target);
