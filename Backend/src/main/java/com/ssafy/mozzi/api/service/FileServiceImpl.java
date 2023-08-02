@@ -1,7 +1,5 @@
 package com.ssafy.mozzi.api.service;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Optional;
 
 import org.springframework.context.annotation.PropertySource;
@@ -15,6 +13,7 @@ import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
 import com.ssafy.mozzi.common.auth.ObjectStorageClient;
 import com.ssafy.mozzi.common.dto.MozzirollFileItem;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
+import com.ssafy.mozzi.common.util.FileUtil;
 import com.ssafy.mozzi.common.util.mapper.FileMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
 import com.ssafy.mozzi.db.entity.remote.Mozziroll;
@@ -59,28 +58,21 @@ public class FileServiceImpl implements FileService {
         if (user == null)
             throw new CloudStorageSaveFailException("파일 저장 유저 없음");
         // Mozziroll 테이블에 정보 추가.
+        // TODO: 모찌 제목 추가
         Mozziroll mozziroll = mozzirollRepository.save(
             Mozziroll.builder()
                 .objectName(OBJECT_NAME)
                 .build());
-        if (mozziroll == null)
-            throw new CloudStorageSaveFailException("Mozziroll 테이블 저장 실패");
+
         // UserMozziroll 테이블에 정보 추가
         UserMozziroll userMozziroll = userMozzirollRepository.save(UserMozziroll.builder()
             .mozziroll(mozziroll)
             .user(user)
             .build());
-        if (userMozziroll == null)
-            throw new CloudStorageSaveFailException("UserMozziroll 테이블 저장 실패");
 
         // Object Storage에 파일 추가
-        PutObjectResponse response = null;
-        try {
-            response = fileRepository.putObject(client.getClient(), generateStreamFromFile(file), OBJECT_NAME,
-                contentType);
-        } catch (IOException e) {
-            throw new CloudStorageSaveFailException("파일 변환 실패");
-        }
+        PutObjectResponse response = fileRepository.putObject(client.getClient(), FileUtil.generateStreamFromFile(file),
+            OBJECT_NAME, contentType);
 
         if (response.getLastModified() == null)
             throw new CloudStorageSaveFailException("파일 업로드 실패");
@@ -104,15 +96,5 @@ public class FileServiceImpl implements FileService {
             mozziroll.get().getObjectName());
 
         return FileMapper.toMozzirollItem(getObjectResponse, mozziroll);
-    }
-
-    /**
-     * MultipartFile을 InputStream으로 변환해주는 함수
-     * @param file MultipartFile
-     * @return InputStream 형태의 파일
-     * @see FileRepository
-     */
-    public static InputStream generateStreamFromFile(MultipartFile file) throws IOException {
-        return file.getInputStream();
     }
 }

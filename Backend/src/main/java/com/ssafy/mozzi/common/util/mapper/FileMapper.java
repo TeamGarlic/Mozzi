@@ -1,11 +1,13 @@
 package com.ssafy.mozzi.common.util.mapper;
 
+import java.util.Optional;
+
+import org.springframework.core.io.InputStreamResource;
+
 import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
 import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
 import com.ssafy.mozzi.common.dto.MozzirollFileItem;
 import com.ssafy.mozzi.db.entity.remote.Mozziroll;
-import java.util.Optional;
-import org.springframework.core.io.InputStreamResource;
 
 public class FileMapper {
     public static FileMozzirollPostRes toFileMozzirollPostRes(Mozziroll mozziroll) {
@@ -14,10 +16,11 @@ public class FileMapper {
             .build();
     }
 
-    public static MozzirollFileItem toMozzirollItem(GetObjectResponse getObjectResponse, Optional<Mozziroll> mozziroll) {
+    public static MozzirollFileItem toMozzirollItem(GetObjectResponse getObjectResponse,
+        Optional<Mozziroll> mozziroll) {
         return MozzirollFileItem.builder()
             .file(new InputStreamResource(getObjectResponse.getInputStream()))
-            .fileName(mozziroll.get().getObjectName())
+            .fileName(mozziroll.get().getObjectName()) // TODO: 모찌 제목으로 수정
             .build();
     }
 }
