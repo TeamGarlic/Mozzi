@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.ssafy.mozzi.api.response.FrameListGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundGetRes;
+import com.ssafy.mozzi.api.response.ItemBackgroundPostRes;
 import com.ssafy.mozzi.api.response.ItemStickerGetRes;
 import com.ssafy.mozzi.common.dto.BackgroundItem;
 import com.ssafy.mozzi.common.dto.FrameClipItem;
@@ -108,5 +109,17 @@ public class ItemMapper {
         }
 
         return clipList;
+    }
+
+    /**
+     *  Backgroud 엔티티를 ItemBackgroundPostRes로 변환
+     *
+     * @param backgroud Backgroud
+     * @return ItemBackgroundPostRes
+     */
+    public static ItemBackgroundPostRes toItemBackgroundPostRes(Backgroud backgroud) {
+        return ItemBackgroundPostRes.builder()
+            .id(backgroud.getId())
+            .build();
     }
 }

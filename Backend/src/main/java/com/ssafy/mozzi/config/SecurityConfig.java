@@ -1,8 +1,5 @@
 package com.ssafy.mozzi.config;
 
-import com.ssafy.mozzi.common.auth.JwtAuthenticationFilter;
-import com.ssafy.mozzi.common.auth.JwtTokenProvider;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,6 +9,11 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.ssafy.mozzi.common.auth.JwtAuthenticationFilter;
+import com.ssafy.mozzi.common.auth.JwtTokenProvider;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
@@ -47,7 +49,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.OPTIONS).permitAll()  // preflight 로 보내는 요청을 해결
                 .requestMatchers(AUTH_WHITELIST).permitAll()
-                .requestMatchers(HttpMethod.POST, "/files/**").authenticated()
+                .requestMatchers(HttpMethod.POST, "/files").authenticated()
                 .requestMatchers(HttpMethod.POST, "/sessions").authenticated()  // accessToken 이 필요한 경우
                 .requestMatchers(HttpMethod.GET, "/sessions/**").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "sessions/**").authenticated()
