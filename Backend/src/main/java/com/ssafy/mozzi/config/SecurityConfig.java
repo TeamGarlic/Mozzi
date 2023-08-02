@@ -1,8 +1,5 @@
 package com.ssafy.mozzi.config;
 
-import com.ssafy.mozzi.common.auth.JwtAuthenticationFilter;
-import com.ssafy.mozzi.common.auth.JwtTokenProvider;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,6 +9,12 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import com.ssafy.mozzi.common.auth.JwtAuthenticationFilter;
+import com.ssafy.mozzi.common.auth.JwtTokenProvider;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
@@ -21,23 +24,6 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
 
     // TODO: Need to add path after adding anonymous mapping.
-    private static final String[] AUTH_WHITELIST = {
-        "/users/**", "/items/**"
-        , "/h2-console/**" // TODO: remove before deploy
-        , "/"
-        , "sessions/connections"
-    };
-
-    private static final String[] OPTION_WHITELIST = {
-        "/users/**", "/items/**"
-        , "/h2-console/**" // TODO: remove before deploy
-        , "/sessions/**"
-        , "/"
-    };
-
-    private static final String[] AUTH_LIST = {
-        "/sessions"
-    };
 
     @Bean
     protected SecurityFilterChain config(HttpSecurity http) throws Exception {
@@ -46,13 +32,36 @@ public class SecurityConfig {
             .cors(AbstractHttpConfigurer::disable) // TODO: Should determine whether CORS needed or not
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.OPTIONS).permitAll()  // preflight 로 보내는 요청을 해결
-                .requestMatchers(AUTH_WHITELIST).permitAll()
-                .requestMatchers(HttpMethod.POST, "/files/**").authenticated()
-                .requestMatchers(HttpMethod.POST, "/sessions").authenticated()  // accessToken 이 필요한 경우
-                .requestMatchers(HttpMethod.GET, "/sessions/**").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "sessions/**").authenticated()
-                .requestMatchers(HttpMethod.GET, "/files/**").permitAll()
+                .requestMatchers("/h2-console/**").permitAll()  // h2 요청 해결
+
+                // users 요청에 대한 보안 설정
+                .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
+                .requestMatchers(HttpMethod.GET, "/users/check-login-id").permitAll()
+                .requestMatchers(HttpMethod.POST, "/users/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/users/reissue").permitAll()
+                .requestMatchers(HttpMethod.GET, "/users").authenticated()
+                .requestMatchers(HttpMethod.GET, "/users/logout").authenticated()
+                .requestMatchers(HttpMethod.PATCH, "/users").permitAll()
+
+                // sessions 요청에 대한 보안 설정
+                .requestMatchers(HttpMethod.POST, "/sessions").authenticated()
+                .requestMatchers(HttpMethod.GET, "/sessions/{shareCode}").permitAll()
+                .requestMatchers(HttpMethod.POST, "/sessions/connections").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/sessions/{sessionId}").permitAll()
+
+                // items 요청에 대한 보안 설정
+                .requestMatchers(HttpMethod.GET, "/items/backgrounds").permitAll()
+                .requestMatchers(HttpMethod.GET, "/items/backgrounds/{ObjectName}").permitAll()
+                .requestMatchers(HttpMethod.POST, "/items/backgrounds").authenticated()
+                .requestMatchers(HttpMethod.GET, "/items/stickers").permitAll()
+                .requestMatchers(HttpMethod.GET, "/items/frames").permitAll()
+
+                // files 에 대한 보안 설정
+                .requestMatchers(HttpMethod.POST, "/files/mozziroll/upload").authenticated()
+                .requestMatchers(HttpMethod.GET, "/files/mozziroll/{mozzirollId}").permitAll()
             )
+            .csrf((csrf) -> csrf
+                .ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**")))  // h2 csrf 방지
             .headers(headers ->
                 headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
             )
