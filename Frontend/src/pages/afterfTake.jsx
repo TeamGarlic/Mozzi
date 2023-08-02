@@ -4,7 +4,7 @@ import ClipLog from "@/components/ClipLog";
 import Frame from "@/components/Frame";
 import {useSelector} from "react-redux";
 import {useEffect, useRef} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useLocation} from "react-router-dom";
 import frame1 from "@/assets/img/frame6.jpg"
 
 function AfterTake() {
@@ -15,6 +15,7 @@ function AfterTake() {
   const completeClipContextRef = useRef();
   const videoRef = useRef({});
   const navigate = useNavigate();
+  const location = useLocation();
   const bg = new Image();
   bg.src = frame1;
 

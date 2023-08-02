@@ -1,6 +1,9 @@
 import UserCard from "@/components/UserCard"
 import {useState} from "react"
 import {checkHost} from "@/utils/DecoratorUtil.js"
+import PropTypes from "prop-types";
+import TakePic from "@/pages/takePic.jsx";
+
 
 function UserList(){
   const [isHost] = useState(1);
@@ -149,3 +152,13 @@ function UserList(){
 }
 
 export default UserList;
+
+UserList.propTypes = {
+  user: PropTypes.shape({
+    id: PropTypes.number,
+    userId: PropTypes.string,
+    userNickname: PropTypes.string,
+    email: PropTypes.string,
+    isHost: PropTypes.number,
+  }),
+};

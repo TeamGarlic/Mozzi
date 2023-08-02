@@ -16,7 +16,6 @@ function TakePic({ shareCode, sendMessage, chatLists, user }) {
   const [timer, setTimer] = useState(3);
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
-
   var interval;
   const mainCanvas = useSelector((state) => state.canvasReducer.mainCanvas);
   let mediaRecorder = null;
@@ -53,7 +52,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user }) {
       // Todo: taken에 따른 로직 take 함수에 넣기(비동기 필요)
       if (taken == 4) {
         // console.log(clipList);
-        navigate(`/${shareCode}/aftertake`);
+        navigate(`/${shareCode}/aftertake`, {state: {user: user}});
       } else {
         // console.log(clipList);
         setTaken(taken + 1);
@@ -104,7 +103,8 @@ function TakePic({ shareCode, sendMessage, chatLists, user }) {
             </div>
             <div className="text-2xl">MOZZI</div>
           </div>
-          <PicSideBar />
+          <PicSideBar
+            user={user}/>
           {/* <div className="float-right mr-10 text-2xl">taken : {taken}/10</div> */}
         </div>
         <BigCam />
@@ -149,5 +149,6 @@ TakePic.propTypes = {
     userId: PropTypes.string,
     userNickname: PropTypes.string,
     email: PropTypes.string,
+    isHost: PropTypes.number,
   }),
 };

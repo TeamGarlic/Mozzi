@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import {useDispatch} from "react-redux";
 import {changeBgAction} from "@/modules/bgAction.js";
+import TakePic from "@/pages/takePic.jsx";
 
 function BgCard({ bgName, bgSrc }) {
   const dispatch = useDispatch();
@@ -24,4 +25,12 @@ export default BgCard;
 BgCard.propTypes = {
   bgName: PropTypes.string.isRequired,
   bgSrc: PropTypes.string,
+  user: PropTypes.shape({
+    id: PropTypes.number,
+    userId: PropTypes.string,
+    userNickname: PropTypes.string,
+    email: PropTypes.string,
+    isHost: PropTypes.number,
+  })
 };
+

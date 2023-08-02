@@ -6,7 +6,7 @@ import {
 } from "@/modules/canvasAction.js";
 import MakeBooth from "./makeBooth";
 import TakePic from "./takePic";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { SelfieSegmentation } from "@mediapipe/selfie_segmentation";
 import { drawCanvas, drawMyVid } from "@/utils/videoUtil.js";
 import useSession from "@/hooks/useSession.js";
@@ -18,8 +18,9 @@ function Booth() {
   const { code: shareCode } = useParams();
   const dispatch = useDispatch();
   // console.log(sessionID);
-  const { user, checkUser } = useUser();
-  console.log(user);
+  const location = useLocation();
+  const { user, checkUser } = useUser({isHost: location.state.isHost});
+
   const {
     mainSession,
     maskSession,
