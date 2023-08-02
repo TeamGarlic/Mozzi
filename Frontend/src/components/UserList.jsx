@@ -132,6 +132,7 @@ function UserList({user}){
              onDragLeave={onDragLeave}
              onDragOver={onDragOver}
              onDrop={onDrop}
+             className="mt-1 mb-1"
              draggable>
           <UserCard
             setTool={setTool}
