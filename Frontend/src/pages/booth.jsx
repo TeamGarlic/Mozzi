@@ -12,6 +12,7 @@ import { drawCanvas, drawMyVid } from "@/utils/videoUtil.js";
 import useSession from "@/hooks/useSession.js";
 import { changeBgAction } from "@/modules/bgAction.js";
 import useUser from "@/hooks/useUser";
+import {checkHost} from "@/utils/DecoratorUtil.js";
 
 function Booth() {
   const [taking, setTaking] = useState(false);
@@ -54,6 +55,7 @@ function Booth() {
     dispatch(resetCamCanvasesAction());
     setTaking(true);
   }
+  startTake = checkHost(startTake, user.isHost);
 
   const onResults = (results) => {
     // 로컬 웹캠의 한 프레임이 처리될 때 마다 실행되는 함수들

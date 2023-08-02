@@ -1,9 +1,9 @@
 import PropTypes from "prop-types";
 import {useDispatch} from "react-redux";
 import {changeBgAction} from "@/modules/bgAction.js";
-import TakePic from "@/pages/takePic.jsx";
+import {checkHost} from "@/utils/DecoratorUtil.js";
 
-function BgCard({ bgName, bgSrc }) {
+function BgCard({ bgName, bgSrc, user }) {
   const dispatch = useDispatch();
 
   function setBg(event){
@@ -11,6 +11,8 @@ function BgCard({ bgName, bgSrc }) {
     newBg.src = event.target.src;
     dispatch(changeBgAction({img: newBg}));
   }
+  setBg = checkHost(setBg, user.isHost)
+
 
   return (
     <div className="shadow border select-none cursor-pointer bg-white dark:bg-gray-800 rounded-md flex flex-1 items-center p-4 my-2 w-full h-[9/16]">

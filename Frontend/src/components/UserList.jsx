@@ -2,11 +2,8 @@ import UserCard from "@/components/UserCard"
 import {useState} from "react"
 import {checkHost} from "@/utils/DecoratorUtil.js"
 import PropTypes from "prop-types";
-import TakePic from "@/pages/takePic.jsx";
 
-
-function UserList(){
-  const [isHost] = useState(1);
+function UserList({user}){
   const [userList, setUserList] = useState([
     { item: "🦜", name: "Parrot", onMic: 1, onCam: 1, isHost: 1 },
     { item: "🦖", name: "Dinosaur", onMic: 1, onCam: 1, isHost: 0 },
@@ -116,12 +113,12 @@ function UserList(){
     setUserList(_userList);
   }
 
-  onDragOver = checkHost(onDragOver, isHost)
-  onDragEnter = checkHost(onDragEnter, isHost)
-  onDragStart = checkHost(onDragStart, isHost)
-  onDragEnd = checkHost(onDragEnd, isHost)
-  onDragLeave = checkHost(onDragLeave, isHost)
-  onDrop = checkHost(onDrop, isHost)
+  onDragOver = checkHost(onDragOver, user.isHost)
+  onDragEnter = checkHost(onDragEnter, user.isHost)
+  onDragStart = checkHost(onDragStart, user.isHost)
+  onDragEnd = checkHost(onDragEnd, user.isHost)
+  onDragLeave = checkHost(onDragLeave, user.isHost)
+  onDrop = checkHost(onDrop, user.isHost)
   
   return (
     <>

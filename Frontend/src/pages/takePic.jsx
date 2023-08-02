@@ -9,6 +9,7 @@ import PropTypes from "prop-types";
 import MyRadioGroup from "@/components/MyRadioGroup";
 import { useSelector, useDispatch } from "react-redux";
 import { AddClipAction } from "@/modules/clipAction";
+import {checkHost} from "@/utils/DecoratorUtil.js";
 
 function TakePic({ shareCode, sendMessage, chatLists, user }) {
   const timers = [3, 5, 10];
@@ -83,6 +84,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user }) {
 
     recordClip(taken);
   }
+  take = checkHost(take, user.isHost)
 
   // useEffect(() => {
   //   if (count === 0) {
