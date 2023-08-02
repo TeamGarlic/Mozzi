@@ -32,6 +32,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.OPTIONS).permitAll()  // preflight 로 보내는 요청을 해결
                 .requestMatchers("/h2-console/**").permitAll()  // h2 요청 해결
+                .requestMatchers("/sessions/testpath/**").permitAll()
 
                 // users 요청에 대한 보안 설정
                 .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
