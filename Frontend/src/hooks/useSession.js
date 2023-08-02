@@ -37,12 +37,6 @@ function useSession(userName, shareCode) {
         const subscriber = mainSession.subscribe(event.stream, undefined);
         setSubscribers((prev) => [...prev, subscriber]);
       });
-      // TODO : mask subscribe 필요한지 확인
-      // maskSession.on('streamCreated', (event) => {
-      //     const subscriber = maskSession.subscribe(event.stream, undefined);
-      //     setSubscribers([...subscribers, subscriber]);
-      //   });
-
       // 채팅 수신
       mainSession.on("signal:chat", (event) => {
         console.log(event);
@@ -56,10 +50,6 @@ function useSession(userName, shareCode) {
       mainSession.on("streamDestroyed", (event) => {
         deleteSubscriber(event.stream.streamManager);
       });
-      // // TODO : mask unsubscribe 필요한지 확인
-      // maskSession.on('streamDestroyed', (event) => {
-      //   deleteSubscriber(event.stream.streamManager);
-      // });
 
       // 예외 처리
       mainSession.on("exception", (exception) => {
@@ -141,15 +131,13 @@ function useSession(userName, shareCode) {
   };
 
   useEffect(() => {
-    // TODO : userName, sessionId 설정 (이 위치에서 할 필요는 없음)
 
     const handleBeforeUnload = () => {
       leaveSession();
     };
-    // TODO : 라이프사이클 확인
+
     window.addEventListener("beforeunload", leaveSession);
 
-    // TODO : 라이프사이클 확인
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
