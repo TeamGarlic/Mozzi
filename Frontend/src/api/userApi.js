@@ -56,42 +56,50 @@ const userApi = {
   // },
   reIssue: async (accessToken, refreshToken) => {
     alert("reissue start");
-    let res = await UserApi.post(
+    try {
+      let res = await UserApi.post(
         "reissue",
         {
           accessToken: accessToken,
           refreshToken: refreshToken,
         },
         { withCredentials: true }
-    );
+      );
 
-    if (res.status === 200) {
-      alert("reissue complete");
-      window.sessionStorage.setItem("accessToken", res.data.accessToken);
-      window.sessionStorage.setItem("refreshToken", res.data.refreshToken);
-      return;
+      if (res.status === 200) {
+        alert("reissue complete");
+        window.localStorage.setItem("accessToken", res.data.accessToken);
+        window.localStorage.setItem("refreshToken", res.data.refreshToken);
+        return;
+      }
+    } catch {
+      window.localStorage.removeItem("accessToken");
+      window.localStorage.removeItem("refreshToken");
+      alert("세션 만료 : 다시 로그인해 주세요");
+      location.href = "/";
     }
-
-    window.sessionStorage.removeItem("accessToken");
-    window.sessionStorage.removeItem("refreshToken");
-    alert("세션 만료 : 다시 로그인해 주세요");
-    location.href = "/";
   },
 
-  getUser: async (accessToken) => {
-    if(!accessToken) return;
+  getUser: async () => {
+    if (!window.localStorage.getItem("accessToken")) return;
+    console.log("user search");
     let res = await UserApi.get("", {
       headers: {
         "Content-Type": "application/json",
-        Authorization: accessToken,
+        Authorization: window.localStorage.getItem("accessToken"),
       },
     });
 
-    if(res.status===200){
+    if (res.status === 200) {
+      console.log("searched!");
+      console.log(res);
       return res;
     }
-
-    await userApi.reIssue(accessToken, window.localStorage.getItem("refreshToken"));
+    console.log(res);
+    await userApi.reIssue(
+      window.localStorage.getItem("accessToken"),
+      window.localStorage.getItem("refreshToken")
+    );
 
     res = await UserApi.get("", {
       headers: {
