@@ -36,7 +36,7 @@ public class ItemMapper {
         for (Backgroud backgroud : backgrounds) {
             backgroundItems.add(BackgroundItem.builder()
                 .id(backgroud.getId())
-                .url(backgroud.getObjectName())
+                .objectName(backgroud.getObjectName())
                 .build());
         }
 
