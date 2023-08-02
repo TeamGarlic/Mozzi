@@ -1,9 +1,17 @@
 package com.ssafy.mozzi.api.controller;
 
+import java.nio.charset.StandardCharsets;
+
+import org.springframework.core.io.Resource;
 import org.springframework.http.CacheControl;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
 import com.ssafy.mozzi.api.service.FileService;
+import com.ssafy.mozzi.common.dto.MozzirollFileItem;
 import com.ssafy.mozzi.common.model.ItemCacheControl;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
@@ -47,5 +56,28 @@ public class FileController {
                     .data(fileService.saveMozziroll(file, accessToken))
                     .build()
             );
+    }
+
+    /**
+     * 모찌롤 id에 해당하는 모찌롤을 다운로드
+     *
+     * @param mozzirollId String
+     * @return ResponseEntity<Resource>
+     * @see FileService
+     * @see MozzirollFileItem
+     * @see MediaType
+     */
+    @GetMapping(value = "/mozziroll/{mozzirollId}")
+    public ResponseEntity<Resource> downloadMozziroll(@PathVariable("mozzirollId") String mozzirollId) {
+        MozzirollFileItem mozzirollFileItem = fileService.downloadMozziroll(mozzirollId);
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .cacheControl(cacheControl.getCacheControl())
+            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+            .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment() // (6)
+                .filename(mozzirollFileItem.getFileName(), StandardCharsets.UTF_8)
+                .build()
+                .toString())
+            .body(mozzirollFileItem.getFile());
     }
 }
