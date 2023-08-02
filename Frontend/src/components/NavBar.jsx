@@ -35,7 +35,7 @@ function NavBar({ user }) {
         className=" float-left w-20 h-20 hover:cursor-pointer"
         onClick={goHome}
       />
-      {user.name ? (
+      {user ? (
         <div className=" float-right flex-col">
           <button
             onClick={showMenu}

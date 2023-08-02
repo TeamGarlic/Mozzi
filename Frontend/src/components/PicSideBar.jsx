@@ -4,8 +4,10 @@ import UserList from "./UserList";
 import BgCard from "./BgCard";
 import { UsersIcon } from "@heroicons/react/24/outline";
 import { ComputerDesktopIcon } from "@heroicons/react/24/outline";
+import PropTypes from "prop-types";
+import TakePic from "@/pages/takePic.jsx";
 
-export default function PicSideBar() {
+export default function PicSideBar({user}) {
   // const buttons = [
   //   { word: "사용자", idx: 1 },
   //   { word: "배경", idx: 2 },
@@ -44,14 +46,15 @@ export default function PicSideBar() {
         >
           {menu === 1 && (
             <div className="h-full">
-              <UserList />
+              <UserList
+                user={user}/>
             </div>
           )}
           {menu === 2 && (
             <div className="h-full">
               배경 변경하기
               {bGs.map((bg) => (
-                <BgCard bgName={bg.bgName} key={bg.bgName} bgSrc={bg.src}/>
+                <BgCard bgName={bg.bgName} key={bg.bgName} bgSrc={bg.src} user={user}/>
               ))}
             </div>
           )}
@@ -61,3 +64,13 @@ export default function PicSideBar() {
         </>
   );
 }
+
+PicSideBar.propTypes = {
+    user: PropTypes.shape({
+        id: PropTypes.number,
+        userId: PropTypes.string,
+        userNickname: PropTypes.string,
+        email: PropTypes.string,
+        isHost: PropTypes.number,
+    }),
+};

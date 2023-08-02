@@ -16,7 +16,11 @@ function useUser(initialState = null) {
   useEffect(() => {
     getUser().then((res)=>{
       if (res&&res.status === 200) {
-        setUser(res.data.data);
+        const userData = res.data.data
+        setUser({
+          ...user,
+          ...userData,
+        });
         // console.log("200 complete");
       } else {
         // console.log("no user");
@@ -28,7 +32,11 @@ function useUser(initialState = null) {
   async function checkUser() {
     await getUser().then((res)=>{
       if (res&&res.status === 200) {
-        setUser(res.data.data);
+        const userData = res.data.data
+        setUser({
+          ...user,
+          ...userData,
+        });
         // console.log("200 complete");
       } else {
         let guest = prompt("이름을 입력하세요", "GUEST");
@@ -36,7 +44,10 @@ function useUser(initialState = null) {
           alert("메인 화면으로 돌아갑니다.");
           navigate("/");
         }
-        setUser(guest);
+        setUser({
+          ...user,
+          userNickname: guest,
+        });
       }
       // console.log(res.status);
     });

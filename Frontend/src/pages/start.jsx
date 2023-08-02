@@ -35,7 +35,7 @@ function Start() {
         data: { shareCode },
       },
     } = res;
-    navigate(`/${shareCode}/booth`);
+    navigate(`/${shareCode}/booth`, {state: {isHost: 1}});
   }
 
   const activeEnter = (e) => {
@@ -53,7 +53,7 @@ function Start() {
           data: { shareCode },
         },
       } = res;
-      navigate(`/${shareCode}/booth`);
+      navigate(`/${shareCode}/booth`, {state: {isHost: 0}});
     } catch {
       alert("해당 코드로 생성된 부스가 없습니다.");
     }
