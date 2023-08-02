@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -15,11 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.mozzi.api.request.ReIssuePostReq;
 import com.ssafy.mozzi.api.request.UserLoginPostReq;
 import com.ssafy.mozzi.api.request.UserRegisterPostReq;
+import com.ssafy.mozzi.api.request.UserUpdatePutReq;
 import com.ssafy.mozzi.api.response.ReIssuePostRes;
 import com.ssafy.mozzi.api.response.UserIdCheckRes;
 import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
+import com.ssafy.mozzi.api.response.UserUpdateRes;
 import com.ssafy.mozzi.api.service.UserService;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
@@ -146,5 +149,17 @@ public class UserController {
             .body(
                 userService.logout(accessToken)
             );
+    }
+
+    /**
+     * 유저 정보 변경 요청을 받아 존재하는 데이터에 대해 데이터를 갱신합니다.
+     * @param request
+     * @see UserService
+     */
+    @PatchMapping
+    public ResponseEntity<? extends BaseResponseBody<UserUpdateRes>> update(@RequestBody UserUpdatePutReq request) {
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.noCache())
+            .body(userService.update(request));
     }
 }
