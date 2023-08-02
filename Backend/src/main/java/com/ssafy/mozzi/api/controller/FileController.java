@@ -45,17 +45,17 @@ public class FileController {
      */
     @PostMapping(value = "/mozziroll/upload")
     public ResponseEntity<? extends BaseResponseBody<FileMozzirollPostRes>> saveMozziroll(
-        @RequestHeader("Authorization") String accessToken,
-        @RequestParam("file") MultipartFile file) {
+            @RequestHeader("Authorization") String accessToken, @RequestParam("file") MultipartFile file,
+            @RequestParam("title") String title) {
         return ResponseEntity
-            .status(HttpStatus.CREATED)
-            .cacheControl(CacheControl.noStore())
-            .body(
-                BaseResponseBody.<FileMozzirollPostRes>builder()
-                    .message("Save mozziroll success")
-                    .data(fileService.saveMozziroll(file, accessToken))
-                    .build()
-            );
+                .status(HttpStatus.CREATED)
+                .cacheControl(CacheControl.noStore())
+                .body(
+                        BaseResponseBody.<FileMozzirollPostRes>builder()
+                                .message("Save mozziroll success")
+                                .data(fileService.saveMozziroll(file, title, accessToken))
+                                .build()
+                );
     }
 
     /**
@@ -71,13 +71,14 @@ public class FileController {
     public ResponseEntity<Resource> downloadMozziroll(@PathVariable("mozzirollId") String mozzirollId) {
         MozzirollFileItem mozzirollFileItem = fileService.downloadMozziroll(mozzirollId);
         return ResponseEntity
-            .status(HttpStatus.OK)
-            .cacheControl(cacheControl.getCacheControl())
-            .contentType(MediaType.APPLICATION_OCTET_STREAM)
-            .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment() // (6)
-                .filename(mozzirollFileItem.getFileName(), StandardCharsets.UTF_8)
-                .build()
-                .toString())
-            .body(mozzirollFileItem.getFile());
+                .status(HttpStatus.OK)
+                .cacheControl(cacheControl.getCacheControl())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment() // (6)
+                        .filename(mozzirollFileItem.getFileName(), StandardCharsets.UTF_8)
+                        .build()
+                        .toString())
+                .body(mozzirollFileItem.getFile());
     }
 }
+

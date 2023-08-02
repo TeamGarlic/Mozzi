@@ -2,6 +2,9 @@ package com.ssafy.mozzi.api.service;
 
 import java.util.Optional;
 
+import com.ssafy.mozzi.api.request.UserUpdatePutReq;
+import com.ssafy.mozzi.api.response.UserUpdateRes;
+import com.ssafy.mozzi.common.exception.handler.NoDataException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

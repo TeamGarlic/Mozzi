@@ -3,11 +3,13 @@ package com.ssafy.mozzi.api.service;
 import com.ssafy.mozzi.api.request.ReIssuePostReq;
 import com.ssafy.mozzi.api.request.UserLoginPostReq;
 import com.ssafy.mozzi.api.request.UserRegisterPostReq;
+import com.ssafy.mozzi.api.request.UserUpdatePutReq;
 import com.ssafy.mozzi.api.response.ReIssuePostRes;
 import com.ssafy.mozzi.api.response.UserIdCheckRes;
 import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
+import com.ssafy.mozzi.api.response.UserUpdateRes;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 import com.ssafy.mozzi.db.entity.remote.User;
 
