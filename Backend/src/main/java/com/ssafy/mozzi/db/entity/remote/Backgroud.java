@@ -10,6 +10,7 @@ import com.ssafy.mozzi.db.entity.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,8 +26,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Backgroud extends BaseEntity {
-    @Size(max = 300)
-    private String url;
+
+    @NotNull
+    @Size(max = 500)
+    @Column(name = "object_name")
+    private String objectName;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @CreationTimestamp

@@ -71,6 +71,7 @@ public class User extends BaseEntity {
     private Set<MozzirollLike> likedMozzirolls = new HashSet<>();
 
     @Size(max = 150)
+    @Column(name = "refresh_token")
     private String refreshToken;
 
     @Override
