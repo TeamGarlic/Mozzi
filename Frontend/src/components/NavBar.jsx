@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
+import mozzilogo from "@/assets/img/mozzi.png";
 
 function NavBar({ user }) {
   // const [user, setUser] = useState(null);
@@ -24,13 +25,13 @@ function NavBar({ user }) {
   function logOut() {
     localStorage.removeItem("accessToken");
     alert("로그아웃되었습니다!");
-    location.href="/";
+    location.href = "/";
   }
 
   return (
     <div className="fixed w-screen top-0 p-4 px-8 h-fit">
       <img
-        src="/src/assets/img/mozzi.png"
+        src={mozzilogo}
         className=" float-left w-20 h-20 hover:cursor-pointer"
         onClick={goHome}
       />
@@ -76,6 +77,6 @@ NavBar.dafaultProps = {
 
 NavBar.propTypes = {
   user: PropTypes.shape({
-    name: PropTypes.string,
+    userNickname: PropTypes.string,
   }),
 };
