@@ -20,9 +20,15 @@ function Booth() {
   // console.log(sessionID);
   const { user, checkUser } = useUser();
   console.log(user);
-  checkUser();
-  const { mainSession, maskSession, subscribers, joinSession, sendMessage, chatLists, sendBlob, clipBlob } =
-    useSession(user, shareCode);
+  const {
+    mainSession,
+    maskSession,
+    subscribers,
+    joinSession,
+    sendMessage,
+    chatLists,
+    mainPublisher,
+  } = useSession(user, shareCode);
 
   // 소스 웹캠 video
   const webcamRef = useRef();
@@ -39,9 +45,9 @@ function Booth() {
   // TODO : bgImg를 Redux에서 관리
   const bgNow = useSelector((state) => state.bgReducer.bgNow);
 
-  const testRef = useRef();
-  const testRef2 = useRef();
-  const testRef3 = useRef();
+  // const testRef = useRef();
+  // const testRef2 = useRef();
+  // const testRef3 = useRef();
 
   function startTake() {
     dispatch(resetCamCanvasesAction());
@@ -52,7 +58,13 @@ function Booth() {
     // 로컬 웹캠의 한 프레임이 처리될 때 마다 실행되는 함수들
 
     // 내 웹캠을 담을 canvas (화면에 표시 x)
-    drawMyVid(bgRemovedRef, bgRemovedContextRef, results, bgMaskRef, bgMaskContextRef);
+    drawMyVid(
+      bgRemovedRef,
+      bgRemovedContextRef,
+      results,
+      bgMaskRef,
+      bgMaskContextRef
+    );
     // console.log(camCanvases)
     // TODO : camCanvases 리렌더링 안되는 오류 수정
     camCanvases.forEach((e) => {
@@ -60,13 +72,15 @@ function Booth() {
     });
 
     // TODO : 한 레이어만 그리는 샘플 코드 지우기
-    if(mainCanvas.canvas) drawCanvas(mainCanvas.canvas,mainCanvas.context,bgNow.img,[myLayer]);
+    if (mainCanvas.canvas)
+      drawCanvas(mainCanvas.canvas, mainCanvas.context, bgNow.img, [myLayer]);
 
     // TODO : 캔버스에 그리기
     // drawCanvas(canvasRef,canvasContextRef,bgImg,layers);
   };
 
   useEffect(() => {
+    checkUser();
     // TODO : bgImg를 Redux에서 관리
     const bgImg = new Image();
     bgImg.src = "/src/assets/img/bg1.jpg";
@@ -107,26 +121,38 @@ function Booth() {
     joinSession([bgRemovedRef, bgMaskRef]);
   }, []);
 
-  useEffect(() => {
-    console.log(subscribers);
-    if(subscribers.length>0) subscribers[0].addVideoElement(testRef.current);
-    if(subscribers.length>1) subscribers[1].addVideoElement(testRef2.current);
-    if(subscribers.length>2) subscribers[2].addVideoElement(testRef3.current);
-  }, [subscribers]);
+  // useEffect(() => {
+  //   console.log(subscribers);
+  //   if (subscribers.length > 0) subscribers[0].addVideoElement(testRef.current);
+  //   if (subscribers.length > 1)
+  //     subscribers[1].addVideoElement(testRef2.current);
+  //   if (subscribers.length > 2)
+  //     subscribers[2].addVideoElement(testRef3.current);
+  // }, [subscribers]);
 
   return (
     <>
       {!taking ? (
-        <MakeBooth startTake={startTake} shareCode={shareCode} />
+        <MakeBooth
+          startTake={startTake}
+          shareCode={shareCode}
+          subscribers={subscribers}
+          mainPublisher={mainPublisher}
+        />
       ) : (
-        <TakePic shareCode={shareCode} sendMessage={sendMessage} chatLists={chatLists}/>
+        <TakePic
+          shareCode={shareCode}
+          sendMessage={sendMessage}
+          chatLists={chatLists}
+          user={user}
+        />
       )}
       <video autoPlay ref={webcamRef} className="hidden" />
       <canvas ref={bgRemovedRef} className="hidden" />
       <canvas ref={bgMaskRef} className="hidden" />
-      <video autoPlay ref={testRef} className="" />
+      {/* <video autoPlay ref={testRef} className="" />
       <video autoPlay ref={testRef2} className="" />
-      <video autoPlay ref={testRef3} className="" />
+      <video autoPlay ref={testRef3} className="" /> */}
     </>
   );
 }

@@ -1,18 +1,22 @@
 import { Link } from "react-router-dom";
 import { Card } from "@material-tailwind/react";
-import UserCard from "./UserCard";
+import { useRef, useEffect } from "react";
+// import UserCard from "./UserCard";
 import TextInput from "./TextInput";
-// import SmallCam from "./SmallCam";
+import UserVideoComponent from "./UserVideoComponents";
+import PropTypes from "prop-types";
 
-export default function UserSideBar() {
-  const users = [
-    { name: "홍길동" },
-    { name: "박길동" },
-    { name: "최길동" },
-    { name: "김길동" },
-    { name: "곽길동" },
-    { name: "정길동" },
-  ];
+export default function UserSideBar({ subscribers, mainPublisher }) {
+  const myRef = useRef();
+  console.log(subscribers);
+  console.log(mainPublisher);
+
+  useEffect(() => {
+    if (mainPublisher) {
+      mainPublisher.addVideoElement(myRef.current);
+    }
+  }, [mainPublisher]);
+
   return (
     <Card
       id="sideMenu"
@@ -22,14 +26,23 @@ export default function UserSideBar() {
         <span className=" text-xl">사용자</span>
       </div>
       <ul className="gap-4 overflow-y-scroll scrollbar-hide">
+        {/* <canvas ref={myRef} /> */}
+        <video autoPlay ref={myRef} />
+        <hr />
         {/* <SmallCam /> */}
-        {users.map((user) => (
-          <UserCard userName={user.name} key={user.name} />
-          // <>
-          //   {/* <SmallCam /> */}
-          //   {user.name}
-          // </>
-        ))}
+        {subscribers &&
+          subscribers.map((sub) => (
+            <>
+              {/* <UserCard
+              userName={sub.stream.connection.connectionId}
+              key={sub.stream.connection.connectionId}
+            /> */}
+              <div key={sub.id} className="stream-container col-md-6 col-xs-6">
+                <span>{sub.id}</span>
+                <UserVideoComponent sub={sub} />
+              </div>
+            </>
+          ))}
       </ul>
       <div className="px-4">
         <TextInput type="text" placeholder="이름 변경..." className="" />
@@ -43,3 +56,8 @@ export default function UserSideBar() {
     </Card>
   );
 }
+
+UserSideBar.propTypes = {
+  subscribers: PropTypes.array,
+  mainPublisher: PropTypes.object,
+};

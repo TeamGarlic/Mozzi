@@ -1,6 +1,6 @@
 import { useState } from "react";
 // import { Link } from "react-router-dom";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PicSideBar from "../components/PicSideBar";
 import Layout from "../components/Layout";
 import BigCam from "../components/BigCam";
@@ -10,7 +10,7 @@ import MyRadioGroup from "@/components/MyRadioGroup";
 import { useSelector, useDispatch } from "react-redux";
 import { AddClipAction } from "@/modules/clipAction";
 
-function TakePic({ shareCode, sendMessage, chatLists }) {
+function TakePic({ shareCode, sendMessage, chatLists, user }) {
   const timers = [3, 5, 10];
   const [taken, setTaken] = new useState(1);
   const [timer, setTimer] = useState(3);
@@ -96,7 +96,7 @@ function TakePic({ shareCode, sendMessage, chatLists }) {
   return (
     <Layout>
       <>
-        <Chat sendMessage = {sendMessage} chatLists={chatLists}/>
+        <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} />
         <div className="w-full pt-4 ps-4">
           <div>
             <div className=" text-sm text-gray-500">
@@ -143,5 +143,11 @@ TakePic.propTypes = {
   startTake: PropTypes.func,
   shareCode: PropTypes.string,
   sendMessage: PropTypes.func,
-  chatLists : PropTypes.array
+  chatLists: PropTypes.array,
+  user: PropTypes.shape({
+    id: PropTypes.number,
+    userId: PropTypes.string,
+    userNickname: PropTypes.string,
+    email: PropTypes.string,
+  }),
 };

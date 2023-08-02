@@ -1,4 +1,5 @@
 import axios from "axios";
+import userApi from "@/api/userApi.js";
 
 // booth api axios 객체
 const BoothApi = axios.create({
@@ -8,17 +9,33 @@ const BoothApi = axios.create({
 
 const boothApi = {
   createBooth: async (accessToken) => {
-    const res = await BoothApi.post(
-      "",
-      {},
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: accessToken,
-        },
-      }
+    let res = await BoothApi.post(
+        "",
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: accessToken,
+          },
+        }
     );
-    console.log(res);
+
+    if(res.status===200){
+      return res;
+    }
+
+    await userApi.reIssue(accessToken, window.localStorage.getItem("refreshToken"));
+
+    res = await BoothApi.post(
+        "",
+        {},
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: window.localStorage.getItem("accessToken"),
+          },
+        }
+    );
     return res;
   }, // 완
 

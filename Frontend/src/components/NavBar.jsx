@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
+import mozzilogo from "@/assets/img/mozzi.png";
 
 function NavBar({ user }) {
   // const [user, setUser] = useState(null);
@@ -24,13 +25,13 @@ function NavBar({ user }) {
   function logOut() {
     localStorage.removeItem("accessToken");
     alert("로그아웃되었습니다!");
-    navigate("/");
+    location.href = "/";
   }
 
   return (
     <div className="fixed w-screen top-0 p-4 px-8 h-fit">
       <img
-        src="/src/assets/img/mozzi.png"
+        src={mozzilogo}
         className=" float-left w-20 h-20 hover:cursor-pointer"
         onClick={goHome}
       />
@@ -40,12 +41,12 @@ function NavBar({ user }) {
             onClick={showMenu}
             className=" float-right leading-[calc(1.875rem)]"
           >
-            {user.name}
+            {user.userNickname}
           </button>
           {menu && (
             <ul className="mt-10 border-4 rounded-lg p-4">
               <li className=" my-2">
-                <Link to={`/mypage/${user.name}`}>마이페이지</Link>
+                <Link to={`/mypage/${user.userNickname}`}>마이페이지</Link>
               </li>
               <li className=" my-2">
                 <Link to="/modify">내정보수정</Link>
@@ -61,7 +62,7 @@ function NavBar({ user }) {
           className="float-right  leading-[calc(1.875rem)]"
           onClick={goLogin}
         >
-          login
+          로그인
         </button>
       )}
     </div>
@@ -76,6 +77,6 @@ NavBar.dafaultProps = {
 
 NavBar.propTypes = {
   user: PropTypes.shape({
-    name: PropTypes.string,
+    userNickname: PropTypes.string,
   }),
 };
