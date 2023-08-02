@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import userApi from "@/api/userApi";
 import { useNavigate } from "react-router-dom";
 
-function useUser(initialState = null) {
+function useUser(initialState = {}) {
   const [user, setUser] = useState(initialState);
   const accessToken = localStorage.getItem("accessToken");
   const navigate = useNavigate();
@@ -15,7 +15,11 @@ function useUser(initialState = null) {
     }
     let res = getUser();
     if (res.status === 200) {
-      setUser(res.data);
+      const data = res.data
+      setUser({
+        ...user,
+        ...data,
+      });
       console.log("200 complete");
     } else {
       console.log("no user");
@@ -29,7 +33,10 @@ function useUser(initialState = null) {
         alert("메인 화면으로 돌아갑니다.");
         navigate("/");
       }
-      await setUser(guest);
+      await setUser({
+        ...user,
+        name: guest
+      });
     }
   }
 
