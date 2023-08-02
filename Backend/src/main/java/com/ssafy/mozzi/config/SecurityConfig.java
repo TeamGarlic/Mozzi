@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.ssafy.mozzi.common.auth.JwtAuthenticationFilter;
 import com.ssafy.mozzi.common.auth.JwtTokenProvider;
@@ -31,6 +32,7 @@ public class SecurityConfig {
             .cors(AbstractHttpConfigurer::disable) // TODO: Should determine whether CORS needed or not
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.OPTIONS).permitAll()  // preflight 로 보내는 요청을 해결
+                .requestMatchers("/h2-console/**").permitAll()  // h2 요청 해결
 
                 // users 요청에 대한 보안 설정
                 .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
@@ -58,6 +60,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/files/mozziroll/upload").authenticated()
                 .requestMatchers(HttpMethod.GET, "/files/mozziroll/{mozzirollId}").permitAll()
             )
+            .csrf((csrf) -> csrf
+                .ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**")))  // h2 csrf 방지
             .headers(headers ->
                 headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
             )
