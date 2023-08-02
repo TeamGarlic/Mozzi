@@ -32,16 +32,21 @@ public class AuthentificationProvider implements AbstractAuthenticationDetailsPr
         // OCI 구성 파일 읽기
 
         InputStream configInputStream = new ClassPathResource("config/oci_api_config").getInputStream();
+        System.out.println(configInputStream);
         File ConfigFileResource = File.createTempFile("oci_api_config", "");
+        System.out.println(ConfigFileResource);
 
         FileUtils.copyInputStreamToFile(configInputStream, ConfigFileResource);
         ConfigFile config = ConfigFileReader.parse(ConfigFileResource.getPath(), "DEFAULT");
+        System.out.println(config);
 
         InputStream keyInputStream = new ClassPathResource("config/" + ORACLE_CLOUD_PUBLIC_KEY).getInputStream();
+        System.out.println(keyInputStream);
         File privateKeyResource = File.createTempFile(ORACLE_CLOUD_PUBLIC_KEY, ".pem");
 
         FileUtils.copyInputStreamToFile(keyInputStream, privateKeyResource);
         Supplier<InputStream> privateKeySupplier = new SimplePrivateKeySupplier(privateKeyResource.getPath());
+        System.out.println(privateKeySupplier);
 
         return SimpleAuthenticationDetailsProvider.builder()
             .tenantId(config.get("tenancy")).userId(config.get("user")).fingerprint(config.get("fingerprint"))
