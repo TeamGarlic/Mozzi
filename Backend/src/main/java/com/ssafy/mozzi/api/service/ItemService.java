@@ -1,7 +1,11 @@
 package com.ssafy.mozzi.api.service;
 
+import org.springframework.core.io.Resource;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.ssafy.mozzi.api.response.FrameListGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundGetRes;
+import com.ssafy.mozzi.api.response.ItemBackgroundPostRes;
 import com.ssafy.mozzi.api.response.ItemStickerGetRes;
 
 /**
@@ -15,4 +19,8 @@ public interface ItemService {
     FrameListGetRes getFrameList();
 
     ItemStickerGetRes getStickerRes(int pageNum, int pageSize);
+
+    ItemBackgroundPostRes saveBackground(MultipartFile file);
+
+    Resource getBackgroundImg(String ObjectName);
 }
