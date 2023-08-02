@@ -32,6 +32,9 @@ import io.openvidu.java.client.OpenVidu;
 import io.openvidu.java.client.Session;
 import io.openvidu.java.client.SessionProperties;
 
+/**
+ * Openvidu 부스 관리 서비스입니다.
+ */
 @Service
 @PropertySource("classpath:application-keys.properties")
 public class BoothServiceImpl implements BoothService {
@@ -40,7 +43,7 @@ public class BoothServiceImpl implements BoothService {
     private final BoothUserRepository boothUserRepository;
 
     private final RandomGenerator random = RandomGeneratorFactory
-        .getDefault().create(System.currentTimeMillis());
+            .getDefault().create(System.currentTimeMillis());
 
     private final UserService userService;
 
@@ -50,17 +53,18 @@ public class BoothServiceImpl implements BoothService {
 
     @Autowired
     BoothServiceImpl(BoothRepository boothRepository, BoothUserRepository boothUserRepository, UserService userService,
-        MozziUtil mozziUtil, Environment env) {
+                     MozziUtil mozziUtil, Environment env) {
         this.boothRepository = boothRepository;
         this.boothUserRepository = boothUserRepository;
         this.userService = userService;
         this.mozziUtil = mozziUtil;
         this.openVidu = new OpenVidu(Objects.requireNonNull(env.getProperty("OPENVIDU_URL")),
-            Objects.requireNonNull(env.getProperty("OPENVIDU_SECRET")));
+                Objects.requireNonNull(env.getProperty("OPENVIDU_SECRET")));
     }
 
     /**
      * 새로 만들고자 하는 부스의 공유 코드를 받아서 새로운 부스를 생성하고, session Id를 반환합니다.
+     *
      * @param request Session creation request
      * @return Openvidu에서 사용되는 부스의 session Id
      * @see Session
@@ -118,6 +122,7 @@ public class BoothServiceImpl implements BoothService {
 
     /**
      * 공유 코드를 이용하여 참여하고자하는 openvidu의 session Id를 반환받습니다.
+     *
      * @param shareCode 참여하고자 하는 부스의 Share Code
      * @return openvidu session id
      * @see Session
@@ -142,6 +147,7 @@ public class BoothServiceImpl implements BoothService {
 
     /**
      * Openvidu Session Id를 이용하여 Openvidu Connection Token을 반환합니다
+     *
      * @param request session id가 담긴 요청
      * @return Openvidu Connection Token
      * @see Session
@@ -149,21 +155,23 @@ public class BoothServiceImpl implements BoothService {
      */
     @Override
     public BaseResponseBody<ConnectionPostRes> getConnectionToken(ConnectionPostReq request, String accessToken) throws
-        Exception {
+            Exception {
         Session session = openVidu.getActiveSession(request.getSessionId());
         if (session == null) {
             throw new InvalidSessionIdException(
-                String.format("You requested invalid session(%s). It could be destroyed.", request.getSessionId()));
+                    String.format("You requested invalid session(%s). It could be destroyed.", request.getSessionId()));
         }
         Booth booth = boothRepository.findBySessionId(request.getSessionId());
-        long userId = mozziUtil.findUserIdByToken(accessToken);
+        if (accessToken != null) {
+            long userId = mozziUtil.findUserIdByToken(accessToken);
 
-        Optional<BoothUser> boothUser = boothUserRepository.findByBoothIdAndUserId(booth.getId(), userId);
-        if (boothUser.isEmpty()) {
-            BoothUser connectedUser = new BoothUser();
-            connectedUser.setUserId(userId);
-            connectedUser.setBooth(booth);
-            boothUserRepository.save(connectedUser);
+            Optional<BoothUser> boothUser = boothUserRepository.findByBoothIdAndUserId(booth.getId(), userId);
+            if (boothUser.isEmpty()) {
+                BoothUser connectedUser = new BoothUser();
+                connectedUser.setUserId(userId);
+                connectedUser.setBooth(booth);
+                boothUserRepository.save(connectedUser);
+            }
         }
 
         Connection connection = session.createConnection();
@@ -179,6 +187,7 @@ public class BoothServiceImpl implements BoothService {
 
     /**
      * SessionId 를 입력받아 해당 SessionId에 해당하는 h2 Booth 와 openvidu Booth 를 삭제합니다.
+     *
      * @param sessionId session id 요청
      * @return SessionRes
      * @see Session
@@ -192,7 +201,7 @@ public class BoothServiceImpl implements BoothService {
 
         if (session == null) {
             throw new InvalidSessionIdException(
-                String.format("You requested invalid session(%s). It could be destroyed.", sessionId));
+                    String.format("You requested invalid session(%s). It could be destroyed.", sessionId));
         }
         session.close();
 
@@ -213,6 +222,7 @@ public class BoothServiceImpl implements BoothService {
 
     /**
      * 영문자/숫자로 구성된 length 만큼의 랜덤한 문자열을 만듭니다.
+     *
      * @param length 생성할 문자열의 길이
      * @return 생성된 랜덤한 문자열
      */

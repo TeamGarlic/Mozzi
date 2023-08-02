@@ -1,11 +1,5 @@
 package com.ssafy.mozzi.api.service;
 
-import java.util.Optional;
-import java.util.Set;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
 import com.ssafy.mozzi.common.exception.handler.AlreadyLinkedMozziException;
 import com.ssafy.mozzi.common.exception.handler.BoothNotExistsException;
@@ -18,11 +12,21 @@ import com.ssafy.mozzi.db.entity.local.BoothUser;
 import com.ssafy.mozzi.db.entity.remote.Mozziroll;
 import com.ssafy.mozzi.db.entity.remote.UserMozziroll;
 import com.ssafy.mozzi.db.repository.local.BoothRepository;
+import com.ssafy.mozzi.db.repository.local.BoothUserRepository;
 import com.ssafy.mozzi.db.repository.remote.MozzirollRepository;
 import com.ssafy.mozzi.db.repository.remote.UserMozzirollRepository;
-
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Moziiroll 관리 서비스입니다.
+ */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MozzirollServiceImpl implements MozzirollService {
@@ -31,6 +35,7 @@ public class MozzirollServiceImpl implements MozzirollService {
     private final UserMozzirollRepository userMozzirollRepository;
     private final MozziUtil mozziUtil;
     private final BoothRepository boothRepository;
+    private final BoothUserRepository boothUserRepository;
 
     /**
      * 사용자 계정에 Mozziroll 연결 요청을 유효성 확인 후 연결합니다.
@@ -57,11 +62,20 @@ public class MozzirollServiceImpl implements MozzirollService {
             throw new BoothNotExistsException("Requested Booth not exists");
         }
 
-        Set<BoothUser> connectedUsers = booth.get().getUsers();
-        BoothUser boothUser = new BoothUser();
-        boothUser.setUserId(userId);
+        List<BoothUser> connectedUsers = boothUserRepository.findByBoothId(request.getBoothId());
+        if (connectedUsers == null) {
+            throw new UnAuthorizedException("You are not authorized to linked mozziroll");
+        }
 
-        if (!connectedUsers.contains(boothUser)) {
+        boolean authorized = false;
+        for (BoothUser user : connectedUsers) {
+            if (user.getUserId() == userId) {
+                authorized = true;
+                break;
+            }
+        }
+
+        if (!authorized) {
             throw new UnAuthorizedException("You are not authorized to linked mozziroll");
         }
 

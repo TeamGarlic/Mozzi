@@ -1,9 +1,6 @@
 package com.ssafy.mozzi.db.entity.local;
 
-import java.util.Objects;
-
 import com.ssafy.mozzi.db.entity.BaseEntity;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -12,6 +9,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Objects;
 
 @Data
 @Entity
@@ -28,17 +27,15 @@ public class BoothUser extends BaseEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof BoothUser boothUser))
-            return false;
-        if (!super.equals(o))
-            return false;
-        return Objects.equals(getId(), boothUser.getId());
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        BoothUser boothUser = (BoothUser) o;
+        return userId == boothUser.userId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId());
+        return Objects.hash(super.hashCode(), userId);
     }
 }

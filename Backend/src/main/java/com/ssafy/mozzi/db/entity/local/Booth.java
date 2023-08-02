@@ -1,24 +1,19 @@
 package com.ssafy.mozzi.db.entity.local;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.Set;
-
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
-
 import com.ssafy.mozzi.db.entity.BaseEntity;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Data
@@ -47,11 +42,6 @@ public class Booth extends BaseEntity {
 
     @Column(nullable = false)
     private long creator;
-
-    @Column
-    @OneToMany(mappedBy = "booth", orphanRemoval = true, cascade = CascadeType.ALL)
-    private Set<BoothUser> users;
-
     @Override
     public boolean equals(Object o) {
         if (this == o)
