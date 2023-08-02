@@ -7,15 +7,15 @@ import UserVideoComponent from "./UserVideoComponents";
 import PropTypes from "prop-types";
 
 export default function UserSideBar({ subscribers, mainPublisher }) {
-  const myRef = useRef();
+  // const myRef = useRef();
   console.log(subscribers);
   console.log(mainPublisher);
 
   useEffect(() => {
     console.log(subscribers)
-    if (mainPublisher) {
-      mainPublisher.addVideoElement(myRef.current);
-    }
+    // if (mainPublisher) {
+    //   mainPublisher.addVideoElement(myRef.current);
+    // }
   }, [mainPublisher, subscribers]);
 
   return (
@@ -27,21 +27,20 @@ export default function UserSideBar({ subscribers, mainPublisher }) {
         <span className=" text-xl">사용자</span>
       </div>
       <ul className="gap-4 overflow-y-scroll scrollbar-hide">
-        {/* <canvas ref={myRef} /> */}
-        <video autoPlay ref={myRef} />
-        <hr />
-        {/* <SmallCam /> */}
+
+
+        <div className="stream-container col-md-6 col-xs-6">
+          <UserVideoComponent sub={mainPublisher} />
+          <hr />
+        </div>
+
         {subscribers &&
           subscribers.map((sub) => (
             <>
-              {/* <UserCard
-              userName={sub.stream.connection.connectionId}
-              key={sub.stream.connection.connectionId}
-            /> */}
               {!JSON.parse(sub.stream.connection.data).isMask?(
               <div key={JSON.parse(sub.stream.connection.data).uid} className="stream-container col-md-6 col-xs-6">
-                {/*<span>{JSON.parse(sub.stream.connection.data).clientData}</span>*/}
                 <UserVideoComponent sub={sub} />
+                <hr />
               </div>
               ):null}
             </>

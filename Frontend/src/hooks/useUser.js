@@ -2,10 +2,7 @@ import { useState, useEffect } from "react";
 import userApi from "@/api/userApi";
 import { useNavigate } from "react-router-dom";
 
-function useUser(initialState = {
-  // TODO : 테스트용 방장권한 제거
-  isHost : 1,
-}) {
+function useUser(initialState = null) {
   const [user, setUser] = useState(initialState);
   const accessToken = localStorage.getItem("accessToken");
   const navigate = useNavigate();

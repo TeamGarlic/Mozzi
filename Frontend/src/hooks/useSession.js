@@ -3,11 +3,12 @@ import { OpenVidu } from "openvidu-browser";
 import { v4 } from "uuid";
 import boothApi from "@/api/boothApi.js";
 
-function useSession(userName, shareCode) {
+function useSession(shareCode) {
   const [mainSession, setMainSession] = useState(undefined);
   const [maskSession, setMaskSession] = useState(undefined);
   const [mainPublisher, setMainPublisher] = useState(undefined);
   const [maskPublisher, setMaskPublisher] = useState(undefined);
+  const [userName, setUserName] = useState(undefined);
   const [subscribers, setSubscribers] = useState([]);
   const [chatLists, setChatLists] = useState([]);
   const leaveSession = () => {
@@ -24,7 +25,8 @@ function useSession(userName, shareCode) {
     setSubscribers([]);
   };
 
-  const joinSession = async (canvases) => {
+  const joinSession = async (userName, canvases) => {
+    setUserName(userName);
     try {
       const mainOV = new OpenVidu();
       const maskOV = new OpenVidu();
