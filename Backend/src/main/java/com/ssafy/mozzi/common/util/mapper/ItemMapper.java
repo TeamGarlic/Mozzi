@@ -36,7 +36,7 @@ public class ItemMapper {
         for (Backgroud backgroud : backgrounds) {
             backgroundItems.add(BackgroundItem.builder()
                 .id(backgroud.getId())
-                .url(backgroud.getObjectName())
+                .objectName(backgroud.getObjectName())
                 .build());
         }
 
@@ -59,7 +59,7 @@ public class ItemMapper {
         for (Sticker sticker : stickers) {
             stickerItems.add(StickerItem.builder()
                 .id(sticker.getId())
-                .url(sticker.getObjectName())
+                .objectName(sticker.getObjectName())
                 .build());
         }
 
@@ -80,7 +80,7 @@ public class ItemMapper {
         for (Frame frame : frames) {
             frameList.add(FrameItem.builder()
                 .id(frame.getId())
-                .url(frame.getObjectName())
+                .objectName(frame.getObjectName())
                 .rects(toFrameClipItem(frame.getFrameClips()))
                 .build());
         }

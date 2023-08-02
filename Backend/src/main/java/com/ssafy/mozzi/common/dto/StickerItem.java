@@ -15,5 +15,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class StickerItem {
     private long id;
-    private String url;
+    private String objectName;
 }
