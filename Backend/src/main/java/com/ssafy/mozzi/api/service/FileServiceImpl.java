@@ -88,6 +88,15 @@ public class FileServiceImpl implements FileService {
         return FileMapper.toFileMozzirollPostRes(mozziroll);
     }
 
+    /**
+     * 모찌롤 파일을 ObjectStorage에 저장하고 해당 유저(방장)의 마이 페이지에 추가합니다.
+     * @param mozzirollId String
+     * @return MozzirollFileItem
+     * @see MozzirollRepository
+     * @see FileRepository
+     * @see MozzirollFileItem
+     * @see FileMapper
+     */
     @Override
     public MozzirollFileItem downloadMozziroll(String mozzirollId) {
         Optional<Mozziroll> mozziroll = mozzirollRepository.findById(Long.parseLong(mozzirollId));

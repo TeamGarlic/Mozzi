@@ -1,5 +1,12 @@
 package com.ssafy.mozzi.db.repository.cloud;
 
+import java.io.InputStream;
+import java.util.Objects;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Repository;
+
 import com.oracle.bmc.objectstorage.ObjectStorage;
 import com.oracle.bmc.objectstorage.model.StorageTier;
 import com.oracle.bmc.objectstorage.requests.GetObjectRequest;
@@ -7,11 +14,6 @@ import com.oracle.bmc.objectstorage.requests.PutObjectRequest;
 import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
 import com.oracle.bmc.objectstorage.responses.PutObjectResponse;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
-import java.io.InputStream;
-import java.util.Objects;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Repository;
 
 @Repository
 public class FileRepository {
@@ -24,6 +26,16 @@ public class FileRepository {
         this.ORACLE_BUCKET = Objects.requireNonNull(env.getProperty("ORACLE_BUCKET"));
     }
 
+    /**
+     * Cloud Storage ObjectStorage에 Object 업로드
+     * @param client ObjectStorage
+     * @param file InputStream
+     * @param objectName String
+     * @param contentType String
+     * @return PutObjectResponse
+     * @see PutObjectRequest
+     * @see CloudStorageSaveFailException
+     */
     public PutObjectResponse putObject(ObjectStorage client, InputStream file, String objectName, String contentType) {
         PutObjectRequest putObjectRequest = null;
         try {
@@ -44,13 +56,22 @@ public class FileRepository {
         return client.putObject(putObjectRequest);
     }
 
+    /**
+     * Cloud Storage ObjectStorage에 Object 가져오기
+     * @param client ObjectStorage
+     * @param objectName String
+     * @return GetObjectResponse
+     * @see GetObjectResponse
+     * @see CloudStorageSaveFailException
+     */
     public GetObjectResponse getObject(ObjectStorage client, String objectName) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
             .bucketName(ORACLE_BUCKET)
             .namespaceName(ORACLE_NAMESPACE)
             .objectName(objectName).build();
 
-        if (getObjectRequest==null) throw new CloudStorageSaveFailException("파일 Get 실패");
+        if (getObjectRequest == null)
+            throw new CloudStorageSaveFailException("파일 Get 실패");
 
         return client.getObject(getObjectRequest);
     }

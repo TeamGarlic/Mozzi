@@ -1,12 +1,7 @@
 package com.ssafy.mozzi.api.controller;
 
-import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
-import com.ssafy.mozzi.api.service.FileService;
-import com.ssafy.mozzi.common.dto.MozzirollFileItem;
-import com.ssafy.mozzi.common.model.ItemCacheControl;
-import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 import java.nio.charset.StandardCharsets;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.core.io.Resource;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ContentDisposition;
@@ -23,6 +18,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
+import com.ssafy.mozzi.api.service.FileService;
+import com.ssafy.mozzi.common.dto.MozzirollFileItem;
+import com.ssafy.mozzi.common.model.ItemCacheControl;
+import com.ssafy.mozzi.common.model.response.BaseResponseBody;
+
+import lombok.RequiredArgsConstructor;
 
 @CrossOrigin("*")
 @RestController
@@ -55,6 +58,15 @@ public class FileController {
             );
     }
 
+    /**
+     * 모찌롤 id에 해당하는 모찌롤을 다운로드
+     *
+     * @param mozzirollId String
+     * @return ResponseEntity<Resource>
+     * @see FileService
+     * @see MozzirollFileItem
+     * @see MediaType
+     */
     @GetMapping(value = "/mozziroll/{mozzirollId}")
     public ResponseEntity<Resource> downloadMozziroll(@PathVariable("mozzirollId") String mozzirollId) {
         MozzirollFileItem mozzirollFileItem = fileService.downloadMozziroll(mozzirollId);
