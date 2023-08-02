@@ -72,7 +72,7 @@ public class ItemController {
      */
     @GetMapping("/background/{objectName}")
     public ResponseEntity<Resource> getBackground(
-        @PathVariable("backgroundId") String objectName) {
+        @PathVariable("objectName") String objectName) {
         Resource resource = itemService.getBackgroundImg(objectName);
 
         return ResponseEntity.ok()
