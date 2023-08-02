@@ -21,7 +21,6 @@ function Start() {
   async function makeBooth() {
     if (!user) {
       alert("로그인해주세요!");
-      // TODO : 로그인 정보 긁어오는데 성공하면 return
       return;
     }
 
@@ -35,6 +34,12 @@ function Start() {
     navigate(`/${shareCode}/booth`);
   }
 
+  const activeEnter = (e) => {
+    if(e.key === "Enter") {
+      gotoBooth();
+    }
+  }
+
   async function gotoBooth() {
     try {
       let res = await boothApi.getSessionID(code.value);
@@ -46,7 +51,7 @@ function Start() {
       } = res;
       navigate(`/${shareCode}/booth`);
     } catch {
-      alert("부스가 없습니다.");
+      alert("해당 코드로 생성된 부스가 없습니다.");
     }
   }
   return (
@@ -83,7 +88,7 @@ function Start() {
                 </div>
               ) : (
                 <div className="mt-2 h-14 flex leading-10 text-lg gap-2">
-                  <TextInput type="text" placeholder="코드 입력" {...code} />
+                  <TextInput type="text" placeholder="코드 입력" onKeyDown={activeEnter} {...code} />
                   <span
                     className="mt-2 leading-10 hover:cursor-pointer"
                     onClick={gotoBooth}

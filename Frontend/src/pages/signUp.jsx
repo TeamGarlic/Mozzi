@@ -12,7 +12,7 @@ function SignUp() {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const pw = useInput();
   const pwRegex =
-    /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()-=_+])[a-z\d!@#$%^&*()-=_+]{8,16}$/;
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()-=_+])[A-Za-z\d!@#$%^&*()-=_+]{8,16}$/;
   const pw2 = useInput();
   const nickname = useInput();
   const nickRegex = /^(?!\s)(?!.*\s{2})\S{2,16}$/;
@@ -30,7 +30,7 @@ function SignUp() {
   async function checkId() {
     if (!idRegex.test(id.value)) {
       setIdValid(false);
-      setIdComment("사용 불가능한 ID입니다.");
+      setIdComment("숫자 또는 알파벳 소문자로 이루어진 4~16자의 아이디를 입력하세요.");
       return;
     }
     let res = await userApi.checkId(id.value);
@@ -43,7 +43,7 @@ function SignUp() {
     console.log(result);
     if (!result) {
       setIdValid(false);
-      setIdComment("중복된 ID입니다.");
+      setIdComment("이미 사용 중인 ID입니다.");
       return;
     }
     setIdValid(true);
@@ -53,7 +53,7 @@ function SignUp() {
   function checkEmail() {
     if (!emailRegex.test(email.value)) {
       setEmailValid(false);
-      setEmailComment("사용 불가능한 이메일입니다.");
+      setEmailComment("올바른 형식의 이메일을 입력하세요.");
       return;
     }
     setEmailValid(true);
@@ -63,7 +63,7 @@ function SignUp() {
   function checkPw() {
     if (!pwRegex.test(pw.value)) {
       setPwValid(false);
-      setPwComment("사용 불가능한 비밀번호입니다.");
+      setPwComment("숫자, 알파벳 또는 특수문자로 이루어진 8~16자의 비밀번호를 입력하세요.");
       return;
     }
     setPwValid(true);
@@ -71,17 +71,13 @@ function SignUp() {
   }
 
   function checkPw2() {
-    if (!pwRegex.test(pw2.value)) {
+    if (pw2.value !== pw.value) {
       setPw2Valid(false);
-      setPw2Comment("비밀번호 형식이 틀립니다.");
-      return;
-    } else if (pw2.value !== pw.value) {
-      setPw2Valid(false);
-      setPw2Comment("비밀번호와 다릅니다.");
+      setPw2Comment("비밀번호가 일치하지 않습니다.");
       return;
     }
     setPw2Valid(true);
-    setPw2Comment("사용 가능합니다.");
+    setPw2Comment("비밀번호가 일치합니다");
   }
 
   function checkNick() {
@@ -128,6 +124,12 @@ function SignUp() {
     nickname.reset();
   }
 
+  const activeEnter = (e) => {
+    if(e.key === "Enter") {
+      sign();
+    }
+  }
+
   return (
     <Layout>
       <>
@@ -137,13 +139,13 @@ function SignUp() {
             <span className=" float-left text-lg">회원가입</span>
           </div>
           <div className="flex-col">
-            <TextInput type="text" placeholder="ID" {...id} onBlur={checkId} />
+            <TextInput type="text" placeholder="아이디" {...id} onBlur={checkId} />
             <div className=" text-red-600 text-sm text-left">{idComment}</div>
           </div>
           <div className="flex-col">
             <TextInput
               type="text"
-              placeholder="Email"
+              placeholder="이메일"
               {...email}
               onBlur={checkEmail}
             />
@@ -172,9 +174,10 @@ function SignUp() {
           <div className="flex-col">
             <TextInput
               type="password"
-              placeholder="비밀번호확인"
+              placeholder="비밀번호 확인"
               {...pw2}
               onBlur={checkPw2}
+              onKeyDown={activeEnter}
             />
             <div className="text-red-600 text-sm text-left">{pw2Comment}</div>
           </div>
