@@ -27,7 +27,7 @@ function useUser(initialState = null) {
 
   async function checkUser() {
     await getUser().then((res)=>{
-      if (res.status === 200) {
+      if (res&&res.status === 200) {
         setUser(res.data.data);
         // console.log("200 complete");
       } else {
