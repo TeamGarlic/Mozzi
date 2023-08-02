@@ -106,9 +106,8 @@ public class ItemServiceImpl implements ItemService {
         final String OBJECT_NAME = String.format("%s_%s", System.currentTimeMillis(), file.getOriginalFilename());
         String contentType = "multipart/form-data";
 
-        // TODO: 파일 이름 및 ObjectName 수정 필요
         Backgroud backgroud = backgroundRepository.save(Backgroud.builder()
-            .url(OBJECT_NAME)
+            .objectName(OBJECT_NAME)
             .build());
 
         // Object Storage에 파일 추가

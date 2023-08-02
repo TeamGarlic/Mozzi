@@ -20,7 +20,7 @@ public class FileMapper {
         Optional<Mozziroll> mozziroll) {
         return MozzirollFileItem.builder()
             .file(new InputStreamResource(getObjectResponse.getInputStream()))
-            .fileName(mozziroll.get().getObjectName()) // TODO: 모찌 제목으로 수정
+            .fileName(mozziroll.get().getObjectName())
             .build();
     }
 }

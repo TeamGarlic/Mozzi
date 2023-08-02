@@ -45,15 +45,15 @@ public class FileController {
      */
     @PostMapping(value = "/mozziroll/upload")
     public ResponseEntity<? extends BaseResponseBody<FileMozzirollPostRes>> saveMozziroll(
-        @RequestHeader("Authorization") String accessToken,
-        @RequestParam("file") MultipartFile file) {
+        @RequestHeader("Authorization") String accessToken, @RequestParam("file") MultipartFile file,
+        @RequestParam("title") String title) {
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .cacheControl(CacheControl.noStore())
             .body(
                 BaseResponseBody.<FileMozzirollPostRes>builder()
                     .message("Save mozziroll success")
-                    .data(fileService.saveMozziroll(file, accessToken))
+                    .data(fileService.saveMozziroll(file, title, accessToken))
                     .build()
             );
     }
