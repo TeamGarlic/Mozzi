@@ -22,6 +22,7 @@ import com.ssafy.mozzi.api.response.UserIdCheckRes;
 import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
+import com.ssafy.mozzi.api.response.UserUpdateRes;
 import com.ssafy.mozzi.api.service.UserService;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
@@ -156,7 +157,7 @@ public class UserController {
      * @see UserService
      */
     @PatchMapping
-    public ResponseEntity<? extends BaseResponseBody<Long>> update(@RequestBody UserUpdatePutReq request) {
+    public ResponseEntity<? extends BaseResponseBody<UserUpdateRes>> update(@RequestBody UserUpdatePutReq request) {
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
             .body(userService.update(request));

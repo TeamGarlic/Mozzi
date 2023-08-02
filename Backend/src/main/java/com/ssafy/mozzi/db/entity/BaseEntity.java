@@ -1,7 +1,5 @@
 package com.ssafy.mozzi.db.entity;
 
-import java.io.Serializable;
-
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,7 +11,7 @@ import lombok.Data;
  */
 @Data
 @MappedSuperclass
-public class BaseEntity implements Serializable {
+public class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id = null;

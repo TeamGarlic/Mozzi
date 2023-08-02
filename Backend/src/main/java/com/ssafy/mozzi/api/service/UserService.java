@@ -9,6 +9,7 @@ import com.ssafy.mozzi.api.response.UserIdCheckRes;
 import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
+import com.ssafy.mozzi.api.response.UserUpdateRes;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 import com.ssafy.mozzi.db.entity.remote.User;
 
@@ -32,5 +33,5 @@ public interface UserService {
 
     User findUserByToken(String accessToken);
 
-    BaseResponseBody<Long> update(UserUpdatePutReq request);
+    BaseResponseBody<UserUpdateRes> update(UserUpdatePutReq request);
 }

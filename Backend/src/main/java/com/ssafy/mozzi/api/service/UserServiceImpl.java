@@ -18,6 +18,7 @@ import com.ssafy.mozzi.api.response.UserIdCheckRes;
 import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
+import com.ssafy.mozzi.api.response.UserUpdateRes;
 import com.ssafy.mozzi.common.auth.JwtTokenProvider;
 import com.ssafy.mozzi.common.exception.handler.DuplicatedUserIdException;
 import com.ssafy.mozzi.common.exception.handler.InvalidRefreshTokenException;
@@ -204,7 +205,7 @@ public class UserServiceImpl implements UserService {
      */
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     @Override
-    public BaseResponseBody<Long> update(UserUpdatePutReq request) {
+    public BaseResponseBody<UserUpdateRes> update(UserUpdatePutReq request) {
         User user = findUserByToken(request.getAccessToken());
 
         if (request.getEmail() == null && request.getNickname() == null && request.getPassword() == null) {
@@ -222,9 +223,9 @@ public class UserServiceImpl implements UserService {
             user.setEmail(request.getEmail());
         }
 
-        return BaseResponseBody.<Long>builder()
+        return BaseResponseBody.<UserUpdateRes>builder()
             .message(String.format("User(%s) data updated.", user.getUserId()))
-            .data(user.getId())
+            .data(UserUpdateRes.builder().id(user.getId()).build())
             .build();
     }
 }
