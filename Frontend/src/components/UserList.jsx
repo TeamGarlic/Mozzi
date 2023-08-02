@@ -71,8 +71,8 @@ function UserList({user}){
   }
 
   function onDrop(event){
-    const dragIdx = drag.dataset.index;
-    const targetIdx = event.currentTarget.dataset.index;
+    const dragIdx = Number(drag.dataset.index);
+    const targetIdx = Number(event.currentTarget.dataset.index);
     const _userList = [...userList];
     const _user = _userList[dragIdx];
 
@@ -96,7 +96,7 @@ function UserList({user}){
         _userList.splice(targetIdx, 0, _user);
       } else {
         _userList.splice(dragIdx, 1);
-        _userList.splice(targetIdx + 1, 0, _user);
+        _userList.splice(targetIdx+1, 0, _user);
       }
     }
     setUserList(_userList);
