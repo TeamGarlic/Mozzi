@@ -21,7 +21,7 @@ function Booth() {
   const { user, checkUser } = useUser();
   console.log(user);
   checkUser();
-  const { mainSession, maskSession, subscribers, joinSession, sendMessage, chatLists } =
+  const { mainSession, maskSession, subscribers, joinSession, sendMessage, chatLists, sendBlob, clipBlob } =
     useSession(user, shareCode);
 
   // 소스 웹캠 video

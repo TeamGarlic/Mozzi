@@ -1,7 +1,9 @@
 import UserCard from "@/components/UserCard"
 import {useState} from "react"
+import {checkHost} from "@/utils/DecoratorUtil.js"
 
 function UserList(){
+  const [isHost] = useState(1);
   const [userList, setUserList] = useState([
     { item: "🦜", name: "Parrot", onMic: 1, onCam: 1, isHost: 1 },
     { item: "🦖", name: "Dinosaur", onMic: 1, onCam: 1, isHost: 0 },
@@ -59,6 +61,7 @@ function UserList(){
   }
 
   function onDragStart(event){
+    console.log(isHost);
     setDrag(event.target);
     event.dataTransfer.effectAllowed = "move";
     event.dataTransfer.setData("text/html", event.target);
@@ -110,6 +113,13 @@ function UserList(){
     setUserList(_userList);
   }
 
+  onDragOver = checkHost(onDragOver, isHost)
+  onDragEnter = checkHost(onDragEnter, isHost)
+  onDragStart = checkHost(onDragStart, isHost)
+  onDragEnd = checkHost(onDragEnd, isHost)
+  onDragLeave = checkHost(onDragLeave, isHost)
+  onDrop = checkHost(onDrop, isHost)
+  
   return (
     <>
       대충 사용자 목록
