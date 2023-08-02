@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -132,14 +131,12 @@ public class ItemController {
     /**
      * 가상 배경 업로드
      *
-     * @param accessToken String
      * @param file MultipartFile
      * @return ResponseEntity<? extends BaseResponseBody < ItemBackgroundPostRes>>
      * @see ItemService
      */
     @PostMapping("/background")
     public ResponseEntity<? extends BaseResponseBody<ItemBackgroundPostRes>> saveBackground(
-        @RequestHeader("Authorization") String accessToken,
         @RequestParam("file") MultipartFile file) {
         return ResponseEntity
             .status(HttpStatus.CREATED)
