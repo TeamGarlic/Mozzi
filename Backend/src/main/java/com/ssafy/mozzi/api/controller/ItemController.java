@@ -66,14 +66,14 @@ public class ItemController {
     /**
      * 배경 화면 ObjectName으로 배경 이미지 반환하는 메소드
      *
-     * @param backgroundId String\
+     * @param objectName String
      * @return ResponseEntity<Resource>
      * @see ItemService
      */
-    @GetMapping("/background/{backgroundId}")
+    @GetMapping("/background/{objectName}")
     public ResponseEntity<Resource> getBackground(
-        @PathVariable("backgroundId") String backgroundId) {
-        Resource resource = itemService.getBackgroundImg(backgroundId);
+        @PathVariable("backgroundId") String objectName) {
+        Resource resource = itemService.getBackgroundImg(objectName);
 
         return ResponseEntity.ok()
             .cacheControl(cacheControl.getCacheControl())

@@ -50,8 +50,8 @@ public class SecurityConfig {
 
                 // items 요청에 대한 보안 설정
                 .requestMatchers(HttpMethod.GET, "/items/backgrounds").permitAll()
-                .requestMatchers(HttpMethod.GET, "/items/backgrounds/{ObjectName}").permitAll()
-                .requestMatchers(HttpMethod.POST, "/items/backgrounds").authenticated()
+                .requestMatchers(HttpMethod.GET, "/items/background/{objectName}").permitAll()
+                .requestMatchers(HttpMethod.POST, "/items/background").authenticated()
                 .requestMatchers(HttpMethod.GET, "/items/stickers").permitAll()
                 .requestMatchers(HttpMethod.GET, "/items/frames").permitAll()
 
