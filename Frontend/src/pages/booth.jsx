@@ -36,7 +36,6 @@ function Booth() {
   const webcamRef = useRef();
   // 배경 제거된 영상 그리는 canvas, context, layer 정보
   const bgRemovedRef = useRef();
-  const bgRemovedContextRef = useRef();
   // 배경 마스크 그리는 canvas, context, layer 정보
   const bgMaskRef = useRef();
   const bgMaskContextRef = useRef();
@@ -46,10 +45,7 @@ function Booth() {
   const myLayer = useSelector((state) => state.canvasReducer.myLayer);
   // TODO : bgImg를 Redux에서 관리
   const bgNow = useSelector((state) => state.bgReducer.bgNow);
-
-  // const testRef = useRef();
-  // const testRef2 = useRef();
-  // const testRef3 = useRef();
+  const subCanvasRefs = useRef();
 
   function startTake() {
     dispatch(resetCamCanvasesAction());
@@ -58,8 +54,6 @@ function Booth() {
   startTake = checkHost(startTake, user.isHost);
 
   const onResults = (results) => {
-    // 로컬 웹캠의 한 프레임이 처리될 때 마다 실행되는 함수들
-
     drawMask(bgMaskRef, bgMaskContextRef, results)
 
     // // 내 웹캠을 담을 canvas (화면에 표시 x)
@@ -68,8 +62,7 @@ function Booth() {
     //   bgRemovedContextRef,
     //   results,
     // );
-    // console.log(camCanvases)
-    // // TODO : camCanvases 리렌더링 안되는 오류 수정
+
     // camCanvases.forEach((e) => {
     //   drawMyVid(e.canvas, e.context, results);
     // });
@@ -145,8 +138,15 @@ function Booth() {
         />
       )}
       <video autoPlay ref={webcamRef} className="hidden" />
-      {/*<canvas ref={bgRemovedRef} className="hidden" />*/}
       <canvas ref={bgMaskRef} className="hidden" />
+      {/*{*/}
+      {/*  subscribers.map((sub) => {*/}
+      {/*    return (*/}
+      {/*      <video key={JSON.parse(sub.stream.connection.data).uid} ref={(elem) =>*/}
+      {/*        subCanvasRefs.current[JSON.parse(sub.stream.connection.data).uid] = elem}></video>*/}
+      {/*    )*/}
+      {/*  })*/}
+      {/*}*/}
     </>
   );
 }
