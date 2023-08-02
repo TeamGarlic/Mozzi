@@ -5,11 +5,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.ssafy.mozzi.common.exception.handler.AccessTokenNotExistsException;
+import com.ssafy.mozzi.common.exception.handler.AlreadyLinkedMozziException;
+import com.ssafy.mozzi.common.exception.handler.BoothNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.DuplicateShareCodeException;
 import com.ssafy.mozzi.common.exception.handler.DuplicatedUserIdException;
 import com.ssafy.mozzi.common.exception.handler.InvalidRefreshTokenException;
-import com.ssafy.mozzi.common.exception.handler.NoDataException;
+import com.ssafy.mozzi.common.exception.handler.MozzirollNotExists;
 import com.ssafy.mozzi.common.exception.handler.ShareCodeNotExistException;
+import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.UserLoginFailException;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
@@ -23,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ControllerAdviceHandler {
     /**
-     * 존재하지 않는 Id일 경우의 응답을 반환한다.
+     * 이미 존재하는 Id일 경우의 응답을 반환한다.
      * @see UserIdNotExistsException
      * @see com.ssafy.mozzi.api.service.UserService
      */
@@ -51,10 +55,10 @@ public class ControllerAdviceHandler {
      * @see com.ssafy.mozzi.api.service.UserService
      */
     @ExceptionHandler(DuplicatedUserIdException.class)
-    public ResponseEntity<BaseResponseBody<Void>> handleDuplicateUserIdException(DuplicatedUserIdException exception) {
+    public ResponseEntity<BaseResponseBody> handleDuplicateUserIdException(DuplicatedUserIdException exception) {
         log.error("[DuplicatedUserIdException] : {}", exception.getMessage());
         return new ResponseEntity<>(
-            BaseResponseBody.<Void>builder()
+            BaseResponseBody.builder()
                 .message("You requested duplicated User ID")
                 .build(), HttpStatus.BAD_REQUEST
         );
@@ -125,18 +129,52 @@ public class ControllerAdviceHandler {
         );
     }
 
-    /**
-     * 요청을 처리하는데 필요한 데이터가 존재 하지 않는 경우의 응답입니다.
-     * @see com.ssafy.mozzi.api.service.UserServiceImpl
-     */
-    @ExceptionHandler(NoDataException.class)
-    public ResponseEntity<BaseResponseBody<String>> noDataException(NoDataException exception) {
+    @ExceptionHandler(AccessTokenNotExistsException.class)
+    public ResponseEntity<BaseResponseBody<Void>> handleAccessTokenNotExistsException(
+        AccessTokenNotExistsException exception) {
+        return new ResponseEntity<>(
+            BaseResponseBody.<Void>builder()
+                .message("Access Token Not Exists")
+                .build(), HttpStatus.UNAUTHORIZED
+        );
+    }
+
+    @ExceptionHandler(AlreadyLinkedMozziException.class)
+    public ResponseEntity<BaseResponseBody<Void>> handleAlreadyLinkedMozziException(
+        AlreadyLinkedMozziException exception) {
         return ResponseEntity.badRequest()
             .body(
-                BaseResponseBody.<String>builder()
-                    .message("There is no data to perform your request")
-                    .data(exception.getMessage())
+                BaseResponseBody.<Void>builder()
+                    .message(exception.getMessage())
                     .build()
             );
+    }
+
+    @ExceptionHandler(MozzirollNotExists.class)
+    public ResponseEntity<BaseResponseBody<Void>> handleMozzirollNotExists(MozzirollNotExists exists) {
+        return ResponseEntity.badRequest()
+            .body(
+                BaseResponseBody.<Void>builder()
+                    .message(exists.getMessage())
+                    .build()
+            );
+    }
+
+    @ExceptionHandler(BoothNotExistsException.class)
+    public ResponseEntity<BaseResponseBody<Void>> handleBoothNotExists(BoothNotExistsException exception) {
+        return ResponseEntity.badRequest()
+            .body(
+                BaseResponseBody.<Void>builder()
+                    .message("Booth not exists")
+                    .build()
+            );
+    }
+
+    @ExceptionHandler(UnAuthorizedException.class)
+    public ResponseEntity<BaseResponseBody<Void>> handleUnAuthorizedException(UnAuthorizedException exception) {
+        return new ResponseEntity<>(
+            BaseResponseBody.<Void>builder()
+                .message(exception.getMessage())
+                .build(), HttpStatus.UNAUTHORIZED);
     }
 }

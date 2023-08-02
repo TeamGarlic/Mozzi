@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,12 +39,12 @@ public class BoothController {
      */
     @PostMapping
     public ResponseEntity<? extends BaseResponseBody<SessionRes>> createBooth(
-        @RequestBody SessionPostReq request) throws
+        @RequestHeader String Authorization, @RequestBody SessionPostReq request) throws
         Exception {
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
             .body(
-                boothService.createBooth(request)
+                boothService.createBooth(request, Authorization)
             );
     }
 
@@ -73,11 +74,11 @@ public class BoothController {
      */
     @PostMapping("/connections")
     public ResponseEntity<? extends BaseResponseBody<ConnectionPostRes>> createConnection(
-        @RequestBody ConnectionPostReq request) throws Exception {
+        @RequestHeader String Authorization, @RequestBody ConnectionPostReq request) throws Exception {
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
             .body(
-                boothService.getConnectionToken(request)
+                boothService.getConnectionToken(request, Authorization)
             );
     }
 
@@ -106,7 +107,10 @@ public class BoothController {
         try {
             SessionPostReq req = new SessionPostReq();
             req.setShareCode(shareCode);
-            sessionId = boothService.createBooth(req).getData().getSessionId();
+            sessionId = boothService.createBooth(req,
+                    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjkwOTU0NzYwLCJleHAiOjEyMTY5MDk1NDc2MH0.RF8qFqAwbcbDdS1jl9Q9vAb5RzOZ8j6xmjMqWAApKio")
+                .getData()
+                .getSessionId();
         } catch (DuplicateShareCodeException exception) {
             sessionId = boothService.joinBooth(shareCode).getData().getSessionId();
         }
@@ -117,7 +121,8 @@ public class BoothController {
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
             .body(
-                boothService.getConnectionToken(connectionPostReq)
+                boothService.getConnectionToken(connectionPostReq,
+                    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjkwOTU0NzYwLCJleHAiOjEyMTY5MDk1NDc2MH0.RF8qFqAwbcbDdS1jl9Q9vAb5RzOZ8j6xmjMqWAApKio")
             );
     }
 }

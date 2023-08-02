@@ -1,6 +1,7 @@
 package com.ssafy.mozzi.api.service;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.random.RandomGenerator;
 import java.util.random.RandomGeneratorFactory;
 
@@ -14,13 +15,17 @@ import com.ssafy.mozzi.api.request.ConnectionPostReq;
 import com.ssafy.mozzi.api.request.SessionPostReq;
 import com.ssafy.mozzi.api.response.ConnectionPostRes;
 import com.ssafy.mozzi.api.response.SessionRes;
+import com.ssafy.mozzi.common.exception.handler.AccessTokenNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.DuplicateShareCodeException;
 import com.ssafy.mozzi.common.exception.handler.InvalidSessionIdException;
 import com.ssafy.mozzi.common.exception.handler.ShareCodeNotExistException;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
+import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.db.datasource.LocalDatasource;
 import com.ssafy.mozzi.db.entity.local.Booth;
+import com.ssafy.mozzi.db.entity.local.BoothUser;
 import com.ssafy.mozzi.db.repository.local.BoothRepository;
+import com.ssafy.mozzi.db.repository.local.BoothUserRepository;
 
 import io.openvidu.java.client.Connection;
 import io.openvidu.java.client.OpenVidu;
@@ -31,14 +36,25 @@ import io.openvidu.java.client.SessionProperties;
 @PropertySource("classpath:application-keys.properties")
 public class BoothServiceImpl implements BoothService {
     private final BoothRepository boothRepository;
+
+    private final BoothUserRepository boothUserRepository;
+
     private final RandomGenerator random = RandomGeneratorFactory
         .getDefault().create(System.currentTimeMillis());
+
+    private final UserService userService;
+
+    private final MozziUtil mozziUtil;
 
     private final OpenVidu openVidu;
 
     @Autowired
-    BoothServiceImpl(BoothRepository boothRepository, Environment env) {
+    BoothServiceImpl(BoothRepository boothRepository, BoothUserRepository boothUserRepository, UserService userService,
+        MozziUtil mozziUtil, Environment env) {
         this.boothRepository = boothRepository;
+        this.boothUserRepository = boothUserRepository;
+        this.userService = userService;
+        this.mozziUtil = mozziUtil;
         this.openVidu = new OpenVidu(Objects.requireNonNull(env.getProperty("OPENVIDU_URL")),
             Objects.requireNonNull(env.getProperty("OPENVIDU_SECRET")));
     }
@@ -52,7 +68,11 @@ public class BoothServiceImpl implements BoothService {
      */
     @Override
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
-    public BaseResponseBody<SessionRes> createBooth(SessionPostReq request) throws Exception {
+    public BaseResponseBody<SessionRes> createBooth(SessionPostReq request, String accessToken) throws Exception {
+        if (accessToken == null) {
+            throw new AccessTokenNotExistsException("There is no access Token");
+        }
+
         String shareCode = request.getShareCode();
         Booth booth = null;
         if (shareCode == null) {
@@ -74,7 +94,7 @@ public class BoothServiceImpl implements BoothService {
                 booth = Booth.builder()
                     .sessionId(sessionId)
                     .shareCode(shareCode)
-                    // TODO: JWT 추가한 이후에 메서드 parameter로 creator 추가하고 아래 부분 수정해야함
+                    .creator(mozziUtil.findUserIdByToken(accessToken))
                     .creator(1L)
                     .build();
                 boothRepository.save(booth);
@@ -128,12 +148,24 @@ public class BoothServiceImpl implements BoothService {
      * @see Connection
      */
     @Override
-    public BaseResponseBody<ConnectionPostRes> getConnectionToken(ConnectionPostReq request) throws Exception {
+    public BaseResponseBody<ConnectionPostRes> getConnectionToken(ConnectionPostReq request, String accessToken) throws
+        Exception {
         Session session = openVidu.getActiveSession(request.getSessionId());
         if (session == null) {
             throw new InvalidSessionIdException(
                 String.format("You requested invalid session(%s). It could be destroyed.", request.getSessionId()));
         }
+        Booth booth = boothRepository.findBySessionId(request.getSessionId());
+        long userId = mozziUtil.findUserIdByToken(accessToken);
+
+        Optional<BoothUser> boothUser = boothUserRepository.findByBoothIdAndUserId(booth.getId(), userId);
+        if (boothUser.isEmpty()) {
+            BoothUser connectedUser = new BoothUser();
+            connectedUser.setUserId(userId);
+            connectedUser.setBooth(booth);
+            boothUserRepository.save(connectedUser);
+        }
+
         Connection connection = session.createConnection();
         return BaseResponseBody.<ConnectionPostRes>builder()
             .message("Connection Token created")

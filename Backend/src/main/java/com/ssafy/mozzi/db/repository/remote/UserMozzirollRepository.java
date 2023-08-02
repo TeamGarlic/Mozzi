@@ -12,4 +12,5 @@ import com.ssafy.mozzi.db.entity.remote.UserMozziroll;
  */
 @Repository
 public interface UserMozzirollRepository extends JpaRepository<UserMozziroll, Long> {
+    UserMozziroll findByMozzirollIdAndUserId(long mozzirollId, long userId);
 }
