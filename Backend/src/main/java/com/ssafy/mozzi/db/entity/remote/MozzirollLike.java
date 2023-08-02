@@ -24,6 +24,6 @@ public class MozzirollLike extends BaseEntity {
     private User likedUser;
 
     @ManyToOne
-    @JoinColumn(name = "liked_mozziroll_id")
-    private Mozziroll likedMozziroll;
+    @JoinColumn(name = "user_mozziroll_id")
+    private UserMozziroll likedUserMozziroll;
 }

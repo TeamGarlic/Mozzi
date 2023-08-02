@@ -41,16 +41,8 @@ public class Mozziroll extends BaseEntity {
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
-    @Builder.Default
-    @ColumnDefault("false")
-    @Column(nullable = false)
-    private Boolean deleted = false;
-
     @OneToMany(mappedBy = "mozziroll")
-    private Set<UserMozziroll> mozzirollUsers = new HashSet<>();
-
-    @OneToMany(mappedBy = "likedMozziroll")
-    private Set<MozzirollLike> likedUsers = new HashSet<>();
+    private Set<UserMozziroll> userMozzirolls = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
