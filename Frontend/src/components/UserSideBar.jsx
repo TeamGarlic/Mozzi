@@ -1,22 +1,11 @@
 import { Link } from "react-router-dom";
 import { Card } from "@material-tailwind/react";
-import { useRef, useEffect } from "react";
 // import UserCard from "./UserCard";
 import TextInput from "./TextInput";
 import UserVideoComponent from "./UserVideoComponents";
 import PropTypes from "prop-types";
 
 export default function UserSideBar({ subscribers, mainPublisher }) {
-  // const myRef = useRef();
-  console.log(subscribers);
-  console.log(mainPublisher);
-
-  useEffect(() => {
-    console.log(subscribers)
-    // if (mainPublisher) {
-    //   mainPublisher.addVideoElement(myRef.current);
-    // }
-  }, [mainPublisher, subscribers]);
 
   return (
     <Card

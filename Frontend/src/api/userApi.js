@@ -82,7 +82,7 @@ const userApi = {
 
   getUser: async () => {
     if (!window.localStorage.getItem("accessToken")) return;
-    console.log("user search");
+    // console.log("user search");
     let res = await UserApi.get("", {
       headers: {
         "Content-Type": "application/json",
@@ -91,11 +91,11 @@ const userApi = {
     });
 
     if (res.status === 200) {
-      console.log("searched!");
-      console.log(res);
+      // console.log("searched!");
+      // console.log(res);
       return res;
     }
-    console.log(res);
+    // console.log(res);
     await userApi.reIssue(
       window.localStorage.getItem("accessToken"),
       window.localStorage.getItem("refreshToken")
