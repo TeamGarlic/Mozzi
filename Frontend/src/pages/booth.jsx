@@ -6,20 +6,22 @@ import {
 } from "@/modules/canvasAction.js";
 import MakeBooth from "./makeBooth";
 import TakePic from "./takePic";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { SelfieSegmentation } from "@mediapipe/selfie_segmentation";
 import { drawCanvas, drawMask } from '@/utils/videoUtil.js';
 import useSession from "@/hooks/useSession.js";
 import { changeBgAction } from "@/modules/bgAction.js";
 import useUser from "@/hooks/useUser";
+import {checkHost} from "@/utils/DecoratorUtil.js";
 
 function Booth() {
   const [taking, setTaking] = useState(false);
   const { code: shareCode } = useParams();
   const dispatch = useDispatch();
   // console.log(sessionID);
-  const { user, checkUser } = useUser();
-  console.log(user);
+  const location = useLocation();
+  const { user, checkUser } = useUser({isHost: location.state.isHost});
+
   const {
     mainSession,
     maskSession,
@@ -53,6 +55,7 @@ function Booth() {
     dispatch(resetCamCanvasesAction());
     setTaking(true);
   }
+  startTake = checkHost(startTake, user.isHost);
 
   const onResults = (results) => {
     // 로컬 웹캠의 한 프레임이 처리될 때 마다 실행되는 함수들

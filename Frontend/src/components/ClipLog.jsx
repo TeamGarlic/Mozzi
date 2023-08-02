@@ -7,8 +7,10 @@ import {
   DragClearAction,
   DragEndAction,
 } from "@/modules/clipAction";
+import PropTypes from "prop-types";
+import {checkHost} from "@/utils/DecoratorUtil.js";
 
-function ClipLog() {
+function ClipLog({user}) {
   const clipList = useSelector((state) => state.clipReducer.clipList);
   const drag = useSelector((state) => state.clipReducer.drag);
   const dispatch = useDispatch();
@@ -74,6 +76,13 @@ function ClipLog() {
     dispatch(DragEndAction({ end: event.target.id.slice(0, 4) }));
   }
 
+  clickVideo = checkHost(clickVideo, user.isHost);
+  onDragStart = checkHost(onDragStart, user.isHost);
+  onDragEnd = checkHost(onDragEnd, user.isHost);
+  onDragOver = checkHost(onDragOver, user.isHost);
+  onDragEnter = checkHost(onDragEnter, user.isHost);
+  onDrop = checkHost(onDrop, user.isHost);
+
   return (
     <>
       <span onClick={addVideo} className="text-3xl">
@@ -113,3 +122,13 @@ function ClipLog() {
 }
 
 export default ClipLog;
+
+ClipLog.propTypes = {
+  user: PropTypes.shape({
+    id: PropTypes.number,
+    userId: PropTypes.string,
+    userNickname: PropTypes.string,
+    email: PropTypes.string,
+    isHost: PropTypes.number,
+  }),
+};

@@ -1,7 +1,9 @@
 import UserCard from "@/components/UserCard"
 import {useState} from "react"
+import {checkHost} from "@/utils/DecoratorUtil.js"
+import PropTypes from "prop-types";
 
-function UserList(){
+function UserList({user}){
   const [userList, setUserList] = useState([
     { item: "🦜", name: "Parrot", onMic: 1, onCam: 1, isHost: 1 },
     { item: "🦖", name: "Dinosaur", onMic: 1, onCam: 1, isHost: 0 },
@@ -110,6 +112,13 @@ function UserList(){
     setUserList(_userList);
   }
 
+  onDragOver = checkHost(onDragOver, user.isHost)
+  onDragEnter = checkHost(onDragEnter, user.isHost)
+  onDragStart = checkHost(onDragStart, user.isHost)
+  onDragEnd = checkHost(onDragEnd, user.isHost)
+  onDragLeave = checkHost(onDragLeave, user.isHost)
+  onDrop = checkHost(onDrop, user.isHost)
+  
   return (
     <>
       대충 사용자 목록
@@ -139,3 +148,13 @@ function UserList(){
 }
 
 export default UserList;
+
+UserList.propTypes = {
+  user: PropTypes.shape({
+    id: PropTypes.number,
+    userId: PropTypes.string,
+    userNickname: PropTypes.string,
+    email: PropTypes.string,
+    isHost: PropTypes.number,
+  }),
+};
