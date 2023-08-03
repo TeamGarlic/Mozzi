@@ -74,7 +74,8 @@ public class BoothController {
      */
     @PostMapping("/connections")
     public ResponseEntity<? extends BaseResponseBody<ConnectionPostRes>> createConnection(
-        @RequestHeader String Authorization, @RequestBody ConnectionPostReq request) throws Exception {
+        @RequestHeader(required = false) String Authorization, @RequestBody ConnectionPostReq request) throws
+        Exception {
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
             .body(
