@@ -1,18 +1,10 @@
-import { Link } from "react-router-dom";
 import { Card } from "@material-tailwind/react";
-import UserCard from "./UserCard";
 import TextInput from "./TextInput";
-// import SmallCam from "./SmallCam";
+import UserVideoComponent from "./UserVideoComponents";
+import PropTypes from "prop-types";
 
-export default function UserSideBar() {
-  const users = [
-    { name: "홍길동" },
-    { name: "박길동" },
-    { name: "최길동" },
-    { name: "홍길동" },
-    { name: "홍길동" },
-    { name: "홍길동" },
-  ];
+export default function UserSideBar({ subscribers, mainPublisher, leaveSession }) {
+
   return (
     <Card
       id="sideMenu"
@@ -22,14 +14,24 @@ export default function UserSideBar() {
         <span className=" text-xl">사용자</span>
       </div>
       <ul className="gap-4 overflow-y-scroll scrollbar-hide">
-        {/* <SmallCam /> */}
-        {users.map((user) => (
-          <UserCard userName={user.name} key={user.name} />
-          // <>
-          //   {/* <SmallCam /> */}
-          //   {user.name}
-          // </>
-        ))}
+
+
+        <div className="stream-container col-md-6 col-xs-6">
+          <UserVideoComponent sub={mainPublisher} />
+          <hr />
+        </div>
+
+        {subscribers &&
+          subscribers.map((sub) => (
+            <>
+              {!JSON.parse(sub.stream.connection.data).isMask?(
+              <div key={JSON.parse(sub.stream.connection.data).uid} className="stream-container col-md-6 col-xs-6">
+                <UserVideoComponent sub={sub} />
+                <hr />
+              </div>
+              ):null}
+            </>
+          ))}
       </ul>
       <div className="px-4">
         <TextInput type="text" placeholder="이름 변경..." className="" />
@@ -37,9 +39,15 @@ export default function UserSideBar() {
       <button type="button" className="w-full h-10">
         이름 변경
       </button>
-      <Link className="w-full h-10 text-center leading-10" to="/">
+      <button className="w-full h-10 text-center leading-10" onClick={leaveSession}>
         나가기
-      </Link>
+      </button>
     </Card>
   );
 }
+
+UserSideBar.propTypes = {
+  subscribers: PropTypes.array,
+  mainPublisher: PropTypes.object,
+  leaveSession: PropTypes.func,
+};

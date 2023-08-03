@@ -1,134 +1,184 @@
-import { useEffect, useState } from 'react';
-import { OpenVidu } from 'openvidu-browser';
-import axios from 'axios';
+import { useEffect, useState } from "react";
+import { OpenVidu } from "openvidu-browser";
+import { v4 } from "uuid";
+import boothApi from "@/api/boothApi.js";
 
-// TODO : APPLICATION_SERVER_URL 삭제하고 boothApi.js 안의 메소드 사용
-const APPLICATION_SERVER_URL = 'https://ssafyscheduler.ddns.net:40000/';
-
-function useSession(userName, shareCode) {
-  const [session, setSession] = useState(undefined);
-  const [mainStreamManager, setMainStreamManager] = useState(undefined);
-  const [publisher, setPublisher] = useState(undefined);
+function useSession(shareCode) {
+  const [mainSession, setMainSession] = useState(undefined);
+  const [maskSession, setMaskSession] = useState(undefined);
+  const [mainPublisher, setMainPublisher] = useState(undefined);
+  const [maskPublisher, setMaskPublisher] = useState(undefined);
+  const [userName, setUserName] = useState(undefined);
   const [subscribers, setSubscribers] = useState([]);
-  const leaveSession = () => {
-    if (session) {
-      session.disconnect();
+  const [chatLists, setChatLists] = useState([]);
+  const [nowTaking, setNowTaking] = useState(false);
+
+  const leaveSession = async () => {
+    location.href = '/'
+    if (mainSession) {
+      await mainSession.disconnect();
     }
-    setSession(undefined);
-    setMainStreamManager(undefined);
-    setPublisher(undefined);
+    if (maskSession) {
+      await maskSession.disconnect();
+    }
+    setMainSession(undefined);
+    setMaskSession(undefined);
+    setMainPublisher(undefined);
+    setMaskPublisher(undefined);
     setSubscribers([]);
   };
 
-
-  const joinSession = async (canvases) => {
+  const joinSession = async (userName, canvases) => {
+    setUserName(userName);
     try {
-      const OV = new OpenVidu();
-      const mySession = OV.initSession();
-      setSession(mySession);
+      const mainOV = new OpenVidu();
+      const maskOV = new OpenVidu();
+      const mainSession = mainOV.initSession();
+      const maskSession = maskOV.initSession();
+      setMainSession(mainSession);
+      setMaskSession(maskSession);
 
-      // 생성시 이벤트
-      mySession.on('streamCreated', (event) => {
-        const subscriber = mySession.subscribe(event.stream, undefined);
-        setSubscribers([...subscribers, subscriber]);
+      mainSession.on("streamCreated", (event) => {
+        const subscriber = mainSession.subscribe(event.stream, undefined);
+        setSubscribers((prev) => [...prev, subscriber]);
       });
 
-      // 언마운트시 이벤트
-      mySession.on('streamDestroyed', (event) => {
-        deleteSubscriber(event.stream.streamManager);
+      mainSession.on("signal:chat", async(event) => {
+        console.log(event);
+        let data = await JSON.parse(event.data);
+        setChatLists((prev) => {
+          return [...prev, data];
+        });
       });
 
-      // 예외 처리
-      mySession.on('exception', (exception) => {
+      mainSession.on("signal:gotoTakePic", (event)=>{
+        console.log("방장이 사진찍재!!");
+        setNowTaking(true);
+      })
+
+      mainSession.on("streamDestroyed", (event) => {
+        setSubscribers((prev)=>{
+          const newSubscribers = [...prev];
+          const idx = newSubscribers.indexOf(event.stream.streamManager);
+          console.log(newSubscribers)
+          if (idx <0) return;
+          newSubscribers.splice(idx, 1);
+          return [...newSubscribers]
+        });
+      });
+
+      mainSession.on("exception", (exception) => {
+        console.warn(exception);
+      });
+      maskSession.on("exception", (exception) => {
         console.warn(exception);
       });
 
+      const mainToken = await getToken(shareCode);
+      const maskToken = await getToken(shareCode);
 
-      const token = await getToken();
+      const uid = v4();
+      await mainSession.connect(mainToken, {
+        clientData: userName,
+        isMask : false,
+        uid : uid,
+      });
+      await maskSession.connect(maskToken, {
+        clientData: userName,
+        isMask : true,
+        uid : uid,
+      });
 
-
-      mySession.connect(token, { clientData: userName });
-
-
-      const publisher = await OV.initPublisherAsync(undefined, {
+      const mainPublisher = await mainOV.initPublisherAsync(undefined, {
         audioSource: undefined,
-        videoSource: canvases[1].current.captureStream(30).getVideoTracks()[0],
+        videoSource: undefined,
         publishAudio: true,
         publishVideo: true,
         frameRate: 30,
-        insertMode: 'APPEND',
+        insertMode: "APPEND",
+        mirror: true,
+      });
+      const maskPublisher = await maskOV.initPublisherAsync(undefined, {
+        audioSource: undefined,
+        videoSource: canvases[1].current.captureStream(30).getVideoTracks()[0],
+        publishAudio: false,
+        publishVideo: true,
+        frameRate: 30,
+        insertMode: "APPEND",
         mirror: false,
       });
 
-
-      mySession.publish(publisher);
-
-
-      setMainStreamManager(publisher);
-      setPublisher(publisher);
-      console.log(subscribers)
+      await mainSession.publish(mainPublisher);
+      await maskSession.publish(maskPublisher);
+      await setMainPublisher(mainPublisher);
+      await setMaskPublisher(maskPublisher);
     } catch (error) {
-      console.log('There was an error connecting to the session:', error.code, error.message);
+      console.log(
+        "There was an error connecting to the session:",
+        error.code,
+        error.message
+      );
     }
   };
 
-
-  const deleteSubscriber = (streamManager) => {
-    const newSubscribers = [...subscribers];
-    const idx = newSubscribers.indexOf(streamManager);
-    if (idx > -1) newSubscribers.splice(idx, 1);
-    setSubscribers(newSubscribers);
+  const sendMessage = async (message, userName) => {
+    console.log({ from: userName+"", message: message });
+    await mainSession.signal({
+      data: JSON.stringify({ from: userName+"", message: message}),
+      to: [],
+      type: "chat",
+    });
   };
 
+  const gotoTakePic = async()=>{
+    await mainSession.signal({
+      data : "",
+      to:[],
+      type:"gotoTakePic"
+    });
+  }
 
-  const getToken = async () => {
-    const receivedId = await createSession(shareCode);
-    return await createToken(receivedId);
+  const getToken = async (code) => {
+    let idRes = await boothApi.getSessionID(code);
+    const {
+      data: {
+        data: { sessionId },
+      },
+    } = idRes;
+    let tokenRes = await boothApi.getToken(sessionId);
+    const {
+      data: {
+        data: { token },
+      },
+    } = tokenRes;
+    return token;
   };
 
+  useEffect(() => {
 
-  // TODO : @/api/boothApi.js 에 합치기
-  const createSession = async (sessionId) => {
-    const response = await axios.post(
-      APPLICATION_SERVER_URL + 'api/sessions',
-      { customSessionId: sessionId },
-      {
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
-    return response.data; // The sessionId
-  };
-
-  // TODO : @/api/boothApi.js 에 합치기
-  const createToken = async (sessionId) => {
-    const response = await axios.post(
-      APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
-      {},
-      {
-        headers: { 'Content-Type': 'application/json' },
-      }
-    );
-    return response.data; // The token
-  };
-
-
-  useEffect(()=>{
-    // TODO : userName, sessionId 설정 (이 위치에서 할 필요는 없음)
-
-    const handleBeforeUnload = () => {
-      leaveSession();
+    const handleBeforeUnload = async () => {
+      await leaveSession();
     };
-    // TODO : 라이프사이클 확인
-    window.addEventListener('beforeunload', leaveSession);
 
-    // TODO : 라이프사이클 확인
+    window.addEventListener("beforeunload", leaveSession);
+
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
+  }, []);
 
-  },[]);
-
-  return {session, mainStreamManager, publisher, subscribers, joinSession } ;
+  return {
+    mainSession,
+    maskSession,
+    subscribers,
+    joinSession,
+    sendMessage,
+    chatLists,
+    mainPublisher,
+    leaveSession,
+    gotoTakePic,
+    nowTaking
+  };
 }
 
 export default useSession;

@@ -11,7 +11,6 @@ function MyPage() {
   const { username } = useParams();
 
   useEffect(() => {
-    console.log(username);
     user ? console.log(user.name) : alert("로그인해주세요");
   }, [user]);
 

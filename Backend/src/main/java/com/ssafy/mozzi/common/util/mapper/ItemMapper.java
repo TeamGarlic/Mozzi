@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.ssafy.mozzi.api.response.FrameListGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundGetRes;
+import com.ssafy.mozzi.api.response.ItemBackgroundPostRes;
 import com.ssafy.mozzi.api.response.ItemStickerGetRes;
 import com.ssafy.mozzi.common.dto.BackgroundItem;
 import com.ssafy.mozzi.common.dto.FrameClipItem;
@@ -35,7 +36,8 @@ public class ItemMapper {
         for (Backgroud backgroud : backgrounds) {
             backgroundItems.add(BackgroundItem.builder()
                 .id(backgroud.getId())
-                .url(backgroud.getUrl())
+                .objectName(backgroud.getObjectName())
+                .title(backgroud.getTitle())
                 .build());
         }
 
@@ -58,7 +60,8 @@ public class ItemMapper {
         for (Sticker sticker : stickers) {
             stickerItems.add(StickerItem.builder()
                 .id(sticker.getId())
-                .url(sticker.getUrl())
+                .objectName(sticker.getObjectName())
+                .title(sticker.getTitle())
                 .build());
         }
 
@@ -79,7 +82,8 @@ public class ItemMapper {
         for (Frame frame : frames) {
             frameList.add(FrameItem.builder()
                 .id(frame.getId())
-                .url(frame.getUrl())
+                .objectName(frame.getObjectName())
+                .title(frame.getTitle())
                 .rects(toFrameClipItem(frame.getFrameClips()))
                 .build());
         }
@@ -108,5 +112,17 @@ public class ItemMapper {
         }
 
         return clipList;
+    }
+
+    /**
+     *  Backgroud 엔티티를 ItemBackgroundPostRes로 변환
+     *
+     * @param backgroud Backgroud
+     * @return ItemBackgroundPostRes
+     */
+    public static ItemBackgroundPostRes toItemBackgroundPostRes(Backgroud backgroud) {
+        return ItemBackgroundPostRes.builder()
+            .id(backgroud.getId())
+            .build();
     }
 }

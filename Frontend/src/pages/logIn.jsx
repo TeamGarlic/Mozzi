@@ -13,19 +13,16 @@ function LogIn() {
   const pw = useInput();
 
   async function login() {
-    console.log(`id : ${id.value}, pw : ${pw.value}`);
     try {
       let res = await userApi.logIn(id.value, pw.value);
-      console.log(res);
       if (res.status === 200) {
-        alert(res.data.message);
+        alert('로그인 성공');
         localStorage.setItem("accessToken", res.data.data.accessToken);
         localStorage.setItem("refreshToken", res.data.data.refreshToken);
         navigate("/");
       }
     } catch (e) {
       const status = e.response.status;
-      console.log(status);
       if (status === 404) {
         setError("존재하지 않는 아이디입니다!");
       } else if (status === 400) {
@@ -36,6 +33,12 @@ function LogIn() {
     }
     id.reset();
     pw.reset();
+  }
+
+  const activeEnter = (e) => {
+    if(e.key === "Enter") {
+      login();
+    }
   }
 
   return (
@@ -53,7 +56,7 @@ function LogIn() {
             <TextInput type="text" placeholder="ID" {...id} />
           </div>
           <div className="flex">
-            <TextInput type="password" placeholder="비밀번호" {...pw} />
+            <TextInput type="password" placeholder="비밀번호" {...pw} onKeyDown={activeEnter} />
           </div>
           <span className=" float-left text-sm text-red-500">{error}</span>
           <button
@@ -64,7 +67,6 @@ function LogIn() {
             로그인
           </button>
         </div>
-        {/*</div>*/}
       </>
     </Layout>
   );

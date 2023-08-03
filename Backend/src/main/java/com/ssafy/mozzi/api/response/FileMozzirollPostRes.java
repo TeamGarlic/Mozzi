@@ -6,14 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 토큰 재발급 응답 Object
- * @see com.ssafy.mozzi.common.auth.JwtTokenProvider
+ * Mozziroll 업로드 응답 Dto 입니다.
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class reissuePostRes {
-    private String accessToken;
-    private String refreshToken;
+public class FileMozzirollPostRes {
+    private Long id; // mozziroll의 id
 }
