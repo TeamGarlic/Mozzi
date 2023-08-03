@@ -1,9 +1,22 @@
 import PropTypes from "prop-types";
-import SmallCam from "@/components/SmallCam";
 import { MicrophoneIcon as SolidMic } from "@heroicons/react/24/solid";
 import { MicrophoneIcon as OutlineMic } from "@heroicons/react/24/outline";
+import { useEffect, useRef } from "react";
 
-function EnterDialog({ visibility, onClick, toggleVoice, setVoice }) {
+function EnterDialog({
+  visibility,
+  onClick,
+  toggleVoice,
+  setVoice,
+  mainPublisher,
+}) {
+  const myRef = useRef();
+  useEffect(() => {
+    if (mainPublisher) {
+      console.log(mainPublisher);
+      mainPublisher.addVideoElement(myRef.current);
+    }
+  }, [mainPublisher]);
   return (
     visibility && (
       <div className=" z-10 absolute top-0 w-full min-h-screen justify-center items-center text-center bg-stone-600 bg-opacity-50 overflow-scroll">
@@ -14,7 +27,7 @@ function EnterDialog({ visibility, onClick, toggleVoice, setVoice }) {
           <div className="p-4 flex">
             <div className="w-1/2 flex-col overflow-hidden">
               <span>camera</span>
-              <SmallCam />
+              <video autoPlay ref={myRef} className="" />
               <select className="cam" value={"1"}>
                 <option value="1">cam1</option>
                 <option value="2">cam2</option>
@@ -59,4 +72,5 @@ EnterDialog.propTypes = {
   onClick: PropTypes.func.isRequired,
   toggleVoice: PropTypes.bool.isRequired,
   setVoice: PropTypes.func.isRequired,
+  mainPublisher: PropTypes.object,
 };

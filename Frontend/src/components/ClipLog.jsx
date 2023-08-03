@@ -7,16 +7,15 @@ import {
   DragClearAction,
   DragEndAction,
 } from "@/modules/clipAction";
+import PropTypes from "prop-types";
+import {checkHost} from "@/utils/DecoratorUtil.js";
 
-function ClipLog() {
+function ClipLog({user}) {
   const clipList = useSelector((state) => state.clipReducer.clipList);
   const drag = useSelector((state) => state.clipReducer.drag);
   const dispatch = useDispatch();
   const clipNum = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  // const clipNum = Array.from({length: clipList['n']}, (v, i) => i+1);
 
-
-  // clip 추가를 위한 연습용 이벤트
   const [idx, setIdx] = useState(3);
   function addVideo() {
     dispatch(
@@ -27,7 +26,6 @@ function ClipLog() {
     );
     setIdx(idx + 1);
   }
-  // clip 추가를 위한 연습용 이벤트
 
   function clickVideo(event) {
     console.log("click");
@@ -74,6 +72,13 @@ function ClipLog() {
     dispatch(DragEndAction({ end: event.target.id.slice(0, 4) }));
   }
 
+  clickVideo = checkHost(clickVideo, user.isHost);
+  onDragStart = checkHost(onDragStart, user.isHost);
+  onDragEnd = checkHost(onDragEnd, user.isHost);
+  onDragOver = checkHost(onDragOver, user.isHost);
+  onDragEnter = checkHost(onDragEnter, user.isHost);
+  onDrop = checkHost(onDrop, user.isHost);
+
   return (
     <>
       <span onClick={addVideo} className="text-3xl">
@@ -113,3 +118,13 @@ function ClipLog() {
 }
 
 export default ClipLog;
+
+ClipLog.propTypes = {
+  user: PropTypes.shape({
+    id: PropTypes.number,
+    userId: PropTypes.string,
+    userNickname: PropTypes.string,
+    email: PropTypes.string,
+    isHost: PropTypes.number,
+  }),
+};
