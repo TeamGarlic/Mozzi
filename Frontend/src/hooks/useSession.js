@@ -141,7 +141,8 @@ function useSession(shareCode) {
   const deleteSubscriber = (streamManager) => {
     const newSubscribers = [...subscribers];
     const idx = newSubscribers.indexOf(streamManager);
-    if (idx > -1) newSubscribers.splice(idx, 1);
+    if (idx <0) return;
+    newSubscribers.splice(idx, 1);
     setSubscribers(newSubscribers);
   };
 
