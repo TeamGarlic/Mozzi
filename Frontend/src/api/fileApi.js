@@ -1,6 +1,5 @@
 import axios from "axios";
 
-// 미인증 유저 api axios 객체
 const FileApi = axios.create({
   // baseUrl : 백엔드 서버 IP
   baseURL: "/files",
@@ -9,15 +8,6 @@ const FileApi = axios.create({
   },
 });
 
-// 인증 유저 api axios 객체
-// const UserAuthApi = axios.create({
-//   baseURL: "/",
-//   headers: {
-//       "Content-Type": "application/json"
-//   }
-// });
-
-// 유저 인증, 정보 관련 API
 const fileApi = {
   checkId: async (id) => {
     const res = await FileApi.get(`check-login-id?userId=${id}`, {

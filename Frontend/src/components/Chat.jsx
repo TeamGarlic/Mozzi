@@ -11,7 +11,7 @@ function Chat({ sendMessage, chatLists, user }) {
   const msg = useInput();
   function send() {
     if (msg.value.length === 0) return;
-    sendMessage(msg.value);
+    sendMessage(msg.value, user.userNickname);
     msg.reset();
     setTimeout(() => {
       chattingLog.current.scrollTop = chattingLog.current.scrollHeight;
@@ -34,11 +34,11 @@ function Chat({ sendMessage, chatLists, user }) {
           >
             {chatLists &&
               chatLists.map((item) => {
-                return item.from.userNickname === user.userNickname ? (
+                return item.from === user.userNickname ? (
                   <div>
                     <div className="text-right flex-col pb-2">
                       <div className="text-sm text-gray-500">
-                        {item.from.userNickname}
+                        {item.from}
                       </div>
                       <div>{item.message}</div>
                     </div>
