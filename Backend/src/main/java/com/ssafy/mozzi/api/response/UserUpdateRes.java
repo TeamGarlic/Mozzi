@@ -4,10 +4,10 @@ import lombok.Builder;
 import lombok.Data;
 
 /**
- * Openvidu Websocket 응답 Dto 입니다.
+ * 유저 정보 업데이트 응답 Dto 입니다.
  */
 @Data
 @Builder
-public class ConnectionPostRes {
-    private String token;
+public class UserUpdateRes {
+    long id;
 }

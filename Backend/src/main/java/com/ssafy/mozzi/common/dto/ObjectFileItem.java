@@ -1,20 +1,17 @@
 package com.ssafy.mozzi.common.dto;
 
+import org.springframework.core.io.Resource;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Sticker 응답을 위한 DTD Object
- * @see com.ssafy.mozzi.db.entity.remote.Sticker
- */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StickerItem {
-    private long id;
-    private String objectName;
-    private String title;
+public class ObjectFileItem {
+    private Resource file;
+    private String fileName;
 }

@@ -26,9 +26,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Sticker extends BaseEntity {
+
     @NotNull
     @Size(max = 500)
-    private String url;
+    @Column(name = "object_name")
+    private String objectName;
+
+    @Size(max = 20)
+    private String title;
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @CreationTimestamp

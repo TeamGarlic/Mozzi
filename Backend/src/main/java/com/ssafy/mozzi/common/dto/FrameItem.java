@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FrameItem {
     private Long id;
-    private String url;
+    private String objectName;
+    private String title;
     private List<FrameClipItem> rects;
 }

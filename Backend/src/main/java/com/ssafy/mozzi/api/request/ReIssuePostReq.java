@@ -7,7 +7,7 @@ import lombok.Data;
  * @see com.ssafy.mozzi.common.auth.JwtTokenProvider
  */
 @Data
-public class reissuePostReq {
+public class ReIssuePostReq {
     private String accessToken;
     private String refreshToken;
 }
