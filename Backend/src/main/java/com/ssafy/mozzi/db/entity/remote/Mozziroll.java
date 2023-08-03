@@ -12,6 +12,8 @@ import com.ssafy.mozzi.db.entity.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -43,6 +45,10 @@ public class Mozziroll extends BaseEntity {
 
     @OneToMany(mappedBy = "mozziroll")
     private Set<UserMozziroll> userMozzirolls = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "creator_id")
+    private User creator;
 
     @Override
     public boolean equals(Object o) {

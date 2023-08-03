@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "user_mozziroll")
+@Table(name = "user_mozziroll",
+    uniqueConstraints = {@UniqueConstraint(name = "usermozzi", columnNames = {"user_id", "mozziroll_id"})})
 public class UserMozziroll extends BaseEntity {
 
     @Builder.Default

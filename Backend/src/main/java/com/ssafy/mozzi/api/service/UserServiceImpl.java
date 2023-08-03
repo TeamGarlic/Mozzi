@@ -2,6 +2,9 @@ package com.ssafy.mozzi.api.service;
 
 import java.util.Optional;
 
+import com.ssafy.mozzi.api.request.UserUpdatePutReq;
+import com.ssafy.mozzi.api.response.UserUpdateRes;
+import com.ssafy.mozzi.common.exception.handler.NoDataException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,17 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.mozzi.api.request.ReIssuePostReq;
 import com.ssafy.mozzi.api.request.UserLoginPostReq;
 import com.ssafy.mozzi.api.request.UserRegisterPostReq;
-import com.ssafy.mozzi.api.request.UserUpdatePutReq;
 import com.ssafy.mozzi.api.response.ReIssuePostRes;
 import com.ssafy.mozzi.api.response.UserIdCheckRes;
 import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
-import com.ssafy.mozzi.api.response.UserUpdateRes;
 import com.ssafy.mozzi.common.auth.JwtTokenProvider;
 import com.ssafy.mozzi.common.exception.handler.DuplicatedUserIdException;
 import com.ssafy.mozzi.common.exception.handler.InvalidRefreshTokenException;
-import com.ssafy.mozzi.common.exception.handler.NoDataException;
 import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.UserLoginFailException;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;

@@ -43,16 +43,19 @@ public class Booth extends BaseEntity {
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
-    private long creator;
+    private Long creator;
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
+        if (Objects.equals(this, o)) {
             return true;
-        if (!(o instanceof Booth booth))
+        }
+        if (!(o instanceof Booth booth)) {
             return false;
-        if (!super.equals(o))
+        }
+        if (!super.equals(o)) {
             return false;
+        }
         return Objects.equals(getId(), booth.getId());
     }
 

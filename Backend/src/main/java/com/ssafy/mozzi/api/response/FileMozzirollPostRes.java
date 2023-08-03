@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Mozziroll 업로드 응답 Dto 입니다.
+ */
 @Data
 @Builder
 @NoArgsConstructor

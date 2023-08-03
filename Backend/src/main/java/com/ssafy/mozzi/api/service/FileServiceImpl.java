@@ -30,7 +30,6 @@ import lombok.RequiredArgsConstructor;
 @PropertySource("classpath:application-keys.properties")
 @RequiredArgsConstructor
 public class FileServiceImpl implements FileService {
-
     private final FileRepository fileRepository;
     private final MozzirollRepository mozzirollRepository;
     private final UserMozzirollRepository userMozzirollRepository;
@@ -63,6 +62,7 @@ public class FileServiceImpl implements FileService {
         Mozziroll mozziroll = mozzirollRepository.save(
             Mozziroll.builder()
                 .objectName(OBJECT_NAME)
+                .creator(user)
                 .build());
 
         // UserMozziroll 테이블에 정보 추가

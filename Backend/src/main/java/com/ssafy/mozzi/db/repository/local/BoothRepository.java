@@ -1,5 +1,7 @@
 package com.ssafy.mozzi.db.repository.local;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +14,7 @@ import com.ssafy.mozzi.db.entity.local.Booth;
  */
 @Repository
 public interface BoothRepository extends JpaRepository<Booth, Long> {
-    Booth findByShareCode(String shareCode);
+    Optional<Booth> findByShareCode(String shareCode);
 
-    Booth findBySessionId(String sessionId);
+    Optional<Booth> findBySessionId(String sessionId);
 }
