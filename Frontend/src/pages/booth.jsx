@@ -14,6 +14,8 @@ import { changeBgAction } from "@/modules/bgAction.js";
 import useUser from "@/hooks/useUser";
 import {checkHost} from "@/utils/DecoratorUtil.js";
 import bg from "@/assets/img/bg1.jpg";
+import userApi from "@/api/userApi.js";
+import fileApi from "@/api/fileApi.js";
 
 function Booth() {
   const [taking, setTaking] = useState(false);
@@ -22,6 +24,7 @@ function Booth() {
   // console.log(sessionID);
   const location = useLocation();
   const { user, checkUser } = useUser({isHost: location.state?location.state.isHost:1});
+  const [bgList, setBgList] = useState([]);
 
   const {
     mainSession,
@@ -79,14 +82,26 @@ function Booth() {
     // drawCanvas(canvasRef,canvasContextRef,bgImg,layers);
   };
 
+  async function getBgList(pageNum, pageSize) {
+    try {
+      let res = await fileApi.getBgList(pageNum, pageSize);
+      if (res.status === 200) {
+        await setBgList(res.data.data.backgrounds);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   useEffect(() => {
     checkUser();
     // TODO : bgImg를 Redux에서 관리
     const bgImg = new Image();
-    bgImg.src = bg;
+    bgImg.src = "https://api.mozzi.lol/items/background/1691022079984_bg2.jpg";
     bgImg.crossOrigin = "anonymous";
     dispatch(changeBgAction({ img: bgImg }));
 
+    getBgList(1, 10);
     bgMaskContextRef.current = bgMaskRef.current.getContext("2d");
     const constraints = {
       video: { width: { max: 1280 }, height: { max: 720 } },
@@ -141,6 +156,7 @@ function Booth() {
           sendMessage={sendMessage}
           chatLists={chatLists}
           user={user}
+          bgList={bgList}
         />
       )}
       <video autoPlay ref={webcamRef} className="hidden" />
