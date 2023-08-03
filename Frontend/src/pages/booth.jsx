@@ -13,6 +13,7 @@ import useSession from "@/hooks/useSession.js";
 import { changeBgAction } from "@/modules/bgAction.js";
 import useUser from "@/hooks/useUser";
 import {checkHost} from "@/utils/DecoratorUtil.js";
+import bg from "@/assets/img/bg1.jpg";
 
 function Booth() {
   const [taking, setTaking] = useState(false);
@@ -79,7 +80,7 @@ function Booth() {
     checkUser();
     // TODO : bgImg를 Redux에서 관리
     const bgImg = new Image();
-    bgImg.src = "/src/assets/img/bg1.jpg";
+    bgImg.src = bg;
     bgImg.crossOrigin = "anonymous";
     dispatch(changeBgAction({ img: bgImg }));
 
