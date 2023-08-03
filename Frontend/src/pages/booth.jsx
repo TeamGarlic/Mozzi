@@ -32,6 +32,7 @@ function Booth() {
     chatLists,
     mainPublisher,
     leaveSession,
+    gotoTakePic
   } = useSession(shareCode);
 
   // 소스 웹캠 video
@@ -51,6 +52,7 @@ function Booth() {
 
   function startTake() {
     dispatch(resetCamCanvasesAction());
+    gotoTakePic();
     setTaking(true);
   }
   startTake = checkHost(startTake, user.isHost);
@@ -131,6 +133,7 @@ function Booth() {
           subscribers={subscribers}
           mainPublisher={mainPublisher}
           leaveSession={leaveSession}
+          gotoTakePic={gotoTakePic}
         />
       ) : (
         <TakePic
