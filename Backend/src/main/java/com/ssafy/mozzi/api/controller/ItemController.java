@@ -77,7 +77,7 @@ public class ItemController {
 
         return ResponseEntity.ok()
             .cacheControl(cacheControl.getCacheControl())
-            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+            .contentType(MediaType.IMAGE_JPEG)
             .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment() // (6)
                 .filename(resource.getFilename(), StandardCharsets.UTF_8)
                 .build()
