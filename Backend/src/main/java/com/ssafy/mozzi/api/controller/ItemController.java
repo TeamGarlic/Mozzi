@@ -137,14 +137,15 @@ public class ItemController {
      */
     @PostMapping("/background")
     public ResponseEntity<? extends BaseResponseBody<ItemBackgroundPostRes>> saveBackground(
-        @RequestParam("file") MultipartFile file) {
+        @RequestParam("file") MultipartFile file,
+        @RequestParam("title") String title) {
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .cacheControl(CacheControl.noStore())
             .body(
                 BaseResponseBody.<ItemBackgroundPostRes>builder()
                     .message("Save background success")
-                    .data(itemService.saveBackground(file))
+                    .data(itemService.saveBackground(file, title))
                     .build()
             );
     }

@@ -37,6 +37,7 @@ public class ItemMapper {
             backgroundItems.add(BackgroundItem.builder()
                 .id(backgroud.getId())
                 .objectName(backgroud.getObjectName())
+                .title(backgroud.getTitle())
                 .build());
         }
 
@@ -60,6 +61,7 @@ public class ItemMapper {
             stickerItems.add(StickerItem.builder()
                 .id(sticker.getId())
                 .objectName(sticker.getObjectName())
+                .title(sticker.getTitle())
                 .build());
         }
 
@@ -81,6 +83,7 @@ public class ItemMapper {
             frameList.add(FrameItem.builder()
                 .id(frame.getId())
                 .objectName(frame.getObjectName())
+                .title(frame.getTitle())
                 .rects(toFrameClipItem(frame.getFrameClips()))
                 .build());
         }

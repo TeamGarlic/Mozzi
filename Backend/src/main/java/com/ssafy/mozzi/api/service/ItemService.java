@@ -20,7 +20,7 @@ public interface ItemService {
 
     ItemStickerGetRes getStickerRes(int pageNum, int pageSize);
 
-    ItemBackgroundPostRes saveBackground(MultipartFile file);
+    ItemBackgroundPostRes saveBackground(MultipartFile file, String title);
 
     Resource getBackgroundImg(String ObjectName);
 }

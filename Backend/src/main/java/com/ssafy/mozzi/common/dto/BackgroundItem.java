@@ -16,4 +16,5 @@ import lombok.NoArgsConstructor;
 public class BackgroundItem {
     private long id;
     private String objectName;
+    private String title;
 }
