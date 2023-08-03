@@ -18,5 +18,6 @@ import lombok.NoArgsConstructor;
 public class FrameItem {
     private Long id;
     private String objectName;
+    private String title;
     private List<FrameClipItem> rects;
 }

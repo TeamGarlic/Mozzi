@@ -105,12 +105,13 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
-    public ItemBackgroundPostRes saveBackground(MultipartFile file) {
+    public ItemBackgroundPostRes saveBackground(MultipartFile file, String title) {
         final String OBJECT_NAME = String.format("%s_%s", System.currentTimeMillis(), file.getOriginalFilename());
         String contentType = "multipart/form-data";
 
         Backgroud backgroud = backgroundRepository.save(Backgroud.builder()
             .objectName(OBJECT_NAME)
+            .title(title)
             .build());
 
         // Object Storage에 파일 추가

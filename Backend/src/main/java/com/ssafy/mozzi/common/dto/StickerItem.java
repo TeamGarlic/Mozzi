@@ -16,4 +16,5 @@ import lombok.NoArgsConstructor;
 public class StickerItem {
     private long id;
     private String objectName;
+    private String title;
 }

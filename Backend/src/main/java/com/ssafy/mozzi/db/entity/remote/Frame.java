@@ -40,6 +40,9 @@ public class Frame extends BaseEntity {
     @Column(name = "object_name")
     private String objectName;
 
+    @Size(max = 20)
+    private String title;
+
     @ColumnDefault("CURRENT_TIMESTAMP")
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
