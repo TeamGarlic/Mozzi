@@ -2,14 +2,11 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import mozzilogo from "@/assets/img/mozzi.png";
+import userApi from "@/api/userApi";
 
 function NavBar({ user }) {
-  // const [user, setUser] = useState(null);
   const [menu, setMenu] = useState(false);
   const navigate = useNavigate();
-  // useEffect(() => {
-  //   setUser(null);
-  // }, []);
 
   function goLogin() {
     navigate("/login");
@@ -22,10 +19,15 @@ function NavBar({ user }) {
     setMenu(!menu);
   }
 
-  function logOut() {
-    localStorage.removeItem("accessToken");
-    alert("로그아웃되었습니다!");
-    location.href = "/";
+  async function logOut() {
+    let res = await userApi.logOut();
+    console.log(res);
+    if(res.status ===200){
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      alert("로그아웃되었습니다!");
+      location.href = "/";
+    }
   }
 
   return (

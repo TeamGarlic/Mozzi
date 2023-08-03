@@ -26,7 +26,7 @@ function useSession(shareCode) {
   };
 
   const joinSession = async (userName, canvases) => {
-    setUserName(userName);
+    await setUserName(userName);
     try {
       const mainOV = new OpenVidu();
       const maskOV = new OpenVidu();
@@ -41,9 +41,9 @@ function useSession(shareCode) {
         setSubscribers((prev) => [...prev, subscriber]);
       });
       // 채팅 수신
-      mainSession.on("signal:chat", (event) => {
+      mainSession.on("signal:chat", async(event) => {
         console.log(event);
-        let data = { ...JSON.parse(event.data), id: event.from.connectionId };
+        let data = await JSON.parse(event.data);
         setChatLists((prev) => {
           return [...prev, data];
         });
@@ -109,9 +109,10 @@ function useSession(shareCode) {
     }
   };
 
-  const sendMessage = (message) => {
-    mainSession.signal({
-      data: JSON.stringify({ from: userName, message: message }), // Any string (optional)
+  const sendMessage = async (message, userName) => {
+    console.log({ from: userName+"", message: message });
+    await mainSession.signal({
+      data: JSON.stringify({ from: userName+"", message: message}), // Any string (optional)
       to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
       type: "chat", // The type of message (optional)
     });

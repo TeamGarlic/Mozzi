@@ -26,9 +26,7 @@ function Start() {
       return;
     }
 
-    let res = await boothApi.createBooth(
-      window.localStorage.getItem("accessToken")
-    );
+    let res = await boothApi.createBooth();
     console.log(res);
     let {
       data: {
