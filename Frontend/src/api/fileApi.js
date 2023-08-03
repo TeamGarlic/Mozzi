@@ -15,7 +15,12 @@ const fileApi = {
     return res;
   },
 
-  // getFrameList: async()
+  getFrameList: async () => {
+    const res = await FileApi.get(
+      `frames`,
+    );
+    return res;
+  },
 };
 
 export default fileApi;

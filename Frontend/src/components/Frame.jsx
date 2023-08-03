@@ -6,7 +6,6 @@ import {
   DragStartAction,
   Frame2FrameAction,
 } from "@/modules/clipAction";
-import frame1 from "@/assets/img/frame6.jpg"
 import PropTypes from "prop-types";
 import {checkHost} from "@/utils/DecoratorUtil.js";
 
@@ -91,7 +90,7 @@ function Frame({user}) {
   return (
     <div>
       <div className="relative">
-        <img src={frame1} alt="frame" ref={imgRef}></img>
+        <img src={frame.src} alt="frame" ref={imgRef}></img>
         {frameNum.map((i) => {
           if (frame[i]["src"]) {
             return (

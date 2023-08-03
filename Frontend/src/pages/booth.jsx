@@ -13,7 +13,6 @@ import useSession from "@/hooks/useSession.js";
 import { changeBgAction } from "@/modules/bgAction.js";
 import useUser from "@/hooks/useUser";
 import {checkHost} from "@/utils/DecoratorUtil.js";
-import bg from "@/assets/img/bg1.jpg";
 import fileApi from "@/api/fileApi.js";
 
 function Booth() {
@@ -24,6 +23,7 @@ function Booth() {
   const location = useLocation();
   const { user, checkUser } = useUser({isHost: location.state?location.state.isHost:1});
   const [bgList, setBgList] = useState([]);
+  const [frameList, setFrameList] = useState([]);
 
   const {
     mainSession,
@@ -86,7 +86,18 @@ function Booth() {
     try {
       let res = await fileApi.getBgList(pageNum, pageSize);
       if (res.status === 200) {
-        await setBgList(res.data.data.backgrounds);
+        setBgList(res.data.data.backgrounds);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async function getFrameList(){
+    try {
+      let res = await fileApi.getFrameList();
+      if (res.status === 200) {
+        setFrameList(res.data.data.frames)
       }
     } catch (e) {
       console.log(e);
@@ -95,13 +106,12 @@ function Booth() {
 
   useEffect(() => {
     checkUser();
+    getFrameList();
     // TODO : bgImg를 Redux에서 관리
     const bgImg = new Image();
-    bgImg.src = "https://api.mozzi.lol/items/background/1691022079984_bg2.jpg";
+    bgImg.src = "https://api.mozzi.lol/files/object/1691022079984_bg2.jpg";
     bgImg.crossOrigin = "anonymous";
     dispatch(changeBgAction({ img: bgImg }));
-
-    getBgList(1, 10);
     bgMaskContextRef.current = bgMaskRef.current.getContext("2d");
     const constraints = {
       video: { width: { max: 1280 }, height: { max: 720 } },
@@ -133,6 +143,7 @@ function Booth() {
       })
     );
     joinSession(user.userNickname,[bgRemovedRef, bgMaskRef]);
+    getBgList(1, 10);
   }, []);
 
   useEffect(() => {
@@ -149,6 +160,7 @@ function Booth() {
           mainPublisher={mainPublisher}
           leaveSession={leaveSession}
           gotoTakePic={gotoTakePic}
+          frameList={frameList}
         />
       ) : (
         <TakePic
