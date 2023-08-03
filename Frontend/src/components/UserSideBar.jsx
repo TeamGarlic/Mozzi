@@ -1,6 +1,4 @@
-import { Link } from "react-router-dom";
 import { Card } from "@material-tailwind/react";
-// import UserCard from "./UserCard";
 import TextInput from "./TextInput";
 import UserVideoComponent from "./UserVideoComponents";
 import PropTypes from "prop-types";

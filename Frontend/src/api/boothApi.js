@@ -1,9 +1,7 @@
 import axios from "axios";
 import userApi from "@/api/userApi.js";
 
-// booth api axios 객체
 const PublicBoothApi = axios.create({
-  // baseUrl : 백엔드 서버 IP
   baseURL: "https://api.mozzi.lol/sessions",
   headers: {
     "Content-Type": "application/json",
@@ -11,7 +9,6 @@ const PublicBoothApi = axios.create({
 });
 
 const PrivateBoothApi = axios.create({
-  // baseUrl : 백엔드 서버 IP
   baseURL: "https://api.mozzi.lol/sessions",
   config:{
     headers: {
@@ -58,7 +55,6 @@ PrivateBoothApi.interceptors.response.use(
         } catch (error) {
           if (axios.isAxiosError(error)) {
               alert("세션 만료. 다시 로그인해 주세요");
-              // window.location.replace('/login');
           }
         }
     }
@@ -69,7 +65,7 @@ const boothApi = {
   createBooth: async () => {
     let res = await PrivateBoothApi.post("",{});
     return res;
-  }, // 완
+  },
 
   getSessionID: async (shareCode) => {
     const res = await PublicBoothApi.get(`${shareCode}`);
