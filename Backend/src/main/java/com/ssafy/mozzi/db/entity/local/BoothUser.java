@@ -28,7 +28,7 @@ public class BoothUser extends BaseEntity {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
+        if (Objects.equals(this, o)) {
             return true;
         }
         if (!(o instanceof BoothUser boothUser)) {
