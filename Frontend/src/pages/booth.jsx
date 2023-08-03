@@ -51,7 +51,9 @@ function Booth() {
   const myLayer = useSelector((state) => state.canvasReducer.myLayer);
   // TODO : bgImg를 Redux에서 관리
   const bgNow = useSelector((state) => state.bgReducer.bgNow);
+  const subVideoRefs = useRef({});
   const subCanvasRefs = useRef({});
+  const videoMap = {}
 
   function startTake() {
     dispatch(resetCamCanvasesAction());
@@ -148,6 +150,28 @@ function Booth() {
 
   useEffect(() => {
     console.log(subscribers);
+    console.log(subVideoRefs);
+    console.log(subCanvasRefs);
+    for (var key in videoMap) {
+      delete videoMap[key];
+    }
+    subscribers.forEach((sub)=>{
+      if(JSON.parse(sub.stream.connection.data).isMask){
+        videoMap[JSON.parse(sub.stream.connection.data).uid]={
+          ...videoMap[JSON.parse(sub.stream.connection.data).uid],
+          maskRef : subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid+"_Mask"],
+          canvasRef : subCanvasRefs.current[JSON.parse(sub.stream.connection.data).uid],
+        }
+        sub.addVideoElement(subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid+"_Mask"]).current;
+      }else{
+        videoMap[JSON.parse(sub.stream.connection.data).uid]={
+          ...videoMap[JSON.parse(sub.stream.connection.data).uid],
+          vidRef : subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid],
+        }
+        sub.addVideoElement(subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid]).current;
+      }
+    });
+    console.log(videoMap);
   }, [subscribers]);
 
   return (
@@ -173,14 +197,25 @@ function Booth() {
       )}
       <video autoPlay ref={webcamRef} className="hidden" />
       <canvas ref={bgMaskRef} className="hidden" />
-      {/*{*/}
-      {/*  subscribers.map((sub) => {*/}
-      {/*    return (*/}
-      {/*      <video key={JSON.parse(sub.stream.connection.data).uid} ref={(elem) =>*/}
-      {/*        subCanvasRefs.current[JSON.parse(sub.stream.connection.data).uid] = elem}></video>*/}
-      {/*    )*/}
-      {/*  })*/}
-      {/*}*/}
+      {
+        subscribers.map((sub) => {
+          return (
+            <video key={JSON.parse(sub.stream.connection.data).uid} ref={(elem) =>
+              subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid+(JSON.parse(sub.stream.connection.data).isMask?"_Mask":"")] = elem}
+            className="hidden"></video>
+          )
+        })
+      }
+      {
+        subscribers.map((sub) => {
+          if(!JSON.parse(sub.stream.connection.data).isMask) return null;
+          return (
+            <canvas key={JSON.parse(sub.stream.connection.data).uid} ref={(elem) =>
+              subCanvasRefs.current[JSON.parse(sub.stream.connection.data).uid] = elem}
+            className="hidden"></canvas>
+          )
+        })
+      }
     </>
   );
 }
