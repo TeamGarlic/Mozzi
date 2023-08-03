@@ -1,5 +1,6 @@
 package com.ssafy.mozzi.api.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -15,15 +16,18 @@ import com.ssafy.mozzi.api.response.ItemBackgroundGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundPostRes;
 import com.ssafy.mozzi.api.response.ItemStickerGetRes;
 import com.ssafy.mozzi.common.auth.ObjectStorageClient;
+import com.ssafy.mozzi.common.dto.FrameClipItem;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
 import com.ssafy.mozzi.common.util.FileUtil;
 import com.ssafy.mozzi.common.util.mapper.ItemMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
 import com.ssafy.mozzi.db.entity.remote.Backgroud;
 import com.ssafy.mozzi.db.entity.remote.Frame;
+import com.ssafy.mozzi.db.entity.remote.FrameClip;
 import com.ssafy.mozzi.db.entity.remote.Sticker;
 import com.ssafy.mozzi.db.repository.cloud.FileRepository;
 import com.ssafy.mozzi.db.repository.remote.BackgroundRepository;
+import com.ssafy.mozzi.db.repository.remote.FrameClipRepository;
 import com.ssafy.mozzi.db.repository.remote.FrameRepository;
 import com.ssafy.mozzi.db.repository.remote.StickerRepository;
 
@@ -39,6 +43,7 @@ import lombok.RequiredArgsConstructor;
 public class ItemServiceImpl implements ItemService {
     private final BackgroundRepository backgroundRepository;
     private final FrameRepository frameRepository;
+    private final FrameClipRepository frameClipRepository;
     private final StickerRepository stickerRepository;
     private final FileRepository fileRepository;
     private final ObjectStorageClient client;
@@ -118,5 +123,41 @@ public class ItemServiceImpl implements ItemService {
         if (response.getLastModified() == null)
             throw new CloudStorageSaveFailException("파일 업로드 실패");
         return ItemMapper.toItemBackgroundPostRes(backgroud);
+    }
+
+    /**
+     * 프레임 업로드 비지니스 로직
+     * @param file MultipartFile
+     * @param title String
+     * @param frameClipItems FrameClipItem[]
+     * @see ItemService
+     */
+    @Override
+    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
+    public String saveFrame(MultipartFile file, String title, FrameClipItem[] frameClipItems) {
+        final String OBJECT_NAME = String.format("%s_%s", System.currentTimeMillis(), file.getOriginalFilename());
+        String conentType = "multipart/form-data";
+
+        Set<FrameClip> frameClips = new HashSet<>();
+
+        for (FrameClipItem frameClipItem : frameClipItems) {
+            FrameClip frameClip = frameClipRepository.save(
+                FrameClip.builder()
+                    .width(frameClipItem.getWidth())
+                    .height(frameClipItem.getHeight())
+                    .x(frameClipItem.getX())
+                    .y(frameClipItem.getY())
+                    .build());
+
+            frameClips.add(frameClip);
+        }
+
+        Frame frame = frameRepository.save(Frame.builder()
+            .objectName(OBJECT_NAME)
+            .title(title)
+            .frameClips(frameClips)
+            .build());
+
+        return "";
     }
 }

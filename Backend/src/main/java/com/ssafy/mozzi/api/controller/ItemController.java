@@ -16,6 +16,7 @@ import com.ssafy.mozzi.api.response.ItemBackgroundGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundPostRes;
 import com.ssafy.mozzi.api.response.ItemStickerGetRes;
 import com.ssafy.mozzi.api.service.ItemService;
+import com.ssafy.mozzi.common.dto.FrameClipItem;
 import com.ssafy.mozzi.common.model.ItemCacheControl;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
@@ -117,6 +118,32 @@ public class ItemController {
                 BaseResponseBody.<ItemBackgroundPostRes>builder()
                     .message("Save background success")
                     .data(itemService.saveBackground(file, title))
+                    .build()
+            );
+    }
+
+    /**
+     * 프레임 업로드 비지니스 로직
+     * @param file MultipartFile
+     * @param title String
+     * @param frameClipItems FrameClipItem[]
+     * @see ItemService
+     */
+    @PostMapping("/frame")
+    public ResponseEntity<? extends BaseResponseBody<String>> saveFrame(
+        @RequestParam("file") MultipartFile file,
+        @RequestParam("title") String title,
+        @RequestParam("rects") FrameClipItem[] frameClipItems) {
+
+        String response = itemService.saveFrame(file, title, frameClipItems);
+
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .cacheControl(CacheControl.noStore())
+            .body(
+                BaseResponseBody.<String>builder()
+                    .message("frame upload success")
+                    .data(response)
                     .build()
             );
     }
