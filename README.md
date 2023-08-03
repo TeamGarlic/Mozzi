@@ -17,11 +17,7 @@
 * 서비스 특징: 웹캠과 WebRTC 기술을 활용해 여러 명을 한 배경한 클립 생성
 * [초기 기획안](https://pattern-ounce-358.notion.site/d16d1d1a50d4469985b8de563c96b35c)
 
-<!-- blank line -->
-<figure class="video_container">
-  <iframe src="https://www.youtube.com/embed/J9AHQaM_pVQ" frameborder="0" allowfullscreen="true"> </iframe>
-</figure>
-<!-- blank line -->
+[![샘플](/Resouce/img/thumbnail.png)](https://www.youtube.com/embed/J9AHQaM_pVQ)
 
 
 ## ⚙ 개발 환경 및 IDE
