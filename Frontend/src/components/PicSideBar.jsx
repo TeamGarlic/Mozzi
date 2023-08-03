@@ -7,21 +7,6 @@ import { ComputerDesktopIcon } from "@heroicons/react/24/outline";
 import PropTypes from "prop-types";
 
 export default function PicSideBar({user, bgList}) {
-  // const buttons = [
-  //   { word: "사용자", idx: 1 },
-  //   { word: "배경", idx: 2 },
-  //   // {word:"스티커", idx:3}
-  // ];
-
-  // const bGs = [
-  //   { bgName: "피사의 사탑", src: "/src/assets/img/bg1.jpg" },
-  //   { bgName: "싸움수준", src: "/src/assets/img/bg2.jpg" },
-  //   { bgName: "러쉬모어 산", src: "/src/assets/img/bg3.jpg" },
-  //   { bgName: "다크로드", src: "/src/assets/img/bg4.png" },
-  //   { bgName: "절-벽", src: "/src/assets/img/cliff.png" },
-  //   { bgName: "문호텔어스뷰", src: "/src/assets/img/earth.jpg" },
-  //   { bgName: "시공조아", src: "/src/assets/img/heroes.jpg" }];
-
   const [menu, setMenu] = useState(0);
 
   return (

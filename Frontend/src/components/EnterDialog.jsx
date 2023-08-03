@@ -1,5 +1,4 @@
 import PropTypes from "prop-types";
-// import SmallCam from "@/components/SmallCam";
 import { MicrophoneIcon as SolidMic } from "@heroicons/react/24/solid";
 import { MicrophoneIcon as OutlineMic } from "@heroicons/react/24/outline";
 import { useEffect, useRef } from "react";
@@ -28,7 +27,6 @@ function EnterDialog({
           <div className="p-4 flex">
             <div className="w-1/2 flex-col overflow-hidden">
               <span>camera</span>
-              {/* <SmallCam /> */}
               <video autoPlay ref={myRef} className="" />
               <select className="cam" value={"1"}>
                 <option value="1">cam1</option>

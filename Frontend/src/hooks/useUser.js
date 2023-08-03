@@ -9,7 +9,6 @@ function useUser(initialState = null) {
 
   async function getUser() {
     let res = await userApi.getUser(accessToken);
-    // console.log(user);
     return res;
   }
 
@@ -21,11 +20,7 @@ function useUser(initialState = null) {
           ...user,
           ...userData,
         });
-        // console.log("200 complete");
-      } else {
-        // console.log("no user");
       }
-      // console.log(res.status);
     });
   }, [accessToken]);
 
@@ -37,7 +32,6 @@ function useUser(initialState = null) {
           ...user,
           ...userData,
         });
-        // console.log("200 complete");
       } else {
         let guest = prompt("이름을 입력하세요", "GUEST");
         if (!guest) {
@@ -49,17 +43,8 @@ function useUser(initialState = null) {
           userNickname: guest,
         });
       }
-      // console.log(res.status);
     });
     console.log(user);
-    // if (!user) {
-    //   let guest = prompt("이름을 입력하세요", "GUEST");
-    //   if (!guest) {
-    //     alert("메인 화면으로 돌아갑니다.");
-    //     navigate("/");
-    //   }
-    //   setUser(guest);
-    // }
   }
 
   return { user, setUser, checkUser };

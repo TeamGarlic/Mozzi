@@ -21,30 +21,28 @@ function useSession(shareCode) {
     if (maskSession) {
       await maskSession.disconnect();
     }
-    await setMainSession(undefined);
-    await setMaskSession(undefined);
-    await setMainPublisher(undefined);
-    await setMaskPublisher(undefined);
-    await setSubscribers([]);
+    setMainSession(undefined);
+    setMaskSession(undefined);
+    setMainPublisher(undefined);
+    setMaskPublisher(undefined);
+    setSubscribers([]);
   };
 
   const joinSession = async (userName, canvases) => {
-    await setUserName(userName);
+    setUserName(userName);
     try {
       const mainOV = new OpenVidu();
       const maskOV = new OpenVidu();
       const mainSession = mainOV.initSession();
       const maskSession = maskOV.initSession();
-      await setMainSession(mainSession);
-      await setMaskSession(maskSession);
+      setMainSession(mainSession);
+      setMaskSession(maskSession);
 
-      // 생성시 이벤트
       mainSession.on("streamCreated", (event) => {
         const subscriber = mainSession.subscribe(event.stream, undefined);
         setSubscribers((prev) => [...prev, subscriber]);
       });
 
-      // 채팅 수신
       mainSession.on("signal:chat", async(event) => {
         console.log(event);
         let data = await JSON.parse(event.data);
@@ -53,13 +51,11 @@ function useSession(shareCode) {
         });
       });
 
-      //takePic 이동 신호 수신
       mainSession.on("signal:gotoTakePic", (event)=>{
         console.log("방장이 사진찍재!!");
         setNowTaking(true);
       })
 
-      // 언마운트시 이벤트
       mainSession.on("streamDestroyed", (event) => {
         setSubscribers((prev)=>{
           const newSubscribers = [...prev];
@@ -71,7 +67,6 @@ function useSession(shareCode) {
         });
       });
 
-      // 예외 처리
       mainSession.on("exception", (exception) => {
         console.warn(exception);
       });
@@ -126,17 +121,15 @@ function useSession(shareCode) {
     }
   };
 
-  // 채팅 메세지 신호 전송
   const sendMessage = async (message, userName) => {
     console.log({ from: userName+"", message: message });
     await mainSession.signal({
-      data: JSON.stringify({ from: userName+"", message: message}), // Any string (optional)
-      to: [], // Array of Connection objects (optional. Broadcast to everyone if empty)
-      type: "chat", // The type of message (optional)
+      data: JSON.stringify({ from: userName+"", message: message}),
+      to: [],
+      type: "chat",
     });
   };
 
-  //사진 촬영 페이지로 이동 신호
   const gotoTakePic = async()=>{
     await mainSession.signal({
       data : "",
@@ -147,14 +140,12 @@ function useSession(shareCode) {
 
   const getToken = async (code) => {
     let idRes = await boothApi.getSessionID(code);
-    // console.log(idRes);
     const {
       data: {
         data: { sessionId },
       },
     } = idRes;
     let tokenRes = await boothApi.getToken(sessionId);
-    // console.log(tokenRes);
     const {
       data: {
         data: { token },
@@ -172,7 +163,6 @@ function useSession(shareCode) {
     window.addEventListener("beforeunload", leaveSession);
 
     return () => {
-      // handleBeforeUnload();
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);

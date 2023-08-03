@@ -9,7 +9,6 @@ import {
 
 function BigCam() {
   const W = 1024, H = 560;
-  // 영상 위치 조절 컴포넌트
   const rndRef = useRef();
   const dispatch = useDispatch();
 
