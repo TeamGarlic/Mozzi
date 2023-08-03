@@ -7,7 +7,7 @@ import lombok.Data;
  */
 @Data
 public class MozziLinkPostRequest {
-    private long boothId;
+    private String shareCode;
     private long mozzirollId;
     private String title;
 }

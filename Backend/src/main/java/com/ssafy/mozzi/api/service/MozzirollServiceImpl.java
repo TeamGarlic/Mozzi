@@ -1,5 +1,10 @@
 package com.ssafy.mozzi.api.service;
 
+import java.util.Optional;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
 import com.ssafy.mozzi.common.exception.handler.AlreadyLinkedMozziException;
 import com.ssafy.mozzi.common.exception.handler.BoothNotExistsException;
@@ -8,20 +13,15 @@ import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.db.entity.local.Booth;
-import com.ssafy.mozzi.db.entity.local.BoothUser;
 import com.ssafy.mozzi.db.entity.remote.Mozziroll;
 import com.ssafy.mozzi.db.entity.remote.UserMozziroll;
 import com.ssafy.mozzi.db.repository.local.BoothRepository;
 import com.ssafy.mozzi.db.repository.local.BoothUserRepository;
 import com.ssafy.mozzi.db.repository.remote.MozzirollRepository;
 import com.ssafy.mozzi.db.repository.remote.UserMozzirollRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Moziiroll 관리 서비스입니다.
@@ -45,43 +45,33 @@ public class MozzirollServiceImpl implements MozzirollService {
     @Override
     public ResponseEntity<BaseResponseBody<Long>> link(MozziLinkPostRequest request, String accessToken) {
         long userId = mozziUtil.findUserIdByToken(accessToken);
-        UserMozziroll userMozziroll = userMozzirollRepository.findByMozzirollIdAndUserId(userId,
-            request.getMozzirollId());
+        Optional<UserMozziroll> userMozzirollCheck = userMozzirollRepository.findByMozzirollIdAndUserId(
+            request.getMozzirollId(), userId);
 
-        if (userMozziroll != null) {
+        if (userMozzirollCheck.isPresent()) {
             throw new AlreadyLinkedMozziException(
                 String.format("Mozzi %d is already registered Mozzi.", request.getMozzirollId()));
         }
-        Mozziroll mozziroll = mozzirollRepository.getReferenceById(request.getMozzirollId());
-        if (mozziroll == null) {
+        Optional<Mozziroll> mozziroll = mozzirollRepository.findById(request.getMozzirollId());
+        if (mozziroll.isEmpty()) {
             throw new MozzirollNotExists("Requested Mozziroll not exists");
         }
-
-        Optional<Booth> booth = boothRepository.findById(request.getBoothId());
+        Optional<Booth> booth = boothRepository.findByShareCode(request.getShareCode());
         if (booth.isEmpty()) {
             throw new BoothNotExistsException("Requested Booth not exists");
         }
 
-        List<BoothUser> connectedUsers = boothUserRepository.findByBoothId(request.getBoothId());
-        if (connectedUsers == null) {
-            throw new UnAuthorizedException("You are not authorized to linked mozziroll");
-        }
-
-        boolean authorized = false;
-        for (BoothUser user : connectedUsers) {
-            if (user.getUserId() == userId) {
-                authorized = true;
-                break;
-            }
-        }
+        long boothId = booth.get().getId();
+        long creatorId = mozziroll.get().getCreator().getId();
+        boolean authorized = boothUserRepository.findByBoothIdAndUserId(boothId, creatorId).isPresent();
 
         if (!authorized) {
             throw new UnAuthorizedException("You are not authorized to linked mozziroll");
         }
 
-        userMozziroll = UserMozziroll.builder()
+        UserMozziroll userMozziroll = UserMozziroll.builder()
             .user(userService.findUserByToken(accessToken))
-            .mozziroll(mozziroll)
+            .mozziroll(mozziroll.get())
             .title(request.getTitle())
             .build();
         userMozzirollRepository.save(userMozziroll);

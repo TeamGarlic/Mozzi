@@ -1,6 +1,7 @@
 package com.ssafy.mozzi.api.service;
 
-import lombok.RequiredArgsConstructor;
+import java.util.Optional;
+
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +23,7 @@ import com.ssafy.mozzi.db.repository.cloud.FileRepository;
 import com.ssafy.mozzi.db.repository.remote.MozzirollRepository;
 import com.ssafy.mozzi.db.repository.remote.UserMozzirollRepository;
 
-import java.util.Optional;
-
+import lombok.RequiredArgsConstructor;
 
 @Service
 @PropertySource("classpath:application-keys.properties")
@@ -59,20 +59,21 @@ public class FileServiceImpl implements FileService {
         // Mozziroll 테이블에 정보 추가.
         // TODO: 모찌 제목 추가
         Mozziroll mozziroll = mozzirollRepository.save(
-                Mozziroll.builder()
-                        .objectName(OBJECT_NAME)
-                        .build());
+            Mozziroll.builder()
+                .objectName(OBJECT_NAME)
+                .creator(user)
+                .build());
 
         // UserMozziroll 테이블에 정보 추가
         UserMozziroll userMozziroll = userMozzirollRepository.save(UserMozziroll.builder()
-                .mozziroll(mozziroll)
-                .title(title)
-                .user(user)
-                .build());
+            .mozziroll(mozziroll)
+            .title(title)
+            .user(user)
+            .build());
 
         // Object Storage에 파일 추가
         PutObjectResponse response = fileRepository.putObject(client.getClient(), FileUtil.generateStreamFromFile(file),
-                OBJECT_NAME, contentType);
+            OBJECT_NAME, contentType);
 
         if (response.getLastModified() == null)
             throw new CloudStorageSaveFailException("파일 업로드 실패");
@@ -93,7 +94,7 @@ public class FileServiceImpl implements FileService {
     public MozzirollFileItem downloadMozziroll(String mozzirollId) {
         Optional<Mozziroll> mozziroll = mozzirollRepository.findById(Long.parseLong(mozzirollId));
         GetObjectResponse getObjectResponse = fileRepository.getObject(client.getClient(),
-                mozziroll.get().getObjectName());
+            mozziroll.get().getObjectName());
 
         return FileMapper.toMozzirollItem(getObjectResponse, mozziroll);
     }

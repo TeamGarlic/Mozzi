@@ -43,7 +43,7 @@ public class BoothServiceImpl implements BoothService {
     private final BoothUserRepository boothUserRepository;
 
     private final RandomGenerator random = RandomGeneratorFactory
-            .getDefault().create(System.currentTimeMillis());
+        .getDefault().create(System.currentTimeMillis());
 
     private final UserService userService;
 
@@ -53,13 +53,13 @@ public class BoothServiceImpl implements BoothService {
 
     @Autowired
     BoothServiceImpl(BoothRepository boothRepository, BoothUserRepository boothUserRepository, UserService userService,
-                     MozziUtil mozziUtil, Environment env) {
+        MozziUtil mozziUtil, Environment env) {
         this.boothRepository = boothRepository;
         this.boothUserRepository = boothUserRepository;
         this.userService = userService;
         this.mozziUtil = mozziUtil;
         this.openVidu = new OpenVidu(Objects.requireNonNull(env.getProperty("OPENVIDU_URL")),
-                Objects.requireNonNull(env.getProperty("OPENVIDU_SECRET")));
+            Objects.requireNonNull(env.getProperty("OPENVIDU_SECRET")));
     }
 
     /**
@@ -78,15 +78,15 @@ public class BoothServiceImpl implements BoothService {
         }
 
         String shareCode = request.getShareCode();
-        Booth booth = null;
+        Optional<Booth> booth = null;
         if (shareCode == null) {
             do {
                 shareCode = generateString(20);
                 booth = boothRepository.findByShareCode(shareCode);
-            } while (booth != null);
+            } while (booth.isPresent());
         } else {
             booth = boothRepository.findByShareCode(shareCode);
-            if (booth != null) {
+            if (booth.isPresent()) {
                 throw new DuplicateShareCodeException(String.format("Duplicated booth share code(%s)", shareCode));
             }
         }
@@ -94,14 +94,14 @@ public class BoothServiceImpl implements BoothService {
         while (true) {
             String sessionId = generateString(20);
             booth = boothRepository.findBySessionId(sessionId);
-            if (booth == null) {
-                booth = Booth.builder()
+            if (booth.isEmpty()) {
+                Booth newBooth = Booth.builder()
                     .sessionId(sessionId)
                     .shareCode(shareCode)
                     .creator(mozziUtil.findUserIdByToken(accessToken))
                     .creator(1L)
                     .build();
-                boothRepository.save(booth);
+                boothRepository.save(newBooth);
 
                 SessionProperties properties = new SessionProperties.Builder()
                     .customSessionId(sessionId)
@@ -130,7 +130,7 @@ public class BoothServiceImpl implements BoothService {
     @Override
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     public BaseResponseBody<SessionRes> joinBooth(String shareCode) {
-        Booth booth = boothRepository.findByShareCode(shareCode);
+        Optional<Booth> booth = boothRepository.findByShareCode(shareCode);
         if (booth == null) {
             throw new ShareCodeNotExistException(String.format("Requested booth(%s) not exist", shareCode));
         }
@@ -139,7 +139,7 @@ public class BoothServiceImpl implements BoothService {
             .data(
                 SessionRes.builder()
                     .shareCode(shareCode)
-                    .sessionId(booth.getSessionId())
+                    .sessionId(booth.get().getSessionId())
                     .build()
             )
             .build();
@@ -155,21 +155,26 @@ public class BoothServiceImpl implements BoothService {
      */
     @Override
     public BaseResponseBody<ConnectionPostRes> getConnectionToken(ConnectionPostReq request, String accessToken) throws
-            Exception {
+        Exception {
         Session session = openVidu.getActiveSession(request.getSessionId());
         if (session == null) {
             throw new InvalidSessionIdException(
-                    String.format("You requested invalid session(%s). It could be destroyed.", request.getSessionId()));
+                String.format("You requested invalid session(%s). It could be destroyed.", request.getSessionId()));
         }
-        Booth booth = boothRepository.findBySessionId(request.getSessionId());
+        Optional<Booth> booth = boothRepository.findBySessionId(request.getSessionId());
+        if (booth.isEmpty()) {
+            throw new InvalidSessionIdException(
+                String.format("You requested invalid session(%s). It could be destroyed.", request.getSessionId()));
+        }
+
         if (accessToken != null) {
             long userId = mozziUtil.findUserIdByToken(accessToken);
-
-            Optional<BoothUser> boothUser = boothUserRepository.findByBoothIdAndUserId(booth.getId(), userId);
+            long boothId = booth.get().getId();
+            Optional<BoothUser> boothUser = boothUserRepository.findByBoothIdAndUserId(boothId, userId);
             if (boothUser.isEmpty()) {
                 BoothUser connectedUser = new BoothUser();
                 connectedUser.setUserId(userId);
-                connectedUser.setBooth(booth);
+                connectedUser.setBooth(booth.get());
                 boothUserRepository.save(connectedUser);
             }
         }
@@ -197,24 +202,21 @@ public class BoothServiceImpl implements BoothService {
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     public BaseResponseBody<SessionRes> deleteBooth(String sessionId) throws Exception {
         Session session = openVidu.getActiveSession(sessionId);
-        Booth booth = boothRepository.findBySessionId(sessionId);
-
         if (session == null) {
             throw new InvalidSessionIdException(
-                    String.format("You requested invalid session(%s). It could be destroyed.", sessionId));
+                String.format("You requested invalid session(%s). It could be destroyed.", sessionId));
         }
         session.close();
 
-        if (booth != null) {
-            boothRepository.delete(booth);
-        }
+        Optional<Booth> booth = boothRepository.findBySessionId(sessionId);
+        booth.ifPresent(boothRepository::delete);
 
         return BaseResponseBody.<SessionRes>builder()
             .message("deleted exist booth")
             .data(
                 SessionRes.builder()
                     .shareCode("")
-                    .sessionId(booth.getSessionId())
+                    .sessionId(sessionId)
                     .build()
             )
             .build();
