@@ -34,7 +34,8 @@ function Booth() {
     chatLists,
     mainPublisher,
     leaveSession,
-    gotoTakePic
+    gotoTakePic,
+    nowTaking
   } = useSession(shareCode);
 
   // 소스 웹캠 video
@@ -140,7 +141,7 @@ function Booth() {
 
   return (
     <>
-      {!taking ? (
+      {!nowTaking ? (
         <MakeBooth
           startTake={startTake}
           shareCode={shareCode}

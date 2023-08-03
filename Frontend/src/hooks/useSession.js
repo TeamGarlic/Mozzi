@@ -11,6 +11,8 @@ function useSession(shareCode) {
   const [userName, setUserName] = useState(undefined);
   const [subscribers, setSubscribers] = useState([]);
   const [chatLists, setChatLists] = useState([]);
+  const [nowTaking, setNowTaking] = useState(false);
+
   const leaveSession = async () => {
     location.href = '/'
     if (mainSession) {
@@ -54,6 +56,7 @@ function useSession(shareCode) {
       //takePic 이동 신호 수신
       mainSession.on("signal:gotoTakePic", (event)=>{
         console.log("방장이 사진찍재!!");
+        setNowTaking(true);
       })
 
       // 언마운트시 이벤트
@@ -183,7 +186,8 @@ function useSession(shareCode) {
     chatLists,
     mainPublisher,
     leaveSession,
-    gotoTakePic
+    gotoTakePic,
+    nowTaking
   };
 }
 

@@ -5,7 +5,6 @@ import BgCard from "./BgCard";
 import { UsersIcon } from "@heroicons/react/24/outline";
 import { ComputerDesktopIcon } from "@heroicons/react/24/outline";
 import PropTypes from "prop-types";
-import TakePic from "@/pages/takePic.jsx";
 
 export default function PicSideBar({user, bgList}) {
   // const buttons = [
