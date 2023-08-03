@@ -11,18 +11,19 @@ function useSession(shareCode) {
   const [userName, setUserName] = useState(undefined);
   const [subscribers, setSubscribers] = useState([]);
   const [chatLists, setChatLists] = useState([]);
-  const leaveSession = () => {
+  const leaveSession = async () => {
+    location.href = '/'
     if (mainSession) {
-      mainSession.disconnect();
+      await mainSession.disconnect();
     }
     if (maskSession) {
-      maskSession.disconnect();
+      await maskSession.disconnect();
     }
-    setMainSession(undefined);
-    setMaskSession(undefined);
-    setMainPublisher(undefined);
-    setMaskPublisher(undefined);
-    setSubscribers([]);
+    await setMainSession(undefined);
+    await setMaskSession(undefined);
+    await setMainPublisher(undefined);
+    await setMaskPublisher(undefined);
+    await setSubscribers([]);
   };
 
   const joinSession = async (userName, canvases) => {
@@ -38,9 +39,6 @@ function useSession(shareCode) {
       // 생성시 이벤트
       mainSession.on("streamCreated", (event) => {
         const subscriber = mainSession.subscribe(event.stream, undefined);
-        // console.log("@@@@@@@@@@@@@@@@@@@stream Created!!!!@@@@@@@@@@@@@@@@@@@@@@@@");
-        // console.log(subscribers)
-        // console.log(subscriber)
         setSubscribers((prev) => [...prev, subscriber]);
       });
       // 채팅 수신
@@ -147,13 +145,14 @@ function useSession(shareCode) {
 
   useEffect(() => {
 
-    const handleBeforeUnload = () => {
-      leaveSession();
+    const handleBeforeUnload = async () => {
+      await leaveSession();
     };
 
     window.addEventListener("beforeunload", leaveSession);
 
     return () => {
+      // handleBeforeUnload();
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
@@ -166,6 +165,7 @@ function useSession(shareCode) {
     sendMessage,
     chatLists,
     mainPublisher,
+    leaveSession,
   };
 }
 

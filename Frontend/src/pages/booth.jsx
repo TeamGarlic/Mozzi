@@ -31,6 +31,7 @@ function Booth() {
     sendMessage,
     chatLists,
     mainPublisher,
+    leaveSession,
   } = useSession(shareCode);
 
   // 소스 웹캠 video
@@ -129,6 +130,7 @@ function Booth() {
           shareCode={shareCode}
           subscribers={subscribers}
           mainPublisher={mainPublisher}
+          leaveSession={leaveSession}
         />
       ) : (
         <TakePic

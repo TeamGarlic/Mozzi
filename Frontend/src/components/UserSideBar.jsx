@@ -5,7 +5,7 @@ import TextInput from "./TextInput";
 import UserVideoComponent from "./UserVideoComponents";
 import PropTypes from "prop-types";
 
-export default function UserSideBar({ subscribers, mainPublisher }) {
+export default function UserSideBar({ subscribers, mainPublisher, leaveSession }) {
 
   return (
     <Card
@@ -41,9 +41,9 @@ export default function UserSideBar({ subscribers, mainPublisher }) {
       <button type="button" className="w-full h-10">
         이름 변경
       </button>
-      <Link className="w-full h-10 text-center leading-10" to="/">
+      <button className="w-full h-10 text-center leading-10" onClick={leaveSession}>
         나가기
-      </Link>
+      </button>
     </Card>
   );
 }
@@ -51,4 +51,5 @@ export default function UserSideBar({ subscribers, mainPublisher }) {
 UserSideBar.propTypes = {
   subscribers: PropTypes.array,
   mainPublisher: PropTypes.object,
+  leaveSession: PropTypes.func,
 };

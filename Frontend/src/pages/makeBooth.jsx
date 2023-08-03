@@ -6,7 +6,7 @@ import { useState } from "react";
 import { resetCamCanvasesAction } from "@/modules/canvasAction.js";
 import { useDispatch } from "react-redux";
 
-function MakeBooth({ startTake, shareCode, subscribers, mainPublisher }) {
+function MakeBooth({ startTake, shareCode, subscribers, mainPublisher, leaveSession }) {
   const [visibility, setVisibility] = new useState(true);
   const [toggleVoice, setToggleVoice] = new useState(true);
 
@@ -81,6 +81,7 @@ function MakeBooth({ startTake, shareCode, subscribers, mainPublisher }) {
           <UserSideBar
             subscribers={subscribers}
             mainPublisher={mainPublisher}
+            leaveSession={leaveSession}
           />
         </div>
       </Layout>
@@ -96,4 +97,5 @@ MakeBooth.propTypes = {
   subscribers: PropTypes.array,
   myRef: PropTypes.object,
   mainPublisher: PropTypes.object,
+  leaveSession: PropTypes.func,
 };
