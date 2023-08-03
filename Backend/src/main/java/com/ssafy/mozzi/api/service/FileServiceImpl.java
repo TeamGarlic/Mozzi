@@ -3,6 +3,7 @@ package com.ssafy.mozzi.api.service;
 import java.util.Optional;
 
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,7 +12,7 @@ import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
 import com.oracle.bmc.objectstorage.responses.PutObjectResponse;
 import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
 import com.ssafy.mozzi.common.auth.ObjectStorageClient;
-import com.ssafy.mozzi.common.dto.MozzirollFileItem;
+import com.ssafy.mozzi.common.dto.ObjectFileItem;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
 import com.ssafy.mozzi.common.util.FileUtil;
 import com.ssafy.mozzi.common.util.mapper.FileMapper;
@@ -87,15 +88,29 @@ public class FileServiceImpl implements FileService {
      * @return MozzirollFileItem
      * @see MozzirollRepository
      * @see FileRepository
-     * @see MozzirollFileItem
+     * @see ObjectFileItem
      * @see FileMapper
      */
     @Override
-    public MozzirollFileItem downloadMozziroll(String mozzirollId) {
+    public ObjectFileItem downloadMozziroll(String mozzirollId) {
         Optional<Mozziroll> mozziroll = mozzirollRepository.findById(Long.parseLong(mozzirollId));
         GetObjectResponse getObjectResponse = fileRepository.getObject(client.getClient(),
             mozziroll.get().getObjectName());
 
         return FileMapper.toMozzirollItem(getObjectResponse, mozziroll);
+    }
+
+    /**
+     * ObjectName으로 이미지/영상 반환하는 비즈니스 로직
+     * @param ObjectName String
+     * @return Resource
+     * @see FileRepository
+     * @see com.oracle.bmc.objectstorage.ObjectStorageClient
+     * @see FileMapper
+     */
+    @Override
+    public Resource getObject(String ObjectName) {
+        GetObjectResponse getObjectResponse = fileRepository.getObject(client.getClient(), ObjectName);
+        return FileMapper.toResource(getObjectResponse);
     }
 }

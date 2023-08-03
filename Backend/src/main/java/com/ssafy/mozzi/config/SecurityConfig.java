@@ -51,7 +51,6 @@ public class SecurityConfig {
 
                 // items 요청에 대한 보안 설정
                 .requestMatchers(HttpMethod.GET, "/items/backgrounds").permitAll()
-                .requestMatchers(HttpMethod.GET, "/items/background/{objectName}").permitAll()
                 .requestMatchers(HttpMethod.POST, "/items/background").authenticated()
                 .requestMatchers(HttpMethod.GET, "/items/stickers").permitAll()
                 .requestMatchers(HttpMethod.GET, "/items/frames").permitAll()
@@ -59,6 +58,7 @@ public class SecurityConfig {
                 // files 에 대한 보안 설정
                 .requestMatchers(HttpMethod.POST, "/files/mozziroll/upload").authenticated()
                 .requestMatchers(HttpMethod.GET, "/files/mozziroll/{mozzirollId}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/files/object/{objectName}").permitAll()
             )
             .headers(headers ->
                 headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)

@@ -3,14 +3,12 @@ package com.ssafy.mozzi.api.service;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
 import com.oracle.bmc.objectstorage.responses.PutObjectResponse;
 import com.ssafy.mozzi.api.response.FrameListGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundGetRes;
@@ -19,7 +17,6 @@ import com.ssafy.mozzi.api.response.ItemStickerGetRes;
 import com.ssafy.mozzi.common.auth.ObjectStorageClient;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
 import com.ssafy.mozzi.common.util.FileUtil;
-import com.ssafy.mozzi.common.util.mapper.FileMapper;
 import com.ssafy.mozzi.common.util.mapper.ItemMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
 import com.ssafy.mozzi.db.entity.remote.Backgroud;
@@ -121,19 +118,5 @@ public class ItemServiceImpl implements ItemService {
         if (response.getLastModified() == null)
             throw new CloudStorageSaveFailException("파일 업로드 실패");
         return ItemMapper.toItemBackgroundPostRes(backgroud);
-    }
-
-    /**
-     * ObjectName으로 Background 이미지 반환하는 비즈니스 로직
-     * @param ObjectName String
-     * @return Resource
-     * @see FileRepository
-     * @see com.oracle.bmc.objectstorage.ObjectStorageClient
-     * @see FileMapper
-     */
-    @Override
-    public Resource getBackgroundImg(String ObjectName) {
-        GetObjectResponse getObjectResponse = fileRepository.getObject(client.getClient(), ObjectName);
-        return FileMapper.toResource(getObjectResponse);
     }
 }
