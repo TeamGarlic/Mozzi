@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
 import com.ssafy.mozzi.api.service.FileService;
-import com.ssafy.mozzi.common.dto.MozzirollFileItem;
+import com.ssafy.mozzi.common.dto.ObjectFileItem;
 import com.ssafy.mozzi.common.model.ItemCacheControl;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
@@ -64,20 +64,42 @@ public class FileController {
      * @param mozzirollId String
      * @return ResponseEntity<Resource>
      * @see FileService
-     * @see MozzirollFileItem
+     * @see ObjectFileItem
      * @see MediaType
      */
     @GetMapping(value = "/mozziroll/{mozzirollId}")
     public ResponseEntity<Resource> downloadMozziroll(@PathVariable("mozzirollId") String mozzirollId) {
-        MozzirollFileItem mozzirollFileItem = fileService.downloadMozziroll(mozzirollId);
+        ObjectFileItem objectFileItem = fileService.downloadMozziroll(mozzirollId);
         return ResponseEntity
             .status(HttpStatus.OK)
             .cacheControl(cacheControl.getCacheControl())
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
             .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment() // (6)
-                .filename(mozzirollFileItem.getFileName(), StandardCharsets.UTF_8)
+                .filename(objectFileItem.getFileName(), StandardCharsets.UTF_8)
                 .build()
                 .toString())
-            .body(mozzirollFileItem.getFile());
+            .body(objectFileItem.getFile());
+    }
+
+    /**
+     * ObjectName으로 resource(이미지, 영상) 반환하는 메소드
+     *
+     * @param objectName String
+     * @return ResponseEntity<Resource>
+     * @see FileService
+     */
+    @GetMapping("/object/{objectName}")
+    public ResponseEntity<Resource> getObject(
+        @PathVariable("objectName") String objectName) {
+        Resource resource = fileService.getObject(objectName);
+
+        return ResponseEntity.ok()
+            .cacheControl(cacheControl.getCacheControl())
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment() // (6)
+                .filename(resource.getFilename(), StandardCharsets.UTF_8)
+                .build()
+                .toString())
+            .body(resource);
     }
 }

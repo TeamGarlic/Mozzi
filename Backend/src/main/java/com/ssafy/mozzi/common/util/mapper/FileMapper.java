@@ -7,7 +7,7 @@ import org.springframework.core.io.Resource;
 
 import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
 import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
-import com.ssafy.mozzi.common.dto.MozzirollFileItem;
+import com.ssafy.mozzi.common.dto.ObjectFileItem;
 import com.ssafy.mozzi.db.entity.remote.Mozziroll;
 
 public class FileMapper {
@@ -17,9 +17,9 @@ public class FileMapper {
             .build();
     }
 
-    public static MozzirollFileItem toMozzirollItem(GetObjectResponse getObjectResponse,
+    public static ObjectFileItem toMozzirollItem(GetObjectResponse getObjectResponse,
         Optional<Mozziroll> mozziroll) {
-        return MozzirollFileItem.builder()
+        return ObjectFileItem.builder()
             .file(new InputStreamResource(getObjectResponse.getInputStream()))
             .fileName(mozziroll.get().getObjectName())
             .build();
