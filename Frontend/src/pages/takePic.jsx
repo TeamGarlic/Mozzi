@@ -11,7 +11,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { AddClipAction } from "@/modules/clipAction";
 import {checkHost} from "@/utils/DecoratorUtil.js";
 
-function TakePic({ shareCode, sendMessage, chatLists, user }) {
+function TakePic({ shareCode, sendMessage, subscribers, chatLists, user }) {
   const timers = [3, 5, 10];
   const [taken, setTaken] = new useState(1);
   const [timer, setTimer] = useState(3);
@@ -106,7 +106,8 @@ function TakePic({ shareCode, sendMessage, chatLists, user }) {
             <div className="text-2xl">MOZZI</div>
           </div>
           <PicSideBar
-            user={user}/>
+            user={user}
+            subscribers={subscribers}/>
           {/* <div className="float-right mr-10 text-2xl">taken : {taken}/10</div> */}
         </div>
         <BigCam />
@@ -145,6 +146,7 @@ TakePic.propTypes = {
   startTake: PropTypes.func,
   shareCode: PropTypes.string,
   sendMessage: PropTypes.func,
+  subscribers: PropTypes.array,
   chatLists: PropTypes.array,
   user: PropTypes.shape({
     id: PropTypes.number,

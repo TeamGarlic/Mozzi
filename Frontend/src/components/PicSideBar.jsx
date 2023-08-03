@@ -5,14 +5,8 @@ import BgCard from "./BgCard";
 import { UsersIcon } from "@heroicons/react/24/outline";
 import { ComputerDesktopIcon } from "@heroicons/react/24/outline";
 import PropTypes from "prop-types";
-import TakePic from "@/pages/takePic.jsx";
 
-export default function PicSideBar({user}) {
-  // const buttons = [
-  //   { word: "사용자", idx: 1 },
-  //   { word: "배경", idx: 2 },
-  //   // {word:"스티커", idx:3}
-  // ];
+export default function PicSideBar({user, subscribers}) {
 
   const bGs = [
     { bgName: "피사의 사탑", src: "/src/assets/img/bg1.jpg" },
@@ -73,4 +67,5 @@ PicSideBar.propTypes = {
         email: PropTypes.string,
         isHost: PropTypes.number,
     }),
+    subscribers :PropTypes.array
 };
