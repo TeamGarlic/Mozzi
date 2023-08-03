@@ -11,6 +11,7 @@ function LoginNav({ link }) {
   return (
     <div className="fixed w-screen top-0 p-4 px-8 h-fit">
       <img
+        alt = "MOZZI"
         src={mozzilogo}
         className=" float-left w-20 h-20 hover:cursor-pointer"
         onClick={goHome}
