@@ -1,13 +1,14 @@
 package com.ssafy.mozzi.common.util.mapper;
 
-import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
-import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
-import com.ssafy.mozzi.common.dto.MozzirollFileItem;
-import com.ssafy.mozzi.db.entity.remote.Mozziroll;
+import java.util.Optional;
+
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 
-import java.util.Optional;
+import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
+import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
+import com.ssafy.mozzi.common.dto.ObjectFileItem;
+import com.ssafy.mozzi.db.entity.remote.Mozziroll;
 
 public class FileMapper {
     public static FileMozzirollPostRes toFileMozzirollPostRes(Mozziroll mozziroll) {
@@ -16,16 +17,15 @@ public class FileMapper {
             .build();
     }
 
-    public static MozzirollFileItem toMozzirollItem(GetObjectResponse getObjectResponse,
-                                                    Optional<Mozziroll> mozziroll) {
-        return MozzirollFileItem.builder()
-                .file(new InputStreamResource(getObjectResponse.getInputStream()))
-                .fileName(mozziroll.get().getObjectName())
-                .build();
+    public static ObjectFileItem toMozzirollItem(GetObjectResponse getObjectResponse,
+        Optional<Mozziroll> mozziroll) {
+        return ObjectFileItem.builder()
+            .file(new InputStreamResource(getObjectResponse.getInputStream()))
+            .fileName(mozziroll.get().getObjectName())
+            .build();
     }
 
     public static Resource toResource(GetObjectResponse getObjectResponse) {
         return new InputStreamResource(getObjectResponse.getInputStream());
     }
-
 }

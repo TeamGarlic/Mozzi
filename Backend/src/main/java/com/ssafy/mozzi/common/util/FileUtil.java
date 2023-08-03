@@ -22,4 +22,3 @@ public class FileUtil {
         return inputStream;
     }
 }
-
