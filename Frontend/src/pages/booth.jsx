@@ -14,7 +14,6 @@ import { changeBgAction } from "@/modules/bgAction.js";
 import useUser from "@/hooks/useUser";
 import {checkHost} from "@/utils/DecoratorUtil.js";
 import bg from "@/assets/img/bg1.jpg";
-import userApi from "@/api/userApi.js";
 import fileApi from "@/api/fileApi.js";
 
 function Booth() {
