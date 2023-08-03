@@ -45,7 +45,7 @@ function Booth() {
   const myLayer = useSelector((state) => state.canvasReducer.myLayer);
   // TODO : bgImg를 Redux에서 관리
   const bgNow = useSelector((state) => state.bgReducer.bgNow);
-  const subCanvasRefs = useRef();
+  const subCanvasRefs = useRef({});
 
   function startTake() {
     dispatch(resetCamCanvasesAction());
