@@ -55,10 +55,10 @@ public class ControllerAdviceHandler {
      * @see com.ssafy.mozzi.api.service.UserService
      */
     @ExceptionHandler(DuplicatedUserIdException.class)
-    public ResponseEntity<BaseResponseBody> handleDuplicateUserIdException(DuplicatedUserIdException exception) {
+    public ResponseEntity<BaseResponseBody<Void>> handleDuplicateUserIdException(DuplicatedUserIdException exception) {
         log.error("[DuplicatedUserIdException] : {}", exception.getMessage());
         return new ResponseEntity<>(
-            BaseResponseBody.builder()
+            BaseResponseBody.<Void>builder()
                 .message("You requested duplicated User ID")
                 .build(), HttpStatus.BAD_REQUEST
         );

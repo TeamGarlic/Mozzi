@@ -3,15 +3,15 @@ package com.ssafy.mozzi.db.repository.cloud;
 import java.io.InputStream;
 import java.util.Objects;
 
-import com.oracle.bmc.objectstorage.requests.GetObjectRequest;
-import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
 
 import com.oracle.bmc.objectstorage.ObjectStorage;
 import com.oracle.bmc.objectstorage.model.StorageTier;
+import com.oracle.bmc.objectstorage.requests.GetObjectRequest;
 import com.oracle.bmc.objectstorage.requests.PutObjectRequest;
+import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
 import com.oracle.bmc.objectstorage.responses.PutObjectResponse;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
 
@@ -40,13 +40,13 @@ public class FileRepository {
         PutObjectRequest putObjectRequest = null;
         try {
             putObjectRequest = PutObjectRequest.builder()
-                    .bucketName(ORACLE_BUCKET)
-                    .namespaceName(ORACLE_NAMESPACE)
-                    .objectName(objectName)
-                    .contentType(contentType)
-                    .contentLength(30L)
-                    .putObjectBody(file)
-                    .storageTier(StorageTier.Standard).build();
+                .bucketName(ORACLE_BUCKET)
+                .namespaceName(ORACLE_NAMESPACE)
+                .objectName(objectName)
+                .contentType(contentType)
+                .contentLength(30L)
+                .putObjectBody(file)
+                .storageTier(StorageTier.Standard).build();
         } catch (Exception e) {
             throw new CloudStorageSaveFailException("파일 업로드 실패");
         }
@@ -66,9 +66,9 @@ public class FileRepository {
      */
     public GetObjectResponse getObject(ObjectStorage client, String objectName) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                .bucketName(ORACLE_BUCKET)
-                .namespaceName(ORACLE_NAMESPACE)
-                .objectName(objectName).build();
+            .bucketName(ORACLE_BUCKET)
+            .namespaceName(ORACLE_NAMESPACE)
+            .objectName(objectName).build();
 
         if (getObjectRequest == null)
             throw new CloudStorageSaveFailException("파일 Get 실패");
