@@ -15,14 +15,12 @@ function ModifyUser() {
       await userApi.getUser().then(res=>{
         if(res.data.data){
           setUser(res.data.data);
-          console.log(res.data.data)
         }else{
           alert('로그인해주세요!');
           navigate('/');
         }
       });
     }
-
     getUser();
   }, []);
   const newID = useInput();

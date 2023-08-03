@@ -5,7 +5,6 @@ import Frame from "@/components/Frame";
 import {useSelector} from "react-redux";
 import {useEffect, useRef} from "react";
 import {useNavigate, useParams, useLocation} from "react-router-dom";
-import frame1 from "@/assets/img/frame6.jpg"
 import {checkHost} from "@/utils/DecoratorUtil.js";
 
 function AfterTake() {
@@ -18,7 +17,7 @@ function AfterTake() {
   const navigate = useNavigate();
   const location = useLocation();
   const bg = new Image();
-  bg.src = frame1;
+  bg.src = frame.src;
 
   let mediaRecorder = null;
   const arrClipData = [];
