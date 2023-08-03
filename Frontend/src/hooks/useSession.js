@@ -32,12 +32,15 @@ function useSession(shareCode) {
       const maskOV = new OpenVidu();
       const mainSession = mainOV.initSession();
       const maskSession = maskOV.initSession();
-      setMainSession(mainSession);
-      setMaskSession(maskSession);
+      await setMainSession(mainSession);
+      await setMaskSession(maskSession);
 
       // 생성시 이벤트
       mainSession.on("streamCreated", (event) => {
         const subscriber = mainSession.subscribe(event.stream, undefined);
+        // console.log("@@@@@@@@@@@@@@@@@@@stream Created!!!!@@@@@@@@@@@@@@@@@@@@@@@@");
+        // console.log(subscribers)
+        // console.log(subscriber)
         setSubscribers((prev) => [...prev, subscriber]);
       });
       // 채팅 수신
@@ -66,12 +69,12 @@ function useSession(shareCode) {
       const maskToken = await getToken(shareCode);
 
       const uid = v4();
-      mainSession.connect(mainToken, {
+      await mainSession.connect(mainToken, {
         clientData: userName,
         isMask : false,
         uid : uid,
       });
-      maskSession.connect(maskToken, {
+      await maskSession.connect(maskToken, {
         clientData: userName,
         isMask : true,
         uid : uid,
@@ -96,10 +99,10 @@ function useSession(shareCode) {
         mirror: false,
       });
 
-      mainSession.publish(mainPublisher);
-      maskSession.publish(maskPublisher);
-      setMainPublisher(mainPublisher);
-      setMaskPublisher(maskPublisher);
+      await mainSession.publish(mainPublisher);
+      await maskSession.publish(maskPublisher);
+      await setMainPublisher(mainPublisher);
+      await setMaskPublisher(maskPublisher);
     } catch (error) {
       console.log(
         "There was an error connecting to the session:",

@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import mozzilogo from "@/assets/img/mozzi.png";
 
 function LoginNav({ link }) {
   function goHome() {
@@ -10,7 +11,8 @@ function LoginNav({ link }) {
   return (
     <div className="fixed w-screen top-0 p-4 px-8 h-fit">
       <img
-        src="/src/assets/img/mozzi.png"
+        alt = "MOZZI"
+        src={mozzilogo}
         className=" float-left w-20 h-20 hover:cursor-pointer"
         onClick={goHome}
       />
