@@ -17,7 +17,7 @@
 * 서비스 특징: 웹캠과 WebRTC 기술을 활용해 여러 명을 한 배경한 클립 생성
 * [초기 기획안](https://pattern-ounce-358.notion.site/d16d1d1a50d4469985b8de563c96b35c)
 
-[![샘플](/Resouce/img/thumbnail.png)](https://www.youtube.com/embed/J9AHQaM_pVQ)
+[![샘플](/Resource/img/thumbnail.png)](https://www.youtube.com/embed/J9AHQaM_pVQ)
 
 
 ## ⚙ 개발 환경 및 IDE
@@ -72,13 +72,13 @@
 
 ---
 [인생네컷 | 지표상세정보(사람인)](https://www.saramin.co.kr/zf_user/company-info/view-inner-finance/csn/cjZQenRoZVc4cmJrZzRDdFNYZTBaZz09/company_nm/(%EC%A3%BC)%EC%97%98%EC%BC%80%EC%9D%B4%EB%B2%A4%EC%B3%90%EC%8A%A4)
-![인생네컷 매출 추이](/Resouce/img/life4cut-saramin.png)
+![인생네컷 매출 추이](/Resource/img/life4cut-saramin.png)
 &nbsp;&nbsp;→ 시간이 갈수록 단체사진에 대한 수요는 꾸준히 증가하고 있다.
 
 ### 2. 공간상의 제약
 
 ---
-![SSAFY9기 9반 종강 기념 사진](/Resouce/img/ssafy99.png)
+![SSAFY9기 9반 종강 기념 사진](/Resource/img/ssafy99.png)
 &nbsp;&nbsp;→ 단체사진에 대한 수요는 증가하지만  
 &nbsp;&nbsp;→ 그 특성 상 공간상의 제약으로 인원의 제한이 생기거나 자리에 없는 사람의 촬영이 불가능하다.
 
@@ -101,38 +101,38 @@
 
 ### 부스 생성
 ###### 로그인 된 사용자는 부스 생성 아이콘을 클릭하여  새로운 부스를 생성할 수 있습니다.
-![메인화면](/Resouce/img/main.png)
-![테스트화면](/Resouce/img/testpage.png)
+![메인화면](/Resource/img/main.png)
+![테스트화면](/Resource/img/testpage.png)
 
 ### 프레임 선택
 ###### 부스 화면에서는 촬영에 사용할 원하는 프레임을 선택할 수 있습니다.
-![프레임 선택](/Resouce/img/frame.png)
+![프레임 선택](/Resource/img/frame.png)
 
 ### 배경 선택
 ###### 실제 촬영이 진행 될 배경을 선택하거나 원하는 배경을 업로드하여 사용할 수 있습니다.  
 ###### 카메라 소스의 위치, 크기를 마우스를 이용해 조절 할 수 있습니다.
-![배경 선택](/Resouce/img/background.png)
+![배경 선택](/Resource/img/background.png)
 
 # 💁 개발 기획 및 결과
 ## 🧱 서비스 아키텍처
-![서비스 아키텍쳐](/Resouce/img/architecture.png)
+![서비스 아키텍쳐](/Resource/img/architecture.png)
 ## 📱 화면 흐름도
-![화면 흐름도](/Resouce/img/uiflow.png)
+![화면 흐름도](/Resource/img/uiflow.png)
 ## 🎩 와이어 프레임
-[![와이어 프레임](/Resouce/img/figma.PNG)](https://www.figma.com/embed?embed_host=notion&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FGsUUmt9HyBKVr3m8NPzqdP%2FInsaengClip%3Ftype%3Ddesign%26mode%3Ddesign%26t%3D0E7AlPhWhJF6ljF7-0)
-![와이어 프레임](/Resouce/img/figmagif.gif)
+[![와이어 프레임](/Resource/img/figma.PNG)](https://www.figma.com/embed?embed_host=notion&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FGsUUmt9HyBKVr3m8NPzqdP%2FInsaengClip%3Ftype%3Ddesign%26mode%3Ddesign%26t%3D0E7AlPhWhJF6ljF7-0)
+![와이어 프레임](/Resource/img/figmagif.gif)
 
 # 🎨 DB ERD
-![ERD](/Resouce/img/erd.png)
+![ERD](/Resource/img/erd.png)
 
 # 📬 API 명세서
-[![API 명세](/Resouce/img/notion-api.png)](https://www.notion.so/adf01362ac67439c8486bdecc2f2862a?v=fe04bea7894e40c6a50a95fc4c274b65)
+[![API 명세](/Resource/img/notion-api.png)](https://www.notion.so/adf01362ac67439c8486bdecc2f2862a?v=fe04bea7894e40c6a50a95fc4c274b65)
 
 # 📋 컨벤션
 ## 🌄 JIRA 컨벤션
 
 ---
-![JIRA 컨벤션](/Resouce/img/convention-jira.png)
+![JIRA 컨벤션](/Resource/img/convention-jira.png)
 
 ## 👉 Git 컨벤션 요약
 
@@ -181,7 +181,7 @@ Resolves: #232
 ```
 
 ### [Git Branch Convention](https://iamcho2.github.io/2021/03/22/branch-rule-git-flow)
-![Git Branch Convetion](/Resouce/img/convention-git-branch.png)
+![Git Branch Convetion](/Resource/img/convention-git-branch.png)
 - 브랜치 네이밍
   - **Master**
   - **Develop**
@@ -189,11 +189,11 @@ Resolves: #232
     - ex. Feature/4(Story)/34(task) → task 단위로 코드 리뷰
   - **Hotfix**/(Issue_number)/(Issue_number)
 
-![Git Branch](/Resouce/img/git-branch.png)
+![Git Branch](/Resource/img/git-branch.png)
 
 ## 코드 리뷰 Convention
 ### [Stack Diff 방식](https://iamcho2.github.io/2021/03/22/branch-rule-git-flow)
-![Stack Diff 방식](/Resouce/img/git-stack.png)  
+![Stack Diff 방식](/Resource/img/git-stack.png)  
 
 ## 🖼 프론트엔드 컨벤션
 
