@@ -11,6 +11,8 @@ function useSession(shareCode) {
   const [userName, setUserName] = useState(undefined);
   const [subscribers, setSubscribers] = useState([]);
   const [chatLists, setChatLists] = useState([]);
+  const [nowTaking, setNowTaking] = useState(false);
+
   const leaveSession = async () => {
     location.href = '/'
     if (mainSession) {
@@ -41,6 +43,7 @@ function useSession(shareCode) {
         const subscriber = mainSession.subscribe(event.stream, undefined);
         setSubscribers((prev) => [...prev, subscriber]);
       });
+
       // 채팅 수신
       mainSession.on("signal:chat", async(event) => {
         console.log(event);
@@ -49,6 +52,12 @@ function useSession(shareCode) {
           return [...prev, data];
         });
       });
+
+      //takePic 이동 신호 수신
+      mainSession.on("signal:gotoTakePic", (event)=>{
+        console.log("방장이 사진찍재!!");
+        setNowTaking(true);
+      })
 
       // 언마운트시 이벤트
       mainSession.on("streamDestroyed", (event) => {
@@ -117,6 +126,7 @@ function useSession(shareCode) {
     }
   };
 
+  // 채팅 메세지 신호 전송
   const sendMessage = async (message, userName) => {
     console.log({ from: userName+"", message: message });
     await mainSession.signal({
@@ -125,6 +135,16 @@ function useSession(shareCode) {
       type: "chat", // The type of message (optional)
     });
   };
+
+  //사진 촬영 페이지로 이동 신호
+  const gotoTakePic = async()=>{
+    await mainSession.signal({
+      data : "",
+      to:[],
+      type:"gotoTakePic"
+    });
+  }
+
   const getToken = async (code) => {
     let idRes = await boothApi.getSessionID(code);
     // console.log(idRes);
@@ -166,6 +186,8 @@ function useSession(shareCode) {
     chatLists,
     mainPublisher,
     leaveSession,
+    gotoTakePic,
+    nowTaking
   };
 }
 

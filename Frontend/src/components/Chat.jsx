@@ -47,7 +47,7 @@ function Chat({ sendMessage, chatLists, user }) {
                   <div>
                     <div className="text-left flex-col pb-2">
                       <div className="text-sm text-gray-500">
-                        {item.from.userNickname}
+                        {item.from}
                       </div>
                       <div>{item.message}</div>
                     </div>
