@@ -27,7 +27,6 @@ function Start() {
     }
 
     let res = await boothApi.createBooth();
-    console.log(res);
     let {
       data: {
         data: { shareCode },
