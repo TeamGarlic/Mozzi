@@ -61,7 +61,14 @@ function useSession(shareCode) {
 
       // 언마운트시 이벤트
       mainSession.on("streamDestroyed", (event) => {
-        deleteSubscriber(event.stream.streamManager);
+        setSubscribers((prev)=>{
+          const newSubscribers = [...prev];
+          const idx = newSubscribers.indexOf(event.stream.streamManager);
+          console.log(newSubscribers)
+          if (idx <0) return;
+          newSubscribers.splice(idx, 1);
+          return [...newSubscribers]
+        });
       });
 
       // 예외 처리
@@ -137,14 +144,6 @@ function useSession(shareCode) {
       type:"gotoTakePic"
     });
   }
-
-  const deleteSubscriber = (streamManager) => {
-    const newSubscribers = [...subscribers];
-    const idx = newSubscribers.indexOf(streamManager);
-    if (idx <0) return;
-    newSubscribers.splice(idx, 1);
-    setSubscribers(newSubscribers);
-  };
 
   const getToken = async (code) => {
     let idRes = await boothApi.getSessionID(code);
