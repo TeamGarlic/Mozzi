@@ -154,7 +154,6 @@ function Booth() {
         <TakePic
           shareCode={shareCode}
           sendMessage={sendMessage}
-          subscribers={subscribers}
           chatLists={chatLists}
           user={user}
           bgList={bgList}

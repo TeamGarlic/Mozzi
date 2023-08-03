@@ -146,7 +146,6 @@ TakePic.propTypes = {
   startTake: PropTypes.func,
   shareCode: PropTypes.string,
   sendMessage: PropTypes.func,
-  subscribers: PropTypes.array,
   chatLists: PropTypes.array,
   bgList: PropTypes.array,
   user: PropTypes.shape({
