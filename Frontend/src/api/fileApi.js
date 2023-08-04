@@ -1,26 +1,38 @@
 import axios from "axios";
 
-const FileApi = axios.create({
-  baseURL: "https://api.mozzi.lol/items",
+const PublicFileApi = axios.create({
+  baseURL: "https://api.mozzi.lol/files",
   headers: {
     "Content-Type": "application/json",
   },
 });
 
+const PrivateFileApi = axios.create({
+  baseURL: "https://api.mozzi.lol/files",
+  headers: {
+    "Content-Type": "multipart/form-data; boundary=<calculated when request is sent>",
+    Authorization : window.localStorage.getItem("accessToken")
+  },
+});
+
 const fileApi = {
-  getBgList: async (pageNum=1, pageSize=10) => {
-    const res = await FileApi.get(
-      `backgrounds?pageNum=${pageNum}&pageSize=${pageSize}`,
+  saveClip: async (file, title) => {
+    const res = await PrivateFileApi.post(
+      "mozziroll/upload",
+      {
+        file: file,
+        title: title,
+      }
     );
     return res;
   },
 
-  getFrameList: async () => {
-    const res = await FileApi.get(
-      `frames`,
+  downloadClip: async (id) => {
+    const res = await PublicFileApi.get(
+      `mozziroll/${id}`,
     );
     return res;
-  },
+  }
 };
 
 export default fileApi;
