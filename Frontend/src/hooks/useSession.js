@@ -14,7 +14,6 @@ function useSession(shareCode) {
   const [nowTaking, setNowTaking] = useState(false);
 
   const leaveSession = async () => {
-    location.href = '/'
     if (mainSession) {
       await mainSession.disconnect();
     }
@@ -26,6 +25,7 @@ function useSession(shareCode) {
     setMainPublisher(undefined);
     setMaskPublisher(undefined);
     setSubscribers([]);
+    location.href = '/'
   };
 
   const joinSession = async (userName, canvases) => {
@@ -96,7 +96,7 @@ function useSession(shareCode) {
         publishVideo: true,
         frameRate: 30,
         insertMode: "APPEND",
-        mirror: true,
+        mirror: false,
       });
       const maskPublisher = await maskOV.initPublisherAsync(undefined, {
         audioSource: undefined,

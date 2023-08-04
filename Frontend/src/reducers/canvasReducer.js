@@ -5,6 +5,7 @@ import {
   setMyLayer,
   resizeMyLayer,
   setMyLayerSource,
+  updateVideoMap,
 } from '@/modules/canvasAction';
 
 const canvasState = {
@@ -19,6 +20,9 @@ const canvasState = {
     y:undefined,
     width:undefined,
     height:undefined,
+  },
+  videoMap : {
+
   }
 }
 
@@ -67,6 +71,20 @@ const canvasReducer = (state = canvasState, action) => {
       state.myLayer.width = action.payload.width;
       state.myLayer.height = action.payload.height;
       return  {
+        ...state
+      }
+    }
+    case updateVideoMap: {
+      // state.videoMap = action.payload;
+      // console.log(action.payload);
+      for (var prev in state.videoMap) {
+        delete state.videoMap[prev];
+      }
+      for (var next in action.payload) {
+        state.videoMap[next] = action.payload[next];
+      }
+      // console.log(state.videoMap);
+      return {
         ...state
       }
     }
