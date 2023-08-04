@@ -15,15 +15,18 @@ import com.ssafy.mozzi.api.response.ItemBackgroundGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundPostRes;
 import com.ssafy.mozzi.api.response.ItemStickerGetRes;
 import com.ssafy.mozzi.common.auth.ObjectStorageClient;
+import com.ssafy.mozzi.common.dto.FrameClipItem;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
 import com.ssafy.mozzi.common.util.FileUtil;
 import com.ssafy.mozzi.common.util.mapper.ItemMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
 import com.ssafy.mozzi.db.entity.remote.Backgroud;
 import com.ssafy.mozzi.db.entity.remote.Frame;
+import com.ssafy.mozzi.db.entity.remote.FrameClip;
 import com.ssafy.mozzi.db.entity.remote.Sticker;
 import com.ssafy.mozzi.db.repository.cloud.FileRepository;
 import com.ssafy.mozzi.db.repository.remote.BackgroundRepository;
+import com.ssafy.mozzi.db.repository.remote.FrameClipRepository;
 import com.ssafy.mozzi.db.repository.remote.FrameRepository;
 import com.ssafy.mozzi.db.repository.remote.StickerRepository;
 
@@ -39,6 +42,7 @@ import lombok.RequiredArgsConstructor;
 public class ItemServiceImpl implements ItemService {
     private final BackgroundRepository backgroundRepository;
     private final FrameRepository frameRepository;
+    private final FrameClipRepository frameClipRepository;
     private final StickerRepository stickerRepository;
     private final FileRepository fileRepository;
     private final ObjectStorageClient client;
@@ -119,4 +123,60 @@ public class ItemServiceImpl implements ItemService {
             throw new CloudStorageSaveFailException("파일 업로드 실패");
         return ItemMapper.toItemBackgroundPostRes(backgroud);
     }
+
+    /**
+     * 프레임 업로드 비지니스 로직
+     * @param file MultipartFile
+     * @param title String
+     * @see ItemService
+     */
+    @Override
+    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
+    public String saveFrame(MultipartFile file, String title) {
+        final String OBJECT_NAME = String.format("%s_%s", System.currentTimeMillis(), file.getOriginalFilename());
+
+        Frame frame = frameRepository.save(Frame.builder()
+            .objectName(OBJECT_NAME)
+            .title(title)
+            .build());
+
+        return String.valueOf(frame.getId());
+    }
+
+    /**
+     * 프레임 클립 업로드 비지니스 로직
+     * @param frameId long
+     * @param frameClipItems FrameClipItem[]
+     * @see Frame
+     * @see FrameClip
+     */
+    @Override
+    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
+    public String saveFrameClips(long frameId, FrameClipItem[] frameClipItems) {
+
+        Frame frame = frameRepository.findById(frameId).get();
+
+        Set<FrameClip> frameClips = frame.getFrameClips();
+
+        for (FrameClipItem frameClipItem : frameClipItems) {
+            FrameClip frameClip = frameClipRepository.save(
+                FrameClip.builder()
+                    .width(frameClipItem.getWidth())
+                    .height(frameClipItem.getHeight())
+                    .x(frameClipItem.getX())
+                    .y(frameClipItem.getY())
+                    .build());
+
+            frameClip.setFrame(frame);
+
+            frameClips.add(frameClip);
+        }
+
+        frame.setFrameClips(frameClips);
+        frameRepository.save(frame);
+
+        return "success";
+    }
+
+    ;
 }
