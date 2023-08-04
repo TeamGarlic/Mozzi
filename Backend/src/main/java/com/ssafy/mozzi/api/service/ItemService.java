@@ -22,5 +22,7 @@ public interface ItemService {
 
     ItemBackgroundPostRes saveBackground(MultipartFile file, String title);
 
-    String saveFrame(MultipartFile file, String title, FrameClipItem[] frameClipItems);
+    String saveFrame(MultipartFile file, String title);
+
+    String saveFrameClips(long frameId, FrameClipItem[] frameClipItems);
 }

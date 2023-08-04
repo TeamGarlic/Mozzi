@@ -5,7 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -126,16 +128,15 @@ public class ItemController {
      * 프레임 업로드 비지니스 로직
      * @param file MultipartFile
      * @param title String
-     * @param frameClipItems FrameClipItem[]
+     * @param rects FrameClipItem[]
      * @see ItemService
      */
     @PostMapping("/frame")
     public ResponseEntity<? extends BaseResponseBody<String>> saveFrame(
         @RequestParam("file") MultipartFile file,
-        @RequestParam("title") String title,
-        @RequestParam("rects") FrameClipItem[] frameClipItems) {
+        @RequestParam("title") String title) {
 
-        String response = itemService.saveFrame(file, title, frameClipItems);
+        String response = itemService.saveFrame(file, title);
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
@@ -146,5 +147,28 @@ public class ItemController {
                     .data(response)
                     .build()
             );
+    }
+
+    /**
+     * 프레임 클립 업로드 비지니스 로직
+     * @param frameId long
+     * @param frameClipItems FrameClipItem[]
+     * @see ItemService
+     */
+    @PostMapping("/frame/{frameId}")
+    public ResponseEntity<? extends BaseResponseBody<String>> saveFrameClips(
+        @PathVariable("frameId") long frameId,
+        @RequestBody FrameClipItem[] frameClipItems) {
+
+        String response = itemService.saveFrameClips(frameId, frameClipItems);
+
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .cacheControl(CacheControl.noStore())
+            .body(
+                BaseResponseBody.<String>builder()
+                    .message("frame upload success")
+                    .data(response)
+                    .build());
     }
 }

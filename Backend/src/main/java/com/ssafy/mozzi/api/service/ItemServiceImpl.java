@@ -1,6 +1,5 @@
 package com.ssafy.mozzi.api.service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -129,16 +128,35 @@ public class ItemServiceImpl implements ItemService {
      * 프레임 업로드 비지니스 로직
      * @param file MultipartFile
      * @param title String
-     * @param frameClipItems FrameClipItem[]
      * @see ItemService
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
-    public String saveFrame(MultipartFile file, String title, FrameClipItem[] frameClipItems) {
+    public String saveFrame(MultipartFile file, String title) {
         final String OBJECT_NAME = String.format("%s_%s", System.currentTimeMillis(), file.getOriginalFilename());
-        String conentType = "multipart/form-data";
 
-        Set<FrameClip> frameClips = new HashSet<>();
+        Frame frame = frameRepository.save(Frame.builder()
+            .objectName(OBJECT_NAME)
+            .title(title)
+            .build());
+
+        return String.valueOf(frame.getId());
+    }
+
+    /**
+     * 프레임 클립 업로드 비지니스 로직
+     * @param frameId long
+     * @param frameClipItems FrameClipItem[]
+     * @see Frame
+     * @see FrameClip
+     */
+    @Override
+    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
+    public String saveFrameClips(long frameId, FrameClipItem[] frameClipItems) {
+
+        Frame frame = frameRepository.findById(frameId).get();
+
+        Set<FrameClip> frameClips = frame.getFrameClips();
 
         for (FrameClipItem frameClipItem : frameClipItems) {
             FrameClip frameClip = frameClipRepository.save(
@@ -149,15 +167,16 @@ public class ItemServiceImpl implements ItemService {
                     .y(frameClipItem.getY())
                     .build());
 
+            frameClip.setFrame(frame);
+
             frameClips.add(frameClip);
         }
 
-        Frame frame = frameRepository.save(Frame.builder()
-            .objectName(OBJECT_NAME)
-            .title(title)
-            .frameClips(frameClips)
-            .build());
+        frame.setFrameClips(frameClips);
+        frameRepository.save(frame);
 
-        return "";
+        return "success";
     }
+
+    ;
 }
