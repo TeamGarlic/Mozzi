@@ -6,8 +6,9 @@ import { useState } from "react";
 import { resetCamCanvasesAction } from "@/modules/canvasAction.js";
 import {useDispatch, useSelector} from "react-redux";
 import {setFrameAction} from "@/modules/clipAction.js";
+import {checkHost} from "@/utils/DecoratorUtil.js";
 
-function MakeBooth({ startTake, shareCode, subscribers, mainPublisher, leaveSession, gotoTakePic, frameList }) {
+function MakeBooth({ startTake, shareCode, subscribers, mainPublisher, leaveSession, gotoTakePic, frameList, user }) {
   const [visibility, setVisibility] = useState(true);
   const [toggleVoice, setToggleVoice] = useState(true);
   const pickedFrame = useSelector((state) => state.clipReducer.frame);
@@ -29,6 +30,7 @@ function MakeBooth({ startTake, shareCode, subscribers, mainPublisher, leaveSess
   function clickFrame(event, frame){
     dispatch(setFrameAction({frame}));
   }
+  clickFrame = checkHost(clickFrame, user.isHost);
 
   return (
     <>
@@ -105,4 +107,11 @@ MakeBooth.propTypes = {
   leaveSession: PropTypes.func,
   gotoTakePic : PropTypes.func,
   frameList: PropTypes.array,
+  user: PropTypes.shape({
+    id: PropTypes.number,
+    userId: PropTypes.string,
+    userNickname: PropTypes.string,
+    email: PropTypes.string,
+    isHost: PropTypes.number,
+  })
 };

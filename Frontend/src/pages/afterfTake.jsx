@@ -7,7 +7,6 @@ import {useEffect, useRef} from "react";
 import {useNavigate, useParams, useLocation} from "react-router-dom";
 import {checkHost} from "@/utils/DecoratorUtil.js";
 import fileApi from "@/api/fileApi.js";
-import itemApi from "@/api/itemApi.js";
 
 function AfterTake() {
   const { code: shareCode } = useParams();
@@ -20,6 +19,7 @@ function AfterTake() {
   const location = useLocation();
   const bg = new Image();
   bg.src = frame.src;
+  bg.crossOrigin = "anonymous";
 
   let mediaRecorder = null;
   const arrClipData = [];
@@ -59,7 +59,8 @@ function AfterTake() {
   async function saveClip(file, title) {
     try {
       let res = await fileApi.saveClip(file, title);
-      if (res.status === 200) {
+      if (res.status === 201) {
+        // Todo: res.data.data.id 소켓으로 넘기기
         console.log(res);
       }
     } catch (e) {
@@ -79,7 +80,7 @@ function AfterTake() {
       recordClip();
     }
   }
-  makeClip = checkHost(makeClip, location.state.user.isHost)
+  makeClip = checkHost(makeClip, location.state.user.isHost);
 
   function drawVid(){
     frameNum.forEach((idx) => {

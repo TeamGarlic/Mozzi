@@ -201,6 +201,7 @@ function Booth() {
           leaveSession={leaveSession}
           gotoTakePic={gotoTakePic}
           frameList={frameList}
+          user={user}
         />
       ) : (
         <TakePic
