@@ -30,7 +30,7 @@ public class JwtTokenProvider {
     @Value("${JWT_SECRET}")
     private String secretKey;
 
-    private long tokenValidTime = 1000L * 60; // 일시적으로 개발을 위해 토큰 유효시간 늘려놓음
+    private long tokenValidTime = 1000L * 60 * 60 * 24; // 일시적으로 개발을 위해 토큰 유효시간 늘려놓음
     private long refreshTokenValidTime = 1000L * 60 * 60 * 24 * 7; // 7일
 
     private final UserRepository userRepository;
