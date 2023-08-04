@@ -5,6 +5,7 @@ import com.ssafy.mozzi.api.response.ReIssuePostRes;
 import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
+import com.ssafy.mozzi.api.response.UserUpdateRes;
 import com.ssafy.mozzi.common.auth.CustomUserDetails;
 import com.ssafy.mozzi.db.entity.remote.User;
 
@@ -62,5 +63,9 @@ public class UserMapper {
             .userNickname(user.getNickname())
             .email(user.getEmail())
             .build();
+    }
+
+    public static UserUpdateRes toUserUpdateRes(User user) {
+        return UserUpdateRes.builder().id(user.getId()).build();
     }
 }

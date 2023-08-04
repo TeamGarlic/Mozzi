@@ -25,7 +25,6 @@ import com.ssafy.mozzi.common.exception.handler.InvalidRefreshTokenException;
 import com.ssafy.mozzi.common.exception.handler.NoDataException;
 import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.UserLoginFailException;
-import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 import com.ssafy.mozzi.common.util.mapper.UserMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
 import com.ssafy.mozzi.db.entity.remote.User;
@@ -98,15 +97,10 @@ public class UserServiceImpl implements UserService {
      * @return user id 사용 가능 여부를 반환
      */
     @Override
-    public BaseResponseBody<UserIdCheckRes> userIdCheck(String userId) {
+    public UserIdCheckRes userIdCheck(String userId) {
         Optional<User> user = userRepository.findByUserId(userId);
         boolean result = user.isEmpty();
-        return BaseResponseBody.<UserIdCheckRes>builder()
-            .message(String.format("Requested User ID%s available", (result ? "" : " not")))
-            .data(
-                new UserIdCheckRes(result)
-            )
-            .build();
+        return new UserIdCheckRes(result);
     }
 
     /**
@@ -120,7 +114,6 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     public ReIssuePostRes reissue(ReIssuePostReq reissueInfo) {
-
         User user = findUserByToken(reissueInfo.getAccessToken());
 
         if (!user.getRefreshToken().equals(reissueInfo.getRefreshToken()))
@@ -160,17 +153,14 @@ public class UserServiceImpl implements UserService {
      * @see UserInfoRes
      */
     @Override
-    public BaseResponseBody<UserInfoRes> getUserInfo(String accessToken) {
+    public UserInfoRes getUserInfo(String accessToken) {
         User user = findUserByToken(accessToken);
 
         if (user == null) {
             throw new UserIdNotExistsException("user not exists");
         }
 
-        return BaseResponseBody.<UserInfoRes>builder()
-            .message("user exists")
-            .data(UserMapper.toUserInfoRes(user))
-            .build();
+        return UserMapper.toUserInfoRes(user);
     }
 
     /**
@@ -180,7 +170,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
-    public BaseResponseBody<String> logout(String accessToken) {
+    public void logout(String accessToken) {
         User user = findUserByToken(accessToken);
 
         if (user == null) {
@@ -188,11 +178,6 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setRefreshToken(null);
-
-        return BaseResponseBody.<String>builder()
-            .message("logout success")
-            .data("")
-            .build();
     }
 
     /**
@@ -203,7 +188,7 @@ public class UserServiceImpl implements UserService {
      */
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     @Override
-    public BaseResponseBody<UserUpdateRes> update(UserUpdatePutReq request) {
+    public UserUpdateRes update(UserUpdatePutReq request) {
         User user = findUserByToken(request.getAccessToken());
 
         if (request.getEmail() == null && request.getNickname() == null && request.getPassword() == null) {
@@ -221,9 +206,6 @@ public class UserServiceImpl implements UserService {
             user.setEmail(request.getEmail());
         }
 
-        return BaseResponseBody.<UserUpdateRes>builder()
-            .message(String.format("User(%s) data updated.", user.getUserId()))
-            .data(UserUpdateRes.builder().id(user.getId()).build())
-            .build();
+        return UserMapper.toUserUpdateRes(user);
     }
 }

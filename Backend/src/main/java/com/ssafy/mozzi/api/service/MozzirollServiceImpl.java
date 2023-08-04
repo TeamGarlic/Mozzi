@@ -2,7 +2,6 @@ package com.ssafy.mozzi.api.service;
 
 import java.util.Optional;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
@@ -10,7 +9,6 @@ import com.ssafy.mozzi.common.exception.handler.AlreadyLinkedMozziException;
 import com.ssafy.mozzi.common.exception.handler.BoothNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.MozzirollNotExists;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
-import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.db.entity.local.Booth;
 import com.ssafy.mozzi.db.entity.remote.Mozziroll;
@@ -43,7 +41,7 @@ public class MozzirollServiceImpl implements MozzirollService {
      * @param accessToken JWT Access Token
      */
     @Override
-    public ResponseEntity<BaseResponseBody<Long>> link(MozziLinkPostRequest request, String accessToken) {
+    public Long link(MozziLinkPostRequest request, String accessToken) {
         long userId = mozziUtil.findUserIdByToken(accessToken);
         Optional<UserMozziroll> userMozzirollCheck = userMozzirollRepository.findByMozzirollIdAndUserId(
             request.getMozzirollId(), userId);
@@ -69,19 +67,13 @@ public class MozzirollServiceImpl implements MozzirollService {
             throw new UnAuthorizedException("You are not authorized to linked mozziroll");
         }
 
-        UserMozziroll userMozziroll = UserMozziroll.builder()
-            .user(userService.findUserByToken(accessToken))
-            .mozziroll(mozziroll.get())
-            .title(request.getTitle())
-            .build();
-        userMozzirollRepository.save(userMozziroll);
+        UserMozziroll userMozziroll = userMozzirollRepository.save(
+            UserMozziroll.builder()
+                .user(userService.findUserByToken(accessToken))
+                .mozziroll(mozziroll.get())
+                .title(request.getTitle())
+                .build());
 
-        return ResponseEntity.ok()
-            .body(
-                BaseResponseBody.<Long>builder()
-                    .message("Mozziroll Linked")
-                    .data(userMozziroll.getId())
-                    .build()
-            );
+        return userMozziroll.getId();
     }
 }

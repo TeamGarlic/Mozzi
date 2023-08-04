@@ -58,15 +58,13 @@ public class FileServiceImpl implements FileService {
         if (user == null)
             throw new CloudStorageSaveFailException("파일 저장 유저 없음");
         // Mozziroll 테이블에 정보 추가.
-        // TODO: 모찌 제목 추가
         Mozziroll mozziroll = mozzirollRepository.save(
             Mozziroll.builder()
                 .objectName(OBJECT_NAME)
                 .creator(user)
                 .build());
-
         // UserMozziroll 테이블에 정보 추가
-        UserMozziroll userMozziroll = userMozzirollRepository.save(UserMozziroll.builder()
+        userMozzirollRepository.save(UserMozziroll.builder()
             .mozziroll(mozziroll)
             .title(title)
             .user(user)

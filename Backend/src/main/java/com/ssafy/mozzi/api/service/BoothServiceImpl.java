@@ -19,8 +19,8 @@ import com.ssafy.mozzi.common.exception.handler.AccessTokenNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.DuplicateShareCodeException;
 import com.ssafy.mozzi.common.exception.handler.InvalidSessionIdException;
 import com.ssafy.mozzi.common.exception.handler.ShareCodeNotExistException;
-import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 import com.ssafy.mozzi.common.util.MozziUtil;
+import com.ssafy.mozzi.common.util.mapper.BoothMapper;
 import com.ssafy.mozzi.db.datasource.LocalDatasource;
 import com.ssafy.mozzi.db.entity.local.Booth;
 import com.ssafy.mozzi.db.entity.local.BoothUser;
@@ -69,10 +69,11 @@ public class BoothServiceImpl implements BoothService {
      * @return Openvidu에서 사용되는 부스의 session Id
      * @see Session
      * @see SessionPostReq
+     * @see BoothMapper
      */
     @Override
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
-    public BaseResponseBody<SessionRes> createBooth(SessionPostReq request, String accessToken) throws Exception {
+    public SessionRes createBooth(SessionPostReq request, String accessToken) throws Exception {
         if (accessToken == null) {
             throw new AccessTokenNotExistsException("There is no access Token");
         }
@@ -107,15 +108,7 @@ public class BoothServiceImpl implements BoothService {
                     .customSessionId(sessionId)
                     .build();
                 Session session = openVidu.createSession(properties);
-                return BaseResponseBody.<SessionRes>builder()
-                    .message("Requested booth created")
-                    .data(
-                        SessionRes.builder()
-                            .shareCode(shareCode)
-                            .sessionId(session.getSessionId())
-                            .build()
-                    )
-                    .build();
+                return BoothMapper.toSessionRes(session.getSessionId(), shareCode);
             }
         }
     }
@@ -126,23 +119,16 @@ public class BoothServiceImpl implements BoothService {
      * @param shareCode 참여하고자 하는 부스의 Share Code
      * @return openvidu session id
      * @see Session
+     * @see BoothMapper
      */
     @Override
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
-    public BaseResponseBody<SessionRes> joinBooth(String shareCode) {
+    public SessionRes joinBooth(String shareCode) {
         Optional<Booth> booth = boothRepository.findByShareCode(shareCode);
         if (booth == null) {
             throw new ShareCodeNotExistException(String.format("Requested booth(%s) not exist", shareCode));
         }
-        return BaseResponseBody.<SessionRes>builder()
-            .message("Requested booth exists")
-            .data(
-                SessionRes.builder()
-                    .shareCode(shareCode)
-                    .sessionId(booth.get().getSessionId())
-                    .build()
-            )
-            .build();
+        return BoothMapper.toSessionRes(booth.get().getSessionId(), shareCode);
     }
 
     /**
@@ -152,9 +138,10 @@ public class BoothServiceImpl implements BoothService {
      * @return Openvidu Connection Token
      * @see Session
      * @see Connection
+     * @see BoothMapper
      */
     @Override
-    public BaseResponseBody<ConnectionPostRes> getConnectionToken(ConnectionPostReq request, String accessToken) throws
+    public ConnectionPostRes getConnectionToken(ConnectionPostReq request, String accessToken) throws
         Exception {
         Session session = openVidu.getActiveSession(request.getSessionId());
         if (session == null) {
@@ -172,22 +159,16 @@ public class BoothServiceImpl implements BoothService {
             long boothId = booth.get().getId();
             Optional<BoothUser> boothUser = boothUserRepository.findByBoothIdAndUserId(boothId, userId);
             if (boothUser.isEmpty()) {
-                BoothUser connectedUser = new BoothUser();
-                connectedUser.setUserId(userId);
-                connectedUser.setBooth(booth.get());
+                BoothUser connectedUser = BoothUser.builder()
+                    .userId(userId)
+                    .booth(booth.get())
+                    .build();
                 boothUserRepository.save(connectedUser);
             }
         }
 
         Connection connection = session.createConnection();
-        return BaseResponseBody.<ConnectionPostRes>builder()
-            .message("Connection Token created")
-            .data(
-                ConnectionPostRes.builder()
-                    .token(connection.getToken())
-                    .build()
-            )
-            .build();
+        return BoothMapper.toConnectionPostRes(connection);
     }
 
     /**
@@ -197,10 +178,11 @@ public class BoothServiceImpl implements BoothService {
      * @return SessionRes
      * @see Session
      * @see Connection
+     * @see BoothMapper
      */
     @Override
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
-    public BaseResponseBody<SessionRes> deleteBooth(String sessionId) throws Exception {
+    public SessionRes deleteBooth(String sessionId) throws Exception {
         Session session = openVidu.getActiveSession(sessionId);
         if (session == null) {
             throw new InvalidSessionIdException(
@@ -210,16 +192,7 @@ public class BoothServiceImpl implements BoothService {
 
         Optional<Booth> booth = boothRepository.findBySessionId(sessionId);
         booth.ifPresent(boothRepository::delete);
-
-        return BaseResponseBody.<SessionRes>builder()
-            .message("deleted exist booth")
-            .data(
-                SessionRes.builder()
-                    .shareCode("")
-                    .sessionId(sessionId)
-                    .build()
-            )
-            .build();
+        return BoothMapper.toSessionRes(sessionId, "");
     }
 
     /**

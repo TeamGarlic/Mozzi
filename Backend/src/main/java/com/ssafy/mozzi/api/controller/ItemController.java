@@ -45,13 +45,11 @@ public class ItemController {
         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
-        ItemBackgroundGetRes responseData = itemService.getBackgroundRes(pageNum, pageSize);
-
         return ResponseEntity.ok()
             .cacheControl(cacheControl.getCacheControl())
             .body(BaseResponseBody.<ItemBackgroundGetRes>builder()
-                .message("Background fetched")
-                .data(responseData)
+                .message("Background list" + pageNum)
+                .data(itemService.getBackgroundRes(pageNum, pageSize))
                 .build()
             );
     }
@@ -69,13 +67,12 @@ public class ItemController {
         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
-        ItemStickerGetRes responseData = itemService.getStickerRes(pageNum, pageSize);
         return ResponseEntity.ok()
             .cacheControl(cacheControl.getCacheControl())
             .body(
                 BaseResponseBody.<ItemStickerGetRes>builder()
                     .message("sticker list page " + pageNum)
-                    .data(responseData)
+                    .data(itemService.getStickerRes(pageNum, pageSize))
                     .build()
             );
     }
@@ -88,13 +85,13 @@ public class ItemController {
      */
     @GetMapping("/frames")
     public ResponseEntity<? extends BaseResponseBody<FrameListGetRes>> getFrames() {
-        FrameListGetRes response = itemService.getFrameList();
+
         return ResponseEntity.ok()
             .cacheControl(cacheControl.getCacheControl())
             .body(
                 BaseResponseBody.<FrameListGetRes>builder()
-                    .message("success")
-                    .data(response)
+                    .message("frame list success")
+                    .data(itemService.getFrameList())
                     .build()
             );
     }
@@ -110,6 +107,7 @@ public class ItemController {
     public ResponseEntity<? extends BaseResponseBody<ItemBackgroundPostRes>> saveBackground(
         @RequestParam("file") MultipartFile file,
         @RequestParam("title") String title) {
+
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .cacheControl(CacheControl.noStore())
