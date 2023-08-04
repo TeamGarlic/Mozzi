@@ -12,6 +12,7 @@ function useSession(shareCode) {
   const [subscribers, setSubscribers] = useState([]);
   const [chatLists, setChatLists] = useState([]);
   const [nowTaking, setNowTaking] = useState(false);
+  const [now, setNow] = useState("MAKING");
 
   const leaveSession = async () => {
     if (mainSession) {
@@ -25,7 +26,7 @@ function useSession(shareCode) {
     setMainPublisher(undefined);
     setMaskPublisher(undefined);
     setSubscribers([]);
-    location.href = '/'
+    location.href = "/";
   };
 
   const joinSession = async (userName, canvases) => {
@@ -43,7 +44,7 @@ function useSession(shareCode) {
         setSubscribers((prev) => [...prev, subscriber]);
       });
 
-      mainSession.on("signal:chat", async(event) => {
+      mainSession.on("signal:chat", async (event) => {
         console.log(event);
         let data = await JSON.parse(event.data);
         setChatLists((prev) => {
@@ -51,19 +52,20 @@ function useSession(shareCode) {
         });
       });
 
-      mainSession.on("signal:gotoTakePic", (event)=>{
+      mainSession.on("signal:gotoTakePic", async (event) => {
         console.log("방장이 사진찍재!!");
-        setNowTaking(true);
-      })
+        // setNowTaking(true);
+        setNow("TAKING");
+      });
 
       mainSession.on("streamDestroyed", (event) => {
-        setSubscribers((prev)=>{
+        setSubscribers((prev) => {
           const newSubscribers = [...prev];
           const idx = newSubscribers.indexOf(event.stream.streamManager);
-          console.log(newSubscribers)
-          if (idx <0) return;
+          console.log(newSubscribers);
+          if (idx < 0) return;
           newSubscribers.splice(idx, 1);
-          return [...newSubscribers]
+          return [...newSubscribers];
         });
       });
 
@@ -80,13 +82,13 @@ function useSession(shareCode) {
       const uid = v4();
       await mainSession.connect(mainToken, {
         clientData: userName,
-        isMask : false,
-        uid : uid,
+        isMask: false,
+        uid: uid,
       });
       await maskSession.connect(maskToken, {
         clientData: userName,
-        isMask : true,
-        uid : uid,
+        isMask: true,
+        uid: uid,
       });
 
       const mainPublisher = await mainOV.initPublisherAsync(undefined, {
@@ -122,21 +124,21 @@ function useSession(shareCode) {
   };
 
   const sendMessage = async (message, userName) => {
-    console.log({ from: userName+"", message: message });
+    console.log({ from: userName + "", message: message });
     await mainSession.signal({
-      data: JSON.stringify({ from: userName+"", message: message}),
+      data: JSON.stringify({ from: userName + "", message: message }),
       to: [],
       type: "chat",
     });
   };
 
-  const gotoTakePic = async()=>{
+  const gotoTakePic = async () => {
     await mainSession.signal({
-      data : "",
-      to:[],
-      type:"gotoTakePic"
+      data: "",
+      to: [],
+      type: "gotoTakePic",
     });
-  }
+  };
 
   const getToken = async (code) => {
     let idRes = await boothApi.getSessionID(code);
@@ -155,7 +157,6 @@ function useSession(shareCode) {
   };
 
   useEffect(() => {
-
     const handleBeforeUnload = async () => {
       await leaveSession();
     };
@@ -177,7 +178,9 @@ function useSession(shareCode) {
     mainPublisher,
     leaveSession,
     gotoTakePic,
-    nowTaking
+    nowTaking,
+    now,
+    setNow,
   };
 }
 

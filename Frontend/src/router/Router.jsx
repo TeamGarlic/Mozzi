@@ -21,10 +21,10 @@ function Router() {
         <Route path="/modify" element={<ModifyUser />} />
         <Route path="/mypage/:username" element={<MyPage />} />
         <Route path="/:code/booth" element={<Booth />} />
-        <Route path="/:code/makebooth" element={<MakeBooth />} />
+        {/* <Route path="/:code/makebooth" element={<MakeBooth />} />
         <Route path="/:code/takepic" element={<TakePic />} />
         <Route path="/:code/aftertake" element={<AfterTake />} />
-        <Route path="/:code/finish" element={<Finish />} />
+        <Route path="/:code/finish" element={<Finish />} /> */}
         <Route path="*" element={<NoFile />} />
       </Routes>
     </BrowserRouter>
