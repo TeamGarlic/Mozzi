@@ -9,9 +9,9 @@ import PropTypes from "prop-types";
 import MyRadioGroup from "@/components/MyRadioGroup";
 import { useSelector, useDispatch } from "react-redux";
 import { AddClipAction } from "@/modules/clipAction";
-import {checkHost} from "@/utils/DecoratorUtil.js";
+import { checkHost } from "@/utils/DecoratorUtil.js";
 
-function TakePic({ shareCode, sendMessage, chatLists, user, bgList }) {
+function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext }) {
   const timers = [3, 5, 10];
   const [taken, setTaken] = new useState(1);
   const [timer, setTimer] = useState(3);
@@ -45,7 +45,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList }) {
 
     // 녹화 시작
     mediaRecorder.start();
-    console.log("촬영시작")
+    console.log("촬영시작");
     // Todo: 현재는 시간에 dependent => 프레임 단위로 전환 필요함
     setTimeout(() => {
       // 녹화 종료
@@ -55,7 +55,8 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList }) {
       // Todo: taken에 따른 로직 take 함수에 넣기(비동기 필요)
       if (taken == 4) {
         // console.log(clipList);
-        navigate(`/${shareCode}/aftertake`, {state: {user: user}});
+        // navigate(`/${shareCode}/aftertake`, {state: {user: user}});
+        goNext();
       } else {
         // console.log(clipList);
         setTaken(taken + 1);
@@ -69,19 +70,19 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList }) {
   }
 
   function take() {
-    let isTaking = 0
+    let isTaking = 0;
     setTimerVisible(true);
     // console.log(timer + "초 후 촬영");
     interval = setInterval(() => {
       // console.log(interval);
       setCount((prev) => {
         let next = prev - 1;
-        if (isTaking === 0 && next === 0){
+        if (isTaking === 0 && next === 0) {
           // 대기 시간 후 촬영 시작(next 초 만큼)
           next = 5;
           isTaking = 1;
           recordClip(taken);
-        } else if (isTaking ===1 && next === 0) {
+        } else if (isTaking === 1 && next === 0) {
           clearInterval(interval);
           isTaking = 0;
           return timer;
@@ -90,7 +91,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList }) {
       });
     }, 1000);
   }
-  take = checkHost(take, user.isHost)
+  take = checkHost(take, user.isHost);
 
   // useEffect(() => {
   //   if (count === 0) {
@@ -111,9 +112,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList }) {
             </div>
             <div className="text-2xl">MOZZI</div>
           </div>
-          <PicSideBar
-            bgList={bgList}
-            user={user}/>
+          <PicSideBar bgList={bgList} user={user} />
           {/* <div className="float-right mr-10 text-2xl">taken : {taken}/10</div> */}
         </div>
         <BigCam />
@@ -154,6 +153,7 @@ TakePic.propTypes = {
   sendMessage: PropTypes.func,
   chatLists: PropTypes.array,
   bgList: PropTypes.array,
+  goNext: PropTypes.func,
   user: PropTypes.shape({
     id: PropTypes.number,
     userId: PropTypes.string,
