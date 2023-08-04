@@ -45,10 +45,12 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList }) {
 
     // 녹화 시작
     mediaRecorder.start();
+    console.log("촬영시작")
     // Todo: 현재는 시간에 dependent => 프레임 단위로 전환 필요함
     setTimeout(() => {
       // 녹화 종료
       mediaRecorder.stop();
+      setTimerVisible(false);
       console.log(idx);
       // Todo: taken에 따른 로직 take 함수에 넣기(비동기 필요)
       if (taken == 4) {
@@ -67,22 +69,26 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList }) {
   }
 
   function take() {
+    let isTaking = 0
     setTimerVisible(true);
     // console.log(timer + "초 후 촬영");
     interval = setInterval(() => {
       // console.log(interval);
       setCount((prev) => {
         let next = prev - 1;
-        if (next === 0) {
+        if (isTaking === 0 && next === 0){
+          // 대기 시간 후 촬영 시작(next 초 만큼)
+          next = 5;
+          isTaking = 1;
+          recordClip(taken);
+        } else if (isTaking ===1 && next === 0) {
           clearInterval(interval);
-          setTimerVisible(false);
+          isTaking = 0;
           return timer;
         }
         return next;
       });
     }, 1000);
-
-    recordClip(taken);
   }
   take = checkHost(take, user.isHost)
 
