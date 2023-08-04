@@ -54,6 +54,10 @@ export const drawSubscriber = function(canvas, context, video, mask) {
   context.putImageData(pixels,0,0);
   context.globalCompositeOperation = 'source-in';
   //
+
+  context.translate(canvas.width, 0);
+  context.scale(-1, 1);
+
   context.drawImage(
     video,
     0,
@@ -62,6 +66,8 @@ export const drawSubscriber = function(canvas, context, video, mask) {
     canvas.height,
   );
 
+  context.translate(canvas.width, 0);
+  context.scale(-1, 1);
   context.restore();
 };
 
