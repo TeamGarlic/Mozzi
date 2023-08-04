@@ -18,6 +18,12 @@ function Chat({ sendMessage, chatLists, user }) {
     }, 100);
   }
 
+  function onKeyDown(event) {
+    if (event.key === "Enter") {
+      send();
+    }
+  }
+
   useEffect(() => {
     console.log(chatLists);
   }, [chatLists]);
@@ -37,18 +43,14 @@ function Chat({ sendMessage, chatLists, user }) {
                 return item.from === user.userNickname ? (
                   <div>
                     <div className="text-right flex-col pb-2">
-                      <div className="text-sm text-gray-500">
-                        {item.from}
-                      </div>
+                      <div className="text-sm text-gray-500">{item.from}</div>
                       <div>{item.message}</div>
                     </div>
                   </div>
                 ) : (
                   <div>
                     <div className="text-left flex-col pb-2">
-                      <div className="text-sm text-gray-500">
-                        {item.from}
-                      </div>
+                      <div className="text-sm text-gray-500">{item.from}</div>
                       <div>{item.message}</div>
                     </div>
                   </div>
@@ -56,7 +58,12 @@ function Chat({ sendMessage, chatLists, user }) {
               })}
           </div>
           <div className="flex p-3 border-t-2 gap-1">
-            <TextInput placeholder="채팅 입력..." type="text" {...msg} />
+            <TextInput
+              placeholder="채팅 입력..."
+              type="text"
+              {...msg}
+              onKeyDown={onKeyDown}
+            />
             <button
               onClick={send}
               className="rounded-xl bg-blue-500 text-white w-1/3 my-2"

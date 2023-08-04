@@ -1,6 +1,15 @@
 import PropTypes from "prop-types";
 
-function TextInput({ type, placeholder, value, onChange, onBlur, className, onKeyDown, readOnly=false }) {
+function TextInput({
+  type,
+  placeholder,
+  value,
+  onChange,
+  onBlur,
+  className,
+  onKeyDown,
+  readOnly = false,
+}) {
   return (
     <input
       type={type}
