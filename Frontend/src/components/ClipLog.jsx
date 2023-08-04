@@ -28,7 +28,6 @@ function ClipLog({user}) {
   }
 
   function clickVideo(event) {
-    console.log("click");
     dispatch(
       Clip2FrameAction({
         clipIdx: event.target.id[4],
