@@ -8,7 +8,7 @@ const PublicUserApi = axios.create({
 });
 
 const PrivateUserApi = axios.create({
-  baseURL: "https://mozzi.ssafy.life/users",
+  baseURL: "https://api.mozzi.lol/users",
   headers: {
     "Content-Type": "application/json",
     Authorization: window.localStorage.getItem("accessToken"),
