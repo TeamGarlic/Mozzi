@@ -45,8 +45,15 @@ export const drawSubscriber = function(canvas, context, video, mask) {
     canvas.width,
     canvas.height,
   );
-  context.globalCompositeOperation = 'lighter';
 
+  const pixels = context.getImageData(0,0, canvas.width, canvas.height)
+  var d = pixels.data;
+  for(var i =0; i< d.length; i+=4){
+    d[i+3] = d[i]>127?255:0;
+  }
+  context.putImageData(pixels,0,0);
+  context.globalCompositeOperation = 'source-in';
+  //
   context.drawImage(
     video,
     0,

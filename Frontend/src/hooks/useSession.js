@@ -96,7 +96,7 @@ function useSession(shareCode) {
         publishVideo: true,
         frameRate: 30,
         insertMode: "APPEND",
-        mirror: true,
+        mirror: false,
       });
       const maskPublisher = await maskOV.initPublisherAsync(undefined, {
         audioSource: undefined,
@@ -105,7 +105,7 @@ function useSession(shareCode) {
         publishVideo: true,
         frameRate: 30,
         insertMode: "APPEND",
-        mirror: true,
+        mirror: false,
       });
 
       await mainSession.publish(mainPublisher);
