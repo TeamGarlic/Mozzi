@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
@@ -84,6 +83,13 @@ public class MozzirollServiceImpl implements MozzirollService {
         return userMozziroll.getId();
     }
 
+    /**
+     * 사용자의 모찌롤만 반환해줍니다.
+     * @param accessToken JWT Access Token
+     * @param pageNum int
+     * @param pageSize int
+     * @return UserMozzirollGetRes
+     */
     @Override
     public UserMozzirollGetRes getMozzirollsByUser(String accessToken, int pageNum, int pageSize) {
         User user = userService.findUserByToken(accessToken);
