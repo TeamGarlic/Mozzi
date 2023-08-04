@@ -204,22 +204,22 @@ function Booth() {
       )}
       <video autoPlay ref={webcamRef} className="hidden" />
       <canvas ref={bgMaskRef} className="hidden" />
-      {
+      {subscribers &&
         subscribers.map((sub) => {
           return (
-            <video key={JSON.parse(sub.stream.connection.data).uid} ref={(elem) =>
+            <video key={sub.stream.connection.connectionId} ref={(elem) =>
               subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid+(JSON.parse(sub.stream.connection.data).isMask?"_Mask":"")] = elem}
-            className="hidden"></video>
+            className=" "></video>
           )
         })
       }
-      {
+      {subscribers &&
         subscribers.map((sub) => {
           if(!JSON.parse(sub.stream.connection.data).isMask) return null;
           return (
-            <canvas key={JSON.parse(sub.stream.connection.data).uid} ref={(elem) =>
+            <canvas key={sub.stream.connection.connectionId} ref={(elem) =>
               subCanvasRefs.current[JSON.parse(sub.stream.connection.data).uid] = elem}
-            className="hidden"></canvas>
+            className=" "></canvas>
           )
         })
       }
