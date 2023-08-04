@@ -9,7 +9,7 @@ const PublicBoothApi = axios.create({
 });
 
 const PrivateBoothApi = axios.create({
-  baseURL: "https://mozzi.ssafy.life/sessions",
+  baseURL: "https://api.mozzi.lol/sessions",
   config: {
     headers: {
       "Content-Type": "application/json",
