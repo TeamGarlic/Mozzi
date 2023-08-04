@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   resetCamCanvasesAction,
-  setMyLayerSourceAction,
-} from "@/modules/canvasAction.js";
+  setMyLayerSourceAction, updateVideoMapAction,
+} from '@/modules/canvasAction.js';
 import MakeBooth from "./makeBooth";
 import TakePic from "./takePic";
 import { useParams, useLocation } from "react-router-dom";
@@ -49,11 +49,12 @@ function Booth() {
   const camCanvases = useSelector((state) => state.canvasReducer.camCanvases);
   const mainCanvas = useSelector((state) => state.canvasReducer.mainCanvas);
   const myLayer = useSelector((state) => state.canvasReducer.myLayer);
-  // TODO : bgImg를 Redux에서 관리
+  const videoMap = useSelector((state) => state.canvasReducer.videoMap);
+
   const bgNow = useSelector((state) => state.bgReducer.bgNow);
   const subVideoRefs = useRef({});
   const subCanvasRefs = useRef({});
-  const videoMap = {}
+  const localVideoMap = {}
 
   function startTake() {
     dispatch(resetCamCanvasesAction());
@@ -64,6 +65,8 @@ function Booth() {
 
   const onResults = (results) => {
     drawMask(bgMaskRef, bgMaskContextRef, results)
+
+    // console.log(videoMap)
 
     // // 내 웹캠을 담을 canvas (화면에 표시 x)
     // drawMyVid(
@@ -150,27 +153,31 @@ function Booth() {
 
   useEffect(() => {
     console.log(subscribers);
-    console.log(subVideoRefs);
-    console.log(subCanvasRefs);
-    for (var key in videoMap) {
-      delete videoMap[key];
+    // console.log(subVideoRefs);
+    // console.log(subCanvasRefs);
+    for (var key in localVideoMap) {
+      delete localVideoMap[key];
     }
-    subscribers.forEach((sub)=>{
-      if(JSON.parse(sub.stream.connection.data).isMask){
-        videoMap[JSON.parse(sub.stream.connection.data).uid]={
-          ...videoMap[JSON.parse(sub.stream.connection.data).uid],
-          maskRef : subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid+"_Mask"],
-          canvasRef : subCanvasRefs.current[JSON.parse(sub.stream.connection.data).uid],
+    if(subscribers){
+      subscribers.forEach((sub)=>{
+        if(JSON.parse(sub.stream.connection.data).isMask){
+          localVideoMap[JSON.parse(sub.stream.connection.data).uid]={
+            ...localVideoMap[JSON.parse(sub.stream.connection.data).uid],
+            maskRef : subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid+"_Mask"],
+            canvasRef : subCanvasRefs.current[JSON.parse(sub.stream.connection.data).uid],
+          }
+          sub.addVideoElement(subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid+"_Mask"]);
+        }else{
+          localVideoMap[JSON.parse(sub.stream.connection.data).uid]={
+            ...localVideoMap[JSON.parse(sub.stream.connection.data).uid],
+            vidRef : subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid],
+          }
+          sub.addVideoElement(subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid]);
         }
-        sub.addVideoElement(subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid+"_Mask"]).current;
-      }else{
-        videoMap[JSON.parse(sub.stream.connection.data).uid]={
-          ...videoMap[JSON.parse(sub.stream.connection.data).uid],
-          vidRef : subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid],
-        }
-        sub.addVideoElement(subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid]).current;
-      }
-    });
+      });
+    }
+    console.log(localVideoMap);
+    dispatch(updateVideoMapAction(localVideoMap));
     console.log(videoMap);
   }, [subscribers]);
 
