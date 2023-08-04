@@ -6,6 +6,7 @@ import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
 import com.ssafy.mozzi.common.auth.CustomUserDetails;
+import com.ssafy.mozzi.common.dto.UserItem;
 import com.ssafy.mozzi.db.entity.remote.User;
 
 /**
@@ -61,6 +62,14 @@ public class UserMapper {
             .userId(user.getUserId())
             .userNickname(user.getNickname())
             .email(user.getEmail())
+            .build();
+    }
+
+    public static UserItem toUserItem(User user) {
+        return UserItem.builder()
+            .id(user.getId())
+            .userId(user.getUserId())
+            .nickname(user.getNickname())
             .build();
     }
 }

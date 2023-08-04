@@ -64,6 +64,9 @@ public class SecurityConfig {
 
                 // swagger 에 대한 보안 설정
                 .requestMatchers("/swagger-ui/index.html").permitAll()
+
+                // mozzirolls 에 대한 보안 설정
+                .requestMatchers(HttpMethod.GET, "/mozzirolls").authenticated()
             )
             .headers(headers ->
                 headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)

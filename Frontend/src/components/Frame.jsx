@@ -6,9 +6,10 @@ import {
   DragStartAction,
   Frame2FrameAction,
 } from "@/modules/clipAction";
-import frame1 from "@/assets/img/frame6.jpg"
+import PropTypes from "prop-types";
+import {checkHost} from "@/utils/DecoratorUtil.js";
 
-function Frame() {
+function Frame({user}) {
   const frame = useSelector((state) => state.clipReducer.frame);
   const dispatch = useDispatch();
   const drag = useSelector((state) => state.clipReducer.drag);
@@ -79,10 +80,17 @@ function Frame() {
     })
   }
 
+  clickVideo = checkHost(clickVideo, user.isHost);
+  onDragStart = checkHost(onDragStart, user.isHost);
+  onDragEnd = checkHost(onDragEnd, user.isHost);
+  onDrop = checkHost(onDrop, user.isHost);
+  onDragOver = checkHost(onDragOver, user.isHost);
+  onDragEnter = checkHost(onDragEnter, user.isHost);
+
   return (
     <div>
       <div className="relative">
-        <img src={frame1} alt="frame" ref={imgRef}></img>
+        <img src={frame.src} alt="frame" ref={imgRef}></img>
         {frameNum.map((i) => {
           if (frame[i]["src"]) {
             return (
@@ -126,3 +134,14 @@ function Frame() {
 }
 
 export default Frame;
+
+
+Frame.propTypes = {
+  user: PropTypes.shape({
+    id: PropTypes.number,
+    userId: PropTypes.string,
+    userNickname: PropTypes.string,
+    email: PropTypes.string,
+    isHost: PropTypes.number,
+  }),
+};
