@@ -24,6 +24,7 @@ function Booth() {
   const { user, checkUser } = useUser({isHost: location.state?location.state.isHost:1});
   const [bgList, setBgList] = useState([]);
   const [frameList, setFrameList] = useState([]);
+  const pickedFrame = useSelector((state) => state.clipReducer.frame);
 
   const {
     mainSession,
@@ -56,6 +57,7 @@ function Booth() {
   const videoMap = {}
 
   function startTake() {
+    if (pickedFrame.id === 0) return;
     dispatch(resetCamCanvasesAction());
     gotoTakePic();
     setTaking(true);
