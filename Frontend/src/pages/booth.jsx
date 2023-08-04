@@ -8,7 +8,7 @@ import MakeBooth from "./makeBooth";
 import TakePic from "./takePic";
 import { useParams, useLocation } from "react-router-dom";
 import { SelfieSegmentation } from "@mediapipe/selfie_segmentation";
-import { drawCanvas, drawMask } from '@/utils/videoUtil.js';
+import { drawCanvas, drawMask, drawSubscriber } from '@/utils/videoUtil.js';
 import useSession from "@/hooks/useSession.js";
 import { changeBgAction } from "@/modules/bgAction.js";
 import useUser from "@/hooks/useUser";
@@ -64,9 +64,15 @@ function Booth() {
   startTake = checkHost(startTake, user.isHost);
 
   const onResults = (results) => {
-    drawMask(bgMaskRef, bgMaskContextRef, results)
+    // drawMask(bgMaskRef, bgMaskContextRef, results)
+    drawMask(bgMaskRef.current, bgMaskContextRef.current, results)
 
-    // console.log(videoMap)
+    console.log(videoMap)
+    for (var key in videoMap) {
+      drawSubscriber(videoMap[key].canvasRef, videoMap[key].canvasContextRef, ('vidRef' in videoMap[key])?videoMap[key].vidRef:webcamRef.current, videoMap[key].maskRef);
+
+      // if('vidRef' in videoMap[key]) drawSubscriber(videoMap[key].canvasRef, videoMap[key].canvasContextRef, videoMap[key].vidRef, videoMap[key].maskRef);
+    }
 
     // // 내 웹캠을 담을 canvas (화면에 표시 x)
     // drawMyVid(
@@ -165,6 +171,7 @@ function Booth() {
             ...localVideoMap[JSON.parse(sub.stream.connection.data).uid],
             maskRef : subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid+"_Mask"],
             canvasRef : subCanvasRefs.current[JSON.parse(sub.stream.connection.data).uid],
+            canvasContextRef : subCanvasRefs.current[JSON.parse(sub.stream.connection.data).uid].getContext("2d"),
           }
           sub.addVideoElement(subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid+"_Mask"]);
         }else{
@@ -209,7 +216,7 @@ function Booth() {
           return (
             <video key={sub.stream.connection.connectionId} ref={(elem) =>
               subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid+(JSON.parse(sub.stream.connection.data).isMask?"_Mask":"")] = elem}
-            className=" "></video>
+            className="hidden"></video>
           )
         })
       }
