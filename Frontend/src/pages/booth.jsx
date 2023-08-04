@@ -13,7 +13,7 @@ import useSession from "@/hooks/useSession.js";
 import { changeBgAction } from "@/modules/bgAction.js";
 import useUser from "@/hooks/useUser";
 import {checkHost} from "@/utils/DecoratorUtil.js";
-import fileApi from "@/api/fileApi.js";
+import itemApi from "@/api/itemApi.js";
 
 function Booth() {
   const [taking, setTaking] = useState(false);
@@ -24,6 +24,7 @@ function Booth() {
   const { user, checkUser } = useUser({isHost: location.state?location.state.isHost:1});
   const [bgList, setBgList] = useState([]);
   const [frameList, setFrameList] = useState([]);
+  const pickedFrame = useSelector((state) => state.clipReducer.frame);
 
   const {
     mainSession,
@@ -56,6 +57,7 @@ function Booth() {
   const videoMap = {}
 
   function startTake() {
+    if (pickedFrame.id === 0) return;
     dispatch(resetCamCanvasesAction());
     gotoTakePic();
     setTaking(true);
@@ -86,7 +88,7 @@ function Booth() {
 
   async function getBgList(pageNum, pageSize) {
     try {
-      let res = await fileApi.getBgList(pageNum, pageSize);
+      let res = await itemApi.getBgList(pageNum, pageSize);
       if (res.status === 200) {
         setBgList(res.data.data.backgrounds);
       }
@@ -97,7 +99,7 @@ function Booth() {
 
   async function getFrameList(){
     try {
-      let res = await fileApi.getFrameList();
+      let res = await itemApi.getFrameList();
       if (res.status === 200) {
         setFrameList(res.data.data.frames)
       }

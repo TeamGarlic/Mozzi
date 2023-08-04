@@ -4,12 +4,13 @@ import EnterDialog from "@/components/EnterDialog";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { resetCamCanvasesAction } from "@/modules/canvasAction.js";
-import { useDispatch } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {setFrameAction} from "@/modules/clipAction.js";
 
 function MakeBooth({ startTake, shareCode, subscribers, mainPublisher, leaveSession, gotoTakePic, frameList }) {
   const [visibility, setVisibility] = useState(true);
   const [toggleVoice, setToggleVoice] = useState(true);
+  const pickedFrame = useSelector((state) => state.clipReducer.frame);
 
   const dispatch = useDispatch();
   const closeDialog = () => {
@@ -66,7 +67,7 @@ function MakeBooth({ startTake, shareCode, subscribers, mainPublisher, leaveSess
             <div className="gap-6 p-4 mr-[calc(17rem)]  overflow-x-scroll scrollbar-thumb-gray-900 scrollbar-track-gray-100 scrollbar-hide">
               <div className=" inline-flex flex-nowrap h-[calc(25rem)] gap-4 p-4">
                 {frameList.map((frame) => (
-                    <div onClick={(e)=>clickFrame(e, frame)} key={frame.id} className=" w-96 border-2 float-left">
+                    <div onClick={(e)=>clickFrame(e, frame)} key={frame.id} className={`w-96 border-2 float-left ${pickedFrame.id === frame.id ? "border-blue-500" : ""}`}>
                       <img src={`https://api.mozzi.lol/files/object/${frame.objectName}`} alt={frame.objectName}></img>
                     </div>
                   )

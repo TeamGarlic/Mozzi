@@ -6,6 +6,8 @@ import {useSelector} from "react-redux";
 import {useEffect, useRef} from "react";
 import {useNavigate, useParams, useLocation} from "react-router-dom";
 import {checkHost} from "@/utils/DecoratorUtil.js";
+import fileApi from "@/api/fileApi.js";
+import itemApi from "@/api/itemApi.js";
 
 function AfterTake() {
   const { code: shareCode } = useParams();
@@ -40,6 +42,7 @@ function AfterTake() {
       // Todo: webm file url => 백엔드와 통신해서 url 주소를 재설정 해야함
       const fileURL = window.URL.createObjectURL(ClipFile);
       arrClipData.splice(0);
+      saveClip(ClipFile, "test");
       navigate(`/${shareCode}/finish`, {state: {clip: fileURL}});
     }
 
@@ -51,6 +54,17 @@ function AfterTake() {
       mediaRecorder.stop();
       // console.log("stop")
     }, 5000)
+  }
+
+  async function saveClip(file, title) {
+    try {
+      let res = await fileApi.saveClip(file, title);
+      if (res.status === 200) {
+        console.log(res);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   function makeClip(){

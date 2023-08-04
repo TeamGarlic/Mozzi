@@ -3,6 +3,7 @@ import { Clip2Frame, AddClip, Frame2Clip, DragStart, DragEnd, DragClear, Frame2F
 
 const clipState = {
   frame: {
+    id: 0,
     title: "",
     n: 4,
     src: "",
@@ -43,6 +44,7 @@ const clipReducer = (state = clipState, action) => {
     case setFrame: {
       // params로 frame 객체 그대로 입력
       const frame = {
+        id: action.payload.frame.id,
         title: action.payload.frame.title,
         n: action.payload.frame.rects.length,
         src: `https://api.mozzi.lol/files/object/${action.payload.frame.objectName}`,
