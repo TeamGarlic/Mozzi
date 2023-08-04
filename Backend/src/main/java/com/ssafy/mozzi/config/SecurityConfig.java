@@ -59,6 +59,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/files/mozziroll/upload").authenticated()
                 .requestMatchers(HttpMethod.GET, "/files/mozziroll/{mozzirollId}").permitAll()
                 .requestMatchers(HttpMethod.GET, "/files/object/{objectName}").permitAll()
+
+                // mozzirolls 에 대한 보안 설정
+                .requestMatchers(HttpMethod.GET, "/mozzirolls").authenticated()
             )
             .headers(headers ->
                 headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)

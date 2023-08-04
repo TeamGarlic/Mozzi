@@ -2,6 +2,8 @@ package com.ssafy.mozzi.db.repository.remote;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,4 +17,6 @@ import com.ssafy.mozzi.db.entity.remote.UserMozziroll;
 @Repository
 public interface UserMozzirollRepository extends JpaRepository<UserMozziroll, Long> {
     Optional<UserMozziroll> findByMozzirollIdAndUserId(long mozzirollId, long userId);
+
+    Page<UserMozziroll> findByUserId(Long userId, Pageable pageable);
 }
