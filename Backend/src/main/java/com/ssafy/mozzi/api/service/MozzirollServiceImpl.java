@@ -1,17 +1,24 @@
 package com.ssafy.mozzi.api.service;
 
+import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
+import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.common.exception.handler.AlreadyLinkedMozziException;
 import com.ssafy.mozzi.common.exception.handler.BoothNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.MozzirollNotExists;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.util.MozziUtil;
+import com.ssafy.mozzi.common.util.mapper.MozzirollMapper;
 import com.ssafy.mozzi.db.entity.local.Booth;
 import com.ssafy.mozzi.db.entity.remote.Mozziroll;
+import com.ssafy.mozzi.db.entity.remote.User;
 import com.ssafy.mozzi.db.entity.remote.UserMozziroll;
 import com.ssafy.mozzi.db.repository.local.BoothRepository;
 import com.ssafy.mozzi.db.repository.local.BoothUserRepository;
@@ -75,5 +82,14 @@ public class MozzirollServiceImpl implements MozzirollService {
                 .build());
 
         return userMozziroll.getId();
+    }
+
+    @Override
+    public UserMozzirollGetRes getMozzirollsByUser(String accessToken, int pageNum, int pageSize) {
+        User user = userService.findUserByToken(accessToken);
+        PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);
+        Page<UserMozziroll> page = userMozzirollRepository.findByUserId(user.getId(), pageRequest);
+        List<UserMozziroll> userMozzirolls = page.getContent();
+        return MozzirollMapper.toUserMozzirollGetRes(userMozzirolls, page.getTotalPages());
     }
 }

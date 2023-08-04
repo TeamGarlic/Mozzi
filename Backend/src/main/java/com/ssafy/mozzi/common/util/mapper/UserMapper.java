@@ -7,6 +7,7 @@ import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
 import com.ssafy.mozzi.api.response.UserUpdateRes;
 import com.ssafy.mozzi.common.auth.CustomUserDetails;
+import com.ssafy.mozzi.common.dto.UserItem;
 import com.ssafy.mozzi.db.entity.remote.User;
 
 /**
@@ -101,5 +102,18 @@ public class UserMapper {
      */
     public static UserUpdateRes toUserUpdateRes(User user) {
         return UserUpdateRes.builder().id(user.getId()).build();
+    }
+
+    /**
+     * User 엔티티 를 UserItem 로 변환
+     * @param user User
+     * @return UserItem
+     */
+    public static UserItem toUserItem(User user) {
+        return UserItem.builder()
+            .id(user.getId())
+            .userId(user.getUserId())
+            .nickname(user.getNickname())
+            .build();
     }
 }

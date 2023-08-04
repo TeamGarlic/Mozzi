@@ -45,18 +45,15 @@ public class BoothServiceImpl implements BoothService {
     private final RandomGenerator random = RandomGeneratorFactory
         .getDefault().create(System.currentTimeMillis());
 
-    private final UserService userService;
-
     private final MozziUtil mozziUtil;
 
     private final OpenVidu openVidu;
 
     @Autowired
-    BoothServiceImpl(BoothRepository boothRepository, BoothUserRepository boothUserRepository, UserService userService,
-        MozziUtil mozziUtil, Environment env) {
+    BoothServiceImpl(BoothRepository boothRepository, BoothUserRepository boothUserRepository, MozziUtil mozziUtil,
+        Environment env) {
         this.boothRepository = boothRepository;
         this.boothUserRepository = boothUserRepository;
-        this.userService = userService;
         this.mozziUtil = mozziUtil;
         this.openVidu = new OpenVidu(Objects.requireNonNull(env.getProperty("OPENVIDU_URL")),
             Objects.requireNonNull(env.getProperty("OPENVIDU_SECRET")));
