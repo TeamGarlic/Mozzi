@@ -103,6 +103,7 @@ public class ItemServiceImpl implements ItemService {
      * @see FileRepository
      * @see ObjectStorageClient
      * @see ItemMapper
+     * @throws CloudStorageSaveFailException (mozzi code : 0, Http status : 500)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
@@ -120,7 +121,7 @@ public class ItemServiceImpl implements ItemService {
             OBJECT_NAME, contentType);
 
         if (response.getLastModified() == null)
-            throw new CloudStorageSaveFailException("파일 업로드 실패");
+            throw new CloudStorageSaveFailException("Fail to upload background");
         return ItemMapper.toItemBackgroundPostRes(backgroud);
     }
 
@@ -168,7 +169,6 @@ public class ItemServiceImpl implements ItemService {
                     .build());
 
             frameClip.setFrame(frame);
-
             frameClips.add(frameClip);
         }
 
@@ -177,6 +177,4 @@ public class ItemServiceImpl implements ItemService {
 
         return "success";
     }
-
-    ;
 }

@@ -11,8 +11,9 @@ import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.common.exception.handler.AlreadyLinkedMozziException;
 import com.ssafy.mozzi.common.exception.handler.BoothNotExistsException;
-import com.ssafy.mozzi.common.exception.handler.MozzirollNotExists;
+import com.ssafy.mozzi.common.exception.handler.MozzirollNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
+import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.common.util.mapper.MozzirollMapper;
 import com.ssafy.mozzi.db.entity.local.Booth;
@@ -45,6 +46,11 @@ public class MozzirollServiceImpl implements MozzirollService {
      * 사용자 계정에 Mozziroll 연결 요청을 유효성 확인 후 연결합니다.
      * @param request MozziLinked Request
      * @param accessToken JWT Access Token
+     * @throws AlreadyLinkedMozziException (Mozzi code : 8, Http Status 400)
+     * @throws UnAuthorizedException (Mozzi code : 11, Http Status 401)
+     * @throws MozzirollNotExistsException (Mozzi code : 9, Http Status 404)
+     * @throws BoothNotExistsException (Mozzi code : 10, Http Status 404)
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
      */
     @Override
     public Long link(MozziLinkPostRequest request, String accessToken) {
@@ -58,7 +64,7 @@ public class MozzirollServiceImpl implements MozzirollService {
         }
         Optional<Mozziroll> mozziroll = mozzirollRepository.findById(request.getMozzirollId());
         if (mozziroll.isEmpty()) {
-            throw new MozzirollNotExists("Requested Mozziroll not exists");
+            throw new MozzirollNotExistsException("Requested Mozziroll not exists");
         }
         Optional<Booth> booth = boothRepository.findByShareCode(request.getShareCode());
         if (booth.isEmpty()) {
@@ -89,6 +95,7 @@ public class MozzirollServiceImpl implements MozzirollService {
      * @param pageNum int
      * @param pageSize int
      * @return UserMozzirollGetRes
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
      */
     @Override
     public UserMozzirollGetRes getMozzirollsByUser(String accessToken, int pageNum, int pageSize) {

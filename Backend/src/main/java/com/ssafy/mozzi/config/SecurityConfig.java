@@ -63,7 +63,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/files/object/{objectName}").permitAll()
 
                 // swagger 에 대한 보안 설정
-                .requestMatchers("/swagger-ui/index.html").permitAll()
+                .requestMatchers("/swagger-ui/**").permitAll()
+                .requestMatchers("/mozzi-api/**").permitAll()
+                .requestMatchers("/v3/**").permitAll()
 
                 // mozzirolls 에 대한 보안 설정
                 .requestMatchers(HttpMethod.GET, "/mozzirolls").authenticated()

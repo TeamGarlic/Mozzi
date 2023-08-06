@@ -24,9 +24,17 @@ import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
 import com.ssafy.mozzi.api.response.UserUpdateRes;
 import com.ssafy.mozzi.api.service.UserService;
+import com.ssafy.mozzi.common.exception.handler.DuplicatedUserIdException;
+import com.ssafy.mozzi.common.exception.handler.InvalidRefreshTokenException;
+import com.ssafy.mozzi.common.exception.handler.NoDataException;
+import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
+import com.ssafy.mozzi.common.exception.handler.UserLoginFailException;
+import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,6 +48,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
+@Tag(name = "User 컨트롤러", description = "사용자를 관리하는 컨트롤러 입니다.")
 public class UserController {
     private final UserService userService;
 
@@ -50,10 +59,13 @@ public class UserController {
      * @return ResponseEntity<? extends BaseResponseBody> with UserRegisterPostRes
      * @see UserService
      */
-    @Operation(summary = "회원 가입 API", description = "회원 가입을 위한 POST 메소드")
+    @Operation(summary = "회원가입", description = "사용자 회원가입 API 입니다.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "success"),
-        @ApiResponse(responseCode = "400", description = "bad request")
+        @ApiResponse(responseCode = "201", description = "회원가입 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "400", description = "중복된 User Id",
+            content = @Content(schema = @Schema(implementation = DuplicatedUserIdException.DuplicatedUserIdResponse.class))),
+        @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
     })
     @PostMapping("/register")
     public ResponseEntity<? extends BaseResponseBody<UserRegisterPostRes>> register(
@@ -77,6 +89,16 @@ public class UserController {
      * @return ResponseEntity<? extends BaseResponseBody> with UserLoginPostRes
      * @see UserService
      */
+    @Operation(summary = "로그인", description = "사용자 로그인 API 입니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "로그인 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "400", description = "로그인 실패",
+            content = @Content(schema = @Schema(implementation = UserLoginFailException.UserLoginFailResponse.class))),
+        @ApiResponse(responseCode = "404", description = "존재하지 않는 User Id",
+            content = @Content(schema = @Schema(implementation = UserIdNotExistsException.UserIdNotExistsResponse.class))),
+        @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+    })
     @PostMapping("/login")
     public ResponseEntity<? extends BaseResponseBody<UserLoginPostRes>> login(@RequestBody UserLoginPostReq request) {
 
@@ -97,6 +119,16 @@ public class UserController {
      * @return ResponseEntity<? extends BaseResponseBody> with reissuePostRes
      * @see com.ssafy.mozzi.common.auth.JwtTokenProvider
      */
+    @Operation(summary = "토큰 재발행", description = "Access Token을 재발급 받기 위한 API 입니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Acess Token 재발급 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "400", description = "유효하지 않은 Refresh Token",
+            content = @Content(schema = @Schema(implementation = InvalidRefreshTokenException.InvalidRefreshTokenResponse.class))),
+        @ApiResponse(responseCode = "404", description = "존재하지 않는 User Id",
+            content = @Content(schema = @Schema(implementation = UserIdNotExistsException.UserIdNotExistsResponse.class))),
+        @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+    })
     @PostMapping("/reissue")
     public ResponseEntity<? extends BaseResponseBody<ReIssuePostRes>> reissue(@RequestBody ReIssuePostReq request) {
 
@@ -112,6 +144,12 @@ public class UserController {
      * @param userId 사용자가 입력한 id
      * @see UserService
      */
+    @Operation(summary = "User Id Check", description = "요청된 유저 ID가 사용 가능한가 확인합니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "확인 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "500", description = "Internal Server Error",
+            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+    })
     @GetMapping("/check-login-id")
     public ResponseEntity<? extends BaseResponseBody<UserIdCheckRes>> userIdCheck(@RequestParam String userId) {
         UserIdCheckRes userIdCheckRes = userService.userIdCheck(userId);
@@ -130,6 +168,14 @@ public class UserController {
      * @param accessToken 사용자의 Token
      * @see UserService
      */
+    @Operation(summary = "유저 정보", description = "유저 정보를 반환합니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "유저 정보 조회 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "404", description = "존재하지 않는 User Id",
+            content = @Content(schema = @Schema(implementation = UserIdNotExistsException.UserIdNotExistsResponse.class))),
+        @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+    })
     @GetMapping()
     public ResponseEntity<? extends BaseResponseBody<UserInfoRes>> userInfo(
         @RequestHeader("Authorization") String accessToken) {
@@ -148,6 +194,14 @@ public class UserController {
      * @param accessToken 사용자의 Token
      * @see UserService
      */
+    @Operation(summary = "로그아웃", description = "유저의 Refresh Token을 Revoke 시킵니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "로그아웃 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "404", description = "존재하지 않는 User Id",
+            content = @Content(schema = @Schema(implementation = UserIdNotExistsException.UserIdNotExistsResponse.class))),
+        @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+    })
     @GetMapping("/logout")
     public ResponseEntity<? extends BaseResponseBody<String>> logout(
         @RequestHeader("Authorization") String accessToken) {
@@ -168,6 +222,16 @@ public class UserController {
      * @param request
      * @see UserService
      */
+    @Operation(summary = "유저 정보 갱신", description = "유저의 정보를 갱신 시킵니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "유저 정보 갱신 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "404", description = "존재하지 않는 User Id",
+            content = @Content(schema = @Schema(implementation = UserIdNotExistsException.UserIdNotExistsResponse.class))),
+        @ApiResponse(responseCode = "404", description = "갱신할 정보가 존재하지 않습니다.",
+            content = @Content(schema = @Schema(implementation = NoDataException.NoDataResponse.class))),
+        @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+    })
     @PatchMapping
     public ResponseEntity<? extends BaseResponseBody<UserUpdateRes>> update(@RequestBody UserUpdatePutReq request) {
         UserUpdateRes userUpdateRes = userService.update(request);
