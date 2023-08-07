@@ -26,9 +26,9 @@ export default function UserSideBar({ leaveSession }) {
         </div>
 
         {subCanvases &&
-          subCanvases.map((sub) => (
-            <div key={sub.key} className="stream-container col-md-6 col-xs-6">
-              <UserVideoComponent canvas={sub.canvas} />
+          Object.keys(subCanvases).map(key=>(
+            <div key={key} className="stream-container col-md-6 col-xs-6">
+              <UserVideoComponent canvas={subCanvases[key]} />
               <hr />
             </div>
           ))}

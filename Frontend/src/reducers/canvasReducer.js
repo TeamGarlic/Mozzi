@@ -28,7 +28,7 @@ const canvasState = {
     canvasContextRef:undefined,
   },
   pubCanvas : undefined,
-  subCanvases : [],
+  subCanvases : {},
 }
 
 const canvasReducer = (state = canvasState, action) => {
@@ -86,10 +86,7 @@ const canvasReducer = (state = canvasState, action) => {
       }
       for (let key in action.payload) {
         state.subVideoMap[key] = action.payload[key];
-        newSubCanvases.push({
-          key:key,
-          canvas:action.payload[key].canvasRef
-        });
+        newSubCanvases[key] = action.payload[key].canvasRef;
       }
       return {
         ...state,
