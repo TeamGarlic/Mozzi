@@ -58,6 +58,18 @@ function useSession(shareCode) {
         setNow("TAKING");
       });
 
+      mainSession.on("signal:gotoModifing", async (event) => {
+        console.log("방장이 편집하쟤!!");
+        // setNowTaking(true);
+        setNow("MODIFING");
+      });
+
+      mainSession.on("signal:gotoFinish", async (event) => {
+        console.log("방장이 사진찍재!!");
+        // setNowTaking(true);
+        setNow("FINISH");
+      });
+
       mainSession.on("streamDestroyed", (event) => {
         setSubscribers((prev) => {
           const newSubscribers = [...prev];
@@ -140,6 +152,22 @@ function useSession(shareCode) {
     });
   };
 
+  const gotoModifing = async () => {
+    await mainSession.signal({
+      data: "",
+      to: [],
+      type: "gotoModifing",
+    });
+  };
+
+  const gotoFinish = async () => {
+    await mainSession.signal({
+      data: "",
+      to: [],
+      type: "gotoFinish",
+    });
+  };
+
   const getToken = async (code) => {
     let idRes = await boothApi.getSessionID(code);
     const {
@@ -178,6 +206,8 @@ function useSession(shareCode) {
     mainPublisher,
     leaveSession,
     gotoTakePic,
+    gotoModifing,
+    gotoFinish,
     nowTaking,
     now,
     setNow,
