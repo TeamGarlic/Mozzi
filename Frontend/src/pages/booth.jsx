@@ -46,7 +46,8 @@ function Booth() {
     nowTaking,
     now,
     setNow,
-    setFrame
+    setFrame,
+    sendBlob,
   } = useSession(shareCode);
 
   // 소스 웹캠 video
@@ -241,6 +242,7 @@ function Booth() {
           user={user}
           bgList={bgList}
           goNext={gotoModifing}
+          sendBlob={sendBlob}
         />
       )}
       {now === "MODIFING" && (

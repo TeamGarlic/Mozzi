@@ -3,7 +3,7 @@ import { OpenVidu } from "openvidu-browser";
 import { v4 } from "uuid";
 import boothApi from "@/api/boothApi.js";
 import {useDispatch} from "react-redux";
-import {setFrameAction} from "@/modules/clipAction.js";
+import {setFrameAction, AddClipAction} from "@/modules/clipAction.js";
 
 function useSession(shareCode) {
   const [mainSession, setMainSession] = useState(undefined);
@@ -76,6 +76,15 @@ function useSession(shareCode) {
       mainSession.on("signal:setFrame", async (event) => {
         const frame = await JSON.parse(event.data);
         dispatch(setFrameAction({frame}))
+      });
+
+      mainSession.on("signal:sendBlob", async (event) => {
+        const data = await JSON.parse(event.data);
+        // Todo: blob이 비어있을 경우 에러 발생
+        // 합성 로직 이후 확인 필요
+        const blobURL = window.URL.createObjectURL(data.blob);
+        console.log(blobURL)
+        dispatch(AddClipAction({idx: data.idx, src: blobURL}))
       })
 
       mainSession.on("streamDestroyed", (event) => {
@@ -184,6 +193,13 @@ function useSession(shareCode) {
     });
   };
 
+  const sendBlob = async (idx, blob) => {
+    await mainSession.signal({
+      data: JSON.stringify({idx: idx, blob: blob}),
+      to: [],
+      type: "sendBlob",
+    })
+  }
 
 
   const getToken = async (code) => {
@@ -229,7 +245,8 @@ function useSession(shareCode) {
     nowTaking,
     now,
     setNow,
-    setFrame
+    setFrame,
+    sendBlob,
   };
 }
 
