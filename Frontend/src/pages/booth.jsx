@@ -196,19 +196,19 @@ function Booth() {
     }
     if (subscribers) {
       subscribers.forEach((sub) => {
-        localVideoMap[JSON.parse(sub.stream.connection.data).uid] = {
-          ...localVideoMap[JSON.parse(sub.stream.connection.data).uid],
+        localVideoMap[sub.stream.connection.connectionId] = {
+          ...localVideoMap[sub.stream.connection.connectionId],
           vidRef:
-            subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid],
+            subVideoRefs.current[sub.stream.connection.connectionId],
           canvasRef:
-            subCanvasRefs.current[JSON.parse(sub.stream.connection.data).uid],
+            subCanvasRefs.current[sub.stream.connection.connectionId],
           canvasContextRef:
             subCanvasRefs.current[
-              JSON.parse(sub.stream.connection.data).uid
-              ].getContext("2d"),
+              sub.stream.connection.connectionId
+              ].getContext("2d", { willReadFrequently: true }),
         };
         sub.addVideoElement(
-          subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid]
+          subVideoRefs.current[sub.stream.connection.connectionId]
         );
       });
     }
@@ -219,12 +219,13 @@ function Booth() {
 
 
   useEffect(() => {
+    console.log(publisher)
     if (publisher){
       publisher.addVideoElement(pubVideoRef.current);
       dispatch(updatePubVideoMapAction({
         vidRef:pubVideoRef.current,
         canvasRef:pubCanvasRef.current,
-        canvasContextRef:pubCanvasRef.current.getContext("2d"),
+        canvasContextRef:pubCanvasRef.current.getContext("2d", { willReadFrequently: true }),
       }));
     }
   }, [publisher]);
@@ -237,12 +238,36 @@ function Booth() {
 
   return (
     <>
+
+      <video autoPlay ref={webcamRef} className="collapse absolute" />
+      <canvas ref={bgRemovedRef}  width={1280} height={720} className="collapse absolute" />
+
+      <video ref={pubVideoRef} className="collapse absolute" ></video>
+      <canvas ref={pubCanvasRef}  width={1280} height={720} className="collapse absolute" />
+      {subscribers &&
+        subscribers.map((sub) => {
+          return (
+            <div key={sub.stream.connection.connectionId}>
+              <video
+                ref={(elem) =>
+                  (subVideoRefs.current[sub.stream.connection.connectionId] = elem)
+                }
+                className="collapse absolute"
+              ></video>
+              <canvas
+                ref={(elem) =>
+                  (subCanvasRefs.current[sub.stream.connection.connectionId] = elem)
+                }
+                className="collapse absolute"
+              ></canvas>
+            </div>
+          );
+        })}
+
       {now === "MAKING" && (
         <MakeBooth
           startTake={startTake}
           shareCode={shareCode}
-          subscribers={subscribers}
-          publisher={publisher}
           leaveSession={leaveSession}
           frameList={frameList}
           user={user}
@@ -264,30 +289,6 @@ function Booth() {
         <AfterTake goNext={gotoFinish} user={user} />
       )}
       {now === "FINISH" && <Finish />}
-      <video autoPlay ref={webcamRef} className="hidden" />
-      <canvas ref={bgRemovedRef}  width={1280} height={720} className="hidden" />
-
-      <video ref={pubVideoRef} className="hidden" ></video>
-      <canvas ref={pubCanvasRef}  width={1280} height={720} className=" " />
-      {subscribers &&
-        subscribers.map((sub) => {
-          return (
-            <div key={sub.stream.connection.connectionId}>
-              <video
-                ref={(elem) =>
-                  (subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid] = elem)
-                }
-                className="hidden"
-              ></video>
-              <canvas
-                ref={(elem) =>
-                  (subCanvasRefs.current[JSON.parse(sub.stream.connection.data).uid] = elem)
-                }
-                className=" "
-              ></canvas>
-            </div>
-          );
-        })}
     </>
   );
 }

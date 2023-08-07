@@ -1,14 +1,15 @@
 import PropTypes from "prop-types";
 import { useEffect, useRef } from 'react';
 
-export default function UserVideoComponent(sub) {
+export default function UserVideoComponent(canvas) {
   const vidRef = useRef();
 
   useEffect(() => {
-    if (sub.sub) {
-      sub.sub.addVideoElement(vidRef.current);
+    if(canvas&&canvas.canvas){
+      console.log(canvas);
+      vidRef.current.srcObject = canvas.canvas.captureStream();
     }
-  }, [sub]);
+  }, [canvas]);
 
   return(
       <video autoPlay={true} ref={vidRef} />

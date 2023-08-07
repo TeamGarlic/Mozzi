@@ -57,7 +57,7 @@ export const chromaKey = function(canvas, context, video) {
   let d = pixels.data;
   // console.log(d);
   for(let i =0; i< d.length; i+=4){
-    d[i+3] = (d[i]<20&&d[i+1]>240&&d[i+2]<20)?0:255;
+    d[i+3] = (d[i]<70&&d[i+1]>220&&d[i+2]<70)?255-d[i+1]:255;
   }
   context.putImageData(pixels,0,0);
 

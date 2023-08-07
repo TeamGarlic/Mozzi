@@ -27,6 +27,8 @@ const canvasState = {
     canvasRef:undefined,
     canvasContextRef:undefined,
   },
+  pubCanvas : undefined,
+  subCanvases : [],
 }
 
 const canvasReducer = (state = canvasState, action) => {
@@ -78,22 +80,25 @@ const canvasReducer = (state = canvasState, action) => {
       }
     }
     case updateSubVideoMap: {
-      // state.videoMap = action.payload;
-      // console.log(action.payload);
+      const newSubCanvases = [];
       for (let key in state.subVideoMap) {
         delete state.subVideoMap[key];
       }
       for (let key in action.payload) {
         state.subVideoMap[key] = action.payload[key];
+        newSubCanvases.push({
+          key:key,
+          canvas:action.payload[key].canvasRef
+        });
       }
-      // console.log(state.videoMap);
       return {
-        ...state
+        ...state,
+        subCanvases : newSubCanvases,
       }
     }
     case updatePubVideoMap: {
       state.pubVideoMap.vidRef = action.payload.vidRef;
-      state.pubVideoMap.canvasRef = action.payload.canvasRef;
+      state.pubCanvas = state.pubVideoMap.canvasRef = action.payload.canvasRef;
       state.pubVideoMap.canvasContextRef = action.payload.canvasContextRef;
       return {
         ...state
