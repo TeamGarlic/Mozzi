@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import PicSideBar from "../components/PicSideBar";
@@ -11,10 +11,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { AddClipAction } from "@/modules/clipAction";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 
-function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, sendBlob }) {
+function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, sendBlob, timer, taken, timeChange, startTaking, finishTaking, nowTaking }) {
   const timers = [3, 5, 10];
-  const [taken, setTaken] = useState(1);
-  const [timer, setTimer] = useState(3);
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
   var interval;
@@ -32,7 +30,8 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
     };
     mediaRecorder.onstop = () => {
       const blob = new Blob(arrClipData);
-      sendBlob(idx, blob)
+      console.log(blob);
+      sendBlob(idx, blob);
 
       const blobURL = window.URL.createObjectURL(blob);
       dispatch(AddClipAction({ idx, src: blobURL }));
@@ -47,26 +46,23 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
     setTimeout(() => {
       // 녹화 종료
       mediaRecorder.stop();
-      setTimerVisible(false);
-      console.log(idx);
-      // Todo: taken에 따른 로직 take 함수에 넣기(비동기 필요)
       if (taken == 4) {
-        // console.log(clipList);
-        // navigate(`/${shareCode}/aftertake`, {state: {user: user}});
         goNext();
       } else {
-        // console.log(clipList);
-        setTaken(taken + 1);
+        finishTaking();
       }
     }, 5000);
   }
-  function timeChange(e) {
-    setTimer(e.target.value);
-    // console.log(timer + "로 설정");
-    setCount(e.target.value);
+  function setTime(e) {
+    timeChange(e.target.value)
   }
 
   function take() {
+    startTaking();
+    // startCount();
+  }
+
+  function startCount() {
     let isTaking = 0;
     setTimerVisible(true);
     // console.log(timer + "초 후 촬영");
@@ -81,6 +77,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
           recordClip(taken);
         } else if (isTaking === 1 && next === 0) {
           clearInterval(interval);
+          setTimerVisible(false);
           isTaking = 0;
           return timer;
         }
@@ -89,15 +86,15 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
     }, 1000);
   }
   take = checkHost(take, user.isHost);
+  recordClip = checkHost(recordClip, user.isHost);
 
-  // useEffect(() => {
-  //   if (count === 0) {
-  //     alert("찰칵!");
-  //     clearInterval(interval);
-  //     setCount(timer);
-  //     setTimerVisible(false);
-  //   }
-  // }, [count]);
+  useEffect(() => {
+    if (nowTaking) startCount();
+  }, [nowTaking])
+
+  useEffect(() => {
+    setCount(timer);
+  }, [timer]);
   return (
     <Layout>
       <>
@@ -121,7 +118,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
             <MyRadioGroup
               arr={timers}
               name="timer"
-              onChange={timeChange}
+              onChange={setTime}
               nowState={Number(timer)}
               text={"⏲️"}
             />
@@ -159,4 +156,10 @@ TakePic.propTypes = {
     isHost: PropTypes.number,
   }),
   sendBlob: PropTypes.func,
+  timer: PropTypes.number,
+  taken: PropTypes.number,
+  timeChange: PropTypes.func,
+  startTaking: PropTypes.func,
+  finishTaking: PropTypes.func,
+  nowTaking: PropTypes.bool,
 };
