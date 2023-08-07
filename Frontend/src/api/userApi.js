@@ -104,16 +104,30 @@ const userApi = {
   getUser: async () => {
     if (!window.localStorage.getItem("accessToken")) return;
     let res = await PrivateUserApi.get("");
+    console.log(res);
     return res;
   },
 
   modify:async(pwd, nickname, email)=>{
-    let res = await PublicUserApi.patch("",{
+    let template = {
       accessToken : window.localStorage.getItem("accessToken"),
-      password : pwd,
-      nickname : nickname,
-      email : email
-    })
+    }
+
+    if(pwd !== ""){
+      template = {...template, password : pwd,}
+    }
+
+    if(nickname !== ""){
+      template = {...template, nickname:nickname,}
+    }
+
+    if(email !== ""){
+      template = {...template, email:email,}
+    }
+
+    console.log(template);
+
+    let res = await PublicUserApi.patch("",template);
     return res;
   },
 
@@ -121,6 +135,7 @@ const userApi = {
     let res = await PublicUserApi.post("reset",{
       userId : userId
     })
+    console.log(res);
     return res;
   },
 
