@@ -30,7 +30,6 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
     };
     mediaRecorder.onstop = () => {
       const blob = new Blob(arrClipData);
-      console.log(blob);
       sendBlob(idx, blob);
 
       const blobURL = window.URL.createObjectURL(blob);
