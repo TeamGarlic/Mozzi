@@ -7,6 +7,8 @@ import java.util.Set;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import com.ssafy.mozzi.db.entity.BaseEntity;
 
@@ -31,6 +33,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE mozziroll SET deleted = true WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Mozziroll extends BaseEntity {
 
     @NotNull
@@ -42,6 +46,11 @@ public class Mozziroll extends BaseEntity {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;
+
+    @Builder.Default
+    @ColumnDefault("false")
+    @Column(nullable = false)
+    private Boolean deleted = false;
 
     @OneToMany(mappedBy = "mozziroll")
     private Set<UserMozziroll> userMozzirolls = new HashSet<>();
