@@ -106,6 +106,16 @@ const userApi = {
     let res = await PrivateUserApi.get("");
     return res;
   },
+
+  modify:async(pwd, nickname, email)=>{
+    let res = await PublicUserApi.patch("",{
+      accessToken : window.localStorage.getItem("accessToken"),
+      password : pwd,
+      nickname : nickname,
+      email : email
+    })
+    return res;
+  }
 };
 
 export default userApi;

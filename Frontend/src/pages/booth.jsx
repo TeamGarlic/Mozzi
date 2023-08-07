@@ -17,6 +17,7 @@ import { changeBgAction } from "@/modules/bgAction.js";
 import useUser from "@/hooks/useUser";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import itemApi from "@/api/itemApi.js";
+import {usePreventGoBack} from "@/hooks/usePreventGoBack.js";
 
 function Booth() {
   // const [taking, setTaking] = useState(false);
@@ -30,6 +31,8 @@ function Booth() {
   const [bgList, setBgList] = useState([]);
   const [frameList, setFrameList] = useState([]);
   const pickedFrame = useSelector((state) => state.clipReducer.frame);
+
+  const preventgoBack = usePreventGoBack();
 
   const {
     mainSession,
@@ -217,6 +220,21 @@ function Booth() {
     dispatch(updateVideoMapAction(localVideoMap));
     console.log(videoMap);
   }, [subscribers]);
+
+  const preventClose = (e) => {
+    e.preventDefault();
+    e.returnValue = ""; //Chrome에서 동작하도록; deprecated
+  };
+
+  useEffect(() => {
+    (() => {
+      window.addEventListener("beforeunload", preventClose);
+    })();
+
+    return () => {
+      window.removeEventListener("beforeunload", preventClose);
+    };
+  }, []);
 
   return (
     <>
