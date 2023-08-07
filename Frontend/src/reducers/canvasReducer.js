@@ -30,8 +30,8 @@ const canvasReducer = (state = canvasState, action) => {
       }
     }
     case resizeLayer: {
-      console.log(state.position);
-      console.log(action.payload);
+      // console.log(state.position);
+      // console.log(action.payload);
       for (let pos of state.position) {
         if(pos.id===action.payload.id){
           pos.x = action.payload.x;
