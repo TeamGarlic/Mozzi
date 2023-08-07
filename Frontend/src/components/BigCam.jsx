@@ -2,12 +2,12 @@ import {useEffect, useRef} from "react";
 import { useDispatch } from 'react-redux';
 import {Rnd} from "react-rnd";
 import {
-  resizeMyLayerAction,
+  resizeLayerAction,
   setMainCanvasAction,
-  setMyLayerAction,
 } from '@/modules/canvasAction.js';
+import PropTypes from 'prop-types';
 
-function BigCam() {
+export default function BigCam({myId, updatePosition}) {
   const W = 1024, H = 560;
   const rndRef = useRef();
   const dispatch = useDispatch();
@@ -16,12 +16,16 @@ function BigCam() {
   const canvasContextRef = useRef();
 
   const updateSize = () =>{
-    dispatch(resizeMyLayerAction({
+    console.log(myId);
+    const pos= {
+      id : myId,
       x : (rndRef.current.draggable.state.x - canvasRef.current.offsetLeft)/W,
       y : (rndRef.current.draggable.state.y - canvasRef.current.offsetTop)/H,
       width : rndRef.current.resizable.state.width/W,
       height : rndRef.current.resizable.state.height/H,
-    }));
+    };
+    dispatch(resizeLayerAction(pos));
+    updatePosition(pos);
   }
 
   useEffect(() => {
@@ -30,12 +34,6 @@ function BigCam() {
       canvas:canvasRef,
       context:canvasContextRef,
     }));
-    dispatch(setMyLayerAction({
-      x:0,
-      y: 0,
-      width: 0.5,
-      height: 0.5,
-    }))
   }, []);
 
   return (
@@ -64,4 +62,7 @@ function BigCam() {
   );
 }
 
-export default BigCam;
+BigCam.propTypes = {
+  myId: PropTypes.string,
+  updatePosition: PropTypes.func,
+};

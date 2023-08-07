@@ -1,10 +1,6 @@
 import {
   setMainCanvas,
-  addCamCanvas,
-  resetCamCanvases,
-  setMyLayer,
-  resizeMyLayer,
-  setMyLayerSource,
+  resizeLayer,
   updateSubVideoMap, updatePubVideoMap, updatePosition,
 } from '@/modules/canvasAction';
 
@@ -12,14 +8,6 @@ const canvasState = {
   mainCanvas : {
     canvas : undefined,
     context : undefined,
-  },
-  camCanvases : [],
-  myLayer : {
-    image : undefined,
-    x:undefined,
-    y:undefined,
-    width:undefined,
-    height:undefined,
   },
   subVideoMap : {},
   pubVideoMap : {
@@ -41,41 +29,18 @@ const canvasReducer = (state = canvasState, action) => {
         ...state
       }
     }
-    case addCamCanvas: {
-      state.camCanvases.push({
-        canvas : action.payload.canvas,
-        context : action.payload.context,
-      })
-      return  {
-        ...state,
+    case resizeLayer: {
+      console.log(state.position);
+      console.log(action.payload);
+      for (let pos of state.position) {
+        if(pos.id===action.payload.id){
+          pos.x = action.payload.x;
+          pos.y = action.payload.y;
+          pos.width = action.payload.width;
+          pos.height = action.payload.height;
+        }
       }
-    }
-    case resetCamCanvases: {
-      while(state.camCanvases.length) state.camCanvases.shift();
-      return  {
-        ...state,
-      }
-    }
-    case setMyLayer: {
-      state.myLayer.x = action.payload.x
-      state.myLayer.y = action.payload.y
-      state.myLayer.width = action.payload.width
-      state.myLayer.height = action.payload.height
-      return  {
-        ...state
-      }
-    }
-    case setMyLayerSource: {
-      state.myLayer.image = action.payload.canvas
-      return  {
-        ...state
-      }
-    }
-    case resizeMyLayer: {
-      state.myLayer.x = action.payload.x;
-      state.myLayer.y = action.payload.y;
-      state.myLayer.width = action.payload.width;
-      state.myLayer.height = action.payload.height;
+      console.log(state.position);
       return  {
         ...state
       }
@@ -109,6 +74,7 @@ const canvasReducer = (state = canvasState, action) => {
         for (let pos of action.payload) {
           state.position.push({
             image:(pos.id in state.subCanvases)?state.subCanvases[pos.id]:state.pubCanvas,
+            id:pos.id,
             x:pos.x,
             y:pos.y,
             width:pos.width,

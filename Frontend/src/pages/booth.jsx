@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  resetCamCanvasesAction,
-  setMyLayerSourceAction, updatePositionAction, updatePubVideoMapAction, updateSubVideoMapAction,
+  updatePositionAction, updatePubVideoMapAction, updateSubVideoMapAction,
 } from '@/modules/canvasAction.js';
 import MakeBooth from "./makeBooth";
 import TakePic from "./takePic";
@@ -83,7 +82,6 @@ function Booth() {
 
   function startTake() {
     if (pickedFrame.id === 0) return;
-    dispatch(resetCamCanvasesAction());
     sendPosition(position);
     gotoTakePic();
   }
@@ -98,12 +96,6 @@ function Booth() {
     for (let key in subVideoMap) {
       chromaKey(subVideoMap[key].canvasRef, subVideoMap[key].canvasContextRef, subVideoMap[key].vidRef);
     }
-
-    // TODO : 한 레이어만 그리는 샘플 코드 지우기
-    if (mainCanvas.canvas){
-      drawCanvas(mainCanvas.canvas.current, mainCanvas.context.current, bgNow.img, [myLayer]);
-    }
-
 
     // console.log(localPosition)
 
@@ -252,12 +244,6 @@ function Booth() {
       }));
     }
 
-    dispatch(
-      setMyLayerSourceAction({
-        canvas: pubCanvasRef.current,
-      })
-    );
-
 
     initPosition();
 
@@ -327,6 +313,8 @@ function Booth() {
           startTaking={startTaking}
           finishTaking={finishTaking}
           nowTaking={nowTaking}
+          myId={publisher.stream.connection.connectionId}
+          updatePosition={updatePosition}
         />
       )}
       {now === "MODIFING" && (
