@@ -16,9 +16,10 @@ public class AccessTokenNotExistsException extends RuntimeException {
 
     public static class AccessTokenNotExistsResponse extends BaseErrorResponse {
         @Schema(defaultValue = "" + MOZZI_CODE)
-        private final int code = MOZZI_CODE;
+        public final int code = MOZZI_CODE;
 
         public AccessTokenNotExistsResponse(String message) {
+            this.setCode(MOZZI_CODE);
             this.setMessage(message);
         }
     }

@@ -5,20 +5,21 @@ import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * 이미 존재하는 user id로 회원가입을 시도했을 때 발생하는 Exception 입니다 (Mozzi code : 3, Http Status 400)
+ * 사용자 회원가입에 실패한 경우의 Exception 입니다 (Mozzi code : 3, Http Status 400)
  */
-public class DuplicatedUserIdException extends RuntimeException {
-    public DuplicatedUserIdException(String message) {
+public class UserRegisterException extends RuntimeException {
+    public UserRegisterException(String message) {
         super(message);
     }
 
     public static final int MOZZI_CODE = 3;
 
-    public static class DuplicatedUserIdResponse extends BaseErrorResponse {
+    public static class UserRegisterResponse extends BaseErrorResponse {
         @Schema(defaultValue = "" + MOZZI_CODE)
         private final int code = MOZZI_CODE;
 
-        public DuplicatedUserIdResponse(String message) {
+        public UserRegisterResponse(String message) {
+            this.setCode(MOZZI_CODE);
             this.setMessage(message);
         }
     }

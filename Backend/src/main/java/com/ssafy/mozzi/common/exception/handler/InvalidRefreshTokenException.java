@@ -19,6 +19,7 @@ public class InvalidRefreshTokenException extends RuntimeException {
         private final int code = MOZZI_CODE;
 
         public InvalidRefreshTokenResponse(String message) {
+            this.setCode(MOZZI_CODE);
             this.setMessage(message);
         }
     }

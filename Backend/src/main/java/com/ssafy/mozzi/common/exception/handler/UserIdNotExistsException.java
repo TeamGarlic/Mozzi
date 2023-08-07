@@ -16,9 +16,10 @@ public class UserIdNotExistsException extends RuntimeException {
 
     public static class UserIdNotExistsResponse extends BaseErrorResponse {
         @Schema(defaultValue = "" + MOZZI_CODE)
-        private final int code = MOZZI_CODE;
+        private static final int code = MOZZI_CODE;
 
         public UserIdNotExistsResponse(String message) {
+            this.setCode(MOZZI_CODE);
             this.setMessage(message);
         }
     }

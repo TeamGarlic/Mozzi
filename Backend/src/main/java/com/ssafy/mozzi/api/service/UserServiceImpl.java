@@ -20,17 +20,18 @@ import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
 import com.ssafy.mozzi.api.response.UserUpdateRes;
 import com.ssafy.mozzi.common.auth.JwtTokenProvider;
-import com.ssafy.mozzi.common.exception.handler.DuplicatedUserIdException;
 import com.ssafy.mozzi.common.exception.handler.InvalidRefreshTokenException;
 import com.ssafy.mozzi.common.exception.handler.NoDataException;
 import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.UserLoginFailException;
+import com.ssafy.mozzi.common.exception.handler.UserRegisterException;
 import com.ssafy.mozzi.common.util.mapper.UserMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
 import com.ssafy.mozzi.db.entity.remote.User;
 import com.ssafy.mozzi.db.repository.remote.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  User 요청에 대한 Service/비즈니스 로직 구현
@@ -38,6 +39,7 @@ import lombok.RequiredArgsConstructor;
  * @see UserRepository
  * @see User
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -50,7 +52,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param request UserRegisterPostReq
      * @return UserRegisterPostRes
-     * @throws DuplicatedUserIdException (Mozzi code : 3, Http Status 400)
+     * @throws UserRegisterException (Mozzi code : 3, Http Status 400)
      * @see UserRepository
      */
     @Override
@@ -61,8 +63,9 @@ public class UserServiceImpl implements UserService {
         try {
             userRepository.save(user);
         } catch (
-            Exception e) { // TODO: UserRegisterPostReq이 제약 걸려 있는게 아니라, User Entity에 제약이 걸려 있어서, 실패한게 ID 중복 때문이라는게 보장 안 되서, UserRegisterPostReq를 비롯한 Request Dto에 제약을 다 거는 작업이 필요할 것으로 예상.. or 서비스 로직 or Controller에서 체크 작업 수행
-            throw new DuplicatedUserIdException(String.format("Duplicated user id(%s)", request.getUserId()));
+            Exception e) {
+            log.error("[User Save error] : {}", e.getMessage());
+            throw new UserRegisterException(String.format("Duplicated user id(%s)", request.getUserId()));
         }
         return UserMapper.toRegistRes(user);
     }

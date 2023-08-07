@@ -19,6 +19,7 @@ public class ShareCodeNotExistException extends RuntimeException {
         private final int code = MOZZI_CODE;
 
         public ShareCodeNotExistResponse(String message) {
+            this.setCode(MOZZI_CODE);
             this.setMessage(message);
         }
     }

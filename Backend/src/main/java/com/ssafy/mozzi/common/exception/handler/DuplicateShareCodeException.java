@@ -19,6 +19,7 @@ public class DuplicateShareCodeException extends RuntimeException {
         private final int code = MOZZI_CODE;
 
         public DuplicateShareCodeResponse(String message) {
+            this.setCode(MOZZI_CODE);
             this.setMessage(message);
         }
     }

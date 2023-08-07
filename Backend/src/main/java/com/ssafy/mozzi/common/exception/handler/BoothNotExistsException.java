@@ -19,6 +19,7 @@ public class BoothNotExistsException extends RuntimeException {
         private final int code = MOZZI_CODE;
 
         public BoothNotExistsResponse(String message) {
+            this.setCode(MOZZI_CODE);
             this.setMessage(message);
         }
     }

@@ -19,6 +19,7 @@ public class UnAuthorizedException extends RuntimeException {
         private final int code = MOZZI_CODE;
 
         public UnAuthorizedResponse(String message) {
+            this.setCode(MOZZI_CODE);
             this.setMessage(message);
         }
     }

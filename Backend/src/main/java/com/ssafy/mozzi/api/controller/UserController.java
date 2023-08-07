@@ -24,11 +24,11 @@ import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
 import com.ssafy.mozzi.api.response.UserUpdateRes;
 import com.ssafy.mozzi.api.service.UserService;
-import com.ssafy.mozzi.common.exception.handler.DuplicatedUserIdException;
 import com.ssafy.mozzi.common.exception.handler.InvalidRefreshTokenException;
 import com.ssafy.mozzi.common.exception.handler.NoDataException;
 import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.UserLoginFailException;
+import com.ssafy.mozzi.common.exception.handler.UserRegisterException;
 import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
@@ -62,8 +62,8 @@ public class UserController {
     @Operation(summary = "회원가입", description = "사용자 회원가입 API 입니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "회원가입 성공", useReturnTypeSchema = true),
-        @ApiResponse(responseCode = "400", description = "중복된 User Id",
-            content = @Content(schema = @Schema(implementation = DuplicatedUserIdException.DuplicatedUserIdResponse.class))),
+        @ApiResponse(responseCode = "400", description = "회원가입 실패(잘못된 요청)",
+            content = @Content(schema = @Schema(implementation = UserRegisterException.UserRegisterResponse.class))),
         @ApiResponse(responseCode = "500", description = "서버 에러",
             content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
     })

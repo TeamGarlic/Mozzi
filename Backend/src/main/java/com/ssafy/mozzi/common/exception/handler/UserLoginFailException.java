@@ -19,6 +19,7 @@ public class UserLoginFailException extends RuntimeException {
         private final int code = MOZZI_CODE;
 
         public UserLoginFailResponse(String message) {
+            this.setCode(MOZZI_CODE);
             this.setMessage(message);
         }
     }

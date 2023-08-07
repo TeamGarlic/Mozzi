@@ -19,6 +19,7 @@ public class AlreadyLinkedMozziException extends RuntimeException {
         private final int code = MOZZI_CODE;
 
         public AlreadyLinkedMozziResponse(String message) {
+            this.setCode(MOZZI_CODE);
             this.setMessage(message);
         }
     }

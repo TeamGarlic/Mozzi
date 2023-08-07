@@ -10,7 +10,6 @@ import com.ssafy.mozzi.common.exception.handler.AlreadyLinkedMozziException;
 import com.ssafy.mozzi.common.exception.handler.BoothNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
 import com.ssafy.mozzi.common.exception.handler.DuplicateShareCodeException;
-import com.ssafy.mozzi.common.exception.handler.DuplicatedUserIdException;
 import com.ssafy.mozzi.common.exception.handler.InvalidRefreshTokenException;
 import com.ssafy.mozzi.common.exception.handler.InvalidSessionIdException;
 import com.ssafy.mozzi.common.exception.handler.MozzirollNotExistsException;
@@ -19,6 +18,7 @@ import com.ssafy.mozzi.common.exception.handler.ShareCodeNotExistException;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.UserLoginFailException;
+import com.ssafy.mozzi.common.exception.handler.UserRegisterException;
 import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 
 import lombok.extern.slf4j.Slf4j;
@@ -57,15 +57,15 @@ public class ControllerAdviceHandler {
 
     /**
      * 중복된 ID가 존재할 경우의 응답을 반환한다. (Mozzi code : 3, Http Status 400)
-     * @see DuplicatedUserIdException
+     * @see UserRegisterException
      * @see com.ssafy.mozzi.api.service.UserService
      */
-    @ExceptionHandler(DuplicatedUserIdException.class)
+    @ExceptionHandler(UserRegisterException.class)
     public ResponseEntity<? extends BaseErrorResponse> handleDuplicateUserIdException(
-        DuplicatedUserIdException exception) {
+        UserRegisterException exception) {
         log.error("[DuplicatedUserIdException] : {}", exception.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(new DuplicatedUserIdException.DuplicatedUserIdResponse("You requested duplicated User ID"));
+            .body(new UserRegisterException.UserRegisterResponse("You requested duplicated User ID"));
     }
 
     /**
