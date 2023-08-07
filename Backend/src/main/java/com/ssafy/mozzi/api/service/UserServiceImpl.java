@@ -234,6 +234,7 @@ public class UserServiceImpl implements UserService {
      * @throws com.ssafy.mozzi.common.exception.handler.UserEmailNotExists (Mozzi code : 14, Http Status 400)
      */
     @Override
+    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     public UserPasswordResetPostRes reset(String userId) {
         Optional<User> candidateUser = userRepository.findByUserId(userId);
 
