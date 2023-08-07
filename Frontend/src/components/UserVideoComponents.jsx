@@ -6,7 +6,7 @@ export default function UserVideoComponent(canvas) {
 
   useEffect(() => {
     if(canvas&&canvas.canvas){
-      console.log(canvas);
+      // console.log(canvas);
       vidRef.current.srcObject = canvas.canvas.captureStream();
     }
   }, [canvas]);
