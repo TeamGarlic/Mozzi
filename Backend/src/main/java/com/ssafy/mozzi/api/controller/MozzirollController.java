@@ -114,7 +114,6 @@ public class MozzirollController {
         @ApiResponse(responseCode = "200", description = "사용자 Mozziroll 페이징 조회 성공", useReturnTypeSchema = true),
         @ApiResponse(responseCode = "400", description = "잘못된 요청 정보",
             content = @Content(schema = @Schema(implementation = UserIdNotExistsException.UserIdNotExistsResponse.class))),
-        @ApiResponse(responseCode = "403", description = "잘못된 accessToken 또는 url"),
         @ApiResponse(responseCode = "500", description = "서버 에러",
             content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
     })

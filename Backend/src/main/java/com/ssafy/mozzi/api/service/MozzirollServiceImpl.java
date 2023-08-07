@@ -124,7 +124,9 @@ public class MozzirollServiceImpl implements MozzirollService {
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
-    public MozzirollLikeRes likeMozziroll(String accessToken, long userMozzirollId) {
+    public MozzirollLikeRes likeMozziroll(String accessToken, long userMozzirollId) throws
+        MozzirollNotExistsException,
+        UserIdNotExistsException {
         User user = userService.findUserByToken(accessToken);
         UserMozziroll userMozziroll;
 
