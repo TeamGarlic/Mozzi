@@ -13,7 +13,7 @@ import { checkHost } from "@/utils/DecoratorUtil.js";
 
 function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, sendBlob }) {
   const timers = [3, 5, 10];
-  const [taken, setTaken] = new useState(1);
+  const [taken, setTaken] = useState(1);
   const [timer, setTimer] = useState(3);
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
