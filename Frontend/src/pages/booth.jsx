@@ -19,7 +19,6 @@ import itemApi from "@/api/itemApi.js";
 import {usePreventGoBack} from "@/hooks/usePreventGoBack.js";
 
 function Booth() {
-  // const [taking, setTaking] = useState(false);
   const { code: shareCode } = useParams();
   const dispatch = useDispatch();
   // console.log(sessionID);
@@ -49,6 +48,11 @@ function Booth() {
     setNow,
     setFrame,
     sendBlob,
+    timer,
+    taken,
+    timeChange,
+    startTaking,
+    finishTaking,
   } = useSession(shareCode);
 
   // 소스 웹캠 video
@@ -76,7 +80,6 @@ function Booth() {
     if (pickedFrame.id === 0) return;
     dispatch(resetCamCanvasesAction());
     gotoTakePic();
-    setTaking(true);
   }
   startTake = checkHost(startTake, user.isHost);
 
@@ -283,6 +286,12 @@ function Booth() {
           bgList={bgList}
           goNext={gotoModifing}
           sendBlob={sendBlob}
+          timer={timer}
+          timeChange={timeChange}
+          taken={taken}
+          startTaking={startTaking}
+          finishTaking={finishTaking}
+          nowTaking={nowTaking}
         />
       )}
       {now === "MODIFING" && (

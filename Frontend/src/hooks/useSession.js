@@ -13,6 +13,8 @@ function useSession(shareCode) {
   const [chatLists, setChatLists] = useState([]);
   const [nowTaking, setNowTaking] = useState(false);
   const [now, setNow] = useState("MAKING");
+  const [taken, setTaken] = useState(1);
+  const [timer, setTimer] = useState(3);
   const dispatch = useDispatch();
 
   const leaveSession = () => {
@@ -75,6 +77,20 @@ function useSession(shareCode) {
         const blobURL = window.URL.createObjectURL(data.blob);
         console.log(blobURL)
         dispatch(AddClipAction({idx: data.idx, src: blobURL}))
+      });
+
+      session.on("signal:timeChange", async (event) => {
+        const data = await JSON.parse(event.data);
+        setTimer(Number(data.time));
+      });
+
+      session.on("signal:startTaking", async () => {
+        setNowTaking(true)
+      })
+
+      session.on("signal:finishTaking", async () => {
+        setNowTaking(false);
+        setTaken((prev) => prev+1);
       })
 
       session.on("streamDestroyed", (event) => {
@@ -167,6 +183,31 @@ function useSession(shareCode) {
       data: JSON.stringify({idx: idx, blob: blob}),
       to: [],
       type: "sendBlob",
+    });
+  };
+
+  const timeChange = async (time) => {
+    setTimer(time);
+    await session.signal({
+      data: JSON.stringify({time: time}),
+      to: [],
+      type: "timeChange",
+    });
+  };
+
+  const startTaking = async () => {
+    await session.signal({
+      data: "",
+      to: [],
+      type: "startTaking",
+    })
+  }
+
+  const finishTaking = async () => {
+    await session.signal({
+      data: "",
+      to: [],
+      type: "finishTaking",
     })
   }
 
@@ -215,6 +256,11 @@ function useSession(shareCode) {
     setNow,
     setFrame,
     sendBlob,
+    timer,
+    taken,
+    timeChange,
+    startTaking,
+    finishTaking,
   };
 }
 
