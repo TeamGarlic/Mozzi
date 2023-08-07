@@ -6,6 +6,7 @@ export const setMyLayerSource = "setMyLayerSource";
 export const resizeMyLayer = "resizeMyLayer";
 export const updateSubVideoMap = "updateSubVideoMap";
 export const updatePubVideoMap = "updatePubVideoMap";
+export const updatePosition = "updatePosition"
 
 export const setMainCanvasAction = (res) => {
   return {
@@ -59,6 +60,13 @@ export const updateSubVideoMapAction = (res) => {
 export const updatePubVideoMapAction = (res) => {
   return {
     type : updatePubVideoMap,
+    payload : res,
+  }
+};
+
+export const updatePositionAction = (res) => {
+  return {
+    type : updatePosition,
     payload : res,
   }
 };

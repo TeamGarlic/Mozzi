@@ -5,7 +5,7 @@ import {
   setMyLayer,
   resizeMyLayer,
   setMyLayerSource,
-  updateSubVideoMap, updatePubVideoMap,
+  updateSubVideoMap, updatePubVideoMap, updatePosition,
 } from '@/modules/canvasAction';
 
 const canvasState = {
@@ -29,6 +29,7 @@ const canvasState = {
   },
   pubCanvas : undefined,
   subCanvases : {},
+  position: [],
 }
 
 const canvasReducer = (state = canvasState, action) => {
@@ -97,6 +98,25 @@ const canvasReducer = (state = canvasState, action) => {
       state.pubVideoMap.vidRef = action.payload.vidRef;
       state.pubCanvas = state.pubVideoMap.canvasRef = action.payload.canvasRef;
       state.pubVideoMap.canvasContextRef = action.payload.canvasContextRef;
+      return {
+        ...state
+      }
+    }
+    case updatePosition: {
+      while(state.position.length>0) state.position.pop();
+      console.log(action.payload);
+      if(action.payload.length>0){
+        for (let pos of action.payload) {
+          state.position.push({
+            image:(pos.id in state.subCanvases)?state.subCanvases[pos.id]:state.pubCanvas,
+            x:pos.x,
+            y:pos.y,
+            width:pos.width,
+            height:pos.height,
+          })
+        }
+      }
+      console.log(state.position)
       return {
         ...state
       }
