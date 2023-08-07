@@ -32,18 +32,20 @@ public class MozziUtilImpl implements MozziUtil {
      * @return 생성된 랜덤한 문자열
      */
     @Override
-    public String generateString(int length) {
+    public String generateString(int length, boolean includeSpecial) {
         StringBuilder sb = new StringBuilder();
         int[] rands
-            = random.ints(length, 0, 62)
+            = random.ints(length, 0, 62 + (includeSpecial ? 10 : 0))
             .toArray();
         for (int rand : rands) {
             if (rand < 10) {
                 sb.append(rand);
             } else if (rand < 36) {
                 sb.append((char)('a' + rand - 10));
-            } else {
+            } else if (rand < 62) {
                 sb.append((char)('A' + rand - 36));
+            } else {
+                sb.append((char)('!' + rand - 62));
             }
         }
         return sb.toString();

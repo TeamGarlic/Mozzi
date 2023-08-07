@@ -246,7 +246,7 @@ public class UserServiceImpl implements UserService {
             throw new UserEmailNotExists(String.format("%s don't have email address.", userId));
         }
 
-        String newPassword = mozziUtil.generateString(10);
+        String newPassword = mozziUtil.generateString(10, true);
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.flush();
 
