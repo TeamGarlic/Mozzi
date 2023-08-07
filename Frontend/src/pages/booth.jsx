@@ -85,15 +85,10 @@ function Booth() {
     // console.log(pubVideoMap)
     chromaKey(pubVideoMap.canvasRef, pubVideoMap.canvasContextRef, pubVideoMap.vidRef);
 
-    // console.log(videoMap);
-    // for (var key in videoMap) {
-    //   drawSubscriber(
-    //     videoMap[key].canvasRef,
-    //     videoMap[key].canvasContextRef,
-    //     "vidRef" in videoMap[key] ? videoMap[key].vidRef : webcamRef.current,
-    //     videoMap[key].maskRef
-    //   );
-    // }
+    console.log(subVideoMap);
+    for (let key in subVideoMap) {
+      chromaKey(subVideoMap[key].canvasRef, subVideoMap[key].canvasContextRef, subVideoMap[key].vidRef);
+    }
 
     // // 내 웹캠을 담을 canvas (화면에 표시 x)
     // drawMyVid(
