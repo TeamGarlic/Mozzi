@@ -4,6 +4,7 @@ import { v4 } from "uuid";
 import boothApi from "@/api/boothApi.js";
 import {useDispatch} from "react-redux";
 import {setFrameAction, AddClipAction} from "@/modules/clipAction.js";
+import {changeBgAction} from "@/modules/bgAction.js";
 
 function useSession(shareCode) {
   const [session, setSession] = useState(undefined);
@@ -74,9 +75,8 @@ function useSession(shareCode) {
         const data = await JSON.parse(event.data);
         // Todo: blob이 비어있을 경우 에러 발생
         // 합성 로직 이후 확인 필요
-        const blobURL = window.URL.createObjectURL(data.blob);
-        console.log(blobURL)
-        dispatch(AddClipAction({idx: data.idx, src: blobURL}))
+        console.log("sendBlob")
+        dispatch(AddClipAction({idx: data.idx, src: data.src}))
       });
 
       session.on("signal:timeChange", async (event) => {
@@ -91,6 +91,12 @@ function useSession(shareCode) {
       session.on("signal:finishTaking", async () => {
         setNowTaking(false);
         setTaken((prev) => prev+1);
+      })
+
+      session.on("signal:changeBg", async (event) => {
+        const newBg = new Image();
+        newBg.src = event.data
+        dispatch(changeBgAction({img: newBg}));
       })
 
       session.on("streamDestroyed", (event) => {
@@ -178,9 +184,9 @@ function useSession(shareCode) {
     });
   };
 
-  const sendBlob = async (idx, blob) => {
+  const sendBlob = async (idx, src) => {
     await session.signal({
-      data: JSON.stringify({idx: idx, blob: blob}),
+      data: JSON.stringify({idx:idx, src:src}),
       to: [],
       type: "sendBlob",
     });
@@ -200,16 +206,24 @@ function useSession(shareCode) {
       data: "",
       to: [],
       type: "startTaking",
-    })
-  }
+    });
+  };
 
   const finishTaking = async () => {
     await session.signal({
       data: "",
       to: [],
       type: "finishTaking",
-    })
-  }
+    });
+  };
+
+  const changeBg = async (src) => {
+    await session.signal({
+      data: src,
+      to: [],
+      type: "changeBg"
+    });
+  };
 
 
   const getToken = async (code) => {
@@ -261,6 +275,7 @@ function useSession(shareCode) {
     timeChange,
     startTaking,
     finishTaking,
+    changeBg,
   };
 }
 

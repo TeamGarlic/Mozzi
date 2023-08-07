@@ -53,6 +53,7 @@ function Booth() {
     timeChange,
     startTaking,
     finishTaking,
+    changeBg,
   } = useSession(shareCode);
 
   // 소스 웹캠 video
@@ -292,6 +293,7 @@ function Booth() {
           startTaking={startTaking}
           finishTaking={finishTaking}
           nowTaking={nowTaking}
+          changeBg={changeBg}
         />
       )}
       {now === "MODIFING" && (
