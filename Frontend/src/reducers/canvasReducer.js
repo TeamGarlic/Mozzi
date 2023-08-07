@@ -5,7 +5,7 @@ import {
   setMyLayer,
   resizeMyLayer,
   setMyLayerSource,
-  updateVideoMap,
+  updateSubVideoMap, updatePubVideoMap,
 } from '@/modules/canvasAction';
 
 const canvasState = {
@@ -21,9 +21,12 @@ const canvasState = {
     width:undefined,
     height:undefined,
   },
-  videoMap : {
-
-  }
+  subVideoMap : {},
+  pubVideoMap : {
+    vidRef:undefined,
+    canvasRef:undefined,
+    canvasContextRef:undefined,
+  },
 }
 
 const canvasReducer = (state = canvasState, action) => {
@@ -74,16 +77,24 @@ const canvasReducer = (state = canvasState, action) => {
         ...state
       }
     }
-    case updateVideoMap: {
+    case updateSubVideoMap: {
       // state.videoMap = action.payload;
       // console.log(action.payload);
-      for (var prev in state.videoMap) {
-        delete state.videoMap[prev];
+      for (let key in state.subVideoMap) {
+        delete state.subVideoMap[key];
       }
-      for (var next in action.payload) {
-        state.videoMap[next] = action.payload[next];
+      for (let key in action.payload) {
+        state.subVideoMap[key] = action.payload[key];
       }
       // console.log(state.videoMap);
+      return {
+        ...state
+      }
+    }
+    case updatePubVideoMap: {
+      state.pubVideoMap.vidRef = action.payload.vidRef;
+      state.pubVideoMap.canvasRef = action.payload.canvasRef;
+      state.pubVideoMap.canvasContextRef = action.payload.canvasContextRef;
       return {
         ...state
       }

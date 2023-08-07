@@ -3,7 +3,7 @@ import TextInput from "./TextInput";
 import UserVideoComponent from "./UserVideoComponents";
 import PropTypes from "prop-types";
 
-export default function UserSideBar({ subscribers, mainPublisher, leaveSession }) {
+export default function UserSideBar({ subscribers, publisher, leaveSession }) {
 
   return (
     <Card
@@ -17,20 +17,16 @@ export default function UserSideBar({ subscribers, mainPublisher, leaveSession }
 
 
         <div className="stream-container col-md-6 col-xs-6">
-          <UserVideoComponent sub={mainPublisher} />
+          <UserVideoComponent sub={publisher} />
           <hr />
         </div>
 
         {subscribers &&
           subscribers.map((sub) => (
-            <>
-              {!JSON.parse(sub.stream.connection.data).isMask?(
-              <div key={JSON.parse(sub.stream.connection.data).uid} className="stream-container col-md-6 col-xs-6">
-                <UserVideoComponent sub={sub} />
-                <hr />
-              </div>
-              ):null}
-            </>
+            <div key={JSON.parse(sub.stream.connection.data).uid} className="stream-container col-md-6 col-xs-6">
+              <UserVideoComponent sub={sub} />
+              <hr />
+            </div>
           ))}
       </ul>
       <div className="px-4">
@@ -48,6 +44,6 @@ export default function UserSideBar({ subscribers, mainPublisher, leaveSession }
 
 UserSideBar.propTypes = {
   subscribers: PropTypes.array,
-  mainPublisher: PropTypes.object,
+  publisher: PropTypes.object,
   leaveSession: PropTypes.func,
 };

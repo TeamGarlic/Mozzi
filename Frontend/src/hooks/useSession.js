@@ -6,10 +6,8 @@ import {useDispatch} from "react-redux";
 import {setFrameAction, AddClipAction} from "@/modules/clipAction.js";
 
 function useSession(shareCode) {
-  const [mainSession, setMainSession] = useState(undefined);
-  const [maskSession, setMaskSession] = useState(undefined);
-  const [mainPublisher, setMainPublisher] = useState(undefined);
-  const [maskPublisher, setMaskPublisher] = useState(undefined);
+  const [session, setSession] = useState(undefined);
+  const [publisher, setPublisher] = useState(undefined);
   const [userName, setUserName] = useState(undefined);
   const [subscribers, setSubscribers] = useState([]);
   const [chatLists, setChatLists] = useState([]);
@@ -17,37 +15,29 @@ function useSession(shareCode) {
   const [now, setNow] = useState("MAKING");
   const dispatch = useDispatch();
 
-  const leaveSession = async () => {
-    if (mainSession) {
-      await mainSession.disconnect();
+  const leaveSession = () => {
+    if (session) {
+      session.disconnect();
     }
-    if (maskSession) {
-      await maskSession.disconnect();
-    }
-    setMainSession(undefined);
-    setMaskSession(undefined);
-    setMainPublisher(undefined);
-    setMaskPublisher(undefined);
+    setSession(undefined);
+    setPublisher(undefined);
     setSubscribers([]);
     location.href = "/";
   };
 
-  const joinSession = async (userName, canvases) => {
+  const joinSession = async (userName, canvas) => {
     setUserName(userName);
     try {
-      const mainOV = new OpenVidu();
-      const maskOV = new OpenVidu();
-      const mainSession = mainOV.initSession();
-      const maskSession = maskOV.initSession();
-      setMainSession(mainSession);
-      setMaskSession(maskSession);
+      const OV = new OpenVidu();
+      const session = OV.initSession();
+      setSession(session);
 
-      mainSession.on("streamCreated", (event) => {
-        const subscriber = mainSession.subscribe(event.stream, undefined);
+      session.on("streamCreated", (event) => {
+        const subscriber = session.subscribe(event.stream, undefined);
         setSubscribers((prev) => [...prev, subscriber]);
       });
 
-      mainSession.on("signal:chat", async (event) => {
+      session.on("signal:chat", async (event) => {
         console.log(event);
         let data = await JSON.parse(event.data);
         setChatLists((prev) => {
@@ -55,30 +45,30 @@ function useSession(shareCode) {
         });
       });
 
-      mainSession.on("signal:gotoTakePic", async (event) => {
+      session.on("signal:gotoTakePic", async (event) => {
         console.log("방장이 사진찍재!!");
         // setNowTaking(true);
         setNow("TAKING");
       });
 
-      mainSession.on("signal:gotoModifing", async (event) => {
+      session.on("signal:gotoModifing", async (event) => {
         console.log("방장이 편집하쟤!!");
         // setNowTaking(true);
         setNow("MODIFING");
       });
 
-      mainSession.on("signal:gotoFinish", async (event) => {
+      session.on("signal:gotoFinish", async (event) => {
         console.log("방장이 사진찍재!!");
         // setNowTaking(true);
         setNow("FINISH");
       });
 
-      mainSession.on("signal:setFrame", async (event) => {
+      session.on("signal:setFrame", async (event) => {
         const frame = await JSON.parse(event.data);
         dispatch(setFrameAction({frame}))
       });
 
-      mainSession.on("signal:sendBlob", async (event) => {
+      session.on("signal:sendBlob", async (event) => {
         const data = await JSON.parse(event.data);
         // Todo: blob이 비어있을 경우 에러 발생
         // 합성 로직 이후 확인 필요
@@ -87,7 +77,7 @@ function useSession(shareCode) {
         dispatch(AddClipAction({idx: data.idx, src: blobURL}))
       })
 
-      mainSession.on("streamDestroyed", (event) => {
+      session.on("streamDestroyed", (event) => {
         setSubscribers((prev) => {
           const newSubscribers = [...prev];
           const idx = newSubscribers.indexOf(event.stream.streamManager);
@@ -98,51 +88,30 @@ function useSession(shareCode) {
         });
       });
 
-      mainSession.on("exception", (exception) => {
-        console.warn(exception);
-      });
-      maskSession.on("exception", (exception) => {
+      session.on("exception", (exception) => {
         console.warn(exception);
       });
 
-      const mainToken = await getToken(shareCode);
-      const maskToken = await getToken(shareCode);
+      const token = await getToken(shareCode);
 
       const uid = v4();
-      await mainSession.connect(mainToken, {
+      await session.connect(token, {
         clientData: userName,
-        isMask: false,
-        uid: uid,
-      });
-      await maskSession.connect(maskToken, {
-        clientData: userName,
-        isMask: true,
         uid: uid,
       });
 
-      const mainPublisher = await mainOV.initPublisherAsync(undefined, {
+      const publisher = await OV.initPublisherAsync(undefined, {
         audioSource: undefined,
-        videoSource: undefined,
+        videoSource: canvas.current.captureStream(30).getVideoTracks()[0],
         publishAudio: true,
         publishVideo: true,
         frameRate: 30,
         insertMode: "APPEND",
         mirror: false,
       });
-      const maskPublisher = await maskOV.initPublisherAsync(undefined, {
-        audioSource: undefined,
-        videoSource: canvases[1].current.captureStream(30).getVideoTracks()[0],
-        publishAudio: false,
-        publishVideo: true,
-        frameRate: 30,
-        insertMode: "APPEND",
-        mirror: false,
-      });
 
-      await mainSession.publish(mainPublisher);
-      await maskSession.publish(maskPublisher);
-      await setMainPublisher(mainPublisher);
-      await setMaskPublisher(maskPublisher);
+      await session.publish(publisher);
+      await setPublisher(publisher);
     } catch (error) {
       console.log(
         "There was an error connecting to the session:",
@@ -154,7 +123,7 @@ function useSession(shareCode) {
 
   const sendMessage = async (message, userName) => {
     console.log({ from: userName + "", message: message });
-    await mainSession.signal({
+    await session.signal({
       data: JSON.stringify({ from: userName + "", message: message }),
       to: [],
       type: "chat",
@@ -162,7 +131,7 @@ function useSession(shareCode) {
   };
 
   const gotoTakePic = async () => {
-    await mainSession.signal({
+    await session.signal({
       data: "",
       to: [],
       type: "gotoTakePic",
@@ -170,7 +139,7 @@ function useSession(shareCode) {
   };
 
   const gotoModifing = async () => {
-    await mainSession.signal({
+    await session.signal({
       data: "",
       to: [],
       type: "gotoModifing",
@@ -178,7 +147,7 @@ function useSession(shareCode) {
   };
 
   const gotoFinish = async () => {
-    await mainSession.signal({
+    await session.signal({
       data: "",
       to: [],
       type: "gotoFinish",
@@ -186,7 +155,7 @@ function useSession(shareCode) {
   };
 
   const setFrame = async (frame) => {
-    await mainSession.signal({
+    await session.signal({
       data: JSON.stringify(frame),
       to: [],
       type: "setFrame",
@@ -194,7 +163,7 @@ function useSession(shareCode) {
   };
 
   const sendBlob = async (idx, blob) => {
-    await mainSession.signal({
+    await session.signal({
       data: JSON.stringify({idx: idx, blob: blob}),
       to: [],
       type: "sendBlob",
@@ -231,13 +200,12 @@ function useSession(shareCode) {
   }, []);
 
   return {
-    mainSession,
-    maskSession,
+    session,
     subscribers,
     joinSession,
     sendMessage,
     chatLists,
-    mainPublisher,
+    publisher,
     leaveSession,
     gotoTakePic,
     gotoModifing,
