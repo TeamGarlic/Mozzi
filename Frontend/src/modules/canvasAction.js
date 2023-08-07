@@ -4,7 +4,8 @@ export const resetCamCanvases = "resetCamCanvases";
 export const setMyLayer = "setMyLayer";
 export const setMyLayerSource = "setMyLayerSource";
 export const resizeMyLayer = "resizeMyLayer";
-export const updateVideoMap = "updateVideoMap";
+export const updateSubVideoMap = "updateSubVideoMap";
+export const updatePubVideoMap = "updatePubVideoMap";
 
 export const setMainCanvasAction = (res) => {
   return {
@@ -48,9 +49,16 @@ export const resizeMyLayerAction = (res) => {
   }
 };
 
-export const updateVideoMapAction = (res) => {
+export const updateSubVideoMapAction = (res) => {
   return {
-    type : updateVideoMap,
+    type : updateSubVideoMap,
+    payload : res,
+  }
+};
+
+export const updatePubVideoMapAction = (res) => {
+  return {
+    type : updatePubVideoMap,
     payload : res,
   }
 };

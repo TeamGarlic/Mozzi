@@ -2,16 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   resetCamCanvasesAction,
-  setMyLayerSourceAction,
-  updateVideoMapAction,
-} from "@/modules/canvasAction.js";
+  setMyLayerSourceAction, updatePubVideoMapAction, updateSubVideoMapAction,
+} from '@/modules/canvasAction.js';
 import MakeBooth from "./makeBooth";
 import TakePic from "./takePic";
 import AfterTake from "./afterfTake";
 import Finish from "./finish";
 import { useParams, useLocation } from "react-router-dom";
 import { SelfieSegmentation } from "@mediapipe/selfie_segmentation";
-import { drawCanvas, drawMask, drawSubscriber } from "@/utils/videoUtil.js";
+import { drawCanvas, drawMask, chromaKey } from "@/utils/videoUtil.js";
 import useSession from "@/hooks/useSession.js";
 import { changeBgAction } from "@/modules/bgAction.js";
 import useUser from "@/hooks/useUser";
@@ -32,13 +31,12 @@ function Booth() {
   const pickedFrame = useSelector((state) => state.clipReducer.frame);
 
   const {
-    mainSession,
-    maskSession,
+    session,
     subscribers,
     joinSession,
     sendMessage,
     chatLists,
-    mainPublisher,
+    publisher,
     leaveSession,
     gotoTakePic,
     gotoModifing,
@@ -52,16 +50,19 @@ function Booth() {
   const webcamRef = useRef();
   // 배경 제거된 영상 그리는 canvas, context, layer 정보
   const bgRemovedRef = useRef();
-  // 배경 마스크 그리는 canvas, context, layer 정보
-  const bgMaskRef = useRef();
-  const bgMaskContextRef = useRef();
+  const bgRemovedContextRef = useRef();
 
   const camCanvases = useSelector((state) => state.canvasReducer.camCanvases);
   const mainCanvas = useSelector((state) => state.canvasReducer.mainCanvas);
   const myLayer = useSelector((state) => state.canvasReducer.myLayer);
-  const videoMap = useSelector((state) => state.canvasReducer.videoMap);
+  const pubVideoMap = useSelector((state) => state.canvasReducer.pubVideoMap);
+  const subVideoMap = useSelector((state) => state.canvasReducer.subVideoMap);
 
   const bgNow = useSelector((state) => state.bgReducer.bgNow);
+
+  const pubVideoRef = useRef();
+  const pubCanvasRef = useRef();
+
   const subVideoRefs = useRef({});
   const subCanvasRefs = useRef({});
   const localVideoMap = {};
@@ -75,20 +76,19 @@ function Booth() {
   startTake = checkHost(startTake, user.isHost);
 
   const onResults = (results) => {
-    // drawMask(bgMaskRef, bgMaskContextRef, results)
-    drawMask(bgMaskRef.current, bgMaskContextRef.current, results);
+    drawMask(bgRemovedRef.current, bgRemovedContextRef.current, results);
+    // console.log(pubVideoMap)
+    chromaKey(pubVideoMap.canvasRef, pubVideoMap.canvasContextRef, pubVideoMap.vidRef);
 
-    console.log(videoMap);
-    for (var key in videoMap) {
-      drawSubscriber(
-        videoMap[key].canvasRef,
-        videoMap[key].canvasContextRef,
-        "vidRef" in videoMap[key] ? videoMap[key].vidRef : webcamRef.current,
-        videoMap[key].maskRef
-      );
-
-      // if('vidRef' in videoMap[key]) drawSubscriber(videoMap[key].canvasRef, videoMap[key].canvasContextRef, videoMap[key].vidRef, videoMap[key].maskRef);
-    }
+    // console.log(videoMap);
+    // for (var key in videoMap) {
+    //   drawSubscriber(
+    //     videoMap[key].canvasRef,
+    //     videoMap[key].canvasContextRef,
+    //     "vidRef" in videoMap[key] ? videoMap[key].vidRef : webcamRef.current,
+    //     videoMap[key].maskRef
+    //   );
+    // }
 
     // // 내 웹캠을 담을 canvas (화면에 표시 x)
     // drawMyVid(
@@ -139,7 +139,7 @@ function Booth() {
     bgImg.src = "https://api.mozzi.lol/files/object/1691022079984_bg2.jpg";
     bgImg.crossOrigin = "anonymous";
     dispatch(changeBgAction({ img: bgImg }));
-    bgMaskContextRef.current = bgMaskRef.current.getContext("2d");
+    bgRemovedContextRef.current = bgRemovedRef.current.getContext("2d");
     const constraints = {
       video: { width: { max: 1280 }, height: { max: 720 } },
     };
@@ -169,7 +169,7 @@ function Booth() {
         canvas: bgRemovedRef,
       })
     );
-    joinSession(user.userNickname, [bgRemovedRef, bgMaskRef]);
+    joinSession(user.userNickname, bgRemovedRef);
     getBgList(1, 10);
   }, []);
 
@@ -177,46 +177,43 @@ function Booth() {
     console.log(subscribers);
     // console.log(subVideoRefs);
     // console.log(subCanvasRefs);
-    for (var key in localVideoMap) {
+    for (let key in localVideoMap) {
       delete localVideoMap[key];
     }
     if (subscribers) {
       subscribers.forEach((sub) => {
-        if (JSON.parse(sub.stream.connection.data).isMask) {
-          localVideoMap[JSON.parse(sub.stream.connection.data).uid] = {
-            ...localVideoMap[JSON.parse(sub.stream.connection.data).uid],
-            maskRef:
-              subVideoRefs.current[
-                JSON.parse(sub.stream.connection.data).uid + "_Mask"
-              ],
-            canvasRef:
-              subCanvasRefs.current[JSON.parse(sub.stream.connection.data).uid],
-            canvasContextRef:
-              subCanvasRefs.current[
-                JSON.parse(sub.stream.connection.data).uid
+        localVideoMap[JSON.parse(sub.stream.connection.data).uid] = {
+          ...localVideoMap[JSON.parse(sub.stream.connection.data).uid],
+          vidRef:
+            subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid],
+          canvasRef:
+            subCanvasRefs.current[JSON.parse(sub.stream.connection.data).uid],
+          canvasContextRef:
+            subCanvasRefs.current[
+              JSON.parse(sub.stream.connection.data).uid
               ].getContext("2d"),
-          };
-          sub.addVideoElement(
-            subVideoRefs.current[
-              JSON.parse(sub.stream.connection.data).uid + "_Mask"
-            ]
-          );
-        } else {
-          localVideoMap[JSON.parse(sub.stream.connection.data).uid] = {
-            ...localVideoMap[JSON.parse(sub.stream.connection.data).uid],
-            vidRef:
-              subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid],
-          };
-          sub.addVideoElement(
-            subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid]
-          );
-        }
+        };
+        sub.addVideoElement(
+          subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid]
+        );
       });
     }
     console.log(localVideoMap);
-    dispatch(updateVideoMapAction(localVideoMap));
-    console.log(videoMap);
+    dispatch(updateSubVideoMapAction(localVideoMap));
+    console.log(subVideoMap);
   }, [subscribers]);
+
+
+  useEffect(() => {
+    if (publisher){
+      publisher.addVideoElement(pubVideoRef.current);
+      dispatch(updatePubVideoMapAction({
+        vidRef:pubVideoRef.current,
+        canvasRef:pubCanvasRef.current,
+        canvasContextRef:pubCanvasRef.current.getContext("2d"),
+      }));
+    }
+  }, [publisher]);
 
   return (
     <>
@@ -225,7 +222,7 @@ function Booth() {
           startTake={startTake}
           shareCode={shareCode}
           subscribers={subscribers}
-          mainPublisher={mainPublisher}
+          publisher={publisher}
           leaveSession={leaveSession}
           gotoTakePic={gotoTakePic}
           frameList={frameList}
@@ -247,37 +244,27 @@ function Booth() {
       )}
       {now === "FINISH" && <Finish />}
       <video autoPlay ref={webcamRef} className="hidden" />
-      <canvas ref={bgMaskRef} className="hidden" />
+      <canvas ref={bgRemovedRef}  width={1280} height={720} className="hidden" />
+
+      <video ref={pubVideoRef} className="hidden" ></video>
+      <canvas ref={pubCanvasRef}  width={1280} height={720} className=" " />
       {subscribers &&
         subscribers.map((sub) => {
           return (
-            <video
-              key={sub.stream.connection.connectionId}
-              ref={(elem) =>
-                (subVideoRefs.current[
-                  JSON.parse(sub.stream.connection.data).uid +
-                    (JSON.parse(sub.stream.connection.data).isMask
-                      ? "_Mask"
-                      : "")
-                ] = elem)
-              }
-              className="hidden"
-            ></video>
-          );
-        })}
-      {subscribers &&
-        subscribers.map((sub) => {
-          if (!JSON.parse(sub.stream.connection.data).isMask) return null;
-          return (
-            <canvas
-              key={sub.stream.connection.connectionId}
-              ref={(elem) =>
-                (subCanvasRefs.current[
-                  JSON.parse(sub.stream.connection.data).uid
-                ] = elem)
-              }
-              className=" "
-            ></canvas>
+            <div key={sub.stream.connection.connectionId}>
+              <video
+                ref={(elem) =>
+                  (subVideoRefs.current[JSON.parse(sub.stream.connection.data).uid] = elem)
+                }
+                className="hidden"
+              ></video>
+              <canvas
+                ref={(elem) =>
+                  (subCanvasRefs.current[JSON.parse(sub.stream.connection.data).uid] = elem)
+                }
+                className=" "
+              ></canvas>
+            </div>
           );
         })}
     </>
