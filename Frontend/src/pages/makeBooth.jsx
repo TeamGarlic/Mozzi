@@ -3,7 +3,6 @@ import UserSideBar from "../components/UserSideBar";
 import EnterDialog from "@/components/EnterDialog";
 import PropTypes from "prop-types";
 import { useState } from "react";
-import { resetCamCanvasesAction } from "@/modules/canvasAction.js";
 import {useDispatch, useSelector} from "react-redux";
 import {setFrameAction} from "@/modules/clipAction.js";
 import {checkHost} from "@/utils/DecoratorUtil.js";
@@ -16,7 +15,6 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
   const dispatch = useDispatch();
   const closeDialog = () => {
     setVisibility(false);
-    dispatch(resetCamCanvasesAction());
   };
   function setVoice() {
     setToggleVoice(!toggleVoice);

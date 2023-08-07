@@ -16,6 +16,7 @@ function useSession(shareCode) {
   const [now, setNow] = useState("MAKING");
   const [taken, setTaken] = useState(1);
   const [timer, setTimer] = useState(3);
+  const [position, setPosition] = useState({});
   const dispatch = useDispatch();
   const [mozzi, setMozzi] = useState("");
 
@@ -29,7 +30,7 @@ function useSession(shareCode) {
     location.href = "/";
   };
 
-  const joinSession = async (userName, canvas) => {
+  const joinSession = async (userName, source) => {
     setUserName(userName);
     try {
       const OV = new OpenVidu();
@@ -85,6 +86,11 @@ function useSession(shareCode) {
         setTimer(Number(data.time));
       });
 
+      session.on("signal:sendPosition", async (event) => {
+        const data = await JSON.parse(event.data);
+        setPosition(data.position);
+      });
+
       session.on("signal:startTaking", async () => {
         setNowTaking(true)
       })
@@ -130,7 +136,7 @@ function useSession(shareCode) {
 
       const publisher = await OV.initPublisherAsync(undefined, {
         audioSource: undefined,
-        videoSource: canvas.current.captureStream(30).getVideoTracks()[0],
+        videoSource: source,
         publishAudio: true,
         publishVideo: true,
         frameRate: 30,
@@ -239,6 +245,23 @@ function useSession(shareCode) {
     });
   };
 
+  const sendPosition = async (positions) => {
+    // 방장이 모든 유저의 위치 정보를 전파
+    await session.signal({
+      data: JSON.stringify(positions),
+      to: [],
+      type: "setPosition",
+    });
+  };
+
+  const updatePosition = async (position) => {
+    // 참가자가 자신의 위치 정보 수정을 전파
+    await session.signal({
+      data: JSON.stringify(position),
+      to: [],
+      type: "setPosition",
+    });
+  };
 
   const getToken = async (code) => {
     let idRes = await boothApi.getSessionID(code);
@@ -289,6 +312,10 @@ function useSession(shareCode) {
     timeChange,
     startTaking,
     finishTaking,
+    position,
+    setPosition,
+    sendPosition,
+    updatePosition,
     changeBg,
     mozzi,
     sendMozzi,

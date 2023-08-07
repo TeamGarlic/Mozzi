@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  resetCamCanvasesAction,
-  setMyLayerSourceAction, updatePubVideoMapAction, updateSubVideoMapAction,
+  updatePositionAction, updatePubVideoMapAction, updateSubVideoMapAction,
 } from '@/modules/canvasAction.js';
 import MakeBooth from "./makeBooth";
 import TakePic from "./takePic";
@@ -53,6 +52,10 @@ function Booth() {
     timeChange,
     startTaking,
     finishTaking,
+    position,
+    setPosition,
+    sendPosition,
+    updatePosition,
     changeBg,
     mozzi,
     sendMozzi,
@@ -69,6 +72,7 @@ function Booth() {
   const myLayer = useSelector((state) => state.canvasReducer.myLayer);
   const pubVideoMap = useSelector((state) => state.canvasReducer.pubVideoMap);
   const subVideoMap = useSelector((state) => state.canvasReducer.subVideoMap);
+  const localPosition = useSelector((state) => state.canvasReducer.position);
 
   const bgNow = useSelector((state) => state.bgReducer.bgNow);
 
@@ -81,7 +85,7 @@ function Booth() {
 
   function startTake() {
     if (pickedFrame.id === 0) return;
-    dispatch(resetCamCanvasesAction());
+    sendPosition(position);
     gotoTakePic();
   }
   startTake = checkHost(startTake, user.isHost);
@@ -96,13 +100,40 @@ function Booth() {
       chromaKey(subVideoMap[key].canvasRef, subVideoMap[key].canvasContextRef, subVideoMap[key].vidRef);
     }
 
-    // TODO : 한 레이어만 그리는 샘플 코드 지우기
-    if (mainCanvas.canvas)
-      drawCanvas(mainCanvas.canvas.current, mainCanvas.context.current, bgNow.img, [myLayer]);
+    // console.log(localPosition)
 
     // TODO : 캔버스에 그리기
-    // drawCanvas(canvasRef,canvasContextRef,bgImg,layers);
+    if (mainCanvas.canvas){
+      drawCanvas(mainCanvas.canvas.current, mainCanvas.context.current, bgNow.img, localPosition);
+    }
   };
+
+  const initPosition = () => {
+
+    if(publisher&&(now === "MAKING")){
+      const newPosition = [];
+      newPosition.push({
+        id : publisher.stream.connection.connectionId,
+        x:0,
+        y:0,
+        width:0.4,
+        height:0.4,
+      })
+      let d = 0.1;
+      subscribers.forEach((sub) =>{
+        newPosition.push({
+          id : sub.stream.connection.connectionId,
+          x:d,
+          y:d,
+          width:0.4,
+          height:0.4,
+        })
+        d+=0.1
+      });
+      setPosition(newPosition);
+    }
+
+  }
 
   async function getBgList(pageNum, pageSize) {
     try {
@@ -159,7 +190,7 @@ function Booth() {
         requestAnimationFrame(sendToMediaPipe);
       }
     };
-    joinSession(user.userNickname, bgRemovedRef);
+    joinSession(user.userNickname, bgRemovedRef.current.captureStream(30).getVideoTracks()[0]);
     getBgList(1, 10);
 
     (() => {
@@ -200,6 +231,8 @@ function Booth() {
     // console.log(localVideoMap);
     dispatch(updateSubVideoMapAction(localVideoMap));
     // console.log(subVideoMap);
+    initPosition();
+
   }, [subscribers]);
 
 
@@ -214,12 +247,15 @@ function Booth() {
       }));
     }
 
-    dispatch(
-      setMyLayerSourceAction({
-        canvas: pubCanvasRef.current,
-      })
-    );
+
+    initPosition();
+
   }, [publisher]);
+
+
+  useEffect(() => {
+    dispatch(updatePositionAction(position));
+  }, [position]);
 
   const preventClose = (e) => {
     e.preventDefault();
@@ -280,6 +316,8 @@ function Booth() {
           startTaking={startTaking}
           finishTaking={finishTaking}
           nowTaking={nowTaking}
+          myId={publisher.stream.connection.connectionId}
+          updatePosition={updatePosition}
           changeBg={changeBg}
         />
       )}
