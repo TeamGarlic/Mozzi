@@ -45,10 +45,6 @@ public class EmailServiceImpl implements EmailService {
         smtpHost = env.getProperty("SMTP_HOST");
         smtpPort = env.getProperty("SMTP_PORT");
         dkimSelector = env.getProperty("SMTP_DKIM_SELECTOR");
-        // dkim = new ClassPathResource("config/dkim.der").getContentAsByteArray();
-        // KeyFactory rsaKeyFactory = KeyFactory.getInstance("RSA");
-        // PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(dkim);
-        // PrivateKey key = rsaKeyFactory.generatePrivate(privateKeySpec);
 
         InputStream dkimStream = new ClassPathResource("config/dkim.der").getInputStream();
         dkimSigner = new DkimSigner(smtpDomain, dkimSelector,
@@ -94,7 +90,7 @@ public class EmailServiceImpl implements EmailService {
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
             message.setSubject("[Mozzi.lol] 패스워드 초기화 안내", encoding);
 
-            String content = "초기화된 비밀번호는 " + password + "입니다.\n해당 비밀번호를 이용하여 로그인 후 패스워드 변경하시기 바랍니다.";
+            String content = "초기화된 비밀번호는 " + password + "입니다. 해당 비밀번호를 이용하여 로그인 후 패스워드 변경하시기 바랍니다.";
             message.setText(content, "utf-8");
 
             DkimMessage dkimMessage = new DkimMessage(message, dkimSigner);
