@@ -17,6 +17,7 @@ function useSession(shareCode) {
   const [taken, setTaken] = useState(1);
   const [timer, setTimer] = useState(3);
   const dispatch = useDispatch();
+  const [mozzi, setMozzi] = useState("");
 
   const leaveSession = () => {
     if (session) {
@@ -95,8 +96,13 @@ function useSession(shareCode) {
 
       session.on("signal:changeBg", async (event) => {
         const newBg = new Image();
-        newBg.src = event.data
+        newBg.src = event.data;
+        newBg.crossOrigin = "anonymous";
         dispatch(changeBgAction({img: newBg}));
+      })
+
+      session.on("signal:sendMozzi", async (event) => {
+        setMozzi(event.data)
       })
 
       session.on("streamDestroyed", (event) => {
@@ -225,6 +231,14 @@ function useSession(shareCode) {
     });
   };
 
+  const sendMozzi = async (id) => {
+    await session.signal({
+      data: id,
+      to: [],
+      type: "sendMozzi",
+    });
+  };
+
 
   const getToken = async (code) => {
     let idRes = await boothApi.getSessionID(code);
@@ -276,6 +290,8 @@ function useSession(shareCode) {
     startTaking,
     finishTaking,
     changeBg,
+    mozzi,
+    sendMozzi,
   };
 }
 

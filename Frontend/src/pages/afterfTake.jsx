@@ -4,11 +4,11 @@ import Frame from "@/components/Frame";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 import {useEffect, useRef, useState} from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import fileApi from "@/api/fileApi.js";
 
-function AfterTake({ goNext, user }) {
+function AfterTake({ goNext, user, sendMozzi }) {
   const [delay, setDelay] = useState(false);
   const { code: shareCode } = useParams();
   const frame = useSelector((state) => state.clipReducer.frame);
@@ -16,8 +16,6 @@ function AfterTake({ goNext, user }) {
   const completeClipRef = useRef();
   const completeClipContextRef = useRef();
   const videoRef = useRef({});
-  const navigate = useNavigate();
-  const location = useLocation();
   const bg = new Image();
   bg.src = frame.src;
   bg.crossOrigin = "anonymous";
@@ -38,13 +36,8 @@ function AfterTake({ goNext, user }) {
       // blob 데이터를 활용해 webm 파일로 변환
       const ClipFile = new File([blob], "clip.webm", { type: "video/webm" });
       // Todo: webm file url => 백엔드와 통신해서 url 주소를 재설정 해야함
-      const fileURL = window.URL.createObjectURL(ClipFile);
       arrClipData.splice(0);
       saveClip(ClipFile, "test");
-      console.log(location.state);
-      // navigate(`/${shareCode}/finish`, {state: {clip: fileURL}});
-      location.state = {state : {clip : fileURL}};
-      console.log(location.state);
       goNext();
     };
 
@@ -62,8 +55,7 @@ function AfterTake({ goNext, user }) {
     try {
       let res = await fileApi.saveClip(file, title);
       if (res.status === 201) {
-        // Todo: res.data.data.id 소켓으로 넘기기
-        console.log(res);
+        sendMozzi(res.data.data.id);
       }
     } catch (e) {
       console.log(e);
@@ -84,7 +76,6 @@ function AfterTake({ goNext, user }) {
       recordClip();
     }
   }
-  // makeClip = checkHost(makeClip, location.state.user.isHost);
   makeClip = checkHost(makeClip, user.isHost);
 
   function drawVid() {
@@ -120,13 +111,11 @@ function AfterTake({ goNext, user }) {
       <div className={`flex ${delay ? "":"invisible" }`}>Loading...</div>
       <div className={`flex ${delay ? "invisible":"" }`}>
         <div className="w-full h-screen p-4 flex-col">
-          {/* <ClipLog user={location.state.user} /> */}
           <ClipLog user={user} />
         </div>
         <div className="float-right min-w-[calc(32rem)] w-[calc(32rem)] h-screen bg-white flex-col rounded-s-xl p-4 justify-center items-center text-center overflow-y-scroll scrollbar-hide">
           프레임
           <div className="mx-auto bottom-5 justify-center items-center text-center">
-            {/* <Frame user={location.state.user} /> */}
             <Frame user={user} />
             <button
               className="w-1/2 h-10 rounded-3xl bg-yellow-100 shadow-[5px_5px_5px_0px_rgba(0,0,0,0.5)]"
@@ -172,4 +161,5 @@ AfterTake.propTypes = {
     email: PropTypes.string,
     isHost: PropTypes.number,
   }),
+  sendMozzi: PropTypes.func,
 };
