@@ -11,7 +11,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { AddClipAction } from "@/modules/clipAction";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 
-function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, sendBlob, timer, taken, timeChange, startTaking, finishTaking, nowTaking }) {
+function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, sendBlob, timer, taken, timeChange, startTaking, finishTaking, nowTaking, changeBg }) {
   const timers = [3, 5, 10];
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
@@ -30,11 +30,21 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
     };
     mediaRecorder.onstop = () => {
       const blob = new Blob(arrClipData);
-      sendBlob(idx, blob);
-
-      const blobURL = window.URL.createObjectURL(blob);
-      dispatch(AddClipAction({ idx, src: blobURL }));
-
+      const file = new File([blob], "clip.webm", {type: "video/webm"})
+      const fileToBase64 = file => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        return new Promise(resolve => {
+          reader.onloadend = () => {
+            resolve(reader.result);
+          };
+        });
+      };
+      fileToBase64(file).then(res => {
+        // console.log(res);
+        // sendBlob(idx, res);
+        dispatch(AddClipAction({ idx, src: res }));
+      });
       arrClipData.splice(0);
     };
 
@@ -105,7 +115,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
             </div>
             <div className="text-2xl">MOZZI</div>
           </div>
-          <PicSideBar bgList={bgList} user={user} />
+          <PicSideBar bgList={bgList} user={user} changeBg={changeBg}/>
           {/* <div className="float-right mr-10 text-2xl">taken : {taken}/10</div> */}
         </div>
         <BigCam />
@@ -161,4 +171,5 @@ TakePic.propTypes = {
   startTaking: PropTypes.func,
   finishTaking: PropTypes.func,
   nowTaking: PropTypes.bool,
+  changeBg: PropTypes.func,
 };
