@@ -41,6 +41,8 @@ function Booth() {
     mainPublisher,
     leaveSession,
     gotoTakePic,
+    gotoModifing,
+    gotoFinish,
     nowTaking,
     now,
     setNow,
@@ -237,11 +239,11 @@ function Booth() {
           chatLists={chatLists}
           user={user}
           bgList={bgList}
-          goNext={() => setNow("MODIFING")}
+          goNext={gotoModifing}
         />
       )}
       {now === "MODIFING" && (
-        <AfterTake goNext={() => setNow("FINISH")} user={user} />
+        <AfterTake goNext={gotoFinish} user={user} />
       )}
       {now === "FINISH" && <Finish />}
       <video autoPlay ref={webcamRef} className="hidden" />
