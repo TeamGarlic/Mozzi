@@ -69,6 +69,8 @@ public class SecurityConfig {
 
                 // mozzirolls 에 대한 보안 설정
                 .requestMatchers(HttpMethod.GET, "/mozzirolls").authenticated()
+                .requestMatchers(HttpMethod.POST, "/mozzirolls/link").authenticated()
+                .requestMatchers(HttpMethod.POST, "/mozzirolls/{userMozzirollId}").authenticated()
             )
             .headers(headers ->
                 headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)

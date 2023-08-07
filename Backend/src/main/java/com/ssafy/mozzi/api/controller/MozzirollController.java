@@ -4,6 +4,7 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
+import com.ssafy.mozzi.api.response.MozzirollLikeRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.api.service.MozzirollService;
 import com.ssafy.mozzi.common.exception.handler.AlreadyLinkedMozziException;
@@ -96,6 +98,36 @@ public class MozzirollController {
                 BaseResponseBody.<UserMozzirollGetRes>builder()
                     .message("Mozziroll list by user success")
                     .data(mozzirollService.getMozzirollsByUser(accessToken, pageNum, pageSize))
+                    .build()
+            );
+    }
+
+    /**
+     * 모찌롤을 좋아요 합니다. 이미 좋아요 한 경우 좋아요가 해제됩니다.
+     * @param accessToken 사용자의 Token
+     * @param userMozzirollId 사용자가 만든 모찌롤 게시물의 아이디
+     * @see MozzirollService
+     * @see MozzirollLikeRes
+     */
+    @Operation(summary = "모찌롤 좋아요 Toggle", description = "모찌롤을 좋아요 합니다. 이미 좋아요 한 경우 좋아요가 해제됩니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "사용자 Mozziroll 페이징 조회 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "400", description = "잘못된 요청 정보",
+            content = @Content(schema = @Schema(implementation = UserIdNotExistsException.UserIdNotExistsResponse.class))),
+        @ApiResponse(responseCode = "403", description = "잘못된 accessToken 또는 url"),
+        @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+    })
+    @PostMapping("/{userMozzirollId}")
+    public ResponseEntity<? extends BaseResponseBody<MozzirollLikeRes>> likeMozziroll(
+        @RequestHeader("Authorization") String accessToken,
+        @PathVariable long userMozzirollId) {
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.noCache())
+            .body(
+                BaseResponseBody.<MozzirollLikeRes>builder()
+                    .message("mozziroll like or dislike success")
+                    .data(mozzirollService.likeMozziroll(accessToken, userMozzirollId))
                     .build()
             );
     }

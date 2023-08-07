@@ -3,6 +3,7 @@ package com.ssafy.mozzi.common.util.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ssafy.mozzi.api.response.MozzirollLikeRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.common.dto.MozzirollItem;
 import com.ssafy.mozzi.db.entity.remote.UserMozziroll;
@@ -47,6 +48,19 @@ public class MozzirollMapper {
         return UserMozzirollGetRes.builder()
             .mozzirollItems(toMozzirollItems(mozzirollItems))
             .pages(pages)
+            .build();
+    }
+
+    /**
+     * mozzirollLike 의 정보를 MozzirollLikeRes 로 변환
+     * @param likeCount 좋아요 개수
+     * @param isLiked 좋아요 여부
+     * @return MozzirollLikeRes
+     */
+    public static MozzirollLikeRes toMozzirollLikeRes(int likeCount, boolean isLiked) {
+        return MozzirollLikeRes.builder()
+            .likeCount(likeCount)
+            .isLiked(isLiked)
             .build();
     }
 }
