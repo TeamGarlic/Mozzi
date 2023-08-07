@@ -10,21 +10,21 @@ function useUser(initialState = null) {
   async function getUser() {
     let res = await userApi.getUser(accessToken);
     return res;
-  }
+}
 
-  useEffect(() => {
-    getUser().then((res)=>{
-      if (res&&res.status === 200) {
-        const userData = res.data.data
-        setUser({
-          ...user,
-          ...userData,
-        });
-      }
-    });
-  }, [accessToken]);
+useEffect(() => {
+  getUser().then((res)=>{
+    if (res&&res.status === 200) {
+      const userData = res.data.data
+      setUser({
+        ...user,
+        ...userData,
+      });
+    }
+  });
+}, [accessToken]);
 
-  async function checkUser() {
+async function checkUser() {
     await getUser().then((res)=>{
       if (res&&res.status === 200) {
         const userData = res.data.data
