@@ -17,15 +17,26 @@ import com.ssafy.mozzi.api.request.SessionPostReq;
 import com.ssafy.mozzi.api.response.ConnectionPostRes;
 import com.ssafy.mozzi.api.response.SessionRes;
 import com.ssafy.mozzi.api.service.BoothService;
+import com.ssafy.mozzi.common.exception.handler.AccessTokenNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.DuplicateShareCodeException;
+import com.ssafy.mozzi.common.exception.handler.InvalidSessionIdException;
+import com.ssafy.mozzi.common.exception.handler.ShareCodeNotExistException;
+import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/sessions")
 @RequiredArgsConstructor
+@Tag(name = "부스 컨트롤러", description = "WebRTC 부스를 담당하는 컨트롤러입니다.")
 public class BoothController {
     private final BoothService boothService;
 
@@ -37,19 +48,21 @@ public class BoothController {
      * @see com.ssafy.mozzi.api.service.BoothServiceImpl
      * @see io.openvidu.java.client.Session
      */
+    @Operation(summary = "부스 생성", description = "JWT 토큰과 생성하고자 하는 부스의 공유 코드(생략 가능)을 받아 새로운 부스를 생성합니다")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "부스 생성 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "400", description = "중복된 공유 코드", content = @Content(schema = @Schema(implementation = DuplicateShareCodeException.DuplicateShareCodeResponse.class))),
+        @ApiResponse(responseCode = "401", description = "JWT TOKEN 없음", content = @Content(schema = @Schema(implementation = AccessTokenNotExistsException.AccessTokenNotExistsResponse.class))),
+        @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))})
     @PostMapping
-    public ResponseEntity<? extends BaseResponseBody<SessionRes>> createBooth(
-        @RequestHeader String Authorization, @RequestBody SessionPostReq request) throws
-        Exception {
+    public ResponseEntity<? extends BaseResponseBody<SessionRes>> createBooth(@RequestHeader String Authorization,
+        @RequestBody SessionPostReq request) throws Exception {
 
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
-            .body(
-                BaseResponseBody.<SessionRes>builder()
-                    .message("Requested booth created")
-                    .data(boothService.createBooth(request, Authorization))
-                    .build()
-            );
+            .body(BaseResponseBody.<SessionRes>builder()
+                .message("Requested booth created")
+                .data(boothService.createBooth(request, Authorization))
+                .build());
     }
 
     /**
@@ -59,18 +72,19 @@ public class BoothController {
      * @see com.ssafy.mozzi.api.service.BoothServiceImpl
      * @see io.openvidu.java.client.Session
      */
+    @Operation(summary = "부스 참여", description = "부스의 공유 코드를 이용하여 부스의 session id를 얻습니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "부스 참여 정보 획득 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "400", description = "존재하지 않는 공유 코드", content = @Content(schema = @Schema(implementation = ShareCodeNotExistException.ShareCodeNotExistResponse.class))),
+        @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))})
     @GetMapping("/{shareCode}")
-    public ResponseEntity<? extends BaseResponseBody<SessionRes>> joinBooth(@PathVariable String shareCode) throws
-        Exception {
-
+    public ResponseEntity<? extends BaseResponseBody<SessionRes>> joinBooth(@PathVariable String shareCode) {
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
-            .body(
-                BaseResponseBody.<SessionRes>builder()
-                    .message("Requested booth exists")
-                    .data(boothService.joinBooth(shareCode))
-                    .build()
-            );
+            .body(BaseResponseBody.<SessionRes>builder()
+                .message("Requested booth exists")
+                .data(boothService.joinBooth(shareCode))
+                .build());
     }
 
     /**
@@ -80,6 +94,11 @@ public class BoothController {
      * @see com.ssafy.mozzi.api.service.BoothServiceImpl
      * @see io.openvidu.java.client.Connection
      */
+    @Operation(summary = "Connection 생성", description = "Openvidu Session Id를 이용하여 Websocket connection을 생성합니다")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Connection 생성 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "400", description = "존재하지 않는 Session ID", content = @Content(schema = @Schema(implementation = InvalidSessionIdException.InvalidSessionIdResponse.class))),
+        @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))})
     @PostMapping("/connections")
     public ResponseEntity<? extends BaseResponseBody<ConnectionPostRes>> createConnection(
         @RequestHeader(required = false) String Authorization, @RequestBody ConnectionPostReq request) throws
@@ -87,12 +106,10 @@ public class BoothController {
 
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
-            .body(
-                BaseResponseBody.<ConnectionPostRes>builder()
-                    .message("Connection Token created")
-                    .data(boothService.getConnectionToken(request, Authorization))
-                    .build()
-            );
+            .body(BaseResponseBody.<ConnectionPostRes>builder()
+                .message("Connection Token created")
+                .data(boothService.getConnectionToken(request, Authorization))
+                .build());
     }
 
     /**
@@ -102,20 +119,23 @@ public class BoothController {
      * @see com.ssafy.mozzi.api.service.BoothServiceImpl
      * @see io.openvidu.java.client.Session
      */
+    @Operation(summary = "부스 삭제", description = "Openvidu Session Id를 이용해 Session을 삭제합니다.")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "부스 삭제 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "400", description = "존재하지 않는 Session ID", content = @Content(schema = @Schema(implementation = InvalidSessionIdException.InvalidSessionIdResponse.class))),
+        @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))})
     @DeleteMapping("/{sessionId}")
     public ResponseEntity<? extends BaseResponseBody<SessionRes>> deleteBooth(@PathVariable String sessionId) throws
         Exception {
 
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
-            .body(
-                BaseResponseBody.<SessionRes>builder()
-                    .message("deleted exist booth")
-                    .data(boothService.deleteBooth(sessionId))
-                    .build()
-            );
+            .body(BaseResponseBody.<SessionRes>builder()
+                .message("deleted exist booth")
+                .data(boothService.deleteBooth(sessionId))
+                .build());
     }
 
+    @Operation(ignoreJsonView = true)
     // TODO: 배포시 삭제
     @GetMapping("/testpath/{shareCode}")
     public ResponseEntity<? extends BaseResponseBody<ConnectionPostRes>> testConnection(
@@ -136,12 +156,10 @@ public class BoothController {
 
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
-            .body(
-                BaseResponseBody.<ConnectionPostRes>builder()
-                    .message("Connection Token created")
-                    .data(boothService.getConnectionToken(connectionPostReq,
-                        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjkwOTU0NzYwLCJleHAiOjEyMTY5MDk1NDc2MH0.RF8qFqAwbcbDdS1jl9Q9vAb5RzOZ8j6xmjMqWAApKio"))
-                    .build()
-            );
+            .body(BaseResponseBody.<ConnectionPostRes>builder()
+                .message("Connection Token created")
+                .data(boothService.getConnectionToken(connectionPostReq,
+                    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjkwOTU0NzYwLCJleHAiOjEyMTY5MDk1NDc2MH0.RF8qFqAwbcbDdS1jl9Q9vAb5RzOZ8j6xmjMqWAApKio"))
+                .build());
     }
 }

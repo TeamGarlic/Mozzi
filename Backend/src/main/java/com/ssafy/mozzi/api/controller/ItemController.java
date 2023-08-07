@@ -20,8 +20,15 @@ import com.ssafy.mozzi.api.response.ItemStickerGetRes;
 import com.ssafy.mozzi.api.service.ItemService;
 import com.ssafy.mozzi.common.dto.FrameClipItem;
 import com.ssafy.mozzi.common.model.ItemCacheControl;
+import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -31,6 +38,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/items")
+@Tag(name = "Item 컨트롤러", description = "Mozzi에서 사용되는 프레임, 배경 화면 등을 관리하는 컨트롤러입니다.")
 public class ItemController {
     private final ItemService itemService;
     private final ItemCacheControl cacheControl;
@@ -43,6 +51,12 @@ public class ItemController {
      * @return ResponseEntity<? extends ItemBackgroundGetRes>
      * @see ItemService
      */
+    @Operation(summary = "배경 화면 가져오기", description = "배경 화면을 페이징 처리 하여 기져오기.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "배경 화면 fetch 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+    })
     @GetMapping("/backgrounds")
     public ResponseEntity<? extends BaseResponseBody<ItemBackgroundGetRes>> getBackgrounds(
         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
@@ -65,6 +79,12 @@ public class ItemController {
      * @return ResponseEntity<? extends ItemStickerGetRes>
      * @see ItemService
      */
+    @Operation(summary = "스티커 가져오기", description = "스티커를 페이징 처리 하여 기져오기.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "스티커 fetch 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+    })
     @GetMapping("/stickers")
     public ResponseEntity<? extends BaseResponseBody<ItemStickerGetRes>> getStickers(
         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
@@ -86,6 +106,12 @@ public class ItemController {
      * @return ResponseEntity<? extends BaseResponseBody>
      * @see ItemService
      */
+    @Operation(summary = "프레임 가져오기", description = "프레임을 페이징 처리 하여 기져오기.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "프레임 fetch 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+    })
     @GetMapping("/frames")
     public ResponseEntity<? extends BaseResponseBody<FrameListGetRes>> getFrames() {
 
@@ -106,6 +132,12 @@ public class ItemController {
      * @return ResponseEntity<? extends BaseResponseBody < ItemBackgroundPostRes>>
      * @see ItemService
      */
+    @Operation(summary = "가상 배경 업로드", description = "가상 배경을 업로드 합니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "가상 배경 업로드 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+    })
     @PostMapping("/background")
     public ResponseEntity<? extends BaseResponseBody<ItemBackgroundPostRes>> saveBackground(
         @RequestParam("file") MultipartFile file,
@@ -126,9 +158,14 @@ public class ItemController {
      * 프레임 업로드 비지니스 로직
      * @param file MultipartFile
      * @param title String
-     * @param rects FrameClipItem[]
      * @see ItemService
      */
+    @Operation(summary = "프레임 업로드", description = "프레임을 업로드 합니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "프레임 업로드 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+    })
     @PostMapping("/frame")
     public ResponseEntity<? extends BaseResponseBody<String>> saveFrame(
         @RequestParam("file") MultipartFile file,
@@ -153,6 +190,12 @@ public class ItemController {
      * @param frameClipItems FrameClipItem[]
      * @see ItemService
      */
+    @Operation(summary = "프레임 클립 업로드", description = "프레임에 속한 클립 정보를 업로드 합니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "프레임 클립 업로드 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+    })
     @PostMapping("/frame/{frameId}")
     public ResponseEntity<? extends BaseResponseBody<String>> saveFrameClips(
         @PathVariable("frameId") long frameId,

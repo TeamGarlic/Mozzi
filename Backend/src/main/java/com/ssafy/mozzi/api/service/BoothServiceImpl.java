@@ -2,8 +2,6 @@ package com.ssafy.mozzi.api.service;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.random.RandomGenerator;
-import java.util.random.RandomGeneratorFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
@@ -29,21 +27,21 @@ import com.ssafy.mozzi.db.repository.local.BoothUserRepository;
 
 import io.openvidu.java.client.Connection;
 import io.openvidu.java.client.OpenVidu;
+import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.Session;
 import io.openvidu.java.client.SessionProperties;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Openvidu 부스 관리 서비스입니다.
  */
 @Service
 @PropertySource("classpath:application-keys.properties")
+@RequiredArgsConstructor
 public class BoothServiceImpl implements BoothService {
     private final BoothRepository boothRepository;
 
     private final BoothUserRepository boothUserRepository;
-
-    private final RandomGenerator random = RandomGeneratorFactory
-        .getDefault().create(System.currentTimeMillis());
 
     private final MozziUtil mozziUtil;
 
@@ -67,10 +65,13 @@ public class BoothServiceImpl implements BoothService {
      * @see Session
      * @see SessionPostReq
      * @see BoothMapper
+     * @throws DuplicateShareCodeException (Mozzi code : 5, Http Status 400)
+     * @throws AccessTokenNotExistsException (Mozzi code : 7, Http Status 401)
+     * @throws RuntimeException (Mozzi code : 0, Http Status 500)
      */
     @Override
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
-    public SessionRes createBooth(SessionPostReq request, String accessToken) throws Exception {
+    public SessionRes createBooth(SessionPostReq request, String accessToken) {
         if (accessToken == null) {
             throw new AccessTokenNotExistsException("There is no access Token");
         }
@@ -79,7 +80,7 @@ public class BoothServiceImpl implements BoothService {
         Optional<Booth> booth = null;
         if (shareCode == null) {
             do {
-                shareCode = generateString(20);
+                shareCode = mozziUtil.generateString(20);
                 booth = boothRepository.findByShareCode(shareCode);
             } while (booth.isPresent());
         } else {
@@ -88,9 +89,9 @@ public class BoothServiceImpl implements BoothService {
                 throw new DuplicateShareCodeException(String.format("Duplicated booth share code(%s)", shareCode));
             }
         }
-
+        sessionCreation:
         while (true) {
-            String sessionId = generateString(20);
+            String sessionId = mozziUtil.generateString(20);
             booth = boothRepository.findBySessionId(sessionId);
             if (booth.isEmpty()) {
                 Booth newBooth = Booth.builder()
@@ -104,7 +105,20 @@ public class BoothServiceImpl implements BoothService {
                 SessionProperties properties = new SessionProperties.Builder()
                     .customSessionId(sessionId)
                     .build();
-                Session session = openVidu.createSession(properties);
+                Session session = null;
+                try {
+                    openVidu.createSession(properties);
+                } catch (OpenViduHttpException exception) {
+                    switch (exception.getStatus()) {
+                        case 409:
+                            continue sessionCreation;
+                        default:
+                            throw new RuntimeException("Fail to create openvidu session");
+                    }
+                } catch (Exception exception) {
+                    throw new RuntimeException("Fail to create openvidu session");
+                }
+
                 return BoothMapper.toSessionRes(session.getSessionId(), shareCode);
             }
         }
@@ -117,12 +131,13 @@ public class BoothServiceImpl implements BoothService {
      * @return openvidu session id
      * @see Session
      * @see BoothMapper
+     * @throws ShareCodeNotExistException (Mozzi code : 6, Http Status 400)
      */
     @Override
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     public SessionRes joinBooth(String shareCode) {
         Optional<Booth> booth = boothRepository.findByShareCode(shareCode);
-        if (booth == null) {
+        if (booth.isEmpty()) {
             throw new ShareCodeNotExistException(String.format("Requested booth(%s) not exist", shareCode));
         }
         return BoothMapper.toSessionRes(booth.get().getSessionId(), shareCode);
@@ -136,10 +151,11 @@ public class BoothServiceImpl implements BoothService {
      * @see Session
      * @see Connection
      * @see BoothMapper
+     * @throws InvalidSessionIdException (Mozzi code : 12, Http Status 400)
+     * @throws RuntimeException (Mozzi code : 0, Http Status 500)
      */
     @Override
-    public ConnectionPostRes getConnectionToken(ConnectionPostReq request, String accessToken) throws
-        Exception {
+    public ConnectionPostRes getConnectionToken(ConnectionPostReq request, String accessToken) {
         Session session = openVidu.getActiveSession(request.getSessionId());
         if (session == null) {
             throw new InvalidSessionIdException(
@@ -164,7 +180,20 @@ public class BoothServiceImpl implements BoothService {
             }
         }
 
-        Connection connection = session.createConnection();
+        Connection connection = null;
+        try {
+            connection = session.createConnection();
+        } catch (OpenViduHttpException e) {
+            switch (e.getStatus()) {
+                case 404:
+                    throw new InvalidSessionIdException("Requested Booth not exists. It could be destroyed.");
+                default:
+                    throw new RuntimeException("Fail to create Connection");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Fail to create Connection");
+        }
+
         return BoothMapper.toConnectionPostRes(connection);
     }
 
@@ -176,6 +205,7 @@ public class BoothServiceImpl implements BoothService {
      * @see Session
      * @see Connection
      * @see BoothMapper
+     * @throws InvalidSessionIdException (Mozzi code : 13, Http Status 400)
      */
     @Override
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
@@ -190,29 +220,6 @@ public class BoothServiceImpl implements BoothService {
         Optional<Booth> booth = boothRepository.findBySessionId(sessionId);
         booth.ifPresent(boothRepository::delete);
         return BoothMapper.toSessionRes(sessionId, "");
-    }
-
-    /**
-     * 영문자/숫자로 구성된 length 만큼의 랜덤한 문자열을 만듭니다.
-     *
-     * @param length 생성할 문자열의 길이
-     * @return 생성된 랜덤한 문자열
-     */
-    private String generateString(int length) {
-        StringBuilder sb = new StringBuilder();
-        int[] rands
-            = random.ints(length, 0, 62)
-            .toArray();
-        for (int rand : rands) {
-            if (rand < 10) {
-                sb.append(rand);
-            } else if (rand < 36) {
-                sb.append((char)('a' + rand - 10));
-            } else {
-                sb.append((char)('A' + rand - 36));
-            }
-        }
-        return sb.toString();
     }
 
 }

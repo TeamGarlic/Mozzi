@@ -20,17 +20,18 @@ import com.ssafy.mozzi.api.response.UserLoginPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
 import com.ssafy.mozzi.api.response.UserUpdateRes;
 import com.ssafy.mozzi.common.auth.JwtTokenProvider;
-import com.ssafy.mozzi.common.exception.handler.DuplicatedUserIdException;
 import com.ssafy.mozzi.common.exception.handler.InvalidRefreshTokenException;
 import com.ssafy.mozzi.common.exception.handler.NoDataException;
 import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.UserLoginFailException;
+import com.ssafy.mozzi.common.exception.handler.UserRegisterException;
 import com.ssafy.mozzi.common.util.mapper.UserMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
 import com.ssafy.mozzi.db.entity.remote.User;
 import com.ssafy.mozzi.db.repository.remote.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  User 요청에 대한 Service/비즈니스 로직 구현
@@ -38,6 +39,7 @@ import lombok.RequiredArgsConstructor;
  * @see UserRepository
  * @see User
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -50,6 +52,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param request UserRegisterPostReq
      * @return UserRegisterPostRes
+     * @throws UserRegisterException (Mozzi code : 3, Http Status 400)
      * @see UserRepository
      */
     @Override
@@ -59,8 +62,10 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         try {
             userRepository.save(user);
-        } catch (Exception e) {
-            throw new DuplicatedUserIdException(String.format("Duplicated user id(%s)", request.getUserId()));
+        } catch (
+            Exception e) {
+            log.error("[User Save error] : {}", e.getMessage());
+            throw new UserRegisterException(String.format("Duplicated user id(%s)", request.getUserId()));
         }
         return UserMapper.toRegistRes(user);
     }
@@ -70,6 +75,8 @@ public class UserServiceImpl implements UserService {
      *
      * @param request UserLoginPostReq
      * @return UserLoginPostRes
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     * @throws UserLoginFailException (Mozzi code : 4, Http Status 400)
      * @see UserRepository
      */
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
@@ -108,6 +115,8 @@ public class UserServiceImpl implements UserService {
      *
      * @param reissueInfo reissuePostReq
      * @return reissuePostRes
+     * @throws InvalidRefreshTokenException (Mozzi code : 2, Http Status 400)
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
      * @see UserRepository
      * @see JwtTokenProvider
      */
@@ -130,6 +139,7 @@ public class UserServiceImpl implements UserService {
      *  Token으로 User를 찾는 Service/비즈니스 로직
      * @param accessToken String
      * @return User
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
      * @see UserRepository
      * @see JwtTokenProvider
      */
@@ -150,6 +160,7 @@ public class UserServiceImpl implements UserService {
      *  헤더에서 입력받은 accessToken으로 유저 정보를 반환하는 로직
      * @param accessToken String
      * @return BaseResponseBody<UserInfoRes>
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
      * @see UserInfoRes
      */
     @Override
@@ -167,6 +178,7 @@ public class UserServiceImpl implements UserService {
      *  헤더에서 입력받은 accessToken 으로 유저의 리프레쉬 토큰을 null 값으로 변경하는 로직
      * @param accessToken String
      * @return BaseResponseBody<String>
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
@@ -184,7 +196,8 @@ public class UserServiceImpl implements UserService {
      * 유저 데이터 변경 요청을 받아 유저 데이터를 수정합니다.
      * @param request
      * @return BaseResponseBody<Long> 성공시 User Id를 같이 반환합니다.
-     * @throws UserIdNotExistsException
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     * @throws NoDataException (Mozzi code : 13, Http Status 400)
      */
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     @Override

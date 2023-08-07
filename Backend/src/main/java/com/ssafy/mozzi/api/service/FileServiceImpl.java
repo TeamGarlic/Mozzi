@@ -14,6 +14,7 @@ import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
 import com.ssafy.mozzi.common.auth.ObjectStorageClient;
 import com.ssafy.mozzi.common.dto.ObjectFileItem;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
+import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.util.FileUtil;
 import com.ssafy.mozzi.common.util.mapper.FileMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
@@ -45,7 +46,8 @@ public class FileServiceImpl implements FileService {
      * @see UserMozzirollRepository
      * @see FileRepository
      * @see FileMozzirollPostRes
-     * @see CloudStorageSaveFailException
+     * @see CloudStorageSaveFailException (Mozzi code : 0, Http Status 500)
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
@@ -56,7 +58,8 @@ public class FileServiceImpl implements FileService {
         // User 찾기
         User user = userService.findUserByToken(accessToken);
         if (user == null)
-            throw new CloudStorageSaveFailException("파일 저장 유저 없음");
+            throw new CloudStorageSaveFailException(
+                "파일 저장 유저 없음"); // TODO: 요청된 Token에 대해 매칭되는 사용자가 없는 게 Internal Server Error가 맞나 고민해봐야할 것 같아요. Bad Request 쪽의 User Not Exists 이 맞을 것 같아요.
         // Mozziroll 테이블에 정보 추가.
         Mozziroll mozziroll = mozzirollRepository.save(
             Mozziroll.builder()
@@ -75,7 +78,7 @@ public class FileServiceImpl implements FileService {
             OBJECT_NAME, contentType);
 
         if (response.getLastModified() == null)
-            throw new CloudStorageSaveFailException("파일 업로드 실패");
+            throw new CloudStorageSaveFailException("Fail to upload mozzi");
 
         return FileMapper.toFileMozzirollPostRes(mozziroll);
     }
@@ -90,7 +93,8 @@ public class FileServiceImpl implements FileService {
      * @see FileMapper
      */
     @Override
-    public ObjectFileItem downloadMozziroll(String mozzirollId) {
+    public ObjectFileItem downloadMozziroll(
+        String mozzirollId) { // TODO: 다운 받는 유저가 해당 모찌롤을 다운받을 권한이 있나 확인하는 로직 시간 나면 추가..
         Optional<Mozziroll> mozziroll = mozzirollRepository.findById(Long.parseLong(mozzirollId));
         GetObjectResponse getObjectResponse = fileRepository.getObject(client.getClient(),
             mozziroll.get().getObjectName());
