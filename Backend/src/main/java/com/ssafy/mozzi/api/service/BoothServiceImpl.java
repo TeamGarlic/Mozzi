@@ -107,7 +107,7 @@ public class BoothServiceImpl implements BoothService {
                     .build();
                 Session session = null;
                 try {
-                    openVidu.createSession(properties);
+                    session = openVidu.createSession(properties);
                 } catch (OpenViduHttpException exception) {
                     switch (exception.getStatus()) {
                         case 409:
