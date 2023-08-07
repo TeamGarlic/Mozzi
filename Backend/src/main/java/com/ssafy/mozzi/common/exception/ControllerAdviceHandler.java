@@ -16,6 +16,7 @@ import com.ssafy.mozzi.common.exception.handler.MozzirollNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.NoDataException;
 import com.ssafy.mozzi.common.exception.handler.ShareCodeNotExistException;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
+import com.ssafy.mozzi.common.exception.handler.UserEmailNotExists;
 import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.UserLoginFailException;
 import com.ssafy.mozzi.common.exception.handler.UserRegisterException;
@@ -198,5 +199,14 @@ public class ControllerAdviceHandler {
     public ResponseEntity<? extends BaseErrorResponse> handleNoDataException(NoDataException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(new NoDataException.NoDataResponse(exception.getMessage()));
+    }
+
+    /**
+     * 사용자의 email이 필요하나, email이 존재하지 않을 때 발생하는 Exception 입니다 (Mozzi code : 14, Http Status 404)
+     */
+    @ExceptionHandler(UserEmailNotExists.class)
+    public ResponseEntity<? extends BaseErrorResponse> handleUserEmailNotExists(UserEmailNotExists exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(new UserRegisterException.UserRegisterResponse(exception.getMessage()));
     }
 }
