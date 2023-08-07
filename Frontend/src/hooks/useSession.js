@@ -91,6 +91,15 @@ function useSession(shareCode) {
         setPosition(data.position);
       });
 
+      session.on("signal:updatePosition", async (event) => {
+        const data = await JSON.parse(event.data);
+        const newPosition = {};
+        for(let pos in position){
+          newPosition.push((pos.id===data.id)?data:pos);
+        }
+        setPosition(newPosition);
+      });
+
       session.on("signal:startTaking", async () => {
         setNowTaking(true)
       })
