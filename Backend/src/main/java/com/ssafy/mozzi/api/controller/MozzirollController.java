@@ -12,6 +12,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
+import com.ssafy.mozzi.api.service.MozzirollService;
+import com.ssafy.mozzi.common.model.response.BaseResponseBody;
+
+import lombok.RequiredArgsConstructor;
+
+import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.api.service.MozzirollService;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
@@ -33,7 +39,14 @@ public class MozzirollController {
     @PostMapping("/link")
     public ResponseEntity<? extends BaseResponseBody<Long>> link(@RequestHeader String Authorization, @RequestBody
     MozziLinkPostRequest request) {
-        return mozzirollService.link(request, Authorization);
+
+        return ResponseEntity.ok()
+            .body(
+                BaseResponseBody.<Long>builder()
+                    .message("Mozziroll Linked")
+                    .data(mozzirollService.link(request, Authorization))
+                    .build()
+            );
     }
 
     /**

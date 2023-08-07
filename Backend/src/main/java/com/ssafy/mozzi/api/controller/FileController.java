@@ -47,6 +47,7 @@ public class FileController {
     public ResponseEntity<? extends BaseResponseBody<FileMozzirollPostRes>> saveMozziroll(
         @RequestHeader("Authorization") String accessToken, @RequestParam("file") MultipartFile file,
         @RequestParam("title") String title) {
+
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .cacheControl(CacheControl.noStore())
@@ -70,6 +71,7 @@ public class FileController {
     @GetMapping(value = "/mozziroll/{mozzirollId}")
     public ResponseEntity<Resource> downloadMozziroll(@PathVariable("mozzirollId") String mozzirollId) {
         ObjectFileItem objectFileItem = fileService.downloadMozziroll(mozzirollId);
+
         return ResponseEntity
             .status(HttpStatus.OK)
             .cacheControl(cacheControl.getCacheControl())

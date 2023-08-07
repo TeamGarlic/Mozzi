@@ -41,10 +41,14 @@ public class BoothController {
     public ResponseEntity<? extends BaseResponseBody<SessionRes>> createBooth(
         @RequestHeader String Authorization, @RequestBody SessionPostReq request) throws
         Exception {
+
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
             .body(
-                boothService.createBooth(request, Authorization)
+                BaseResponseBody.<SessionRes>builder()
+                    .message("Requested booth created")
+                    .data(boothService.createBooth(request, Authorization))
+                    .build()
             );
     }
 
@@ -58,10 +62,14 @@ public class BoothController {
     @GetMapping("/{shareCode}")
     public ResponseEntity<? extends BaseResponseBody<SessionRes>> joinBooth(@PathVariable String shareCode) throws
         Exception {
+
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
             .body(
-                boothService.joinBooth(shareCode)
+                BaseResponseBody.<SessionRes>builder()
+                    .message("Requested booth exists")
+                    .data(boothService.joinBooth(shareCode))
+                    .build()
             );
     }
 
@@ -76,10 +84,14 @@ public class BoothController {
     public ResponseEntity<? extends BaseResponseBody<ConnectionPostRes>> createConnection(
         @RequestHeader(required = false) String Authorization, @RequestBody ConnectionPostReq request) throws
         Exception {
+
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
             .body(
-                boothService.getConnectionToken(request, Authorization)
+                BaseResponseBody.<ConnectionPostRes>builder()
+                    .message("Connection Token created")
+                    .data(boothService.getConnectionToken(request, Authorization))
+                    .build()
             );
     }
 
@@ -93,10 +105,14 @@ public class BoothController {
     @DeleteMapping("/{sessionId}")
     public ResponseEntity<? extends BaseResponseBody<SessionRes>> deleteBooth(@PathVariable String sessionId) throws
         Exception {
+
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
             .body(
-                boothService.deleteBooth(sessionId)
+                BaseResponseBody.<SessionRes>builder()
+                    .message("deleted exist booth")
+                    .data(boothService.deleteBooth(sessionId))
+                    .build()
             );
     }
 
@@ -110,10 +126,9 @@ public class BoothController {
             req.setShareCode(shareCode);
             sessionId = boothService.createBooth(req,
                     "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjkwOTU0NzYwLCJleHAiOjEyMTY5MDk1NDc2MH0.RF8qFqAwbcbDdS1jl9Q9vAb5RzOZ8j6xmjMqWAApKio")
-                .getData()
                 .getSessionId();
         } catch (DuplicateShareCodeException exception) {
-            sessionId = boothService.joinBooth(shareCode).getData().getSessionId();
+            sessionId = boothService.joinBooth(shareCode).getSessionId();
         }
 
         ConnectionPostReq connectionPostReq = new ConnectionPostReq();
@@ -122,8 +137,11 @@ public class BoothController {
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
             .body(
-                boothService.getConnectionToken(connectionPostReq,
-                    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjkwOTU0NzYwLCJleHAiOjEyMTY5MDk1NDc2MH0.RF8qFqAwbcbDdS1jl9Q9vAb5RzOZ8j6xmjMqWAApKio")
+                BaseResponseBody.<ConnectionPostRes>builder()
+                    .message("Connection Token created")
+                    .data(boothService.getConnectionToken(connectionPostReq,
+                        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjkwOTU0NzYwLCJleHAiOjEyMTY5MDk1NDc2MH0.RF8qFqAwbcbDdS1jl9Q9vAb5RzOZ8j6xmjMqWAApKio"))
+                    .build()
             );
     }
 }

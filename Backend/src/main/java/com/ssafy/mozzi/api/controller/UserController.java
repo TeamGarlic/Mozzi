@@ -58,14 +58,14 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<? extends BaseResponseBody<UserRegisterPostRes>> register(
         @RequestBody UserRegisterPostReq request) {
-        UserRegisterPostRes response = userService.register(request);
+
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .cacheControl(CacheControl.noCache())
             .body(
                 BaseResponseBody.<UserRegisterPostRes>builder()
                     .message("User register success")
-                    .data(response)
+                    .data(userService.register(request))
                     .build()
             );
     }
@@ -79,13 +79,13 @@ public class UserController {
      */
     @PostMapping("/login")
     public ResponseEntity<? extends BaseResponseBody<UserLoginPostRes>> login(@RequestBody UserLoginPostReq request) {
-        UserLoginPostRes response = userService.login(request);
+
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
             .body(
                 BaseResponseBody.<UserLoginPostRes>builder()
                     .message("User login success")
-                    .data(response)
+                    .data(userService.login(request))
                     .build()
             );
     }
@@ -99,11 +99,11 @@ public class UserController {
      */
     @PostMapping("/reissue")
     public ResponseEntity<? extends BaseResponseBody<ReIssuePostRes>> reissue(@RequestBody ReIssuePostReq request) {
-        ReIssuePostRes response = userService.reissue(request);
+
         return new ResponseEntity<>(
             BaseResponseBody.<ReIssuePostRes>builder()
                 .message("reissue access token by refresh token")
-                .data(response)
+                .data(userService.reissue(request))
                 .build(), HttpStatus.OK);
     }
 
@@ -114,10 +114,14 @@ public class UserController {
      */
     @GetMapping("/check-login-id")
     public ResponseEntity<? extends BaseResponseBody<UserIdCheckRes>> userIdCheck(@RequestParam String userId) {
+        UserIdCheckRes userIdCheckRes = userService.userIdCheck(userId);
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
             .body(
-                userService.userIdCheck(userId)
+                BaseResponseBody.<UserIdCheckRes>builder()
+                    .message(String.format("Requested User ID%s available", (userIdCheckRes.isResult() ? "" : " not")))
+                    .data(userIdCheckRes)
+                    .build()
             );
     }
 
@@ -132,7 +136,10 @@ public class UserController {
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
             .body(
-                userService.getUserInfo(accessToken)
+                BaseResponseBody.<UserInfoRes>builder()
+                    .message("user exists")
+                    .data(userService.getUserInfo(accessToken))
+                    .build()
             );
     }
 
@@ -144,10 +151,15 @@ public class UserController {
     @GetMapping("/logout")
     public ResponseEntity<? extends BaseResponseBody<String>> logout(
         @RequestHeader("Authorization") String accessToken) {
+        userService.logout(accessToken);
+
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
             .body(
-                userService.logout(accessToken)
+                BaseResponseBody.<String>builder()
+                    .message("logout success")
+                    .data("")
+                    .build()
             );
     }
 
@@ -158,8 +170,15 @@ public class UserController {
      */
     @PatchMapping
     public ResponseEntity<? extends BaseResponseBody<UserUpdateRes>> update(@RequestBody UserUpdatePutReq request) {
+        UserUpdateRes userUpdateRes = userService.update(request);
+
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
-            .body(userService.update(request));
+            .body(
+                BaseResponseBody.<UserUpdateRes>builder()
+                    .message(String.format("User(%s) data updated.", userUpdateRes.getId()))
+                    .data(userUpdateRes)
+                    .build()
+            );
     }
 }
