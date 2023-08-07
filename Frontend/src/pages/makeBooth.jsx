@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {setFrameAction} from "@/modules/clipAction.js";
 import {checkHost} from "@/utils/DecoratorUtil.js";
 
-function MakeBooth({ startTake, shareCode, subscribers, publisher, leaveSession, setFrame, frameList, user }) {
+function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, user }) {
   const [visibility, setVisibility] = useState(true);
   const [toggleVoice, setToggleVoice] = useState(true);
   const pickedFrame = useSelector((state) => state.clipReducer.frame);
@@ -40,7 +40,6 @@ function MakeBooth({ startTake, shareCode, subscribers, publisher, leaveSession,
         onClick={closeDialog}
         toggleVoice={toggleVoice}
         setVoice={setVoice}
-        publisher={publisher}
       />
       <Layout>
         <div className="flex">
@@ -87,8 +86,6 @@ function MakeBooth({ startTake, shareCode, subscribers, publisher, leaveSession,
             </div>
           </div>
           <UserSideBar
-            subscribers={subscribers}
-            publisher={publisher}
             leaveSession={leaveSession}
           />
         </div>
@@ -102,9 +99,6 @@ export default MakeBooth;
 MakeBooth.propTypes = {
   startTake: PropTypes.func,
   shareCode: PropTypes.string,
-  subscribers: PropTypes.array,
-  myRef: PropTypes.object,
-  publisher: PropTypes.object,
   leaveSession: PropTypes.func,
   gotoTakePic : PropTypes.func,
   frameList: PropTypes.array,

@@ -2,8 +2,12 @@ import { Card } from "@material-tailwind/react";
 import TextInput from "./TextInput";
 import UserVideoComponent from "./UserVideoComponents";
 import PropTypes from "prop-types";
+import { useSelector } from 'react-redux';
 
-export default function UserSideBar({ subscribers, publisher, leaveSession }) {
+export default function UserSideBar({ leaveSession }) {
+
+  const pubCanvas = useSelector((state) => state.canvasReducer.pubCanvas);
+  const subCanvases = useSelector((state) => state.canvasReducer.subCanvases);
 
   return (
     <Card
@@ -17,14 +21,14 @@ export default function UserSideBar({ subscribers, publisher, leaveSession }) {
 
 
         <div className="stream-container col-md-6 col-xs-6">
-          <UserVideoComponent sub={publisher} />
+          <UserVideoComponent canvas={pubCanvas} />
           <hr />
         </div>
 
-        {subscribers &&
-          subscribers.map((sub) => (
-            <div key={JSON.parse(sub.stream.connection.data).uid} className="stream-container col-md-6 col-xs-6">
-              <UserVideoComponent sub={sub} />
+        {subCanvases &&
+          subCanvases.map((sub) => (
+            <div key={sub.key} className="stream-container col-md-6 col-xs-6">
+              <UserVideoComponent canvas={sub.canvas} />
               <hr />
             </div>
           ))}
@@ -43,7 +47,5 @@ export default function UserSideBar({ subscribers, publisher, leaveSession }) {
 }
 
 UserSideBar.propTypes = {
-  subscribers: PropTypes.array,
-  publisher: PropTypes.object,
   leaveSession: PropTypes.func,
 };
