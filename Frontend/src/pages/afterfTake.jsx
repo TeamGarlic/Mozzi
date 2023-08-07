@@ -3,12 +3,13 @@ import ClipLog from "@/components/ClipLog";
 import Frame from "@/components/Frame";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import { useEffect, useRef } from "react";
+import {useEffect, useRef, useState} from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import fileApi from "@/api/fileApi.js";
 
 function AfterTake({ goNext, user }) {
+  const [delay, setDelay] = useState(false);
   const { code: shareCode } = useParams();
   const frame = useSelector((state) => state.clipReducer.frame);
   const frameNum = Array.from({ length: frame["n"] }, (v, i) => i + 1);
@@ -25,6 +26,7 @@ function AfterTake({ goNext, user }) {
   const arrClipData = [];
 
   function recordClip() {
+    setDelay(true);
     const mediaStream = completeClipRef.current.captureStream();
     mediaRecorder = new MediaRecorder(mediaStream);
     mediaRecorder.ondataavailable = (event) => {
@@ -39,7 +41,10 @@ function AfterTake({ goNext, user }) {
       const fileURL = window.URL.createObjectURL(ClipFile);
       arrClipData.splice(0);
       saveClip(ClipFile, "test");
+      console.log(location.state);
       // navigate(`/${shareCode}/finish`, {state: {clip: fileURL}});
+      location.state = {state : {clip : fileURL}};
+      console.log(location.state);
       goNext();
     };
 
@@ -111,7 +116,9 @@ function AfterTake({ goNext, user }) {
 
   return (
     <Layout>
-      <div className="flex">
+      <>
+      <div className={`flex ${delay ? "":"invisible" }`}>Loading...</div>
+      <div className={`flex ${delay ? "invisible":"" }`}>
         <div className="w-full h-screen p-4 flex-col">
           {/* <ClipLog user={location.state.user} /> */}
           <ClipLog user={user} />
@@ -149,6 +156,7 @@ function AfterTake({ goNext, user }) {
           }
         })}
       </div>
+        </>
     </Layout>
   );
 }
