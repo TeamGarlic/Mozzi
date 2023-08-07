@@ -22,46 +22,46 @@ PrivateUserApi.interceptors.request.use((config) => {
 });
 
 PrivateUserApi.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  async (error) => {
-    const { config } = error;
+    (response) => {
+      return response;
+    },
+    async (error) => {
+      const { config } = error;
 
-    const originRequest = config;
-    try {
-      const tokenResponse = await userApi.reIssue();
-      if (tokenResponse.status === 200) {
-        const newAccessToken = tokenResponse.data.data.accessToken;
-        localStorage.setItem(
-          "accessToken",
-          tokenResponse.data.data.accessToken
-        );
-        localStorage.setItem(
-          "refreshToken",
-          tokenResponse.data.data.refreshToken
-        );
-        PrivateUserApi.defaults.headers.common["Authorization"] =
-          newAccessToken;
-        PrivateUserApi.defaults.headers["Authorization"] = newAccessToken;
-        originRequest.headers["Authorization"] = newAccessToken;
-        let res = await axios(originRequest);
-        return res;
-      } else {
-        alert("세션 만료. 다시 로그인해 주세요");
-        window.localStorage.removeItem("accessToken");
-        window.localStorage.removeItem("refreshToken");
-        window.location.replace("/login");
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        alert("세션 만료. 다시 로그인해 주세요");
-        window.localStorage.removeItem("accessToken");
-        window.localStorage.removeItem("refreshToken");
-        window.location.replace("/login");
+      const originRequest = config;
+      try {
+        const tokenResponse = await userApi.reIssue();
+        if (tokenResponse.status === 200) {
+          const newAccessToken = tokenResponse.data.data.accessToken;
+          localStorage.setItem(
+              "accessToken",
+              tokenResponse.data.data.accessToken
+          );
+          localStorage.setItem(
+              "refreshToken",
+              tokenResponse.data.data.refreshToken
+          );
+          PrivateUserApi.defaults.headers.common["Authorization"] =
+              newAccessToken;
+          PrivateUserApi.defaults.headers["Authorization"] = newAccessToken;
+          originRequest.headers["Authorization"] = newAccessToken;
+          let res = await axios(originRequest);
+          return res;
+        } else {
+          alert("세션 만료. 다시 로그인해 주세요");
+          window.localStorage.removeItem("accessToken");
+          window.localStorage.removeItem("refreshToken");
+          window.location.replace("/login");
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          alert("세션 만료. 다시 로그인해 주세요");
+          window.localStorage.removeItem("accessToken");
+          window.localStorage.removeItem("refreshToken");
+          window.location.replace("/login");
+        }
       }
     }
-  }
 );
 
 const userApi = {
@@ -115,6 +115,17 @@ const userApi = {
       email : email
     })
     return res;
+  },
+
+  reset:async(userId)=>{
+    let res = await PublicUserApi.post("reset",{
+      userId : userId
+    })
+    return res;
+  },
+
+  signOut:async()=>{
+
   }
 };
 
