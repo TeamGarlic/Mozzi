@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { OpenVidu } from "openvidu-browser";
 import { v4 } from "uuid";
 import boothApi from "@/api/boothApi.js";
+import {useDispatch} from "react-redux";
+import {setFrameAction, AddClipAction} from "@/modules/clipAction.js";
 
 function useSession(shareCode) {
   const [session, setSession] = useState(undefined);
@@ -11,6 +13,7 @@ function useSession(shareCode) {
   const [chatLists, setChatLists] = useState([]);
   const [nowTaking, setNowTaking] = useState(false);
   const [now, setNow] = useState("MAKING");
+  const dispatch = useDispatch();
 
   const leaveSession = () => {
     if (session) {
@@ -60,6 +63,20 @@ function useSession(shareCode) {
         setNow("FINISH");
       });
 
+      session.on("signal:setFrame", async (event) => {
+        const frame = await JSON.parse(event.data);
+        dispatch(setFrameAction({frame}))
+      });
+
+      session.on("signal:sendBlob", async (event) => {
+        const data = await JSON.parse(event.data);
+        // Todo: blob이 비어있을 경우 에러 발생
+        // 합성 로직 이후 확인 필요
+        const blobURL = window.URL.createObjectURL(data.blob);
+        console.log(blobURL)
+        dispatch(AddClipAction({idx: data.idx, src: blobURL}))
+      })
+
       session.on("streamDestroyed", (event) => {
         setSubscribers((prev) => {
           const newSubscribers = [...prev];
@@ -83,7 +100,7 @@ function useSession(shareCode) {
         uid: uid,
       });
 
-      const mainPublisher = await OV.initPublisherAsync(undefined, {
+      const publisher = await OV.initPublisherAsync(undefined, {
         audioSource: undefined,
         videoSource: canvas.current.captureStream(30).getVideoTracks()[0],
         publishAudio: true,
@@ -93,8 +110,8 @@ function useSession(shareCode) {
         mirror: false,
       });
 
-      await session.publish(mainPublisher);
-      await setPublisher(mainPublisher);
+      await session.publish(publisher);
+      await setPublisher(publisher);
     } catch (error) {
       console.log(
         "There was an error connecting to the session:",
@@ -136,6 +153,23 @@ function useSession(shareCode) {
       type: "gotoFinish",
     });
   };
+
+  const setFrame = async (frame) => {
+    await session.signal({
+      data: JSON.stringify(frame),
+      to: [],
+      type: "setFrame",
+    });
+  };
+
+  const sendBlob = async (idx, blob) => {
+    await session.signal({
+      data: JSON.stringify({idx: idx, blob: blob}),
+      to: [],
+      type: "sendBlob",
+    })
+  }
+
 
   const getToken = async (code) => {
     let idRes = await boothApi.getSessionID(code);
@@ -179,6 +213,8 @@ function useSession(shareCode) {
     nowTaking,
     now,
     setNow,
+    setFrame,
+    sendBlob,
   };
 }
 

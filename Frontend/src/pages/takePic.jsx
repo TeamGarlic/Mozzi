@@ -11,9 +11,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { AddClipAction } from "@/modules/clipAction";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 
-function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext }) {
+function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, sendBlob }) {
   const timers = [3, 5, 10];
-  const [taken, setTaken] = new useState(1);
+  const [taken, setTaken] = useState(1);
   const [timer, setTimer] = useState(3);
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
@@ -32,14 +32,11 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext }) {
     };
     mediaRecorder.onstop = () => {
       const blob = new Blob(arrClipData);
+      sendBlob(idx, blob)
 
-      // blob 데이터를 활용해 webm 파일로 변환
-      const ClipFile = new File([blob], `clip${idx}.webm`, {
-        type: "video/webm",
-      });
-      // Todo: webm file url => 백엔드와 통신해서 url 주소를 재설정 해야함
-      const fileURL = window.URL.createObjectURL(ClipFile);
-      dispatch(AddClipAction({ idx, src: fileURL }));
+      const blobURL = window.URL.createObjectURL(blob);
+      dispatch(AddClipAction({ idx, src: blobURL }));
+
       arrClipData.splice(0);
     };
 
@@ -161,4 +158,5 @@ TakePic.propTypes = {
     email: PropTypes.string,
     isHost: PropTypes.number,
   }),
+  sendBlob: PropTypes.func,
 };

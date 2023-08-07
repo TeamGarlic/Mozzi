@@ -16,6 +16,7 @@ import { changeBgAction } from "@/modules/bgAction.js";
 import useUser from "@/hooks/useUser";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import itemApi from "@/api/itemApi.js";
+import {usePreventGoBack} from "@/hooks/usePreventGoBack.js";
 
 function Booth() {
   // const [taking, setTaking] = useState(false);
@@ -29,6 +30,8 @@ function Booth() {
   const [bgList, setBgList] = useState([]);
   const [frameList, setFrameList] = useState([]);
   const pickedFrame = useSelector((state) => state.clipReducer.frame);
+
+  const preventgoBack = usePreventGoBack();
 
   const {
     session,
@@ -44,6 +47,8 @@ function Booth() {
     nowTaking,
     now,
     setNow,
+    setFrame,
+    sendBlob,
   } = useSession(shareCode);
 
   // 소스 웹캠 video
@@ -171,10 +176,19 @@ function Booth() {
     );
     joinSession(user.userNickname, bgRemovedRef);
     getBgList(1, 10);
+
+    (() => {
+      window.addEventListener("beforeunload", preventClose);
+    })();
+
+    return () => {
+      window.removeEventListener("beforeunload", preventClose);
+    };
+
   }, []);
 
   useEffect(() => {
-    console.log(subscribers);
+    // console.log(subscribers);
     // console.log(subVideoRefs);
     // console.log(subCanvasRefs);
     for (let key in localVideoMap) {
@@ -198,9 +212,9 @@ function Booth() {
         );
       });
     }
-    console.log(localVideoMap);
+    // console.log(localVideoMap);
     dispatch(updateSubVideoMapAction(localVideoMap));
-    console.log(subVideoMap);
+    // console.log(subVideoMap);
   }, [subscribers]);
 
 
@@ -215,6 +229,12 @@ function Booth() {
     }
   }, [publisher]);
 
+  const preventClose = (e) => {
+    e.preventDefault();
+    e.returnValue = ""; //Chrome에서 동작하도록; deprecated
+  };
+
+
   return (
     <>
       {now === "MAKING" && (
@@ -224,9 +244,9 @@ function Booth() {
           subscribers={subscribers}
           publisher={publisher}
           leaveSession={leaveSession}
-          gotoTakePic={gotoTakePic}
           frameList={frameList}
           user={user}
+          setFrame={setFrame}
         />
       )}
       {now === "TAKING" && (
@@ -237,6 +257,7 @@ function Booth() {
           user={user}
           bgList={bgList}
           goNext={gotoModifing}
+          sendBlob={sendBlob}
         />
       )}
       {now === "MODIFING" && (
