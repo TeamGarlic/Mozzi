@@ -85,25 +85,14 @@ function Booth() {
     // console.log(pubVideoMap)
     chromaKey(pubVideoMap.canvasRef, pubVideoMap.canvasContextRef, pubVideoMap.vidRef);
 
-    console.log(subVideoMap);
+    // console.log(subVideoMap);
     for (let key in subVideoMap) {
       chromaKey(subVideoMap[key].canvasRef, subVideoMap[key].canvasContextRef, subVideoMap[key].vidRef);
     }
 
-    // // 내 웹캠을 담을 canvas (화면에 표시 x)
-    // drawMyVid(
-    //   bgRemovedRef,
-    //   bgRemovedContextRef,
-    //   results,
-    // );
-
-    // camCanvases.forEach((e) => {
-    //   drawMyVid(e.canvas, e.context, results);
-    // });
-
     // TODO : 한 레이어만 그리는 샘플 코드 지우기
     if (mainCanvas.canvas)
-      drawCanvas(mainCanvas.canvas, mainCanvas.context, bgNow.img, [myLayer]);
+      drawCanvas(mainCanvas.canvas.current, mainCanvas.context.current, bgNow.img, [myLayer]);
 
     // TODO : 캔버스에 그리기
     // drawCanvas(canvasRef,canvasContextRef,bgImg,layers);
@@ -164,11 +153,6 @@ function Booth() {
         requestAnimationFrame(sendToMediaPipe);
       }
     };
-    dispatch(
-      setMyLayerSourceAction({
-        canvas: bgRemovedRef,
-      })
-    );
     joinSession(user.userNickname, bgRemovedRef);
     getBgList(1, 10);
 
@@ -223,6 +207,12 @@ function Booth() {
         canvasContextRef:pubCanvasRef.current.getContext("2d", { willReadFrequently: true }),
       }));
     }
+
+    dispatch(
+      setMyLayerSourceAction({
+        canvas: pubCanvasRef.current,
+      })
+    );
   }, [publisher]);
 
   const preventClose = (e) => {
