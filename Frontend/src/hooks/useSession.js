@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { OpenVidu } from "openvidu-browser";
 import { v4 } from "uuid";
 import boothApi from "@/api/boothApi.js";
+import {useDispatch} from "react-redux";
+import {setFrameAction} from "@/modules/clipAction.js";
 
 function useSession(shareCode) {
   const [mainSession, setMainSession] = useState(undefined);
@@ -13,6 +15,7 @@ function useSession(shareCode) {
   const [chatLists, setChatLists] = useState([]);
   const [nowTaking, setNowTaking] = useState(false);
   const [now, setNow] = useState("MAKING");
+  const dispatch = useDispatch();
 
   const leaveSession = async () => {
     if (mainSession) {
@@ -69,6 +72,11 @@ function useSession(shareCode) {
         // setNowTaking(true);
         setNow("FINISH");
       });
+
+      mainSession.on("signal:setFrame", async (event) => {
+        const frame = await JSON.parse(event.data);
+        dispatch(setFrameAction({frame}))
+      })
 
       mainSession.on("streamDestroyed", (event) => {
         setSubscribers((prev) => {
@@ -168,6 +176,16 @@ function useSession(shareCode) {
     });
   };
 
+  const setFrame = async (frame) => {
+    await mainSession.signal({
+      data: JSON.stringify(frame),
+      to: [],
+      type: "setFrame",
+    });
+  };
+
+
+
   const getToken = async (code) => {
     let idRes = await boothApi.getSessionID(code);
     const {
@@ -211,6 +229,7 @@ function useSession(shareCode) {
     nowTaking,
     now,
     setNow,
+    setFrame
   };
 }
 
