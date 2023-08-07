@@ -68,9 +68,9 @@ const canvasReducer = (state = canvasState, action) => {
       }
     }
     case updatePosition: {
-      while(state.position.length>0) state.position.pop();
-      console.log(action.payload);
-      if(action.payload.length>0){
+      if(action.payload&&action.payload.length>0){
+        while(state.position.length>0) state.position.pop();
+        // console.log(action.payload);
         for (let pos of action.payload) {
           state.position.push({
             image:(pos.id in state.subCanvases)?state.subCanvases[pos.id]:state.pubCanvas,
