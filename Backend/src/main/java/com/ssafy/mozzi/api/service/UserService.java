@@ -8,6 +8,7 @@ import com.ssafy.mozzi.api.response.ReIssuePostRes;
 import com.ssafy.mozzi.api.response.UserIdCheckRes;
 import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
+import com.ssafy.mozzi.api.response.UserPasswordResetPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
 import com.ssafy.mozzi.api.response.UserUpdateRes;
 import com.ssafy.mozzi.db.entity.remote.User;
@@ -33,4 +34,6 @@ public interface UserService {
     User findUserByToken(String accessToken);
 
     UserUpdateRes update(UserUpdatePutReq request);
+
+    UserPasswordResetPostRes reset(String userId);
 }

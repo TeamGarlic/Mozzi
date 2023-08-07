@@ -17,14 +17,17 @@ import com.ssafy.mozzi.api.response.ReIssuePostRes;
 import com.ssafy.mozzi.api.response.UserIdCheckRes;
 import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
+import com.ssafy.mozzi.api.response.UserPasswordResetPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
 import com.ssafy.mozzi.api.response.UserUpdateRes;
 import com.ssafy.mozzi.common.auth.JwtTokenProvider;
 import com.ssafy.mozzi.common.exception.handler.InvalidRefreshTokenException;
 import com.ssafy.mozzi.common.exception.handler.NoDataException;
+import com.ssafy.mozzi.common.exception.handler.UserEmailNotExists;
 import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.UserLoginFailException;
 import com.ssafy.mozzi.common.exception.handler.UserRegisterException;
+import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.common.util.mapper.UserMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
 import com.ssafy.mozzi.db.entity.remote.User;
@@ -46,6 +49,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final JwtTokenProvider jwtTokenProvider;
+    private final MozziUtil mozziUtil;
+    private final EmailService emailService;
 
     /**
      *  회원 가입 Service/비즈니스 로직
@@ -220,5 +225,33 @@ public class UserServiceImpl implements UserService {
         }
 
         return UserMapper.toUserUpdateRes(user);
+    }
+
+    /**
+     * 사용자의 패스워드 초기화 요청을 받아서 새로운 패스워드를 메일로 보냅니다.
+     * @param userId 초기화할 유저의 ID
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     * @throws com.ssafy.mozzi.common.exception.handler.UserEmailNotExists (Mozzi code : 14, Http Status 400)
+     */
+    @Override
+    public UserPasswordResetPostRes reset(String userId) {
+        Optional<User> candidateUser = userRepository.findByUserId(userId);
+
+        if (candidateUser.isEmpty()) {
+            throw new UserIdNotExistsException("User Id not exists");
+        }
+
+        User user = candidateUser.get();
+        if (user.getEmail() == null || user.getEmail().equals("")) {
+            throw new UserEmailNotExists(String.format("%s don't have email address.", userId));
+        }
+
+        String newPassword = mozziUtil.generateString(10, true);
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.flush();
+
+        emailService.passwordReset(user.getEmail(), newPassword);
+
+        return new UserPasswordResetPostRes(user.getEmail());
     }
 }

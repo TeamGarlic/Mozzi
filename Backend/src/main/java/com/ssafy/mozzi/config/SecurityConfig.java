@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/users").authenticated()
                 .requestMatchers(HttpMethod.GET, "/users/logout").authenticated()
                 .requestMatchers(HttpMethod.PATCH, "/users").permitAll()
+                .requestMatchers(HttpMethod.POST, "/users/reset").permitAll()
 
                 // sessions 요청에 대한 보안 설정
                 .requestMatchers(HttpMethod.POST, "/sessions").authenticated()

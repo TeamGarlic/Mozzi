@@ -80,7 +80,7 @@ public class BoothServiceImpl implements BoothService {
         Optional<Booth> booth = null;
         if (shareCode == null) {
             do {
-                shareCode = mozziUtil.generateString(20);
+                shareCode = mozziUtil.generateString(20, false);
                 booth = boothRepository.findByShareCode(shareCode);
             } while (booth.isPresent());
         } else {
@@ -91,7 +91,7 @@ public class BoothServiceImpl implements BoothService {
         }
         sessionCreation:
         while (true) {
-            String sessionId = mozziUtil.generateString(20);
+            String sessionId = mozziUtil.generateString(20, false);
             booth = boothRepository.findBySessionId(sessionId);
             if (booth.isEmpty()) {
                 Booth newBooth = Booth.builder()
