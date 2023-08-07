@@ -54,6 +54,8 @@ function Booth() {
     startTaking,
     finishTaking,
     changeBg,
+    mozzi,
+    sendMozzi,
   } = useSession(shareCode);
 
   // 소스 웹캠 video
@@ -282,9 +284,9 @@ function Booth() {
         />
       )}
       {now === "MODIFING" && (
-        <AfterTake goNext={gotoFinish} user={user} />
+        <AfterTake goNext={gotoFinish} user={user} sendMozzi={sendMozzi}/>
       )}
-      {now === "FINISH" && <Finish />}
+      {now === "FINISH" && <Finish mozzi={mozzi}/>}
     </>
   );
 }
