@@ -1,18 +1,11 @@
 import PropTypes from "prop-types";
-import {useDispatch} from "react-redux";
-import {changeBgAction} from "@/modules/bgAction.js";
 import {checkHost} from "@/utils/DecoratorUtil.js";
 
-function BgCard({ bgName, bgSrc, user }) {
-  const dispatch = useDispatch();
-
+function BgCard({ bgName, bgSrc, user, changeBg }) {
   function setBg(event){
-    const newBg = new Image();
-    newBg.src = event.target.src;
-    dispatch(changeBgAction({img: newBg}));
+    changeBg(event.target.src)
   }
   setBg = checkHost(setBg, user.isHost)
-
 
   return (
     <div className="shadow border select-none cursor-pointer bg-white dark:bg-gray-800 rounded-md flex flex-1 items-center p-4 my-2 w-full h-[9/16]">
@@ -33,6 +26,7 @@ BgCard.propTypes = {
     userNickname: PropTypes.string,
     email: PropTypes.string,
     isHost: PropTypes.number,
-  })
+  }),
+  changeBg: PropTypes.func,
 };
 

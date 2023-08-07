@@ -56,6 +56,9 @@ function Booth() {
     setPosition,
     sendPosition,
     updatePosition,
+    changeBg,
+    mozzi,
+    sendMozzi,
   } = useSession(shareCode);
 
   // 소스 웹캠 video
@@ -201,7 +204,7 @@ function Booth() {
   }, []);
 
   useEffect(() => {
-    console.log(subscribers);
+    // console.log(subscribers);
     // console.log(subVideoRefs);
     // console.log(subCanvasRefs);
     for (let key in localVideoMap) {
@@ -315,12 +318,13 @@ function Booth() {
           nowTaking={nowTaking}
           myId={publisher.stream.connection.connectionId}
           updatePosition={updatePosition}
+          changeBg={changeBg}
         />
       )}
       {now === "MODIFING" && (
-        <AfterTake goNext={gotoFinish} user={user} />
+        <AfterTake goNext={gotoFinish} user={user} sendMozzi={sendMozzi}/>
       )}
-      {now === "FINISH" && <Finish />}
+      {now === "FINISH" && <Finish mozzi={mozzi}/>}
     </>
   );
 }
