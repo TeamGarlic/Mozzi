@@ -49,6 +49,8 @@ function Booth() {
     nowTaking,
     now,
     setNow,
+    setFrame,
+    sendBlob,
   } = useSession(shareCode);
 
   // 소스 웹캠 video
@@ -81,7 +83,7 @@ function Booth() {
     // drawMask(bgMaskRef, bgMaskContextRef, results)
     drawMask(bgMaskRef.current, bgMaskContextRef.current, results);
 
-    console.log(videoMap);
+    // console.log(videoMap);
     for (var key in videoMap) {
       drawSubscriber(
         videoMap[key].canvasRef,
@@ -177,7 +179,7 @@ function Booth() {
   }, []);
 
   useEffect(() => {
-    console.log(subscribers);
+    // console.log(subscribers);
     // console.log(subVideoRefs);
     // console.log(subCanvasRefs);
     for (var key in localVideoMap) {
@@ -216,9 +218,9 @@ function Booth() {
         }
       });
     }
-    console.log(localVideoMap);
+    // console.log(localVideoMap);
     dispatch(updateVideoMapAction(localVideoMap));
-    console.log(videoMap);
+    // console.log(videoMap);
   }, [subscribers]);
 
   const preventClose = (e) => {
@@ -245,9 +247,9 @@ function Booth() {
           subscribers={subscribers}
           mainPublisher={mainPublisher}
           leaveSession={leaveSession}
-          gotoTakePic={gotoTakePic}
           frameList={frameList}
           user={user}
+          setFrame={setFrame}
         />
       )}
       {now === "TAKING" && (
@@ -258,6 +260,7 @@ function Booth() {
           user={user}
           bgList={bgList}
           goNext={gotoModifing}
+          sendBlob={sendBlob}
         />
       )}
       {now === "MODIFING" && (
