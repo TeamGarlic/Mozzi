@@ -17,6 +17,9 @@ import com.ssafy.mozzi.db.entity.remote.Backgroud;
  */
 @Repository
 public interface BackgroundRepository extends JpaRepository<Backgroud, Long> {
+    @Query("SELECT b.id as id,b.objectName as objectName,b.title as title FROM Backgroud b")
+    Page<BackgroundEntityDto> findAllWithFavorite(Pageable pageable);
+
     @Query("SELECT b.id as id,b.objectName as objectName,b.title as title, bf.id as favoriteId FROM Backgroud b LEFT JOIN BackgroundFavorite bf ON b.id=bf.background.id AND bf.user.id=:userId")
-    Page<BackgroundEntityDto> findAllWithFavorite(@Param("userId") Long userId, Pageable pageable);
+    Page<BackgroundEntityDto> findAllWithFavoriteAndUser(@Param("userId") Long userId, Pageable pageable);
 }
