@@ -65,7 +65,7 @@ const canvasReducer = (state = canvasState, action) => {
       }
     }
     case updatePubVideoMap: {
-      console.log(action.payload);
+      // console.log(action.payload);
       state.pubVideoMap.vidRef = action.payload.vidRef;
       // state.pubCanvas = state.pubVideoMap.canvasRef = action.payload.canvasRef;
       state.pubVideoMap.canvasRef = action.payload.canvasRef;
