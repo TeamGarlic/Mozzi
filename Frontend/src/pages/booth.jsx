@@ -22,9 +22,14 @@ function Booth() {
   const dispatch = useDispatch();
   // console.log(sessionID);
   const location = useLocation();
-  const { user, checkUser } = useUser({
-    isHost: location.state ? location.state.isHost : 1,
-  });
+  let userConfig={};
+  try{
+  userConfig = {isHost : location.state.isHost};
+  }catch{
+  alert("잘못된 접근입니다.");
+      window.location.replace("/");
+  }
+  const { user, checkUser } = useUser(userConfig);
   const [bgList, setBgList] = useState([]);
   const [frameList, setFrameList] = useState([]);
   const pickedFrame = useSelector((state) => state.clipReducer.frame);
@@ -158,6 +163,10 @@ function Booth() {
   }
 
   useEffect(() => {
+    // if(!location.state){
+    //   alert('잘못된 접근입니다.');
+    //   window.location.href="/";
+    // }
     checkUser();
     getFrameList();
     // TODO : bgImg를 Redux에서 관리
@@ -193,13 +202,13 @@ function Booth() {
     joinSession(user.userNickname, bgRemovedRef.current.captureStream(30).getVideoTracks()[0]);
     getBgList(1, 10);
 
-    (() => {
-      window.addEventListener("beforeunload", preventClose);
-    })();
-
-    return () => {
-      window.removeEventListener("beforeunload", preventClose);
-    };
+    // (() => {
+    //   window.addEventListener("beforeunload", preventClose);
+    // })();
+    //
+    // return () => {
+    //   window.removeEventListener("beforeunload", preventClose);
+    // };
 
   }, []);
 
