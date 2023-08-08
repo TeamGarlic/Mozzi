@@ -1,6 +1,7 @@
 package com.ssafy.mozzi.api.service;
 
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
+import com.ssafy.mozzi.api.response.MozzirollLikeRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 
 /**
@@ -10,4 +11,6 @@ public interface MozzirollService {
     Long link(MozziLinkPostRequest request, String accessToken);
 
     UserMozzirollGetRes getMozzirollsByUser(String accessToken, int pageNum, int pageSize);
+
+    MozzirollLikeRes likeMozziroll(String accessToken, long userMozzirollId);
 }

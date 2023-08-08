@@ -12,6 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +23,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "mozziroll_like")
+@Table(name = "mozziroll_like", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"liked_user_id", "user_mozziroll_id"})
+})
 public class MozzirollLike extends BaseEntity {
 
     @ManyToOne
