@@ -51,6 +51,9 @@ public class Booth extends BaseEntity {
     @Column(name = "share_secret")
     private String shareSecret;
 
+    @ColumnDefault("false")
+    private Boolean closed = false;
+
     @Override
     public boolean equals(Object o) {
         if (Objects.equals(this, o)) {

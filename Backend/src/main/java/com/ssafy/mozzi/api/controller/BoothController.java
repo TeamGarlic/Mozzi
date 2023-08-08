@@ -29,12 +29,14 @@ import com.ssafy.mozzi.api.response.SessionRes;
 import com.ssafy.mozzi.api.response.TemporalFileSavePostRes;
 import com.ssafy.mozzi.api.service.BoothService;
 import com.ssafy.mozzi.common.exception.handler.AccessTokenNotExistsException;
+import com.ssafy.mozzi.common.exception.handler.BoothNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.DuplicateShareCodeException;
 import com.ssafy.mozzi.common.exception.handler.FileAlreadyExistsException;
 import com.ssafy.mozzi.common.exception.handler.FileNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.InvalidSessionIdException;
 import com.ssafy.mozzi.common.exception.handler.ShareCodeNotExistException;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
+import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
@@ -211,6 +213,25 @@ public class BoothController {
             .body(resource);
     }
 
+    @Operation(summary = "부스 접속 제한", description = "부스에 사용자가 더 참여 못 하게 부스를 닫습니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "부스 닫기 여부", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "401", description = "부스의 방장이 아니여서 권한이 없음", content = @Content(schema = @Schema(implementation = UnAuthorizedException.UnAuthorizedResponse.class))),
+        @ApiResponse(responseCode = "404", description = "유저가 존재하지 않음", content = @Content(schema = @Schema(implementation = UserIdNotExistsException.UserIdNotExistsResponse.class))),
+        @ApiResponse(responseCode = "404", description = "부스가 존재하지 않음", content = @Content(schema = @Schema(implementation = BoothNotExistsException.BoothNotExistsResponse.class)))
+    })
+    @GetMapping("/close")
+    public ResponseEntity<? extends BaseResponseBody<Boolean>> closeBooth(@RequestHeader String Authorization,
+        @RequestParam String shareCode) {
+        boolean result = boothService.close(Authorization, shareCode);
+        return ResponseEntity.ok(
+            BaseResponseBody.<Boolean>builder()
+                .message(String.format("Requested Booth %s", (result ? "closed" : "already closed")))
+                .data(result)
+                .build()
+        );
+    }
+
     @Operation(ignoreJsonView = true)
     // TODO: 배포시 삭제
     @GetMapping("/testpath/{shareCode}")
@@ -238,4 +259,5 @@ public class BoothController {
                     "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjkwOTU0NzYwLCJleHAiOjEyMTY5MDk1NDc2MH0.RF8qFqAwbcbDdS1jl9Q9vAb5RzOZ8j6xmjMqWAApKio"))
                 .build());
     }
+
 }

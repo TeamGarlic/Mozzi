@@ -25,4 +25,6 @@ public interface BoothService {
         Resource file);
 
     byte[] getTemporalFile(String shareCode, String shareSecret, String fileName);
+
+    boolean close(String accessToken, String shareCode);
 }

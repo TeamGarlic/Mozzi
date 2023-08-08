@@ -24,6 +24,7 @@ import com.ssafy.mozzi.common.exception.handler.FileNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.InvalidSessionIdException;
 import com.ssafy.mozzi.common.exception.handler.ShareCodeNotExistException;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
+import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.common.util.mapper.BoothMapper;
 import com.ssafy.mozzi.db.datasource.LocalDatasource;
@@ -106,14 +107,15 @@ public class BoothServiceImpl implements BoothService {
         while (true) {
             String sessionId = mozziUtil.generateString(20, false);
             booth = boothRepository.findBySessionId(sessionId);
+            long userId = mozziUtil.findUserIdByToken(accessToken);
             if (booth.isEmpty()) {
                 String shareSecret = mozziUtil.generateString(20, true);
                 Booth newBooth = Booth.builder()
                     .sessionId(sessionId)
                     .shareCode(shareCode)
                     .shareSecret(shareSecret)
-                    .creator(mozziUtil.findUserIdByToken(accessToken))
-                    .creator(1L)
+                    .closed(false)
+                    .creator(userId)
                     .build();
                 boothRepository.save(newBooth);
 
@@ -151,11 +153,15 @@ public class BoothServiceImpl implements BoothService {
     @Override
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     public SessionRes joinBooth(String shareCode) {
-        Optional<Booth> booth = boothRepository.findByShareCode(shareCode);
-        if (booth.isEmpty()) {
+        Optional<Booth> boothCandidate = boothRepository.findByShareCode(shareCode);
+        if (boothCandidate.isEmpty()) {
             throw new ShareCodeNotExistException(String.format("Requested booth(%s) not exist", shareCode));
         }
-        return BoothMapper.toSessionRes(booth.get().getSessionId(), shareCode, null);
+        Booth booth = boothCandidate.get();
+        if (booth.getClosed()) {
+            throw new ShareCodeNotExistException(String.format("Requested booth(%s) is closed", shareCode));
+        }
+        return BoothMapper.toSessionRes(booth.getSessionId(), shareCode, null);
     }
 
     /**
@@ -176,20 +182,26 @@ public class BoothServiceImpl implements BoothService {
             throw new InvalidSessionIdException(
                 String.format("You requested invalid session(%s). It could be destroyed.", request.getSessionId()));
         }
-        Optional<Booth> booth = boothRepository.findBySessionId(request.getSessionId());
-        if (booth.isEmpty()) {
+        Optional<Booth> boothCandidate = boothRepository.findBySessionId(request.getSessionId());
+        if (boothCandidate.isEmpty()) {
             throw new InvalidSessionIdException(
                 String.format("You requested invalid session(%s). It could be destroyed.", request.getSessionId()));
+        }
+        Booth booth = boothCandidate.get();
+
+        if (booth.getClosed()) {
+            throw new InvalidSessionIdException(
+                String.format("Your requested Booth(%s) is closed.", request.getSessionId()));
         }
 
         if (accessToken != null) {
             long userId = mozziUtil.findUserIdByToken(accessToken);
-            long boothId = booth.get().getId();
+            long boothId = booth.getId();
             Optional<BoothUser> boothUser = boothUserRepository.findByBoothIdAndUserId(boothId, userId);
             if (boothUser.isEmpty()) {
                 BoothUser connectedUser = BoothUser.builder()
                     .userId(userId)
-                    .booth(booth.get())
+                    .booth(booth)
                     .build();
                 boothUserRepository.save(connectedUser);
             }
@@ -315,5 +327,28 @@ public class BoothServiceImpl implements BoothService {
         }
 
         return fileMap.get(fileName);
+    }
+
+    /**
+     * 방장으로부터 참여 제한을 하고 싶은 부스 정보를 받아, 열려 있다면 닫고, 닫혀있다면 그대로 둡니다.
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     * @throws BoothNotExistsException (Mozzi code : 10, Http Status 404)
+     * @throws UnAuthorizedException (Mozzi code : 11, Http Status 401)
+     */
+    @Override
+    @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
+    public boolean close(String accessToken, String shareCode) {
+        User user = userService.findUserByToken(accessToken);
+        Optional<Booth> boothCandidate = boothRepository.findByShareCode(shareCode);
+        if (boothCandidate.isEmpty()) {
+            throw new BoothNotExistsException("Requested Booth not exists");
+        }
+        Booth booth = boothCandidate.get();
+        if (!Objects.equals(booth.getCreator(), user.getId())) {
+            throw new UnAuthorizedException("You are not the creator of booth");
+        }
+        boolean result = !booth.getClosed();
+        booth.setClosed(true);
+        return result;
     }
 }
