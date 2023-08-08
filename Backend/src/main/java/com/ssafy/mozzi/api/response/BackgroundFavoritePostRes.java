@@ -1,5 +1,6 @@
 package com.ssafy.mozzi.api.response;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BackgroundFavoritePostRes {
-    Long backgroundId;
+    long backgroundId;
+    @NotNull
     Boolean isFavorite;
 }

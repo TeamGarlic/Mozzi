@@ -7,5 +7,5 @@ import lombok.Data;
  */
 @Data
 public class BackgroundFavoritePostReq {
-    Long backgroundId;
+    long backgroundId;
 }
