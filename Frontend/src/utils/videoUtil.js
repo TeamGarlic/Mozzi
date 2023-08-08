@@ -73,7 +73,7 @@ export const drawCanvas = function(canvas, context, bgImg, layers) {
   context.globalCompositeOperation = 'source-over';
   layers.forEach(item => {
     context.drawImage(
-      item.image.canvasRef,
+      item.image,
       canvas.width * item.x,
       canvas.height * item.y,
       canvas.width * item.width,

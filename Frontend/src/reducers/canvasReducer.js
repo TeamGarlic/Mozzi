@@ -72,8 +72,6 @@ const canvasReducer = (state = canvasState, action) => {
       state.pubVideoMap.nickname = action.payload.nickname;
 
       //
-      // state.pubCanvas.canvasRef = action.payload.canvasRef;
-      // state.pubCanvas.nickname = action.payload.nickname;
       state.pubCanvas = {
         canvasRef: state.pubVideoMap.canvasRef,
         nickname : state.pubVideoMap.nickname,
@@ -91,7 +89,7 @@ const canvasReducer = (state = canvasState, action) => {
         // console.log(action.payload);
         for (let pos of action.payload) {
           state.position.push({
-            image:(pos.id in state.subCanvases)?state.subCanvases[pos.id]:state.pubCanvas,
+            image:(pos.id in state.subCanvases)?state.subCanvases[pos.id]:state.pubCanvas.canvasRef,
             id:pos.id,
             x:pos.x,
             y:pos.y,
