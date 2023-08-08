@@ -206,7 +206,7 @@ function Booth() {
         `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`,
     });
     selfieSegmentation.setOptions({
-      modelSelection: 1,
+      modelSelection: 0,
       selfieMode: true,
     });
     selfieSegmentation.onResults(onResults);
