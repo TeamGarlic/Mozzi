@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.ssafy.mozzi.common.dto.BackgroundEntityDto;
 import com.ssafy.mozzi.db.entity.remote.Backgroud;
-import com.ssafy.mozzi.db.entity.remote.BackgroundEntityDto;
 
 /**
  * 배경 즐겨찾기 모델 관련 JPA Query Method 인터페이스
