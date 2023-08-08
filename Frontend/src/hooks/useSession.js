@@ -147,7 +147,7 @@ function useSession(shareCode) {
 
       const token = await getToken(shareCode);
 
-      console.log(userName);
+      // console.log(userName);
       await session.connect(token, {
         clientData: userName,
       });
