@@ -1,11 +1,13 @@
 package com.ssafy.mozzi.api.service;
 
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,15 +15,21 @@ import com.ssafy.mozzi.api.request.ConnectionPostReq;
 import com.ssafy.mozzi.api.request.SessionPostReq;
 import com.ssafy.mozzi.api.response.ConnectionPostRes;
 import com.ssafy.mozzi.api.response.SessionRes;
+import com.ssafy.mozzi.api.response.TemporalFileSavePostRes;
 import com.ssafy.mozzi.common.exception.handler.AccessTokenNotExistsException;
+import com.ssafy.mozzi.common.exception.handler.BoothNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.DuplicateShareCodeException;
+import com.ssafy.mozzi.common.exception.handler.FileAlreadyExistsException;
+import com.ssafy.mozzi.common.exception.handler.FileNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.InvalidSessionIdException;
 import com.ssafy.mozzi.common.exception.handler.ShareCodeNotExistException;
+import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.common.util.mapper.BoothMapper;
 import com.ssafy.mozzi.db.datasource.LocalDatasource;
 import com.ssafy.mozzi.db.entity.local.Booth;
 import com.ssafy.mozzi.db.entity.local.BoothUser;
+import com.ssafy.mozzi.db.entity.remote.User;
 import com.ssafy.mozzi.db.repository.local.BoothRepository;
 import com.ssafy.mozzi.db.repository.local.BoothUserRepository;
 
@@ -43,15 +51,20 @@ public class BoothServiceImpl implements BoothService {
 
     private final BoothUserRepository boothUserRepository;
 
+    private final UserService userService;
+
     private final MozziUtil mozziUtil;
 
     private final OpenVidu openVidu;
+    private final HashMap<String, HashMap<String, byte[]>> map = new HashMap<>();
 
     @Autowired
-    BoothServiceImpl(BoothRepository boothRepository, BoothUserRepository boothUserRepository, MozziUtil mozziUtil,
+    BoothServiceImpl(BoothRepository boothRepository, BoothUserRepository boothUserRepository, UserService userService,
+        MozziUtil mozziUtil,
         Environment env) {
         this.boothRepository = boothRepository;
         this.boothUserRepository = boothUserRepository;
+        this.userService = userService;
         this.mozziUtil = mozziUtil;
         this.openVidu = new OpenVidu(Objects.requireNonNull(env.getProperty("OPENVIDU_URL")),
             Objects.requireNonNull(env.getProperty("OPENVIDU_SECRET")));
@@ -94,9 +107,11 @@ public class BoothServiceImpl implements BoothService {
             String sessionId = mozziUtil.generateString(20, false);
             booth = boothRepository.findBySessionId(sessionId);
             if (booth.isEmpty()) {
+                String shareSecret = mozziUtil.generateString(20, true);
                 Booth newBooth = Booth.builder()
                     .sessionId(sessionId)
                     .shareCode(shareCode)
+                    .shareSecret(shareSecret)
                     .creator(mozziUtil.findUserIdByToken(accessToken))
                     .creator(1L)
                     .build();
@@ -119,7 +134,7 @@ public class BoothServiceImpl implements BoothService {
                     throw new RuntimeException("Fail to create openvidu session");
                 }
 
-                return BoothMapper.toSessionRes(session.getSessionId(), shareCode);
+                return BoothMapper.toSessionRes(session.getSessionId(), shareCode, shareSecret);
             }
         }
     }
@@ -140,7 +155,7 @@ public class BoothServiceImpl implements BoothService {
         if (booth.isEmpty()) {
             throw new ShareCodeNotExistException(String.format("Requested booth(%s) not exist", shareCode));
         }
-        return BoothMapper.toSessionRes(booth.get().getSessionId(), shareCode);
+        return BoothMapper.toSessionRes(booth.get().getSessionId(), shareCode, null);
     }
 
     /**
@@ -217,9 +232,88 @@ public class BoothServiceImpl implements BoothService {
         }
         session.close();
 
-        Optional<Booth> booth = boothRepository.findBySessionId(sessionId);
-        booth.ifPresent(boothRepository::delete);
-        return BoothMapper.toSessionRes(sessionId, "");
+        Optional<Booth> boothCandidate = boothRepository.findBySessionId(sessionId);
+        if (boothCandidate.isPresent()) {
+            Booth booth = boothCandidate.get();
+            if (map.containsKey(booth.getShareCode())) {
+                HashMap<String, byte[]> fileMap = map.remove(booth.getShareCode());
+                fileMap.clear();
+            }
+            boothRepository.delete(booth);
+        }
+
+        return BoothMapper.toSessionRes(sessionId, "", null);
     }
 
+    /**
+     * 부스에서 사용되는 임시 파일을 access token을 이용하여 부스 내의 인원이 맞는 지 확인 후 저장합니다.
+     * @throws com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     * @throws BoothNotExistsException (Mozzi code : 10, Http Status 404)
+     * @throws UnAuthorizedException (Mozzi code : 11, Http Status 401)
+     * @throws FileAlreadyExistsException (Mozzi code : 15, Http Status 400)
+     */
+    @Override
+    @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
+    public TemporalFileSavePostRes temporalFileSave(String accessToken, String shareCode, String fileName,
+        Resource file) {
+        User user = userService.findUserByToken(accessToken);
+        Optional<Booth> boothCandidate = boothRepository.findByShareCode(shareCode);
+        if (boothCandidate.isEmpty()) {
+            throw new BoothNotExistsException("Requested Booth not exists");
+        }
+        Booth booth = boothCandidate.get();
+        Optional<BoothUser> boothUserCandidate = boothUserRepository.findByBoothIdAndUserId(booth.getId(),
+            user.getId());
+        if (boothUserCandidate.isEmpty()) {
+            throw new UnAuthorizedException("You are not member of booth");
+        }
+        HashMap<String, byte[]> fileMap = null;
+        if (map.containsKey(shareCode)) {
+            fileMap = map.get(shareCode);
+        } else {
+            fileMap = new HashMap<>();
+            map.put(shareCode, fileMap);
+        }
+
+        if (fileMap.containsKey(fileName)) {
+            throw new FileAlreadyExistsException(String.format("%s already exists", fileName));
+        }
+        try {
+
+            fileMap.put(fileName, file.getContentAsByteArray());
+        } catch (Exception e) {
+            throw new RuntimeException();
+        }
+
+        return BoothMapper.toTemporalFileSaveRes(shareCode, fileName);
+    }
+
+    /**
+     * 존재하는 부스의 임시 파일을 가져와서 반환합니다.
+     * @throws BoothNotExistsException (Mozzi code : 10, Http Status 404)
+     * @throws FileNotExistsException (Mozzi code : 16, Http Status 400)
+     * @throws UnAuthorizedException (Mozzi code : 11, Http Status 401)
+     */
+    @Override
+    public byte[] getTemporalFile(String shareCode, String shareSecret, String fileName) {
+        if (!map.containsKey(shareCode)) {
+            throw new BoothNotExistsException("Requested Booth not exists");
+        }
+        Optional<Booth> boothCandidate = boothRepository.findByShareCode(shareCode);
+        if (boothCandidate.isEmpty()) {
+            throw new BoothNotExistsException("Requested Booth not exists");
+        }
+        Booth booth = boothCandidate.get();
+
+        if (!booth.getShareSecret().equals(shareSecret)) {
+            throw new UnAuthorizedException("You are not allowed to read file");
+        }
+
+        HashMap<String, byte[]> fileMap = map.get(shareCode);
+        if (!fileMap.containsKey(fileName)) {
+            throw new FileNotExistsException(String.format("Request file %s not exists.", fileName));
+        }
+
+        return fileMap.get(fileName);
+    }
 }

@@ -10,6 +10,7 @@ import com.ssafy.mozzi.db.entity.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -44,6 +45,11 @@ public class Booth extends BaseEntity {
 
     @Column(nullable = false)
     private Long creator;
+
+    @NotBlank
+    @Size(max = 20)
+    @Column(name = "share_secret")
+    private String shareSecret;
 
     @Override
     public boolean equals(Object o) {
