@@ -4,13 +4,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.ssafy.mozzi.api.service.EmailService;
+import com.ssafy.mozzi.api.service.EmailServiceImpl;
 
 @SpringBootTest
 class MozziApplicationTests {
 
     @Autowired
-    EmailService emailService;
+    EmailServiceImpl emailService;
 
     @Test
     void contextLoads() {

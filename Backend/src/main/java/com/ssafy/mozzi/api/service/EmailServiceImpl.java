@@ -1,20 +1,26 @@
 package com.ssafy.mozzi.api.service;
 
+import java.io.InputStream;
 import java.util.Properties;
-
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+
+import net.markenwerk.utils.mail.dkim.Canonicalization;
+import net.markenwerk.utils.mail.dkim.DkimMessage;
+import net.markenwerk.utils.mail.dkim.DkimSigner;
+import net.markenwerk.utils.mail.dkim.SigningAlgorithm;
+
+import jakarta.mail.Authenticator;
+import jakarta.mail.Message;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 
 @Service
 @PropertySource("classpath:application-keys.properties")
@@ -23,16 +29,33 @@ public class EmailServiceImpl implements EmailService {
     final String senderEmail;
     final String senderId;
     final String senderPw;
+    final String smtpDomain;
     final String smtpHost;
     final String smtpPort;
+    final String dkimSelector;
+    final DkimSigner dkimSigner;
+    // final byte[] dkim;
 
     @Autowired
-    EmailServiceImpl(Environment env) {
+    EmailServiceImpl(Environment env) throws Exception {
         senderEmail = env.getProperty("SMTP_SENDER_EMAIL");
-        senderId = env.getProperty("garlic");
+        senderId = env.getProperty("SMTP_SENDER_ID");
         senderPw = env.getProperty("SMTP_SENDER_PW");
+        smtpDomain = env.getProperty("SMTP_DOMAIN");
         smtpHost = env.getProperty("SMTP_HOST");
         smtpPort = env.getProperty("SMTP_PORT");
+        dkimSelector = env.getProperty("SMTP_DKIM_SELECTOR");
+
+        InputStream dkimStream = new ClassPathResource("config/dkim.der").getInputStream();
+        dkimSigner = new DkimSigner(smtpDomain, dkimSelector,
+            dkimStream
+        );
+        dkimSigner.setIdentity(senderEmail);
+        dkimSigner.setHeaderCanonicalization(Canonicalization.SIMPLE);
+        dkimSigner.setBodyCanonicalization(Canonicalization.RELAXED);
+        dkimSigner.setSigningAlgorithm(SigningAlgorithm.SHA256_WITH_RSA);
+        dkimSigner.setLengthParam(true);
+        dkimSigner.setCopyHeaderFields(false);
     }
 
     @Override
@@ -54,7 +77,7 @@ public class EmailServiceImpl implements EmailService {
         prop.put("mail.smtp.socketFactory.fallback", "false");
         // prop.setProperty("mail.smtp.ssl.protocols", "TLSv1.2");
 
-        Session session = Session.getDefaultInstance(prop, new javax.mail.Authenticator() {
+        Session session = Session.getDefaultInstance(prop, new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(senderId, senderPw);
             }
@@ -64,19 +87,15 @@ public class EmailServiceImpl implements EmailService {
 
         try {
             message.setFrom(new InternetAddress(senderEmail));
-
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
             message.setSubject("[Mozzi.lol] 패스워드 초기화 안내", encoding);
 
-            String content = "초기화된 비밀번호는 " + password + "입니다.\n해당 비밀번호를 이용하여 로그인 후 패스워드 변경하시기 바랍니다.";
+            String content = "초기화된 비밀번호는 " + password + "입니다. 해당 비밀번호를 이용하여 로그인 후 패스워드 변경하시기 바랍니다.";
             message.setText(content, "utf-8");
 
-            Transport.send(message);    // send message
-
-            return;
-        } catch (AddressException e) {
-            e.printStackTrace();
-        } catch (MessagingException e) {
+            DkimMessage dkimMessage = new DkimMessage(message, dkimSigner);
+            Transport.send(dkimMessage);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return;

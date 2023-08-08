@@ -84,6 +84,10 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jboss.resteasy/resteasy-multipart-provider
     implementation group: 'org.jboss.resteasy', name: 'resteasy-multipart-provider', version: '2.3.4.Final'
 
+    // https://mvnrepository.com/artifact/net.markenwerk/utils-mail-dkim
+    implementation group: 'net.markenwerk', name: 'utils-mail-dkim', version: '2.0.1'
+    // https://mvnrepository.com/artifact/com.sun.mail/jakarta.mail
+    implementation group: 'com.sun.mail', name: 'jakarta.mail', version: '2.0.0'
 }
 
 tasks.named('test') {
