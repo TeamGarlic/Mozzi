@@ -16,7 +16,7 @@ function useSession(shareCode) {
   const [now, setNow] = useState("MAKING");
   const [taken, setTaken] = useState(1);
   const [timer, setTimer] = useState(3);
-  const [position, setPosition] = useState({});
+  const [position, setPosition] = useState([]);
   const dispatch = useDispatch();
   const [mozzi, setMozzi] = useState("");
 
@@ -89,18 +89,22 @@ function useSession(shareCode) {
       session.on("signal:sendPosition", async (event) => {
         const data = await JSON.parse(event.data);
         // console.log(data);
-        setPosition(data.position);
+        setPosition(data);
       });
 
       session.on("signal:updatePosition", async (event) => {
         const data = await JSON.parse(event.data);
-        // console.log(position);
-        const newPosition = {};
-        for(let pos in position){
-          newPosition.push((pos.id===data.id)?data:pos);
-        }
-        // console.log(newPosition);
-        setPosition(newPosition);
+
+        setPosition((prev)=>{
+          // console.log(prev);
+          // console.log(data);
+          const newPosition = [];
+          for(let pos of prev){
+            newPosition.push((pos.id===data.id)?data:pos);
+          }
+          // console.log(newPosition);
+          return newPosition;
+        });
       });
 
       session.on("signal:startTaking", async () => {
