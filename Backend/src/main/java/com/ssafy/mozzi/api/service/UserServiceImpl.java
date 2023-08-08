@@ -255,4 +255,19 @@ public class UserServiceImpl implements UserService {
 
         return new UserPasswordResetPostRes(user.getEmail());
     }
+
+    /**
+     * 사용자의 accessToken을 입력 받아서 해당 유저를 삭제합니다.
+     * @param accessToekn 유저의 accessToken
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     * @throws com.ssafy.mozzi.common.exception.handler.UserEmailNotExists (Mozzi code : 14, Http Status 400)
+     */
+    @Override
+    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
+    public UserInfoRes withdrawUser(String accessToekn) {
+
+        User user = findUserByToken(accessToekn);
+        userRepository.delete(user);
+        return UserMapper.toUserInfoRes(user);
+    }
 }

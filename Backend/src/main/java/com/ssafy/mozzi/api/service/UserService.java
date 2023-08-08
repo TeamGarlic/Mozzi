@@ -36,4 +36,6 @@ public interface UserService {
     UserUpdateRes update(UserUpdatePutReq request);
 
     UserPasswordResetPostRes reset(String userId);
+
+    UserInfoRes withdrawUser(String accessToken);
 }

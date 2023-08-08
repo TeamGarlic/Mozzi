@@ -4,6 +4,7 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -216,6 +217,21 @@ public class UserController {
             .body(BaseResponseBody.<UserPasswordResetPostRes>builder()
                 .message(String.format("User %s password reseted", request.getUserId()))
                 .data(userService.reset(request.getUserId()))
+                .build());
+    }
+
+    @Operation(summary = "회원 탈퇴", description = "유저의 accessToken을 입력받아 해당 유저를 탈퇴시킵니다. (soft delete)")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "회원 탈퇴 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "404", description = "존재하지 않는 User Id", content = @Content(schema = @Schema(implementation = UserIdNotExistsException.UserIdNotExistsResponse.class))),
+        @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))})
+    @DeleteMapping
+    public ResponseEntity<? extends BaseResponseBody<UserInfoRes>> withdrawUser(
+        @RequestHeader("Authorization") String accessToken) {
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.noCache())
+            .body(BaseResponseBody.<UserInfoRes>builder()
+                .message(String.format("withdraw User success"))
+                .data(userService.withdrawUser(accessToken))
                 .build());
     }
 }

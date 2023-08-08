@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ssafy.mozzi.db.entity.BaseEntity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -68,10 +69,10 @@ public class User extends BaseEntity {
     private Boolean deleted = false;
 
     // TODO: 양방향 관계를 이후에 삭제할 지 고민 해야 됨
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserMozziroll> userMozzirolls = new HashSet<>();
 
-    @OneToMany(mappedBy = "likedUser")
+    @OneToMany(mappedBy = "likedUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<MozzirollLike> likedMozzirolls = new HashSet<>();
 
     @Size(max = 150)
