@@ -88,7 +88,7 @@ function useSession(shareCode) {
 
       session.on("signal:sendPosition", async (event) => {
         const data = await JSON.parse(event.data);
-        console.log(data);
+        // console.log(data);
         setPosition(data);
       });
 
@@ -96,13 +96,13 @@ function useSession(shareCode) {
         const data = await JSON.parse(event.data);
 
         setPosition((prev)=>{
-          console.log(prev);
-          console.log(data);
+          // console.log(prev);
+          // console.log(data);
           const newPosition = [];
           for(let pos of prev){
             newPosition.push((pos.id===data.id)?data:pos);
           }
-          console.log(newPosition);
+          // console.log(newPosition);
           return newPosition;
         });
       });
