@@ -62,6 +62,7 @@ public class ItemController {
     })
     @GetMapping("/backgrounds")
     public ResponseEntity<? extends BaseResponseBody<ItemBackgroundGetRes>> getBackgrounds(
+        @RequestHeader String authorization,
         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
@@ -69,7 +70,7 @@ public class ItemController {
             .cacheControl(cacheControl.getCacheControl())
             .body(BaseResponseBody.<ItemBackgroundGetRes>builder()
                 .message("Background list" + pageNum)
-                .data(itemService.getBackgroundRes(pageNum, pageSize))
+                .data(itemService.getBackgroundRes(authorization, pageNum, pageSize))
                 .build()
             );
     }

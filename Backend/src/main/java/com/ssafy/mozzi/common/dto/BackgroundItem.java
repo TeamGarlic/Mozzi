@@ -17,4 +17,5 @@ public class BackgroundItem {
     private long id;
     private String objectName;
     private String title;
+    private Boolean isFavorite = Boolean.FALSE;
 }
