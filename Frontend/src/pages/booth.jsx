@@ -261,7 +261,7 @@ function Booth() {
 
   useEffect(() => {
     if (publisher){
-      console.log(publisher.session.connection.data);
+      // console.log(publisher.session.connection.data);
       publisher.addVideoElement(pubVideoRef.current);
       dispatch(updatePubVideoMapAction({
         vidRef:pubVideoRef.current,
