@@ -4,11 +4,11 @@ import UserVideoComponent from "./UserVideoComponents";
 import PropTypes from "prop-types";
 import { useSelector } from 'react-redux';
 
-export default function UserSideBar({ leaveSession }) {
+export default function UserSideBar({ leaveSession ,user }) {
 
   const pubCanvas = useSelector((state) => state.canvasReducer.pubCanvas);
   const subCanvases = useSelector((state) => state.canvasReducer.subCanvases);
-
+console.log(subCanvases);
   return (
     <Card
       id="sideMenu"
@@ -19,11 +19,13 @@ export default function UserSideBar({ leaveSession }) {
       </div>
       <ul className="gap-4 overflow-y-scroll scrollbar-hide">
 
-
+        {pubCanvas &&
         <div className="stream-container col-md-6 col-xs-6">
-          <UserVideoComponent canvas={pubCanvas} />
+          <UserVideoComponent canvas={pubCanvas.canvasRef} />
+          {pubCanvas.nickname}
           <hr />
         </div>
+        }
 
         {subCanvases &&
           Object.keys(subCanvases).map(key=>(
@@ -48,4 +50,11 @@ export default function UserSideBar({ leaveSession }) {
 
 UserSideBar.propTypes = {
   leaveSession: PropTypes.func,
+  user: PropTypes.shape({
+    id: PropTypes.number,
+    userId: PropTypes.string,
+    userNickname: PropTypes.string,
+    email: PropTypes.string,
+    isHost: PropTypes.number,
+  }),
 };

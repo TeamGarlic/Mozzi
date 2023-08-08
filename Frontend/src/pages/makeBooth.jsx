@@ -84,6 +84,7 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
             </div>
           </div>
           <UserSideBar
+              user={user}
             leaveSession={leaveSession}
           />
         </div>
