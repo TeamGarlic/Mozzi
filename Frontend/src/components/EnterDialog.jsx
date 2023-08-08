@@ -25,7 +25,7 @@ function EnterDialog({
           <div className="p-4 flex">
             <div className="w-1/2 flex-col overflow-hidden">
               <span>camera</span>
-              <UserVideoComponent canvas={pubCanvas} />
+              <UserVideoComponent canvas={pubCanvas.canvasRef} />
               <select className="cam" value={"1"}>
                 <option value="1">cam1</option>
                 <option value="2">cam2</option>

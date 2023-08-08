@@ -14,8 +14,13 @@ const canvasState = {
     vidRef:undefined,
     canvasRef:undefined,
     canvasContextRef:undefined,
+    nickname:undefined,
   },
-  pubCanvas : undefined,
+  // pubCanvas : undefined,
+  pubCanvas : {
+    canvasRef:undefined,
+    nickname:undefined,
+  },
   subCanvases : {},
   position: [],
 }
@@ -60,8 +65,21 @@ const canvasReducer = (state = canvasState, action) => {
       }
     }
     case updatePubVideoMap: {
+      // console.log(action.payload);
       state.pubVideoMap.vidRef = action.payload.vidRef;
-      state.pubCanvas = state.pubVideoMap.canvasRef = action.payload.canvasRef;
+      // state.pubCanvas = state.pubVideoMap.canvasRef = action.payload.canvasRef;
+      state.pubVideoMap.canvasRef = action.payload.canvasRef;
+      state.pubVideoMap.nickname = action.payload.nickname;
+
+      //
+      // state.pubCanvas.canvasRef = action.payload.canvasRef;
+      // state.pubCanvas.nickname = action.payload.nickname;
+      state.pubCanvas = {
+        canvasRef: state.pubVideoMap.canvasRef,
+        nickname : state.pubVideoMap.nickname,
+      }
+      //
+
       state.pubVideoMap.canvasContextRef = action.payload.canvasContextRef;
       return {
         ...state

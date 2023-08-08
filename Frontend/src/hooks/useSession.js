@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { OpenVidu } from "openvidu-browser";
-import { v4 } from "uuid";
 import boothApi from "@/api/boothApi.js";
 import {useDispatch} from "react-redux";
 import {setFrameAction, AddClipAction, updateFrameAction} from "@/modules/clipAction.js";
@@ -9,7 +8,6 @@ import {changeBgAction} from "@/modules/bgAction.js";
 function useSession(shareCode) {
   const [session, setSession] = useState(undefined);
   const [publisher, setPublisher] = useState(undefined);
-  const [userName, setUserName] = useState(undefined);
   const [subscribers, setSubscribers] = useState([]);
   const [chatLists, setChatLists] = useState([]);
   const [nowTaking, setNowTaking] = useState(false);
@@ -31,7 +29,7 @@ function useSession(shareCode) {
   };
 
   const joinSession = async (userName, source) => {
-    setUserName(userName);
+
     try {
       const OV = new OpenVidu();
       const session = OV.initSession();
@@ -149,10 +147,9 @@ function useSession(shareCode) {
 
       const token = await getToken(shareCode);
 
-      const uid = v4();
+      // console.log(userName);
       await session.connect(token, {
         clientData: userName,
-        uid: uid,
       });
 
       const publisher = await OV.initPublisherAsync(undefined, {
@@ -173,6 +170,8 @@ function useSession(shareCode) {
         error.code,
         error.message
       );
+      alert("연결 중 오류가 발생했습니다.");
+      window.location.href="/";
     }
   };
 

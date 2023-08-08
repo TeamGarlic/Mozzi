@@ -12,10 +12,10 @@ import { SelfieSegmentation } from "@mediapipe/selfie_segmentation";
 import { drawCanvas, drawMask, chromaKey } from "@/utils/videoUtil.js";
 import useSession from "@/hooks/useSession.js";
 import { changeBgAction } from "@/modules/bgAction.js";
-import useUser from "@/hooks/useUser";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import itemApi from "@/api/itemApi.js";
 import {usePreventGoBack} from "@/hooks/usePreventGoBack.js";
+import userApi from "@/api/userApi.js";
 
 function Booth() {
   const { code: shareCode } = useParams();
@@ -29,7 +29,7 @@ function Booth() {
   alert("잘못된 접근입니다.");
       window.location.replace("/");
   }
-  const { user, checkUser } = useUser(userConfig);
+  const [user,setUser] = useState(userConfig);
   const [bgList, setBgList] = useState([]);
   const [frameList, setFrameList] = useState([]);
   const pickedFrame = useSelector((state) => state.clipReducer.frame);
@@ -164,12 +164,30 @@ function Booth() {
   }
 
   useEffect(() => {
-    // if(!location.state){
-    //   alert('잘못된 접근입니다.');
-    //   window.location.href="/";
-    // }
-    checkUser();
-    getFrameList();
+      console.log(user);
+    async function userJoin(initialState, ref){
+      let res = await userApi.getUser();
+      if(res.status ===200){
+        const userData = res.data.data
+        setUser((prev)=>{
+          joinSession(userData.userNickname, ref);
+          return {...prev, userData}
+        });
+      }else{
+        let guest = prompt("이름을 입력하세요", "GUEST");
+        if (!guest) {
+          alert("메인 화면으로 돌아갑니다.");
+          window.location.href="/";
+        }
+        setUser((prev)=>{
+          joinSession(guest, ref);
+          return {...prev, userNickname:guest}
+        });
+      }
+    }
+  // checkUser();
+     getFrameList();
+
     // TODO : bgImg를 Redux에서 관리
     const bgImg = new Image();
     bgImg.src = "https://api.mozzi.lol/files/object/1691022079984_bg2.jpg";
@@ -200,16 +218,11 @@ function Booth() {
         requestAnimationFrame(sendToMediaPipe);
       }
     };
-    joinSession(user.userNickname, bgRemovedRef.current.captureStream(30).getVideoTracks()[0]);
+
+    userJoin(userConfig,  bgRemovedRef.current.captureStream(30).getVideoTracks()[0])
+     // joinSession(user.userNickname, bgRemovedRef.current.captureStream(30).getVideoTracks()[0]);
     getBgList(1, 10);
 
-    // (() => {
-    //   window.addEventListener("beforeunload", preventClose);
-    // })();
-    //
-    // return () => {
-    //   window.removeEventListener("beforeunload", preventClose);
-    // };
 
   }, []);
 
@@ -247,13 +260,14 @@ function Booth() {
 
 
   useEffect(() => {
-    console.log(publisher)
     if (publisher){
+      // console.log(publisher.session.connection.data);
       publisher.addVideoElement(pubVideoRef.current);
       dispatch(updatePubVideoMapAction({
         vidRef:pubVideoRef.current,
         canvasRef:pubCanvasRef.current,
         canvasContextRef:pubCanvasRef.current.getContext("2d", { willReadFrequently: true }),
+        nickname : JSON.parse(publisher.stream.connection.data).clientData
       }));
     }
 
