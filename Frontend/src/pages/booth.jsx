@@ -110,6 +110,7 @@ function Booth() {
 
     // TODO : 캔버스에 그리기
     if (mainCanvas.canvas){
+      // console.log(localPosition);
       drawCanvas(mainCanvas.canvas.current, mainCanvas.context.current, bgNow.img, localPosition);
     }
   };
@@ -206,7 +207,7 @@ function Booth() {
         `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`,
     });
     selfieSegmentation.setOptions({
-      modelSelection: 1,
+      modelSelection: 0,
       selfieMode: true,
     });
     selfieSegmentation.onResults(onResults);
