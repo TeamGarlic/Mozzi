@@ -1,5 +1,4 @@
-import { Clip2Frame, AddClip, Frame2Clip, DragStart, DragEnd, DragClear, Frame2Frame, setFrame, setClipList } from "@/modules/clipAction"
-
+import { updateFrame, Clip2Frame, AddClip, Frame2Clip, DragStart, DragEnd, DragClear, Frame2Frame, setFrame, setClipList } from "@/modules/clipAction"
 
 const clipState = {
   frame: {
@@ -40,6 +39,13 @@ const clipState = {
 
 const clipReducer = (state = clipState, action) => {
   switch(action.type) {
+    case updateFrame: {
+      const frame = action.payload
+      return {
+        ...state,
+        frame
+      }
+    }
     case setFrame: {
       // params로 frame 객체 그대로 입력
       const frame = {

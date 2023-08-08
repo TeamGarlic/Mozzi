@@ -9,7 +9,7 @@ import {
 import PropTypes from "prop-types";
 import {checkHost} from "@/utils/DecoratorUtil.js";
 
-function Frame({user}) {
+function Frame({user, updateMozzi}) {
   const frame = useSelector((state) => state.clipReducer.frame);
   const dispatch = useDispatch();
   const drag = useSelector((state) => state.clipReducer.drag);
@@ -144,4 +144,5 @@ Frame.propTypes = {
     email: PropTypes.string,
     isHost: PropTypes.number,
   }),
+  updateMozzi: PropTypes.func,
 };

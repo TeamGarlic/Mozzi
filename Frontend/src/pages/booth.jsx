@@ -59,6 +59,7 @@ function Booth() {
     changeBg,
     mozzi,
     sendMozzi,
+    updateMozzi,
   } = useSession(shareCode);
 
   // 소스 웹캠 video
@@ -319,10 +320,18 @@ function Booth() {
           myId={publisher.stream.connection.connectionId}
           updatePosition={updatePosition}
           changeBg={changeBg}
+          position={position}
+          sendPosition={sendPosition}
+          setPosition={setPosition}
         />
       )}
       {now === "MODIFING" && (
-        <AfterTake goNext={gotoFinish} user={user} sendMozzi={sendMozzi}/>
+        <AfterTake
+          goNext={gotoFinish}
+          user={user}
+          sendMozzi={sendMozzi}
+          updateMozzi={updateMozzi}
+        />
       )}
       {now === "FINISH" && <Finish mozzi={mozzi}/>}
     </>

@@ -3,7 +3,7 @@ import { OpenVidu } from "openvidu-browser";
 import { v4 } from "uuid";
 import boothApi from "@/api/boothApi.js";
 import {useDispatch} from "react-redux";
-import {setFrameAction, AddClipAction} from "@/modules/clipAction.js";
+import {setFrameAction, AddClipAction, updateFrameAction} from "@/modules/clipAction.js";
 import {changeBgAction} from "@/modules/bgAction.js";
 
 function useSession(shareCode) {
@@ -77,8 +77,8 @@ function useSession(shareCode) {
         const data = await JSON.parse(event.data);
         // Todo: blob이 비어있을 경우 에러 발생
         // 합성 로직 이후 확인 필요
-        console.log("sendBlob")
-        dispatch(AddClipAction({idx: data.idx, src: data.src}))
+        console.log("sendBlob");
+        dispatch(AddClipAction({idx: data.idx, src: data.src}));
       });
 
       session.on("signal:timeChange", async (event) => {
@@ -94,7 +94,6 @@ function useSession(shareCode) {
 
       session.on("signal:updatePosition", async (event) => {
         const data = await JSON.parse(event.data);
-
         setPosition((prev)=>{
           // console.log(prev);
           // console.log(data);
@@ -125,6 +124,12 @@ function useSession(shareCode) {
 
       session.on("signal:sendMozzi", async (event) => {
         setMozzi(event.data)
+      })
+
+      session.on("signal:updateMozzi", async (event) => {
+        const frame = JSON.parse(event.data)
+        console.log(frame);
+        // dispatch(updateFrameAction(frame))
       })
 
       session.on("streamDestroyed", (event) => {
@@ -261,6 +266,14 @@ function useSession(shareCode) {
     });
   };
 
+  const updateMozzi = async (frame) => {
+    await session.signal({
+      data: JSON.stringify(frame),
+      to: [],
+      type: "updateMozzi"
+    })
+  }
+
   const sendPosition = async (positions) => {
     // 방장이 모든 유저의 위치 정보를 전파
     await session.signal({
@@ -335,6 +348,7 @@ function useSession(shareCode) {
     changeBg,
     mozzi,
     sendMozzi,
+    updateMozzi,
   };
 }
 
