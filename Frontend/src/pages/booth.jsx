@@ -110,6 +110,7 @@ function Booth() {
 
     // TODO : 캔버스에 그리기
     if (mainCanvas.canvas){
+      // console.log(localPosition);
       drawCanvas(mainCanvas.canvas.current, mainCanvas.context.current, bgNow.img, localPosition);
     }
   };
