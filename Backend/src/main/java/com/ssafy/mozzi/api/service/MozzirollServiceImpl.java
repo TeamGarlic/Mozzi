@@ -2,7 +2,6 @@ package com.ssafy.mozzi.api.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -139,31 +138,32 @@ public class MozzirollServiceImpl implements MozzirollService {
         boolean isLiked = true;
 
         // 좋아요가 이미 되어있다면 해당 좋아요를 삭제하고 isLiked 를 false 로 만들어줌.
-        Set<MozzirollLike> likes = mozzirollLikeRepository.findByLikedUserAndLikedUserMozziroll(user, userMozziroll);
-        if (!likes.isEmpty()) {
-            for (MozzirollLike like : likes) {
-                user.getLikedMozzirolls().remove(like);
-                userRepository.save(user);
+        Optional<MozzirollLike> like = mozzirollLikeRepository.findByLikedUserAndLikedUserMozziroll(user,
+            userMozziroll);
+        if (like.isPresent()) {
 
-                userMozziroll.getLikedUsers().remove(like);
-                userMozzirollRepository.save(userMozziroll);
+            user.getLikedMozzirolls().remove(like.get());
+            userRepository.save(user);
 
-                mozzirollLikeRepository.delete(like);
-                isLiked = false;
-            }
+            userMozziroll.getLikedUsers().remove(like.get());
+            userMozzirollRepository.save(userMozziroll);
+
+            mozzirollLikeRepository.delete(like.get());
+            isLiked = false;
+
         }
 
         // 좋아요가 없을 경우 좋아요를 만들어줌
         if (isLiked) {
-            MozzirollLike like = new MozzirollLike();
-            like.setLikedUser(user);
-            like.setLikedUserMozziroll(userMozziroll);
-            mozzirollLikeRepository.save(like);
+            MozzirollLike newLike = new MozzirollLike();
+            newLike.setLikedUser(user);
+            newLike.setLikedUserMozziroll(userMozziroll);
+            mozzirollLikeRepository.save(newLike);
 
-            userMozziroll.getLikedUsers().add(like);
+            userMozziroll.getLikedUsers().add(newLike);
             userMozzirollRepository.save(userMozziroll);
 
-            user.getLikedMozzirolls().add(like);
+            user.getLikedMozzirolls().add(newLike);
             userRepository.save(user);
         }
 
