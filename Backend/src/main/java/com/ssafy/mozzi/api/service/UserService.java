@@ -37,5 +37,5 @@ public interface UserService {
 
     UserPasswordResetPostRes reset(String userId);
 
-    String withdrawUser(String accessToken);
+    UserInfoRes withdrawUser(String accessToken);
 }

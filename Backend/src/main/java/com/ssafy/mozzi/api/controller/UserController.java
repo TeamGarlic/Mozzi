@@ -225,11 +225,11 @@ public class UserController {
         @ApiResponse(responseCode = "404", description = "존재하지 않는 User Id", content = @Content(schema = @Schema(implementation = UserIdNotExistsException.UserIdNotExistsResponse.class))),
         @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))})
     @DeleteMapping
-    public ResponseEntity<? extends BaseResponseBody<String>> withdrawUser(
+    public ResponseEntity<? extends BaseResponseBody<UserInfoRes>> withdrawUser(
         @RequestHeader("Authorization") String accessToken) {
         return ResponseEntity.ok()
             .cacheControl(CacheControl.noCache())
-            .body(BaseResponseBody.<String>builder()
+            .body(BaseResponseBody.<UserInfoRes>builder()
                 .message(String.format("withdraw User success"))
                 .data(userService.withdrawUser(accessToken))
                 .build());

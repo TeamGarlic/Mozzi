@@ -264,10 +264,10 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
-    public String withdrawUser(String accessToekn) {
+    public UserInfoRes withdrawUser(String accessToekn) {
 
         User user = findUserByToken(accessToekn);
         userRepository.delete(user);
-        return "";
+        return UserMapper.toUserInfoRes(user);
     }
 }
