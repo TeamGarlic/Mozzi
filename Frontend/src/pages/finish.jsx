@@ -29,7 +29,7 @@ function Finish({mozzi}) {
               user4
             </div>
             <ul className="flex gap-5 text-center justify-center mt-20">
-              <li><a href={`https://api.mozzi.lol/files/mozziroll/${mozzi}`}>다운받기</a></li>
+              <li><a href={`https://api.mozzi.lol/files/mozziroll/${mozzi}`} target="_blanck">다운받기</a></li>
               <li>카톡공유</li>
               <li>인스타공유</li>
               <li>
