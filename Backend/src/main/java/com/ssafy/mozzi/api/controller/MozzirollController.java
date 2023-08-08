@@ -117,7 +117,7 @@ public class MozzirollController {
         @ApiResponse(responseCode = "500", description = "서버 에러",
             content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
     })
-    @PostMapping("/{userMozzirollId}")
+    @PostMapping("/like/{userMozzirollId}")
     public ResponseEntity<? extends BaseResponseBody<MozzirollLikeRes>> likeMozziroll(
         @RequestHeader("Authorization") String accessToken,
         @PathVariable long userMozzirollId) {

@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/users/logout").authenticated()
                 .requestMatchers(HttpMethod.PATCH, "/users").permitAll()
                 .requestMatchers(HttpMethod.POST, "/users/reset").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/users").authenticated()
 
                 // sessions 요청에 대한 보안 설정
                 .requestMatchers(HttpMethod.POST, "/sessions").authenticated()
@@ -71,7 +72,7 @@ public class SecurityConfig {
                 // mozzirolls 에 대한 보안 설정
                 .requestMatchers(HttpMethod.GET, "/mozzirolls").authenticated()
                 .requestMatchers(HttpMethod.POST, "/mozzirolls/link").authenticated()
-                .requestMatchers(HttpMethod.POST, "/mozzirolls/{userMozzirollId}").authenticated()
+                .requestMatchers(HttpMethod.POST, "/mozzirolls/like/{userMozzirollId}").authenticated()
             )
             .headers(headers ->
                 headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
