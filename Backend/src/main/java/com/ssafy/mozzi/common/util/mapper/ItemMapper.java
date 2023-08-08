@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.ssafy.mozzi.api.response.BackgroundFavoritePostRes;
 import com.ssafy.mozzi.api.response.FrameListGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundPostRes;
@@ -13,6 +14,7 @@ import com.ssafy.mozzi.common.dto.FrameClipItem;
 import com.ssafy.mozzi.common.dto.FrameItem;
 import com.ssafy.mozzi.common.dto.StickerItem;
 import com.ssafy.mozzi.db.entity.remote.Backgroud;
+import com.ssafy.mozzi.db.entity.remote.BackgroundFavorite;
 import com.ssafy.mozzi.db.entity.remote.Frame;
 import com.ssafy.mozzi.db.entity.remote.FrameClip;
 import com.ssafy.mozzi.db.entity.remote.Sticker;
@@ -123,6 +125,20 @@ public class ItemMapper {
     public static ItemBackgroundPostRes toItemBackgroundPostRes(Backgroud backgroud) {
         return ItemBackgroundPostRes.builder()
             .id(backgroud.getId())
+            .build();
+    }
+
+    /**
+     * BackgroundFavorite 객체의 정보를 BackgroundFavoritePostRes 로 변환
+     * @param backgroundFavorite BackgroundFavorite
+     * @param isFavorite boolean
+     * @return BackgroundFavoritePostRes
+     */
+    public static BackgroundFavoritePostRes toBackgroundFavoritePostRes(BackgroundFavorite backgroundFavorite,
+        boolean isFavorite) {
+        return BackgroundFavoritePostRes.builder()
+            .backgroundId(backgroundFavorite.getBackground().getId())
+            .isFavorite(isFavorite)
             .build();
     }
 }

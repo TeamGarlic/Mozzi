@@ -1,6 +1,7 @@
 package com.ssafy.mozzi.api.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -10,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.oracle.bmc.objectstorage.responses.PutObjectResponse;
+import com.ssafy.mozzi.api.request.BackgroundFavoritePostReq;
+import com.ssafy.mozzi.api.response.BackgroundFavoritePostRes;
 import com.ssafy.mozzi.api.response.FrameListGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundPostRes;
@@ -18,17 +21,22 @@ import com.ssafy.mozzi.common.auth.ObjectStorageClient;
 import com.ssafy.mozzi.common.dto.FrameClipItem;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
 import com.ssafy.mozzi.common.util.FileUtil;
+import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.common.util.mapper.ItemMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
 import com.ssafy.mozzi.db.entity.remote.Backgroud;
+import com.ssafy.mozzi.db.entity.remote.BackgroundFavorite;
 import com.ssafy.mozzi.db.entity.remote.Frame;
 import com.ssafy.mozzi.db.entity.remote.FrameClip;
 import com.ssafy.mozzi.db.entity.remote.Sticker;
+import com.ssafy.mozzi.db.entity.remote.User;
 import com.ssafy.mozzi.db.repository.cloud.FileRepository;
+import com.ssafy.mozzi.db.repository.remote.BackgroundFavoriteRepository;
 import com.ssafy.mozzi.db.repository.remote.BackgroundRepository;
 import com.ssafy.mozzi.db.repository.remote.FrameClipRepository;
 import com.ssafy.mozzi.db.repository.remote.FrameRepository;
 import com.ssafy.mozzi.db.repository.remote.StickerRepository;
+import com.ssafy.mozzi.db.repository.remote.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -45,7 +53,10 @@ public class ItemServiceImpl implements ItemService {
     private final FrameClipRepository frameClipRepository;
     private final StickerRepository stickerRepository;
     private final FileRepository fileRepository;
+    private final UserRepository userRepository;
+    private final BackgroundFavoriteRepository backgroundFavoriteRepository;
     private final ObjectStorageClient client;
+    private final MozziUtil mozziUtil;
 
     /**
      * Background Get 요청에 대한 응답을 반환하는 비즈니스 로직
@@ -176,5 +187,40 @@ public class ItemServiceImpl implements ItemService {
         frameRepository.save(frame);
 
         return "success";
+    }
+
+    /**
+     * Background 즐겨찾기 등록의 비즈니스 로직
+     * @param backgroundFavoritePostReq FavoriteBackgroundPostReq
+     * @param accessToken String
+     * @see UserRepository
+     * @see BackgroundRepository
+     * @see BackgroundFavoriteRepository
+     * @see ItemMapper
+     */
+    @Override
+    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
+    public BackgroundFavoritePostRes saveFavoriteBackground(BackgroundFavoritePostReq backgroundFavoritePostReq,
+        String accessToken) {
+        long userId = mozziUtil.findUserIdByToken(accessToken);
+        Optional<User> user = userRepository.findById(userId);
+        Optional<Backgroud> backgroud = backgroundRepository.findById(backgroundFavoritePostReq.getBackgroundId());
+
+        Optional<BackgroundFavorite> backgroundFavorite = backgroundFavoriteRepository.findByUserAndBackground(
+            user.get(),
+            backgroud.get());
+
+        boolean favorite = false;
+        if (backgroundFavorite.isPresent()) {
+            backgroundFavoriteRepository.delete(backgroundFavorite.get());
+        } else {
+            backgroundFavorite = Optional.of(backgroundFavoriteRepository.save(BackgroundFavorite.builder()
+                .background(backgroud.get())
+                .user(user.get())
+                .build()));
+            favorite = true;
+        }
+
+        return ItemMapper.toBackgroundFavoritePostRes(backgroundFavorite.get(), favorite);
     }
 }

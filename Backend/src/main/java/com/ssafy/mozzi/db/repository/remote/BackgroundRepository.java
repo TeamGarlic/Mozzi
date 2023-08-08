@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.ssafy.mozzi.db.entity.remote.Backgroud;
 
 /**
- * 배경 모델 관련 JPA Query Method 인터페이스
+ * 배경 즐겨찾기 모델 관련 JPA Query Method 인터페이스
  *
  * @see Repository
  */
