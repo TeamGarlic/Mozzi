@@ -8,7 +8,7 @@ export default function UserSideBar({ leaveSession ,user }) {
 
   const pubCanvas = useSelector((state) => state.canvasReducer.pubCanvas);
   const subCanvases = useSelector((state) => state.canvasReducer.subCanvases);
-console.log(subCanvases);
+// console.log(subCanvases);
   return (
     <Card
       id="sideMenu"
