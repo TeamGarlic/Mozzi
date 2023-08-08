@@ -308,17 +308,15 @@ function useSession(shareCode) {
     return token;
   };
 
-  useEffect(() => {
-    const handleBeforeUnload = async () => {
-      await leaveSession();
-    };
 
+  useEffect(() => {
     window.addEventListener("beforeunload", leaveSession);
 
     return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("beforeunload", leaveSession);
     };
-  }, []);
+  }, [leaveSession]);
+
 
   return {
     session,
