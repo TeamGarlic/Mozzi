@@ -161,6 +161,10 @@ public class ItemServiceImpl implements ItemService {
             .objectName(OBJECT_NAME)
             .title(title)
             .build());
+        PutObjectResponse response = fileRepository.putObject(client.getClient(), FileUtil.generateStreamFromFile(file),
+            OBJECT_NAME, "multipart/form-data");
+        if (response.getLastModified() == null)
+            throw new CloudStorageSaveFailException("Fail to upload Frame file");
 
         return String.valueOf(frame.getId());
     }
