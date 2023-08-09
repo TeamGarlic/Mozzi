@@ -16,7 +16,7 @@ import com.ssafy.mozzi.common.dto.FrameClipItem;
  * @see ItemServiceImpl
  */
 public interface ItemService {
-    ItemBackgroundGetRes getBackgroundRes(int pageNum, int pageSize);
+    ItemBackgroundGetRes getBackgroundRes(String authorization, int pageNum, int pageSize);
 
     FrameListGetRes getFrameList();
 

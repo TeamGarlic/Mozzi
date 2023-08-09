@@ -9,6 +9,7 @@ import com.ssafy.mozzi.api.response.FrameListGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundPostRes;
 import com.ssafy.mozzi.api.response.ItemStickerGetRes;
+import com.ssafy.mozzi.common.dto.BackgroundEntityDto;
 import com.ssafy.mozzi.common.dto.BackgroundItem;
 import com.ssafy.mozzi.common.dto.FrameClipItem;
 import com.ssafy.mozzi.common.dto.FrameItem;
@@ -25,21 +26,22 @@ import com.ssafy.mozzi.db.entity.remote.Sticker;
 public class ItemMapper {
 
     /**
-     * 백그라운드 응답을 위해 Background 엔티티의 집합을 BackgroundItem 엔티티의 집합으로 변환
-     * @param backgrounds List Background
+     * 백그라운드 응답을 위해 BackgroundEntityDto 의 집합을 BackgroundItem 집합으로 변환
+     * @param backgrounds List BackgroundEntityDto
      * @return List BackgroundItem
      * @see Backgroud
      * @see BackgroundItem
      */
 
-    public static ItemBackgroundGetRes toItemBackgroundGetRes(List<Backgroud> backgrounds, int pages) {
+    public static ItemBackgroundGetRes toItemBackgroundGetRes(List<BackgroundEntityDto> backgrounds, int pages) {
         List<BackgroundItem> backgroundItems = new ArrayList<>();  // 반환 할 List 객체
 
-        for (Backgroud backgroud : backgrounds) {
+        for (BackgroundEntityDto backgroud : backgrounds) {
             backgroundItems.add(BackgroundItem.builder()
                 .id(backgroud.getId())
                 .objectName(backgroud.getObjectName())
                 .title(backgroud.getTitle())
+                .isFavorite(backgroud.getFavoriteId() == null ? false : true)
                 .build());
         }
 

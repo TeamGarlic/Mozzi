@@ -18,8 +18,11 @@ import com.ssafy.mozzi.api.response.ItemBackgroundGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundPostRes;
 import com.ssafy.mozzi.api.response.ItemStickerGetRes;
 import com.ssafy.mozzi.common.auth.ObjectStorageClient;
+import com.ssafy.mozzi.common.dto.BackgroundEntityDto;
 import com.ssafy.mozzi.common.dto.FrameClipItem;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
+import com.ssafy.mozzi.common.exception.handler.NoDataException;
+import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.util.FileUtil;
 import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.common.util.mapper.ItemMapper;
@@ -64,13 +67,20 @@ public class ItemServiceImpl implements ItemService {
      * @param pageSize int
      * @return ItemBackgroundGetRes
      * @see ItemBackgroundGetRes
-     * @see Backgroud
+     * @see BackgroundEntityDto
      */
     @Override
-    public ItemBackgroundGetRes getBackgroundRes(int pageNum, int pageSize) {
+    public ItemBackgroundGetRes getBackgroundRes(String authorization, int pageNum, int pageSize) {
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);  // Page 객체를 갖고오기 위한 PageRequest 객체 생성
-        Page<Backgroud> page = backgroundRepository.findAll(pageRequest);  // Page 객체 생성
-        List<Backgroud> backgrounds = page.getContent();  // Page 의 Method 를 이용하여 Background 객체들의 리스트를 만듦
+        Page<BackgroundEntityDto> page = null;
+        if (authorization.equals("")) {
+            page = backgroundRepository.findAllWithFavorite(pageRequest);
+        } else {
+            Long userId = mozziUtil.findUserIdByToken(authorization);
+            page = backgroundRepository.findAllWithFavoriteAndUser(userId, pageRequest);  // Page 객체 생성
+        }
+
+        List<BackgroundEntityDto> backgrounds = page.getContent();  // Page 의 Method 를 이용하여 Background 객체들의 리스트를 만듦
 
         return ItemMapper.toItemBackgroundGetRes(backgrounds, page.getTotalPages());
     }
@@ -204,7 +214,11 @@ public class ItemServiceImpl implements ItemService {
         String accessToken) {
         long userId = mozziUtil.findUserIdByToken(accessToken);
         Optional<User> user = userRepository.findById(userId);
+        if (!user.isPresent())
+            throw new UnAuthorizedException("You are not authorized to save favorite-background");
         Optional<Backgroud> backgroud = backgroundRepository.findById(backgroundFavoritePostReq.getBackgroundId());
+        if (!backgroud.isPresent())
+            throw new NoDataException("This is no data for save favorite-background");
 
         Optional<BackgroundFavorite> backgroundFavorite = backgroundFavoriteRepository.findByUserAndBackground(
             user.get(),

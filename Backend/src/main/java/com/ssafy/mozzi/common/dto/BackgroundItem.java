@@ -1,5 +1,6 @@
 package com.ssafy.mozzi.common.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +18,6 @@ public class BackgroundItem {
     private long id;
     private String objectName;
     private String title;
+    @NotNull
+    private Boolean isFavorite = Boolean.FALSE;
 }
