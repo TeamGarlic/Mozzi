@@ -2,6 +2,13 @@ export const drawMask = function(canvas, context, result) {
   // 배경 제거된 영상을 캔버스에 그리는 함수
   if(!canvas) return;
   context.save();
+
+  // const cx = canvas.width/2;
+  // const cy = canvas.height/2;
+  // context.translate(cx,cy);
+  // context.rotate(Math.PI/3);
+  // context.translate(-cx,-cy);
+  // context.filter = "contrast(1.4) sepia(1)";
   context.clearRect(
     0,
     0,
@@ -24,6 +31,7 @@ export const drawMask = function(canvas, context, result) {
     canvas.width,
     canvas.height
   );
+  context.restore();
   context.globalCompositeOperation = 'destination-over';
   context.fillStyle = '#00FF00';
   context.fillRect(

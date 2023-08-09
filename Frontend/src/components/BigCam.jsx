@@ -8,7 +8,7 @@ import {
 import PropTypes from 'prop-types';
 
 export default function BigCam({myId, updatePosition}) {
-  const W = 1024, H = 560;
+  const W = 1024, H = 660;
   const rndRef = useRef();
   const dispatch = useDispatch();
 
@@ -41,7 +41,7 @@ export default function BigCam({myId, updatePosition}) {
       className="bg-slate-300 m-auto my-10"
       style={{"width" : `${W}px`, "height" : `${H}px`}}
     >
-      <canvas ref={canvasRef} width="1920" height="1080" style={{"width" : `${W}px`, "height" : `${H}px`}}></canvas>
+      <canvas ref={canvasRef} width={W} height={H} style={{"width" : `${W}px`, "height" : `${H}px`}}></canvas>
       <Rnd
           onDrag={updateSize}
           onResize={updateSize}
