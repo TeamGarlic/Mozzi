@@ -169,4 +169,22 @@ public class MozzirollServiceImpl implements MozzirollService {
 
         return MozzirollMapper.toMozzirollLikeRes(userMozziroll.getLikedUsers().size(), isLiked);
     }
+
+
+    /**
+     * 좋아요 순으로 모찌롤들을 반환해줍니다.
+     * @param accessToken JWT Access Token
+     * @param pageNum int
+     * @param pageSize int
+     * @return UserMozzirollGetRes
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     */
+    @Override
+    public UserMozzirollGetRes getPopularUserMozzirolls(String accessToken, int pageNum, int pageSize){
+//        User user = userService.findUserByToken(accessToken);
+        PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);
+        Page<UserMozziroll> page = userMozzirollRepository.findAllOrderByMozzirollLikeCount(pageRequest);
+        List<UserMozziroll> userMozzirolls = page.getContent();
+        return MozzirollMapper.toUserMozzirollGetRes(userMozzirolls, page.getTotalPages());
+    }
 }

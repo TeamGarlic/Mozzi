@@ -130,4 +130,33 @@ public class MozzirollController {
                     .build()
             );
     }
+
+    /**
+     * 좋아요 순으로 유저 모찌롤 목록을 조회합니다.
+     * @param accessToken 사용자의 Token
+     * @param pageNum 페이지 숫자
+     * @param pageSize 페이지 크기
+     * @see MozzirollService
+     */
+    @Operation(summary = "좋아요 순으로 유저 모찌롤 목록 조회", description = "좋아요 순으로 유저 모찌롤 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "좋아요 순 userMozziroll 페이징 조회 성공", useReturnTypeSchema = true),
+            @ApiResponse(responseCode = "500", description = "서버 에러",
+                    content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+    })
+    @GetMapping("/popular")
+    public ResponseEntity<? extends BaseResponseBody<UserMozzirollGetRes>> getPopularUserMozzirolls(
+            @RequestHeader(value = "Authorization", required = false) String accessToken,
+            @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+            @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        return ResponseEntity.ok()
+                .cacheControl(CacheControl.noCache())
+                .body(
+                        BaseResponseBody.<UserMozzirollGetRes>builder()
+                                .message("get popular user mozziroll list success")
+                                .data(mozzirollService.getPopularUserMozzirolls(accessToken, pageNum, pageSize))
+                                .build()
+                );
+    }
+
 }
