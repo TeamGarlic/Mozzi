@@ -13,4 +13,5 @@ public interface MozzirollService {
     UserMozzirollGetRes getMozzirollsByUser(String accessToken, int pageNum, int pageSize);
 
     MozzirollLikeRes likeMozziroll(String accessToken, long userMozzirollId);
+    UserMozzirollGetRes getPopularUserMozzirolls(String accessToken, int pageNum, int pageSize);
 }
