@@ -163,7 +163,7 @@ public class BoothController {
         @ApiResponse(responseCode = "401", description = "해당 부스에 없어서 임시 파일 저장 할 수 없음", content = @Content(schema = @Schema(implementation = UnAuthorizedException.UnAuthorizedResponse.class))),
         @ApiResponse(responseCode = "400", description = "해당하는 파일이 이미 존재", content = @Content(schema = @Schema(implementation = FileAlreadyExistsException.FileAlreadyExistsResponse.class)))
     })
-    @PostMapping("/file")
+    @PostMapping(value = "/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<? extends BaseResponseBody<TemporalFileSavePostRes>> temporalFileSave(
         @RequestHeader String Authorization, @RequestParam("shareCode") String shareCode,
         @RequestParam("fileName") String fileName,

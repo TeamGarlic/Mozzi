@@ -60,7 +60,7 @@ public class FileController {
         @ApiResponse(responseCode = "500", description = "서버 에러",
             content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
     })
-    @PostMapping(value = "/mozziroll/upload")
+    @PostMapping(value = "/mozziroll/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<? extends BaseResponseBody<FileMozzirollPostRes>> saveMozziroll(
         @RequestHeader("Authorization") String accessToken, @RequestParam("file") MultipartFile file,
         @RequestParam("title") String title) {
@@ -119,7 +119,7 @@ public class FileController {
         @ApiResponse(responseCode = "500", description = "서버 에러",
             content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
     })
-    @GetMapping("/object/{objectName}")
+    @GetMapping(value = "/object/{objectName}")
     public ResponseEntity<Resource> getObject(
         @PathVariable("objectName") String objectName) {
         Resource resource = fileService.getObject(objectName);
