@@ -26,8 +26,21 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
   }
 
   function clickFrame(event, frame){
-    dispatch(setFrameAction({frame}));
-    setFrame(frame);
+    const res = {
+      id: frame.id,
+      title: frame.title,
+      n: frame.rects.length,
+      src: `https://api.mozzi.lol/files/object/${frame.objectName}`,
+    }
+    for (let i = 0; i < frame.rects.length; i++) {
+      res[i + 1] = {
+        clipIdx: 0,
+        src: "",
+        ...frame.rects[i]
+      };
+    }
+    dispatch(setFrameAction(res));
+    setFrame(res);
   }
   clickFrame = checkHost(clickFrame, user.isHost);
 

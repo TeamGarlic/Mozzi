@@ -6,26 +6,7 @@ const clipState = {
     title: "",
     n: 4,
     src: "",
-    1: {clipIdx: 0, src: "",
-      width : 0,
-      height : 0,
-      x : 0,
-      y : 0},
-    2: {clipIdx: 0, src: "",
-      width : 0,
-      height : 0,
-      x : 0,
-      y : 0},
-    3: {clipIdx: 0, src: "",
-      width : 0,
-      height : 0,
-      x : 0,
-      y : 0},
-    4: {clipIdx: 0, src: "",
-      width : 0,
-      height : 0,
-      x : 0,
-      y : 0}},
+    },
   clipList: {
     n: 10,
   },
@@ -49,18 +30,8 @@ const clipReducer = (state = clipState, action) => {
     case setFrame: {
       // params로 frame 객체 그대로 입력
       const frame = {
-        id: action.payload.frame.id,
-        title: action.payload.frame.title,
-        n: action.payload.frame.rects.length,
-        src: `https://api.mozzi.lol/files/object/${action.payload.frame.objectName}`,
+        ...action.payload,
       };
-      for (let i = 0; i < action.payload.frame.rects.length; i++) {
-        frame[i + 1] = {
-          clipIdx: 0,
-          src: "",
-          ...action.payload.frame.rects[i]
-        };
-      }
       return {
         ...state,
         frame

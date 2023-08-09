@@ -15,6 +15,8 @@ import { changeBgAction } from "@/modules/bgAction.js";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import itemApi from "@/api/itemApi.js";
 import userApi from "@/api/userApi.js";
+import {AppStore} from "@/store/AppStore.js";
+import Spinner from "@/components/Spinner.jsx"
 
 function Booth() {
   const { code: shareCode } = useParams();
@@ -83,22 +85,24 @@ function Booth() {
   const subVideoRefs = useRef({});
   const subCanvasRefs = useRef({});
   const localVideoMap = {};
+  const [delay, setDelay] = useState(true);
 
   function startTake() {
     if (pickedFrame.id === 0) return;
     sendPosition(position);
+    setFrame(pickedFrame);
     gotoTakePic();
   }
   startTake = checkHost(startTake, user.isHost);
 
   const onResults = (results) => {
-    
+
     drawMask(bgRemovedRef.current, bgRemovedContextRef.current, results);
     chromaKey(pubVideoMap.canvasRef, pubVideoMap.canvasContextRef, pubVideoMap.vidRef);
     for (let key in subVideoMap) {
       chromaKey(subVideoMap[key].canvasRef, subVideoMap[key].canvasContextRef, subVideoMap[key].vidRef);
     }
-    
+
     if (mainCanvas.canvas){
       drawCanvas(mainCanvas.canvas.current, mainCanvas.context.current, bgNow.img, localPosition);
     }
@@ -175,7 +179,8 @@ function Booth() {
 
   // useEffect : []
   useEffect(() => {
-     getFrameList();
+    AppStore.setRunningSpinner();
+    getFrameList();
     const bgImg = new Image();
     // TODO : 배경이미지 API로 받아오기
     getBgList(1, 10);
@@ -253,6 +258,8 @@ function Booth() {
   // useEffect : [publisher]
   useEffect(() => {
     if (publisher){
+      AppStore.setStopSpinner();
+      setDelay(false);
       // console.log(publisher.session.connection.data);
       publisher.addVideoElement(pubVideoRef.current);
       dispatch(updatePubVideoMapAction({
@@ -297,49 +304,54 @@ function Booth() {
             </div>
           );
         })}
-
-      {now === "MAKING" && (
-        <MakeBooth
-          startTake={startTake}
-          shareCode={shareCode}
-          leaveSession={leaveSession}
-          frameList={frameList}
-          user={user}
-          setFrame={setFrame}
-        />
+      {delay ? (
+        <Spinner/>
+      ): (
+        <>
+          {now === "MAKING" && (
+            <MakeBooth
+              startTake={startTake}
+              shareCode={shareCode}
+              leaveSession={leaveSession}
+              frameList={frameList}
+              user={user}
+              setFrame={setFrame}
+            />
+          )}
+          {now === "TAKING" && (
+            <TakePic
+              shareCode={shareCode}
+              sendMessage={sendMessage}
+              chatLists={chatLists}
+              user={user}
+              bgList={bgList}
+              goNext={gotoModifing}
+              sendBlob={sendBlob}
+              timer={timer}
+              timeChange={timeChange}
+              taken={taken}
+              startTaking={startTaking}
+              finishTaking={finishTaking}
+              nowTaking={nowTaking}
+              myId={publisher.stream.connection.connectionId}
+              updatePosition={updatePosition}
+              changeBg={changeBg}
+              position={position}
+              sendPosition={sendPosition}
+              setPosition={setPosition}
+            />
+          )}
+          {now === "MODIFING" && (
+            <AfterTake
+              goNext={gotoFinish}
+              user={user}
+              sendMozzi={sendMozzi}
+              updateMozzi={updateMozzi}
+            />
+          )}
+          {now === "FINISH" && <Finish mozzi={mozzi}/>}
+        </>
       )}
-      {now === "TAKING" && (
-        <TakePic
-          shareCode={shareCode}
-          sendMessage={sendMessage}
-          chatLists={chatLists}
-          user={user}
-          bgList={bgList}
-          goNext={gotoModifing}
-          sendBlob={sendBlob}
-          timer={timer}
-          timeChange={timeChange}
-          taken={taken}
-          startTaking={startTaking}
-          finishTaking={finishTaking}
-          nowTaking={nowTaking}
-          myId={publisher.stream.connection.connectionId}
-          updatePosition={updatePosition}
-          changeBg={changeBg}
-          position={position}
-          sendPosition={sendPosition}
-          setPosition={setPosition}
-        />
-      )}
-      {now === "MODIFING" && (
-        <AfterTake
-          goNext={gotoFinish}
-          user={user}
-          sendMozzi={sendMozzi}
-          updateMozzi={updateMozzi}
-        />
-      )}
-      {now === "FINISH" && <Finish mozzi={mozzi}/>}
     </>
   );
 }

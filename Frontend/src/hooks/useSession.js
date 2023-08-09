@@ -68,7 +68,7 @@ function useSession(shareCode) {
 
       session.on("signal:setFrame", async (event) => {
         const frame = await JSON.parse(event.data);
-        dispatch(setFrameAction({frame}))
+        dispatch(setFrameAction(frame))
       });
 
       session.on("signal:sendBlob", async (event) => {
@@ -209,9 +209,9 @@ function useSession(shareCode) {
     });
   };
 
-  const setFrame = async (frame) => {
+  const setFrame = async (res) => {
     await session.signal({
-      data: JSON.stringify(frame),
+      data: JSON.stringify(res),
       to: [],
       type: "setFrame",
     });
