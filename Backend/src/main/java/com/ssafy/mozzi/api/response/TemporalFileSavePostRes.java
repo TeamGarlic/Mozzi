@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class TemporalFileSavePostRes {
-    String shareCode;
-    String fileName;
+    private String shareCode;
+    private String fileName;
 }

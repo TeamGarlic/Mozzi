@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -307,7 +308,7 @@ public class BoothServiceImpl implements BoothService {
      * @throws UnAuthorizedException (Mozzi code : 11, Http Status 401)
      */
     @Override
-    public byte[] getTemporalFile(String shareCode, String shareSecret, String fileName) {
+    public Resource getTemporalFile(String shareCode, String shareSecret, String fileName) {
         if (!map.containsKey(shareCode)) {
             throw new BoothNotExistsException("Requested Booth not exists");
         }
@@ -326,7 +327,7 @@ public class BoothServiceImpl implements BoothService {
             throw new FileNotExistsException(String.format("Request file %s not exists.", fileName));
         }
 
-        return fileMap.get(fileName);
+        return new ByteArrayResource(fileMap.get(fileName));
     }
 
     /**

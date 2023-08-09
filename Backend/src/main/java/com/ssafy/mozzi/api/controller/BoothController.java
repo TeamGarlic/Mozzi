@@ -3,7 +3,6 @@ package com.ssafy.mozzi.api.controller;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ContentDisposition;
@@ -196,8 +195,7 @@ public class BoothController {
     @GetMapping("/file")
     public ResponseEntity<Resource> getTemporalFile(@RequestHeader String shareSecret, @RequestParam String shareCode,
         @RequestParam String fileName) {
-        byte[] file = boothService.getTemporalFile(shareCode, shareSecret, fileName);
-        Resource resource = new ByteArrayResource(file);
+        Resource resource = boothService.getTemporalFile(shareCode, shareSecret, fileName);
 
         return ResponseEntity.ok()
             .cacheControl(

@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class TemporalFileGetReq {
-    String shareCode;
-    String shareSecret;
-    String fileName;
+    private String shareCode;
+    private String shareSecret;
+    private String fileName;
 }
