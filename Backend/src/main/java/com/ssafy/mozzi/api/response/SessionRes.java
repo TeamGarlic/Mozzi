@@ -11,4 +11,5 @@ import lombok.Data;
 public class SessionRes {
     private String shareCode;
     private String sessionId;
+    private String shareSecret;
 }

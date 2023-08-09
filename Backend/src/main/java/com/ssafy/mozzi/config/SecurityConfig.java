@@ -50,6 +50,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/sessions/{shareCode}").permitAll()
                 .requestMatchers(HttpMethod.POST, "/sessions/connections").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/sessions/{sessionId}").permitAll()
+                .requestMatchers(HttpMethod.POST, "/sessions/file").authenticated()
+                .requestMatchers(HttpMethod.GET, "/sessions/file").permitAll()
 
                 // items 요청에 대한 보안 설정
                 .requestMatchers(HttpMethod.GET, "/items/backgrounds").permitAll()
