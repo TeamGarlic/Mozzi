@@ -8,7 +8,7 @@ import {
 import PropTypes from 'prop-types';
 
 export default function BigCam({myId, updatePosition}) {
-  const W = 1440, H = 960;
+  const W = 1440, H = 960, ratio = 1080/1440;
   const rndRef = useRef();
   const dispatch = useDispatch();
 
@@ -19,10 +19,10 @@ export default function BigCam({myId, updatePosition}) {
     console.log(myId);
     const pos= {
       id : myId,
-      x : (rndRef.current.draggable.state.x - canvasRef.current.offsetLeft)/W,
-      y : (rndRef.current.draggable.state.y - canvasRef.current.offsetTop)/H,
-      width : rndRef.current.resizable.state.width/W,
-      height : rndRef.current.resizable.state.height/H,
+      x : (rndRef.current.draggable.state.x - canvasRef.current.offsetLeft)/(ratio*W),
+      y : (rndRef.current.draggable.state.y - canvasRef.current.offsetTop)/(ratio*H),
+      width : rndRef.current.resizable.state.width/(ratio*W),
+      height : rndRef.current.resizable.state.height/(ratio*H),
     };
     dispatch(resizeLayerAction(pos));
     updatePosition(pos);
@@ -39,20 +39,20 @@ export default function BigCam({myId, updatePosition}) {
   return (
     <div
       className="bg-slate-300 m-auto my-10"
-      style={{"width" : `${W}px`, "height" : `${H}px`}}
+      style={{"width" : `${W*ratio}px`, "height" : `${H*ratio}px`}}
     >
-      <canvas ref={canvasRef} width={W} height={H} style={{"width" : `1080px`, "height" : `720px`}}></canvas>
+      <canvas ref={canvasRef} width={W} height={H} style={{"width" : `${W*ratio}px`, "height" : `${H*ratio}px`}}></canvas>
       <Rnd
           onDrag={updateSize}
           onResize={updateSize}
           default={{
             x: 0,
             y: 0,
-            width: W/2,
-            height: H/2,
+            width: W*ratio*0.4,
+            height: H*ratio*0.4,
           }}
-          minWidth={W/10}
-          minHeight={H/10}
+          minWidth={W*ratio/15}
+          minHeight={H*ratio/15}
           ref={rndRef}
           bounds="parent"
           className={"w-full h-full"} style={{'border':'dashed 1px white'}}
