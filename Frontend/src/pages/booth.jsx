@@ -16,6 +16,8 @@ import { checkHost } from "@/utils/DecoratorUtil.js";
 import itemApi from "@/api/itemApi.js";
 import {usePreventGoBack} from "@/hooks/usePreventGoBack.js";
 import userApi from "@/api/userApi.js";
+import {AppStore} from "@/store/AppStore.js";
+import Spinner from "@/components/Spinner.jsx"
 
 function Booth() {
   const { code: shareCode } = useParams();
@@ -88,6 +90,7 @@ function Booth() {
   const subVideoRefs = useRef({});
   const subCanvasRefs = useRef({});
   const localVideoMap = {};
+  const [delay, setDelay] = useState(true);
 
   function startTake() {
     if (pickedFrame.id === 0) return;
@@ -166,6 +169,7 @@ function Booth() {
   }
 
   useEffect(() => {
+    AppStore.setRunningSpinner();
     console.log(user);
     async function userJoin(initialState, ref){
       let res = await userApi.getUser();
@@ -263,6 +267,8 @@ function Booth() {
 
   useEffect(() => {
     if (publisher){
+      AppStore.setStopSpinner();
+      setDelay(false);
       // console.log(publisher.session.connection.data);
       publisher.addVideoElement(pubVideoRef.current);
       dispatch(updatePubVideoMapAction({
@@ -291,7 +297,6 @@ function Booth() {
 
   return (
     <>
-
       <video autoPlay ref={webcamRef} className="collapse absolute" />
       <canvas ref={bgRemovedRef}  width={1280} height={720} className="collapse absolute" />
 
@@ -316,49 +321,54 @@ function Booth() {
             </div>
           );
         })}
-
-      {now === "MAKING" && (
-        <MakeBooth
-          startTake={startTake}
-          shareCode={shareCode}
-          leaveSession={leaveSession}
-          frameList={frameList}
-          user={user}
-          setFrame={setFrame}
-        />
+      {delay ? (
+        <Spinner/>
+      ): (
+        <>
+          {now === "MAKING" && (
+            <MakeBooth
+              startTake={startTake}
+              shareCode={shareCode}
+              leaveSession={leaveSession}
+              frameList={frameList}
+              user={user}
+              setFrame={setFrame}
+            />
+          )}
+          {now === "TAKING" && (
+            <TakePic
+              shareCode={shareCode}
+              sendMessage={sendMessage}
+              chatLists={chatLists}
+              user={user}
+              bgList={bgList}
+              goNext={gotoModifing}
+              sendBlob={sendBlob}
+              timer={timer}
+              timeChange={timeChange}
+              taken={taken}
+              startTaking={startTaking}
+              finishTaking={finishTaking}
+              nowTaking={nowTaking}
+              myId={publisher.stream.connection.connectionId}
+              updatePosition={updatePosition}
+              changeBg={changeBg}
+              position={position}
+              sendPosition={sendPosition}
+              setPosition={setPosition}
+            />
+          )}
+          {now === "MODIFING" && (
+            <AfterTake
+              goNext={gotoFinish}
+              user={user}
+              sendMozzi={sendMozzi}
+              updateMozzi={updateMozzi}
+            />
+          )}
+          {now === "FINISH" && <Finish mozzi={mozzi}/>}
+        </>
       )}
-      {now === "TAKING" && (
-        <TakePic
-          shareCode={shareCode}
-          sendMessage={sendMessage}
-          chatLists={chatLists}
-          user={user}
-          bgList={bgList}
-          goNext={gotoModifing}
-          sendBlob={sendBlob}
-          timer={timer}
-          timeChange={timeChange}
-          taken={taken}
-          startTaking={startTaking}
-          finishTaking={finishTaking}
-          nowTaking={nowTaking}
-          myId={publisher.stream.connection.connectionId}
-          updatePosition={updatePosition}
-          changeBg={changeBg}
-          position={position}
-          sendPosition={sendPosition}
-          setPosition={setPosition}
-        />
-      )}
-      {now === "MODIFING" && (
-        <AfterTake
-          goNext={gotoFinish}
-          user={user}
-          sendMozzi={sendMozzi}
-          updateMozzi={updateMozzi}
-        />
-      )}
-      {now === "FINISH" && <Finish mozzi={mozzi}/>}
     </>
   );
 }
