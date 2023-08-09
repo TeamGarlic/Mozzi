@@ -4,15 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.ssafy.mozzi.api.response.BackgroundFavoritePostRes;
 import com.ssafy.mozzi.api.response.FrameListGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundPostRes;
 import com.ssafy.mozzi.api.response.ItemStickerGetRes;
+import com.ssafy.mozzi.common.dto.BackgroundEntityDto;
 import com.ssafy.mozzi.common.dto.BackgroundItem;
 import com.ssafy.mozzi.common.dto.FrameClipItem;
 import com.ssafy.mozzi.common.dto.FrameItem;
 import com.ssafy.mozzi.common.dto.StickerItem;
 import com.ssafy.mozzi.db.entity.remote.Backgroud;
+import com.ssafy.mozzi.db.entity.remote.BackgroundFavorite;
 import com.ssafy.mozzi.db.entity.remote.Frame;
 import com.ssafy.mozzi.db.entity.remote.FrameClip;
 import com.ssafy.mozzi.db.entity.remote.Sticker;
@@ -23,21 +26,22 @@ import com.ssafy.mozzi.db.entity.remote.Sticker;
 public class ItemMapper {
 
     /**
-     * 백그라운드 응답을 위해 Background 엔티티의 집합을 BackgroundItem 엔티티의 집합으로 변환
-     * @param backgrounds List Background
+     * 백그라운드 응답을 위해 BackgroundEntityDto 의 집합을 BackgroundItem 집합으로 변환
+     * @param backgrounds List BackgroundEntityDto
      * @return List BackgroundItem
      * @see Backgroud
      * @see BackgroundItem
      */
 
-    public static ItemBackgroundGetRes toItemBackgroundGetRes(List<Backgroud> backgrounds, int pages) {
+    public static ItemBackgroundGetRes toItemBackgroundGetRes(List<BackgroundEntityDto> backgrounds, int pages) {
         List<BackgroundItem> backgroundItems = new ArrayList<>();  // 반환 할 List 객체
 
-        for (Backgroud backgroud : backgrounds) {
+        for (BackgroundEntityDto backgroud : backgrounds) {
             backgroundItems.add(BackgroundItem.builder()
                 .id(backgroud.getId())
                 .objectName(backgroud.getObjectName())
                 .title(backgroud.getTitle())
+                .isFavorite(backgroud.getFavoriteId() == null ? false : true)
                 .build());
         }
 
@@ -123,6 +127,20 @@ public class ItemMapper {
     public static ItemBackgroundPostRes toItemBackgroundPostRes(Backgroud backgroud) {
         return ItemBackgroundPostRes.builder()
             .id(backgroud.getId())
+            .build();
+    }
+
+    /**
+     * BackgroundFavorite 객체의 정보를 BackgroundFavoritePostRes 로 변환
+     * @param backgroundFavorite BackgroundFavorite
+     * @param isFavorite boolean
+     * @return BackgroundFavoritePostRes
+     */
+    public static BackgroundFavoritePostRes toBackgroundFavoritePostRes(BackgroundFavorite backgroundFavorite,
+        boolean isFavorite) {
+        return BackgroundFavoritePostRes.builder()
+            .backgroundId(backgroundFavorite.getBackground().getId())
+            .isFavorite(isFavorite)
             .build();
     }
 }

@@ -2,6 +2,8 @@ package com.ssafy.mozzi.api.service;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.mozzi.api.request.BackgroundFavoritePostReq;
+import com.ssafy.mozzi.api.response.BackgroundFavoritePostRes;
 import com.ssafy.mozzi.api.response.FrameListGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundPostRes;
@@ -14,7 +16,7 @@ import com.ssafy.mozzi.common.dto.FrameClipItem;
  * @see ItemServiceImpl
  */
 public interface ItemService {
-    ItemBackgroundGetRes getBackgroundRes(int pageNum, int pageSize);
+    ItemBackgroundGetRes getBackgroundRes(String authorization, int pageNum, int pageSize);
 
     FrameListGetRes getFrameList();
 
@@ -25,4 +27,7 @@ public interface ItemService {
     String saveFrame(MultipartFile file, String title);
 
     String saveFrameClips(long frameId, FrameClipItem[] frameClipItems);
+
+    BackgroundFavoritePostRes saveFavoriteBackground(BackgroundFavoritePostReq backgroundFavoritePostReq,
+        String accessToken);
 }

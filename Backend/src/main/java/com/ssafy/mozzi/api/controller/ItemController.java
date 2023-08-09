@@ -8,11 +8,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.mozzi.api.request.BackgroundFavoritePostReq;
+import com.ssafy.mozzi.api.response.BackgroundFavoritePostRes;
 import com.ssafy.mozzi.api.response.FrameListGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundPostRes;
@@ -59,6 +62,7 @@ public class ItemController {
     })
     @GetMapping("/backgrounds")
     public ResponseEntity<? extends BaseResponseBody<ItemBackgroundGetRes>> getBackgrounds(
+        @RequestHeader(defaultValue = "") String authorization,
         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
@@ -66,7 +70,7 @@ public class ItemController {
             .cacheControl(cacheControl.getCacheControl())
             .body(BaseResponseBody.<ItemBackgroundGetRes>builder()
                 .message("Background list" + pageNum)
-                .data(itemService.getBackgroundRes(pageNum, pageSize))
+                .data(itemService.getBackgroundRes(authorization, pageNum, pageSize))
                 .build()
             );
     }
@@ -155,7 +159,7 @@ public class ItemController {
     }
 
     /**
-     * 프레임 업로드 비지니스 로직
+     * 프레임 업로드
      * @param file MultipartFile
      * @param title String
      * @see ItemService
@@ -185,7 +189,7 @@ public class ItemController {
     }
 
     /**
-     * 프레임 클립 업로드 비지니스 로직
+     * 프레임 클립 업로드
      * @param frameId long
      * @param frameClipItems FrameClipItem[]
      * @see ItemService
@@ -210,6 +214,33 @@ public class ItemController {
                 BaseResponseBody.<String>builder()
                     .message("frame upload success")
                     .data(response)
+                    .build());
+    }
+
+    /**
+     * 배경 즐겨찾기 추가
+     * @param authorization String
+     * @param backgroundFavoritePostReq BackgroundFavoritePostReq
+     * @see ItemService
+     */
+    @Operation(summary = "배경 즐겨찾기 추가", description = "선택한 배경을 즐겨찾기 추가합니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "배경 즐겨찾기 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+    })
+    @PostMapping("/background/favorite")
+    public ResponseEntity<? extends BaseResponseBody<BackgroundFavoritePostRes>> saveFavoriteBackground(
+        @RequestHeader String authorization,
+        @RequestBody BackgroundFavoritePostReq backgroundFavoritePostReq) {
+
+        return ResponseEntity
+            .status(HttpStatus.OK)
+            .cacheControl(CacheControl.noStore())
+            .body(
+                BaseResponseBody.<BackgroundFavoritePostRes>builder()
+                    .message("background favorite success")
+                    .data(itemService.saveFavoriteBackground(backgroundFavoritePostReq, authorization))
                     .build());
     }
 }

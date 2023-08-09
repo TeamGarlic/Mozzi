@@ -1,6 +1,7 @@
 package com.ssafy.mozzi.api.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -10,25 +11,35 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.oracle.bmc.objectstorage.responses.PutObjectResponse;
+import com.ssafy.mozzi.api.request.BackgroundFavoritePostReq;
+import com.ssafy.mozzi.api.response.BackgroundFavoritePostRes;
 import com.ssafy.mozzi.api.response.FrameListGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundGetRes;
 import com.ssafy.mozzi.api.response.ItemBackgroundPostRes;
 import com.ssafy.mozzi.api.response.ItemStickerGetRes;
 import com.ssafy.mozzi.common.auth.ObjectStorageClient;
+import com.ssafy.mozzi.common.dto.BackgroundEntityDto;
 import com.ssafy.mozzi.common.dto.FrameClipItem;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
+import com.ssafy.mozzi.common.exception.handler.NoDataException;
+import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.util.FileUtil;
+import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.common.util.mapper.ItemMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
 import com.ssafy.mozzi.db.entity.remote.Backgroud;
+import com.ssafy.mozzi.db.entity.remote.BackgroundFavorite;
 import com.ssafy.mozzi.db.entity.remote.Frame;
 import com.ssafy.mozzi.db.entity.remote.FrameClip;
 import com.ssafy.mozzi.db.entity.remote.Sticker;
+import com.ssafy.mozzi.db.entity.remote.User;
 import com.ssafy.mozzi.db.repository.cloud.FileRepository;
+import com.ssafy.mozzi.db.repository.remote.BackgroundFavoriteRepository;
 import com.ssafy.mozzi.db.repository.remote.BackgroundRepository;
 import com.ssafy.mozzi.db.repository.remote.FrameClipRepository;
 import com.ssafy.mozzi.db.repository.remote.FrameRepository;
 import com.ssafy.mozzi.db.repository.remote.StickerRepository;
+import com.ssafy.mozzi.db.repository.remote.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -45,7 +56,10 @@ public class ItemServiceImpl implements ItemService {
     private final FrameClipRepository frameClipRepository;
     private final StickerRepository stickerRepository;
     private final FileRepository fileRepository;
+    private final UserRepository userRepository;
+    private final BackgroundFavoriteRepository backgroundFavoriteRepository;
     private final ObjectStorageClient client;
+    private final MozziUtil mozziUtil;
 
     /**
      * Background Get 요청에 대한 응답을 반환하는 비즈니스 로직
@@ -53,13 +67,20 @@ public class ItemServiceImpl implements ItemService {
      * @param pageSize int
      * @return ItemBackgroundGetRes
      * @see ItemBackgroundGetRes
-     * @see Backgroud
+     * @see BackgroundEntityDto
      */
     @Override
-    public ItemBackgroundGetRes getBackgroundRes(int pageNum, int pageSize) {
+    public ItemBackgroundGetRes getBackgroundRes(String authorization, int pageNum, int pageSize) {
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);  // Page 객체를 갖고오기 위한 PageRequest 객체 생성
-        Page<Backgroud> page = backgroundRepository.findAll(pageRequest);  // Page 객체 생성
-        List<Backgroud> backgrounds = page.getContent();  // Page 의 Method 를 이용하여 Background 객체들의 리스트를 만듦
+        Page<BackgroundEntityDto> page = null;
+        if (authorization.equals("")) {
+            page = backgroundRepository.findAllWithFavorite(pageRequest);
+        } else {
+            Long userId = mozziUtil.findUserIdByToken(authorization);
+            page = backgroundRepository.findAllWithFavoriteAndUser(userId, pageRequest);  // Page 객체 생성
+        }
+
+        List<BackgroundEntityDto> backgrounds = page.getContent();  // Page 의 Method 를 이용하여 Background 객체들의 리스트를 만듦
 
         return ItemMapper.toItemBackgroundGetRes(backgrounds, page.getTotalPages());
     }
@@ -176,5 +197,44 @@ public class ItemServiceImpl implements ItemService {
         frameRepository.save(frame);
 
         return "success";
+    }
+
+    /**
+     * Background 즐겨찾기 등록의 비즈니스 로직
+     * @param backgroundFavoritePostReq FavoriteBackgroundPostReq
+     * @param accessToken String
+     * @see UserRepository
+     * @see BackgroundRepository
+     * @see BackgroundFavoriteRepository
+     * @see ItemMapper
+     */
+    @Override
+    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
+    public BackgroundFavoritePostRes saveFavoriteBackground(BackgroundFavoritePostReq backgroundFavoritePostReq,
+        String accessToken) {
+        long userId = mozziUtil.findUserIdByToken(accessToken);
+        Optional<User> user = userRepository.findById(userId);
+        if (!user.isPresent())
+            throw new UnAuthorizedException("You are not authorized to save favorite-background");
+        Optional<Backgroud> backgroud = backgroundRepository.findById(backgroundFavoritePostReq.getBackgroundId());
+        if (!backgroud.isPresent())
+            throw new NoDataException("This is no data for save favorite-background");
+
+        Optional<BackgroundFavorite> backgroundFavorite = backgroundFavoriteRepository.findByUserAndBackground(
+            user.get(),
+            backgroud.get());
+
+        boolean favorite = false;
+        if (backgroundFavorite.isPresent()) {
+            backgroundFavoriteRepository.delete(backgroundFavorite.get());
+        } else {
+            backgroundFavorite = Optional.of(backgroundFavoriteRepository.save(BackgroundFavorite.builder()
+                .background(backgroud.get())
+                .user(user.get())
+                .build()));
+            favorite = true;
+        }
+
+        return ItemMapper.toBackgroundFavoritePostRes(backgroundFavorite.get(), favorite);
     }
 }
