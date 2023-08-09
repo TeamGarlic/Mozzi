@@ -7,6 +7,8 @@ import {useEffect, useRef, useState} from "react";
 import { useParams } from "react-router-dom";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import fileApi from "@/api/fileApi.js";
+import Spinner from "@/components/Spinner.jsx";
+import {AppStore} from "@/store/AppStore.js";
 
 function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
   const [delay, setDelay] = useState(false);
@@ -25,6 +27,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
 
   function recordClip() {
     setDelay(true);
+    AppStore.setRunningSpinner();
     const mediaStream = completeClipRef.current.captureStream();
     mediaRecorder = new MediaRecorder(mediaStream);
     mediaRecorder.ondataavailable = (event) => {
@@ -38,6 +41,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
       // Todo: webm file url => 백엔드와 통신해서 url 주소를 재설정 해야함
       arrClipData.splice(0);
       saveClip(ClipFile, "test");
+      AppStore.setStopSpinner();
       goNext();
     };
 
@@ -108,7 +112,9 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
   return (
     <Layout>
       <>
-      <div className={`flex ${delay ? "":"invisible" }`}>Loading...</div>
+      <div className={`flex ${delay ? "":"invisible" }`}>
+        <Spinner></Spinner>
+      </div>
       <div className={`flex ${delay ? "invisible":"" }`}>
         <div className="w-full h-screen p-4 flex-col">
           <ClipLog user={user} updateMozzi={updateMozzi}/>

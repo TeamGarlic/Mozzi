@@ -267,8 +267,8 @@ function Booth() {
 
   useEffect(() => {
     if (publisher){
-      AppStore.setStopSpinner();
       setDelay(false);
+      AppStore.setStopSpinner();
       // console.log(publisher.session.connection.data);
       publisher.addVideoElement(pubVideoRef.current);
       dispatch(updatePubVideoMapAction({
