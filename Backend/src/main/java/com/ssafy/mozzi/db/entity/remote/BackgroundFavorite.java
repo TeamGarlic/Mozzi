@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import com.ssafy.mozzi.db.entity.BaseEntity;
 
@@ -35,11 +37,13 @@ import lombok.NoArgsConstructor;
 public class BackgroundFavorite extends BaseEntity {
     @ManyToOne
     @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
     @NotNull
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "background_id")
     private Backgroud background;
 
