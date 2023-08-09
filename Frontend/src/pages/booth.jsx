@@ -14,42 +14,37 @@ import useSession from "@/hooks/useSession.js";
 import { changeBgAction } from "@/modules/bgAction.js";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import itemApi from "@/api/itemApi.js";
-import {usePreventGoBack} from "@/hooks/usePreventGoBack.js";
 import userApi from "@/api/userApi.js";
 
 function Booth() {
   const { code: shareCode } = useParams();
   const dispatch = useDispatch();
-  // console.log(sessionID);
   const location = useLocation();
   let userConfig={};
   try{
   userConfig = {isHost : location.state.isHost};
   }catch{
-  alert("잘못된 접근입니다.");
-      window.location.replace("/");
+    alert("잘못된 접근입니다.");
+    window.location.href = "/";
   }
   const [user,setUser] = useState(userConfig);
   const [bgList, setBgList] = useState([]);
   const [frameList, setFrameList] = useState([]);
   const pickedFrame = useSelector((state) => state.clipReducer.frame);
 
-  const preventgoBack = usePreventGoBack();
 
   const {
-    session,
-    subscribers,
     joinSession,
+    leaveSession,
+    publisher,
+    subscribers,
     sendMessage,
     chatLists,
-    publisher,
-    leaveSession,
     gotoTakePic,
     gotoModifing,
     gotoFinish,
     nowTaking,
     now,
-    setNow,
     setFrame,
     sendBlob,
     timer,
@@ -97,26 +92,19 @@ function Booth() {
   startTake = checkHost(startTake, user.isHost);
 
   const onResults = (results) => {
+    
     drawMask(bgRemovedRef.current, bgRemovedContextRef.current, results);
-    // console.log(pubVideoMap)
     chromaKey(pubVideoMap.canvasRef, pubVideoMap.canvasContextRef, pubVideoMap.vidRef);
-
-    // console.log(subVideoMap);
     for (let key in subVideoMap) {
       chromaKey(subVideoMap[key].canvasRef, subVideoMap[key].canvasContextRef, subVideoMap[key].vidRef);
     }
-
-    // console.log(localPosition)
-
-    // TODO : 캔버스에 그리기
+    
     if (mainCanvas.canvas){
-      // console.log(localPosition);
       drawCanvas(mainCanvas.canvas.current, mainCanvas.context.current, bgNow.img, localPosition);
     }
   };
 
   const initPosition = () => {
-
     if(publisher&&(now === "MAKING")){
       const newPosition = [];
       newPosition.push({
@@ -139,7 +127,6 @@ function Booth() {
       });
       setPosition(newPosition);
     }
-
   }
 
   async function getBgList(pageNum, pageSize) {
@@ -164,33 +151,34 @@ function Booth() {
     }
   }
 
-  useEffect(() => {
-      console.log(user);
-    async function userJoin(initialState, ref){
-      let res = await userApi.getUser();
-      if(res.status ===200){
-        const userData = res.data.data
-        setUser((prev)=>{
-          joinSession(userData.userNickname, ref);
-          return {...prev, userData}
-        });
-      }else{
-        let guest = prompt("이름을 입력하세요", "GUEST");
-        if (!guest) {
-          alert("메인 화면으로 돌아갑니다.");
-          window.location.href="/";
-        }
-        setUser((prev)=>{
-          joinSession(guest, ref);
-          return {...prev, userNickname:guest}
-        });
+  async function userJoin(initialState, ref){
+    let res = await userApi.getUser();
+    if(res.status ===200){
+      const userData = res.data.data
+      setUser((prev)=>{
+        joinSession(userData.userNickname, ref);
+        return {...prev, userData}
+      });
+    }else{
+      let guest = prompt("이름을 입력하세요", "GUEST");
+      if (!guest) {
+        alert("메인 화면으로 돌아갑니다.");
+        window.location.href="/";
       }
+      setUser((prev)=>{
+        joinSession(guest, ref);
+        return {...prev, userNickname:guest}
+      });
     }
-  // checkUser();
-     getFrameList();
+  }
 
-    // TODO : bgImg를 Redux에서 관리
+
+  // useEffect : []
+  useEffect(() => {
+     getFrameList();
     const bgImg = new Image();
+    // TODO : 배경이미지 API로 받아오기
+    getBgList(1, 10);
     bgImg.src = "https://api.mozzi.lol/files/object/1691022079984_bg2.jpg";
     bgImg.crossOrigin = "anonymous";
     dispatch(changeBgAction({ img: bgImg }));
@@ -219,18 +207,21 @@ function Booth() {
         requestAnimationFrame(sendToMediaPipe);
       }
     };
-
     userJoin(userConfig,  bgRemovedRef.current.captureStream(30).getVideoTracks()[0])
-     // joinSession(user.userNickname, bgRemovedRef.current.captureStream(30).getVideoTracks()[0]);
-    getBgList(1, 10);
-
-
   }, []);
 
+
+  // useEffect : [leaveSession]
   useEffect(() => {
-    // console.log(subscribers);
-    // console.log(subVideoRefs);
-    // console.log(subCanvasRefs);
+    window.addEventListener("beforeunload", leaveSession);
+    return () => {
+      window.removeEventListener("beforeunload", leaveSession);
+    };
+  }, [leaveSession]);
+
+
+  // useEffect : [subscribers]
+  useEffect(() => {
     for (let key in localVideoMap) {
       delete localVideoMap[key];
     }
@@ -256,10 +247,10 @@ function Booth() {
     dispatch(updateSubVideoMapAction(localVideoMap));
     // console.log(subVideoMap);
     initPosition();
-
   }, [subscribers]);
 
 
+  // useEffect : [publisher]
   useEffect(() => {
     if (publisher){
       // console.log(publisher.session.connection.data);
@@ -271,29 +262,20 @@ function Booth() {
         nickname : JSON.parse(publisher.stream.connection.data).clientData
       }));
     }
-
-
     initPosition();
 
   }, [publisher]);
 
 
+  // useEffect : [position]
   useEffect(() => {
     dispatch(updatePositionAction(position));
   }, [position]);
 
-  const preventClose = (e) => {
-    e.preventDefault();
-    e.returnValue = ""; //Chrome에서 동작하도록; deprecated
-  };
-
-
   return (
     <>
-
       <video autoPlay ref={webcamRef} className="collapse absolute" />
       <canvas ref={bgRemovedRef}  width={1280} height={720} className="collapse absolute" />
-
       <video ref={pubVideoRef} className="collapse absolute" ></video>
       <canvas ref={pubCanvasRef}  width={1280} height={720} className="collapse absolute" />
       {subscribers &&

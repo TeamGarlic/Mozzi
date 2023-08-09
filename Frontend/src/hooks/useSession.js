@@ -25,7 +25,7 @@ function useSession(shareCode) {
     setSession(undefined);
     setPublisher(undefined);
     setSubscribers([]);
-    location.href = "/";
+    window.location.href = "/";
   };
 
   const joinSession = async (userName, source) => {
@@ -309,17 +309,8 @@ function useSession(shareCode) {
   };
 
 
-  useEffect(() => {
-    window.addEventListener("beforeunload", leaveSession);
-
-    return () => {
-      window.removeEventListener("beforeunload", leaveSession);
-    };
-  }, [leaveSession]);
-
 
   return {
-    session,
     subscribers,
     joinSession,
     sendMessage,
@@ -331,7 +322,6 @@ function useSession(shareCode) {
     gotoFinish,
     nowTaking,
     now,
-    setNow,
     setFrame,
     sendBlob,
     timer,
