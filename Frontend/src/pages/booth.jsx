@@ -92,6 +92,7 @@ function Booth() {
   function startTake() {
     if (pickedFrame.id === 0) return;
     sendPosition(position);
+    setFrame(pickedFrame);
     gotoTakePic();
   }
   startTake = checkHost(startTake, user.isHost);
@@ -165,7 +166,7 @@ function Booth() {
   }
 
   useEffect(() => {
-      console.log(user);
+    console.log(user);
     async function userJoin(initialState, ref){
       let res = await userApi.getUser();
       if(res.status ===200){
