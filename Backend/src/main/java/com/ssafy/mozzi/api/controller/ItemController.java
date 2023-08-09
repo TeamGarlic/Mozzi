@@ -2,6 +2,7 @@ package com.ssafy.mozzi.api.controller;
 
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -142,7 +143,7 @@ public class ItemController {
         @ApiResponse(responseCode = "500", description = "서버 에러",
             content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
     })
-    @PostMapping("/background")
+    @PostMapping(value = "/background", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<? extends BaseResponseBody<ItemBackgroundPostRes>> saveBackground(
         @RequestParam("file") MultipartFile file,
         @RequestParam("title") String title) {
@@ -170,7 +171,7 @@ public class ItemController {
         @ApiResponse(responseCode = "500", description = "서버 에러",
             content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
     })
-    @PostMapping("/frame")
+    @PostMapping(value = "/frame", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<? extends BaseResponseBody<String>> saveFrame(
         @RequestParam("file") MultipartFile file,
         @RequestParam("title") String title) {
