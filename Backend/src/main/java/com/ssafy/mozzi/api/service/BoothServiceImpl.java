@@ -25,7 +25,6 @@ import com.ssafy.mozzi.common.exception.handler.FileNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.InvalidSessionIdException;
 import com.ssafy.mozzi.common.exception.handler.ShareCodeNotExistException;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
-import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.common.util.mapper.BoothMapper;
 import com.ssafy.mozzi.db.datasource.LocalDatasource;
@@ -260,7 +259,7 @@ public class BoothServiceImpl implements BoothService {
 
     /**
      * 부스에서 사용되는 임시 파일을 access token을 이용하여 부스 내의 인원이 맞는 지 확인 후 저장합니다.
-     * @throws com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     * @throws com.ssafy.mozzi.common.exception.NotFoundException (UserIdNotExists, 1)
      * @throws BoothNotExistsException (Mozzi code : 10, Http Status 404)
      * @throws UnAuthorizedException (Mozzi code : 11, Http Status 401)
      * @throws FileAlreadyExistsException (Mozzi code : 15, Http Status 400)
@@ -332,7 +331,7 @@ public class BoothServiceImpl implements BoothService {
 
     /**
      * 방장으로부터 참여 제한을 하고 싶은 부스 정보를 받아, 열려 있다면 닫고, 닫혀있다면 그대로 둡니다.
-     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     * @throws com.ssafy.mozzi.common.exception.NotFoundException (UserIdNotExists, 1)
      * @throws BoothNotExistsException (Mozzi code : 10, Http Status 404)
      * @throws UnAuthorizedException (Mozzi code : 11, Http Status 401)
      */

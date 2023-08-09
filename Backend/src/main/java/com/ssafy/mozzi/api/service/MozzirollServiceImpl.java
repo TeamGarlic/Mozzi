@@ -15,7 +15,6 @@ import com.ssafy.mozzi.common.exception.handler.AlreadyLinkedMozziException;
 import com.ssafy.mozzi.common.exception.handler.BoothNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.MozzirollNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
-import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.common.util.mapper.MozzirollMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
@@ -58,7 +57,7 @@ public class MozzirollServiceImpl implements MozzirollService {
      * @throws UnAuthorizedException (Mozzi code : 11, Http Status 401)
      * @throws MozzirollNotExistsException (Mozzi code : 9, Http Status 404)
      * @throws BoothNotExistsException (Mozzi code : 10, Http Status 404)
-     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     * @throws com.ssafy.mozzi.common.exception.NotFoundException (UserIdNotExists, 1)
      */
     @Override
     public Long link(MozziLinkPostRequest request, String accessToken) {
@@ -103,7 +102,7 @@ public class MozzirollServiceImpl implements MozzirollService {
      * @param pageNum int
      * @param pageSize int
      * @return UserMozzirollGetRes
-     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     * @throws com.ssafy.mozzi.common.exception.NotFoundException (UserIdNotExists, 1)
      */
     @Override
     public UserMozzirollGetRes getMozzirollsByUser(String accessToken, int pageNum, int pageSize) {
@@ -119,13 +118,12 @@ public class MozzirollServiceImpl implements MozzirollService {
      * @param accessToken JWT Access Token
      * @param userMozzirollId long
      * @return MozzirollLikeRes
-     * @throws MozzirollNotExistsException (Mozzi code : 1, Http Status 404)
+     * @throws com.ssafy.mozzi.common.exception.NotFoundException (UserIdNotExists, 1)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     public MozzirollLikeRes likeMozziroll(String accessToken, long userMozzirollId) throws
-        MozzirollNotExistsException,
-        UserIdNotExistsException {
+        MozzirollNotExistsException {
         User user = userService.findUserByToken(accessToken);
         UserMozziroll userMozziroll;
 

@@ -26,6 +26,7 @@ import com.ssafy.mozzi.api.response.ConnectionPostRes;
 import com.ssafy.mozzi.api.response.SessionRes;
 import com.ssafy.mozzi.api.response.TemporalFileSavePostRes;
 import com.ssafy.mozzi.api.service.BoothService;
+import com.ssafy.mozzi.common.exception.ErrorResponse;
 import com.ssafy.mozzi.common.exception.handler.AccessTokenNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.BoothNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.DuplicateShareCodeException;
@@ -34,7 +35,6 @@ import com.ssafy.mozzi.common.exception.handler.FileNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.InvalidSessionIdException;
 import com.ssafy.mozzi.common.exception.handler.ShareCodeNotExistException;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
-import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.model.APICacheControl;
 import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
@@ -211,7 +211,7 @@ public class BoothController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "부스 닫기 여부", useReturnTypeSchema = true),
         @ApiResponse(responseCode = "401", description = "부스의 방장이 아니여서 권한이 없음", content = @Content(schema = @Schema(implementation = UnAuthorizedException.UnAuthorizedResponse.class))),
-        @ApiResponse(responseCode = "404", description = "유저가 존재하지 않음", content = @Content(schema = @Schema(implementation = UserIdNotExistsException.UserIdNotExistsResponse.class))),
+        @ApiResponse(responseCode = "404", description = "유저가 존재하지 않음", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
         @ApiResponse(responseCode = "404", description = "부스가 존재하지 않음", content = @Content(schema = @Schema(implementation = BoothNotExistsException.BoothNotExistsResponse.class)))
     })
     @GetMapping("/close")

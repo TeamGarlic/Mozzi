@@ -14,7 +14,6 @@ import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
 import com.ssafy.mozzi.common.auth.ObjectStorageClient;
 import com.ssafy.mozzi.common.dto.ObjectFileItem;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
-import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.util.FileUtil;
 import com.ssafy.mozzi.common.util.mapper.FileMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
@@ -47,7 +46,7 @@ public class FileServiceImpl implements FileService {
      * @see FileRepository
      * @see FileMozzirollPostRes
      * @see CloudStorageSaveFailException (Mozzi code : 0, Http Status 500)
-     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     * @throws com.ssafy.mozzi.common.exception.NotFoundException (UserIdNotExists, 1)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
