@@ -3,7 +3,6 @@ package com.ssafy.mozzi.api.controller;
 import java.nio.charset.StandardCharsets;
 
 import org.springframework.core.io.Resource;
-import org.springframework.http.CacheControl;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,7 @@ import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
 import com.ssafy.mozzi.api.service.FileService;
 import com.ssafy.mozzi.common.dto.ObjectFileItem;
 import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
-import com.ssafy.mozzi.common.model.ItemCacheControl;
+import com.ssafy.mozzi.common.model.APICacheControl;
 import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
@@ -42,7 +41,6 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "Oracle 컨트롤러", description = "Oracle Cloud File 관리 컨트롤러")
 public class FileController {
     private final FileService fileService;
-    private final ItemCacheControl cacheControl;
 
     /**
      * 모찌롤 파일을 ObjectStorage에 저장 및 방장의 마이페이지에 추가
@@ -67,7 +65,7 @@ public class FileController {
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .cacheControl(CacheControl.noStore())
+            .cacheControl(APICacheControl.noCache)
             .body(
                 BaseResponseBody.<FileMozzirollPostRes>builder()
                     .message("Save mozziroll success")
@@ -97,7 +95,7 @@ public class FileController {
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .cacheControl(cacheControl.getCacheControl())
+            .cacheControl(APICacheControl.usePrivateCache)
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
             .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment() // (6)
                 .filename(objectFileItem.getFileName(), StandardCharsets.UTF_8)
@@ -125,7 +123,7 @@ public class FileController {
         Resource resource = fileService.getObject(objectName);
 
         return ResponseEntity.ok()
-            .cacheControl(cacheControl.getCacheControl())
+            .cacheControl(APICacheControl.usePrivateCache)
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment() // (6)
                 .filename(resource.getFilename(), StandardCharsets.UTF_8)
