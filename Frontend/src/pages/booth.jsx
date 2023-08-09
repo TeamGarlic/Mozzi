@@ -19,22 +19,11 @@ import {AppStore} from "@/store/AppStore.js";
 import Spinner from "@/components/Spinner.jsx"
 
 function Booth() {
+
+  // hooks
   const { code: shareCode } = useParams();
   const dispatch = useDispatch();
   const location = useLocation();
-  let userConfig={};
-  try{
-  userConfig = {isHost : location.state.isHost};
-  }catch{
-    alert("잘못된 접근입니다.");
-    window.location.href = "/";
-  }
-  const [user,setUser] = useState(userConfig);
-  const [bgList, setBgList] = useState([]);
-  const [frameList, setFrameList] = useState([]);
-  const pickedFrame = useSelector((state) => state.clipReducer.frame);
-
-
   const {
     joinSession,
     leaveSession,
@@ -64,30 +53,42 @@ function Booth() {
     updateMozzi,
   } = useSession(shareCode);
 
-  // 소스 웹캠 video
-  const webcamRef = useRef();
-  // 배경 제거된 영상 그리는 canvas, context, layer 정보
-  const bgRemovedRef = useRef();
-  const bgRemovedContextRef = useRef();
 
-  const camCanvases = useSelector((state) => state.canvasReducer.camCanvases);
+  // global variables
+  let localVideoMap = {};
+  let userConfig= {};
+  try{
+    userConfig = {isHost : location.state.isHost};
+  }catch{
+    alert("잘못된 접근입니다.");
+    window.location.href = "/";
+  }
+
+  // useState
+  const [user,setUser] = useState(userConfig);
+  const [bgList, setBgList] = useState([]);
+  const [delay, setDelay] = useState(true);
+  const [frameList, setFrameList] = useState([]);
+
+  // useSelector
   const mainCanvas = useSelector((state) => state.canvasReducer.mainCanvas);
-  const myLayer = useSelector((state) => state.canvasReducer.myLayer);
   const pubVideoMap = useSelector((state) => state.canvasReducer.pubVideoMap);
   const subVideoMap = useSelector((state) => state.canvasReducer.subVideoMap);
   const localPosition = useSelector((state) => state.canvasReducer.position);
-
   const bgNow = useSelector((state) => state.bgReducer.bgNow);
+  const pickedFrame = useSelector((state) => state.clipReducer.frame);
 
+  // useRef
+  const webcamRef = useRef();
+  const bgRemovedRef = useRef();
+  const bgRemovedContextRef = useRef();
   const pubVideoRef = useRef();
   const pubCanvasRef = useRef();
-
   const subVideoRefs = useRef({});
   const subCanvasRefs = useRef({});
-  const localVideoMap = {};
-  const [delay, setDelay] = useState(true);
 
-  function startTake() {
+
+  let startTake = () => {
     if (pickedFrame.id === 0) return;
     sendPosition(position);
     setFrame(pickedFrame);
@@ -133,7 +134,7 @@ function Booth() {
     }
   }
 
-  async function getBgList(pageNum, pageSize) {
+  const getBgList = async (pageNum, pageSize) => {
     try {
       let res = await itemApi.getBgList(pageNum, pageSize);
       if (res.status === 200) {
@@ -144,7 +145,7 @@ function Booth() {
     }
   }
 
-  async function getFrameList() {
+  const getFrameList = async () => {
     try {
       let res = await itemApi.getFrameList();
       if (res.status === 200) {
@@ -155,7 +156,7 @@ function Booth() {
     }
   }
 
-  async function userJoin(initialState, ref){
+  const userJoin = async (initialState, ref)=> {
     let res = await userApi.getUser();
     if(res.status ===200){
       const userData = res.data.data
@@ -180,6 +181,7 @@ function Booth() {
   // useEffect : []
   useEffect(() => {
     AppStore.setRunningSpinner();
+
     getFrameList();
     const bgImg = new Image();
     // TODO : 배경이미지 API로 받아오기

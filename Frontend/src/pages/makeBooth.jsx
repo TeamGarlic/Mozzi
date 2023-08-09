@@ -80,8 +80,8 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
             <div className="gap-6 p-4 mr-[calc(17rem)]  overflow-x-scroll scrollbar-thumb-gray-900 scrollbar-track-gray-100 scrollbar-hide">
               <div className=" inline-flex flex-nowrap h-[calc(25rem)] gap-4 p-4">
                 {frameList.map((frame) => (
-                    <div onClick={(e)=>clickFrame(e, frame)} key={frame.id} className={`w-96 border-2 float-left justify-items-stretch ${pickedFrame.id === frame.id ? "border-blue-500" : ""}`}>
-                      <img src={`https://api.mozzi.lol/files/object/${frame.objectName}`} alt={frame.objectName} className={"max-h-full max-w-full"}></img>
+                    <div onClick={(e)=>clickFrame(e, frame)} key={frame.id} className={`w-96 border-2 float-left ${pickedFrame.id === frame.id ? "border-blue-500" : ""}`}>
+                      <img src={`https://api.mozzi.lol/files/object/${frame.objectName}`} alt={frame.objectName}></img>
                     </div>
                   )
                 )}
