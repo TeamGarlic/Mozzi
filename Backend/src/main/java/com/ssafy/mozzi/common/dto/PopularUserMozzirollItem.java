@@ -24,4 +24,5 @@ public class PopularUserMozzirollItem {
     @NotNull
     private boolean isLiked = false;
     private int likeCount;
+    private UserItem creator;
 }

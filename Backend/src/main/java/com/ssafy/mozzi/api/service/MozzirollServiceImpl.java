@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
 import com.ssafy.mozzi.api.response.MozzirollLikeRes;
 import com.ssafy.mozzi.api.response.PopularUserMozzirolGetlRes;
+import com.ssafy.mozzi.api.response.UserMozzirollDeleteRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.common.dto.PopularUserMozzirollEntityDto;
 import com.ssafy.mozzi.common.exception.handler.AlreadyLinkedMozziException;
@@ -193,5 +194,39 @@ public class MozzirollServiceImpl implements MozzirollService {
             pageRequest);
         List<PopularUserMozzirollEntityDto> userMozzirolls = page.getContent();
         return MozzirollMapper.toPopularUserMozzirollGetRes(userMozzirolls, page.getTotalPages());
+    }
+
+    /**
+     * 유저 모찌롤을 삭제합니다. 이 때 자식또한 같이 삭제 됩니다. (likeMozziroll, mozziroll)
+     * mozziroll 은 orphan 이 되었을 때 삭제됩니다.
+     * @param accessToken JWT Access Token
+     * @param userMozzirollId long
+     * @return UserMozzirollDeleteRes
+     */
+    @Override
+    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
+    public UserMozzirollDeleteRes deleteUserMozziroll(String accessToken, long userMozzirollId) throws
+        MozzirollNotExistsException {
+        User user = userService.findUserByToken(accessToken);
+        Optional<UserMozziroll> userMozziroll = userMozzirollRepository.findById(userMozzirollId);
+        if (!userMozziroll.isPresent()) {
+            throw new MozzirollNotExistsException("user Mozziroll not exists");
+        }
+
+        Mozziroll mozziroll = userMozziroll.get().getMozziroll();
+        UserMozzirollDeleteRes userMozzirollDeleteRes = MozzirollMapper.toUserMozzirollDeleteRes(userMozziroll.get());
+
+        if (userMozziroll.get().getUser().equals(user)) {
+            mozziroll.getUserMozzirolls().remove(userMozziroll.get());
+            userMozzirollRepository.delete(userMozziroll.get());
+        } else
+            throw new UnAuthorizedException("user is not userMozziroll's owner");
+
+        // 만약 mozziroll 이 더이상 어떤 userMozziroll 과 연결 되어있지 않으면 삭제
+        if (mozziroll.getUserMozzirolls().size() == 0) {
+            mozzirollRepository.delete(mozziroll);
+        }
+
+        return userMozzirollDeleteRes;
     }
 }

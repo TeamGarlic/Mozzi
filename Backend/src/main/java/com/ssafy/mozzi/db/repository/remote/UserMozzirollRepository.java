@@ -28,7 +28,8 @@ public interface UserMozzirollRepository extends JpaRepository<UserMozziroll, Lo
         + "userMozziroll.mozziroll.objectName as objectName, "
         + "userMozziroll.title as title, "
         + "count(like.likedUserMozziroll.id) as likeCount, "
-        + "CASE WHEN EXISTS (SELECT likedUser.id FROM userMozziroll.likedUsers likedUser WHERE likedUser.likedUser.id = :userId) THEN true ELSE false END AS isLiked from UserMozziroll "
+        + "CASE WHEN EXISTS (SELECT likedUser.id FROM userMozziroll.likedUsers likedUser WHERE likedUser.likedUser.id = :userId) THEN true ELSE false END AS isLiked, "
+        + "userMozziroll.user as user from UserMozziroll "
         + "userMozziroll left join MozzirollLike as like on userMozziroll.id = like.likedUserMozziroll.id "
         + "where userMozziroll.deleted = false and userMozziroll.posted "
         + "group by userMozziroll.id order by count(like.likedUserMozziroll.id) desc")
