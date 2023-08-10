@@ -42,16 +42,23 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/users").authenticated()
                 .requestMatchers(HttpMethod.GET, "/users/logout").authenticated()
                 .requestMatchers(HttpMethod.PATCH, "/users").permitAll()
+                .requestMatchers(HttpMethod.POST, "/users/reset").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/users").authenticated()
 
                 // sessions 요청에 대한 보안 설정
                 .requestMatchers(HttpMethod.POST, "/sessions").authenticated()
                 .requestMatchers(HttpMethod.GET, "/sessions/{shareCode}").permitAll()
                 .requestMatchers(HttpMethod.POST, "/sessions/connections").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/sessions/{sessionId}").permitAll()
+                .requestMatchers(HttpMethod.POST, "/sessions/file").authenticated()
+                .requestMatchers(HttpMethod.GET, "/sessions/file").permitAll()
 
                 // items 요청에 대한 보안 설정
                 .requestMatchers(HttpMethod.GET, "/items/backgrounds").permitAll()
                 .requestMatchers(HttpMethod.POST, "/items/background").authenticated()
+                .requestMatchers(HttpMethod.POST, "/items/background/favorite").authenticated()
+                .requestMatchers(HttpMethod.POST, "/items/frame").authenticated()
+                .requestMatchers(HttpMethod.POST, "/items/frame/{frameId}").permitAll()
                 .requestMatchers(HttpMethod.GET, "/items/stickers").permitAll()
                 .requestMatchers(HttpMethod.GET, "/items/frames").permitAll()
 
@@ -59,6 +66,17 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/files/mozziroll/upload").authenticated()
                 .requestMatchers(HttpMethod.GET, "/files/mozziroll/{mozzirollId}").permitAll()
                 .requestMatchers(HttpMethod.GET, "/files/object/{objectName}").permitAll()
+
+                // swagger 에 대한 보안 설정
+                .requestMatchers("/swagger-ui/**").permitAll()
+                .requestMatchers("/mozzi-api/**").permitAll()
+                .requestMatchers("/v3/**").permitAll()
+
+                // mozzirolls 에 대한 보안 설정
+                .requestMatchers(HttpMethod.GET, "/mozzirolls").authenticated()
+                .requestMatchers(HttpMethod.POST, "/mozzirolls/link").authenticated()
+                .requestMatchers(HttpMethod.POST, "/mozzirolls/like/{userMozzirollId}").authenticated()
+                .requestMatchers(HttpMethod.GET, "/mozzirolls/popular").permitAll()
             )
             .headers(headers ->
                 headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)

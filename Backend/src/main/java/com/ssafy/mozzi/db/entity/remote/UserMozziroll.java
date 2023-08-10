@@ -5,6 +5,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import com.ssafy.mozzi.db.entity.BaseEntity;
 
@@ -29,6 +31,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "user_mozziroll",
     uniqueConstraints = {@UniqueConstraint(name = "usermozzi", columnNames = {"user_id", "mozziroll_id"})})
+@SQLDelete(sql = "UPDATE user_mozziroll SET deleted = true WHERE id = ?")
+@Where(clause = "deleted = false")
 public class UserMozziroll extends BaseEntity {
 
     @Builder.Default
@@ -41,9 +45,9 @@ public class UserMozziroll extends BaseEntity {
     private String title;
 
     @Builder.Default
-    @ColumnDefault("false")
+    @ColumnDefault("true")
     @Column(nullable = false)
-    private Boolean posted = false;
+    private Boolean posted = true; // 일단 모든 게시물을 보여주기 위해 default 값을 true로 해놓음
 
     @ManyToOne
     @JoinColumn(name = "user_id")

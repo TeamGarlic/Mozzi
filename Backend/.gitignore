@@ -277,3 +277,4 @@ gradle-app.setting
 *.key
 *.pem
 *.pfx
+*.der
