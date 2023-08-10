@@ -18,6 +18,16 @@ const PrivateBoothApi = axios.create({
   },
 });
 
+const uploadApi = axios.create({
+  baseURL: "https://api.mozzi.lol/sessions",
+  config: {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: window.localStorage.getItem("accessToken"),
+    },
+  },
+});
+
 PrivateBoothApi.interceptors.request.use((config) => {
   const token = window.localStorage.getItem("accessToken");
   config.headers.Authorization = token;
@@ -79,7 +89,7 @@ const boothApi = {
   },
 
   getToken: async (sessionID) => {
-    const res = await PublicBoothApi.post(`connections`, {
+    const res = await PrivateBoothApi.post(`connections`, {
       sessionId: sessionID,
     });
     return res;
@@ -88,6 +98,15 @@ const boothApi = {
   getBackground: async (pageNumber = 1) => {
     const res = await PublicBoothApi.get(`backgrounds?pageNum=${pageNumber}`);
     return res;
+  },
+
+  uploadClip: async (fileName, shareCode, file) => {
+    const res = await uploadApi.post("file", {
+      fileName: fileName,
+      shareCode: shareCode,
+      file: file,
+    })
+    return res
   },
 };
 

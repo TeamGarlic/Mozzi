@@ -51,6 +51,8 @@ function Booth() {
     mozzi,
     sendMozzi,
     updateMozzi,
+    shareSecret,
+    sendShareSecret,
   } = useSession(shareCode);
 
 
@@ -92,7 +94,9 @@ function Booth() {
     if (pickedFrame.id === 0) return;
     sendPosition(position);
     setFrame(pickedFrame);
+    sendShareSecret(location.state.shareSecret)
     gotoTakePic();
+    // sendShareSecret();
   }
   startTake = checkHost(startTake, user.isHost);
 

@@ -10,6 +10,7 @@ import MyRadioGroup from "@/components/MyRadioGroup";
 import { useSelector, useDispatch } from "react-redux";
 import { AddClipAction } from "@/modules/clipAction";
 import { checkHost } from "@/utils/DecoratorUtil.js";
+import boothApi from "@/api/boothApi.js";
 
 function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, sendBlob, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition }) {
   const timers = [3, 5, 10];
@@ -22,6 +23,21 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // const clipList = useSelector(state => state.clipReducer.clipList);
+
+  async function uploadClip(file) {
+    console.log(window.localStorage.getItem("accessToken"))
+    try {
+      console.log(`clip${taken}.mp4`, shareCode, file);
+      let res = await boothApi.uploadClip(`clip${taken}.webm`, shareCode, file);
+      console.log(res)
+      if (res.status === 200) {
+        console.log(res.data.data)
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   function recordClip(idx) {
     const mediaStream = mainCanvas.canvas.current.captureStream();
     mediaRecorder = new MediaRecorder(mediaStream);
@@ -30,7 +46,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
     };
     mediaRecorder.onstop = () => {
       const blob = new Blob(arrClipData);
-      // const file = new File([blob], "clip.webm", {type: "video/webm"})
+      const file = new File([blob], `clip${taken}.webm`, {type: "video/webm"})
       // const fileToBase64 = file => {
       //   const reader = new FileReader();
       //   reader.readAsDataURL(file);
@@ -45,6 +61,9 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
       //   // sendBlob(idx, res);
       //   dispatch(AddClipAction({ idx, src: res }));
       // });
+
+      uploadClip(file)
+
       const fileURL = window.URL.createObjectURL(blob)
       dispatch(AddClipAction({idx, src: fileURL}))
       arrClipData.splice(0);
