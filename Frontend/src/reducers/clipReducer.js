@@ -25,14 +25,16 @@ const clipReducer = (state = clipState, action) => {
       const frame = action.payload
       const newFrame = {...state.frame}
       frameNum.forEach((n) => {
-        frame[n] = {
-          clipIdx: frame.clipIdx,
-          src: state.clipList[frame.clipIdx].src
+        newFrame[n] = {
+          ...newFrame[n],
+          clipIdx: Number(frame[n]),
+          src: state.clipList[Number(frame[n])],
         }
       })
+      // console.log(newFrame)
       return {
         ...state,
-        frame
+        frame: newFrame,
       }
     }
     case setFrame: {

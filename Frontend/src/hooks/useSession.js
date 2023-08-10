@@ -43,7 +43,7 @@ function useSession(shareCode) {
       });
 
       session.on("signal:chat", async (event) => {
-        console.log(event);
+        // console.log(event);
         let data = await JSON.parse(event.data);
         setChatLists((prev) => {
           return [...prev, data];
@@ -51,19 +51,19 @@ function useSession(shareCode) {
       });
 
       session.on("signal:gotoTakePic", async (event) => {
-        console.log("방장이 사진찍재!!");
+        // console.log("방장이 사진찍재!!");
         // setNowTaking(true);
         setNow("TAKING");
       });
 
       session.on("signal:gotoModifing", async (event) => {
-        console.log("방장이 편집하쟤!!");
+        // console.log("방장이 편집하쟤!!");
         // setNowTaking(true);
         setNow("MODIFING");
       });
 
       session.on("signal:gotoFinish", async (event) => {
-        console.log("방장이 사진찍재!!");
+        // console.log("방장이 사진찍재!!");
         // setNowTaking(true);
         setNow("FINISH");
       });
@@ -119,8 +119,9 @@ function useSession(shareCode) {
 
       session.on("signal:updateMozzi", async (event) => {
         const frame = JSON.parse(event.data)
-        console.log(frame);
-        // dispatch(updateFrameAction(frame))
+        if (event.from.connectionId !== session.connection.connectionId){
+          dispatch(updateFrameAction(frame))
+        }
       })
 
       session.on("signal:sendFileName", async (event) => {
@@ -128,7 +129,7 @@ function useSession(shareCode) {
         try {
           let res = await boothApi.downloadClip(data.fileName, data.shareSecret, shareCode);
           if (res.status === 200) {
-            console.log(res)
+            // console.log(res)
             dispatch(AddClipAction({idx: data.idx, src: res.data}))
           }
         } catch (e) {
@@ -140,7 +141,7 @@ function useSession(shareCode) {
         setSubscribers((prev) => {
           const newSubscribers = [...prev];
           const idx = newSubscribers.indexOf(event.stream.streamManager);
-          console.log(newSubscribers);
+          // console.log(newSubscribers);
           if (idx < 0) return;
           newSubscribers.splice(idx, 1);
           return [...newSubscribers];
@@ -182,7 +183,7 @@ function useSession(shareCode) {
   };
 
   const sendMessage = async (message, userName) => {
-    console.log({ from: userName + "", message: message });
+    // console.log({ from: userName + "", message: message });
     await session.signal({
       data: JSON.stringify({ from: userName + "", message: message }),
       to: [],
@@ -268,12 +269,9 @@ function useSession(shareCode) {
     const frameNum = Array.from({length: frame['n']}, (v, i) => i+1);
     const data = {}
     frameNum.forEach((n) => {
-      data[n] = {
-        n: {
-          clipIdx: frame[n].clipIdx
-        }
+      data[n] = frame[n].clipIdx
       }
-    })
+    )
     await session.signal({
       data: JSON.stringify(data),
       to: [],
