@@ -360,7 +360,12 @@ function Booth() {
               updateMozzi={updateMozzi}
             />
           )}
-          {now === "FINISH" && <Finish mozzi={mozzi}/>}
+          {now === "FINISH" && (
+              <Finish
+              mozzi={mozzi}
+              subscribers ={subscribers}
+              publisher={publisher}
+          />)}
         </>
       )}
     </>
