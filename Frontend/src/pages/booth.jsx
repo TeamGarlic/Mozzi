@@ -350,6 +350,7 @@ function Booth() {
               position={position}
               sendPosition={sendPosition}
               setPosition={setPosition}
+              publisher={publisher}
             />
           )}
           {now === "MODIFING" && (

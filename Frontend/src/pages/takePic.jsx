@@ -12,7 +12,7 @@ import { AddClipAction } from "@/modules/clipAction";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import boothApi from "@/api/boothApi.js";
 
-function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, sendBlob, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition }) {
+function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, sendBlob, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition, publisher }) {
   const timers = [3, 5, 10];
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
@@ -128,7 +128,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
   return (
     <Layout>
       <>
-        <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} />
+        <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} publisher={publisher}/>
         <div className="w-full pt-4 ps-4">
           <div>
             <div className=" text-sm text-gray-500">
@@ -178,6 +178,7 @@ TakePic.propTypes = {
   chatLists: PropTypes.array,
   bgList: PropTypes.array,
   goNext: PropTypes.func,
+  publisher:PropTypes.any,
   user: PropTypes.shape({
     id: PropTypes.number,
     userId: PropTypes.string,

@@ -46,12 +46,12 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
 
   return (
     <>
-      <EnterDialog
-        visibility={visibility}
-        onClick={closeDialog}
-        toggleVoice={toggleVoice}
-        setVoice={setVoice}
-      />
+      {/*<EnterDialog*/}
+      {/*  visibility={visibility}*/}
+      {/*  onClick={closeDialog}*/}
+      {/*  toggleVoice={toggleVoice}*/}
+      {/*  setVoice={setVoice}*/}
+      {/*/>*/}
       <Layout>
         <div className="flex">
           <div className="w-full h-screen p-4 flex-col">

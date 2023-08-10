@@ -51,19 +51,16 @@ function useSession(shareCode) {
 
       session.on("signal:gotoTakePic", async (event) => {
         console.log("방장이 사진찍재!!");
-        // setNowTaking(true);
         setNow("TAKING");
       });
 
       session.on("signal:gotoModifing", async (event) => {
         console.log("방장이 편집하쟤!!");
-        // setNowTaking(true);
         setNow("MODIFING");
       });
 
       session.on("signal:gotoFinish", async (event) => {
         console.log("방장이 사진찍재!!");
-        // setNowTaking(true);
         setNow("FINISH");
       });
 
@@ -183,9 +180,12 @@ function useSession(shareCode) {
   };
 
   const sendMessage = async (message, userName) => {
-    console.log({ from: userName + "", message: message });
     await session.signal({
-      data: JSON.stringify({ from: userName + "", message: message }),
+      data: JSON.stringify({
+        from: userName + "",
+        message: message,
+        connectionId : publisher.stream.connection.connectionId
+      }),
       to: [],
       type: "chat",
     });
