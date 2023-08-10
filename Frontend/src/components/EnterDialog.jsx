@@ -1,22 +1,20 @@
 import PropTypes from "prop-types";
 import { MicrophoneIcon as SolidMic } from "@heroicons/react/24/solid";
 import { MicrophoneIcon as OutlineMic } from "@heroicons/react/24/outline";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import UserVideoComponent from '@/components/UserVideoComponents.jsx';
+import { useSelector } from 'react-redux';
 
 function EnterDialog({
   visibility,
   onClick,
   toggleVoice,
   setVoice,
-  mainPublisher,
 }) {
-  const myRef = useRef();
-  useEffect(() => {
-    if (mainPublisher) {
-      console.log(mainPublisher);
-      mainPublisher.addVideoElement(myRef.current);
-    }
-  }, [mainPublisher]);
+
+
+  const pubCanvas = useSelector((state) => state.canvasReducer.pubCanvas);
+
   return (
     visibility && (
       <div className=" z-10 absolute top-0 w-full min-h-screen justify-center items-center text-center bg-stone-600 bg-opacity-50 overflow-scroll">
@@ -27,7 +25,7 @@ function EnterDialog({
           <div className="p-4 flex">
             <div className="w-1/2 flex-col overflow-hidden">
               <span>camera</span>
-              <video autoPlay ref={myRef} className="" />
+              <UserVideoComponent canvas={pubCanvas.canvasRef} />
               <select className="cam" value={"1"}>
                 <option value="1">cam1</option>
                 <option value="2">cam2</option>
@@ -72,5 +70,4 @@ EnterDialog.propTypes = {
   onClick: PropTypes.func.isRequired,
   toggleVoice: PropTypes.bool.isRequired,
   setVoice: PropTypes.func.isRequired,
-  mainPublisher: PropTypes.object,
 };

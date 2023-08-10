@@ -2,9 +2,13 @@ import { Card } from "@material-tailwind/react";
 import TextInput from "./TextInput";
 import UserVideoComponent from "./UserVideoComponents";
 import PropTypes from "prop-types";
+import { useSelector } from 'react-redux';
 
-export default function UserSideBar({ subscribers, mainPublisher, leaveSession }) {
+export default function UserSideBar({ leaveSession ,user }) {
 
+  const pubCanvas = useSelector((state) => state.canvasReducer.pubCanvas);
+  const subCanvases = useSelector((state) => state.canvasReducer.subCanvases);
+// console.log(subCanvases);
   return (
     <Card
       id="sideMenu"
@@ -15,22 +19,20 @@ export default function UserSideBar({ subscribers, mainPublisher, leaveSession }
       </div>
       <ul className="gap-4 overflow-y-scroll scrollbar-hide">
 
-
+        {pubCanvas &&
         <div className="stream-container col-md-6 col-xs-6">
-          <UserVideoComponent sub={mainPublisher} />
+          <UserVideoComponent canvas={pubCanvas.canvasRef} />
+          {pubCanvas.nickname}
           <hr />
         </div>
+        }
 
-        {subscribers &&
-          subscribers.map((sub) => (
-            <>
-              {!JSON.parse(sub.stream.connection.data).isMask?(
-              <div key={JSON.parse(sub.stream.connection.data).uid} className="stream-container col-md-6 col-xs-6">
-                <UserVideoComponent sub={sub} />
-                <hr />
-              </div>
-              ):null}
-            </>
+        {subCanvases &&
+          Object.keys(subCanvases).map(key=>(
+            <div key={key} className="stream-container col-md-6 col-xs-6">
+              <UserVideoComponent canvas={subCanvases[key]} />
+              <hr />
+            </div>
           ))}
       </ul>
       <div className="px-4">
@@ -47,7 +49,12 @@ export default function UserSideBar({ subscribers, mainPublisher, leaveSession }
 }
 
 UserSideBar.propTypes = {
-  subscribers: PropTypes.array,
-  mainPublisher: PropTypes.object,
   leaveSession: PropTypes.func,
+  user: PropTypes.shape({
+    id: PropTypes.number,
+    userId: PropTypes.string,
+    userNickname: PropTypes.string,
+    email: PropTypes.string,
+    isHost: PropTypes.number,
+  }),
 };

@@ -3,18 +3,18 @@ import UserSideBar from "../components/UserSideBar";
 import EnterDialog from "@/components/EnterDialog";
 import PropTypes from "prop-types";
 import { useState } from "react";
-import { resetCamCanvasesAction } from "@/modules/canvasAction.js";
-import { useDispatch } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {setFrameAction} from "@/modules/clipAction.js";
+import {checkHost} from "@/utils/DecoratorUtil.js";
 
-function MakeBooth({ startTake, shareCode, subscribers, mainPublisher, leaveSession, gotoTakePic, frameList }) {
+function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, user }) {
   const [visibility, setVisibility] = useState(true);
   const [toggleVoice, setToggleVoice] = useState(true);
+  const pickedFrame = useSelector((state) => state.clipReducer.frame);
 
   const dispatch = useDispatch();
   const closeDialog = () => {
     setVisibility(false);
-    dispatch(resetCamCanvasesAction());
   };
   function setVoice() {
     setToggleVoice(!toggleVoice);
@@ -26,18 +26,32 @@ function MakeBooth({ startTake, shareCode, subscribers, mainPublisher, leaveSess
   }
 
   function clickFrame(event, frame){
-    dispatch(setFrameAction({frame}));
+    const res = {
+      id: frame.id,
+      title: frame.title,
+      n: frame.rects.length,
+      src: `https://api.mozzi.lol/files/object/${frame.objectName}`,
+    }
+    for (let i = 0; i < frame.rects.length; i++) {
+      res[i + 1] = {
+        clipIdx: 0,
+        src: "",
+        ...frame.rects[i]
+      };
+    }
+    dispatch(setFrameAction(res));
+    setFrame(res);
   }
+  clickFrame = checkHost(clickFrame, user.isHost);
 
   return (
     <>
-      <EnterDialog
-        visibility={visibility}
-        onClick={closeDialog}
-        toggleVoice={toggleVoice}
-        setVoice={setVoice}
-        mainPublisher={mainPublisher}
-      />
+      {/*<EnterDialog*/}
+      {/*  visibility={visibility}*/}
+      {/*  onClick={closeDialog}*/}
+      {/*  toggleVoice={toggleVoice}*/}
+      {/*  setVoice={setVoice}*/}
+      {/*/>*/}
       <Layout>
         <div className="flex">
           <div className="w-full h-screen p-4 flex-col">
@@ -63,28 +77,27 @@ function MakeBooth({ startTake, shareCode, subscribers, mainPublisher, leaveSess
               <div className="text-2xl">MOZZI</div>
             </div>
             <div className=" text-2xl p-4">프레임 선택</div>
-            <div className="gap-6 p-4 mr-[calc(17rem)]  overflow-x-scroll scrollbar-thumb-gray-900 scrollbar-track-gray-100 scrollbar-hide">
-              <div className=" inline-flex flex-nowrap h-[calc(25rem)] gap-4 p-4">
+            <div className="gap-6 p-4 mr-[calc(17rem)]  overflow-x-scroll scrollbar-thumb-gray-900 scrollbar-track-gray-100">
+              <div className=" inline-flex flex-nowrap h-[calc(25rem)]  items-center gap-4 p-4">
                 {frameList.map((frame) => (
-                    <div onClick={(e)=>clickFrame(e, frame)} key={frame.id} className=" w-96 border-2 float-left">
-                      <img src={`https://api.mozzi.lol/files/object/${frame.objectName}`} alt={frame.objectName}></img>
+                    <div onClick={(e)=>clickFrame(e, frame)} key={frame.id} className={`border-8 ${pickedFrame.id === frame.id ? "border-blue-500" : ""}`}>
+                      <img src={`https://api.mozzi.lol/files/object/${frame.objectName}`} alt={frame.objectName} className={"max-w-[calc(50rem)] max-h-[calc(22.75rem)]"}></img>
                     </div>
                   )
                 )}
               </div>
             </div>
-            <div className="w-full pt-32">
+            <div className="w-full pt-20">
               <button
                 onClick={startTake}
-                className=" block relative mx-auto w-fit"
+                className=" block relative mx-auto w-fit bg-yellow-400 p-3 rounded-3xl text-slate-600"
               >
                 촬영 시작
               </button>
             </div>
           </div>
           <UserSideBar
-            subscribers={subscribers}
-            mainPublisher={mainPublisher}
+            user={user}
             leaveSession={leaveSession}
           />
         </div>
@@ -98,10 +111,15 @@ export default MakeBooth;
 MakeBooth.propTypes = {
   startTake: PropTypes.func,
   shareCode: PropTypes.string,
-  subscribers: PropTypes.array,
-  myRef: PropTypes.object,
-  mainPublisher: PropTypes.object,
   leaveSession: PropTypes.func,
   gotoTakePic : PropTypes.func,
   frameList: PropTypes.array,
+  user: PropTypes.shape({
+    id: PropTypes.number,
+    userId: PropTypes.string,
+    userNickname: PropTypes.string,
+    email: PropTypes.string,
+    isHost: PropTypes.number,
+  }),
+  setFrame: PropTypes.func,
 };

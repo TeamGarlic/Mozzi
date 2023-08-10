@@ -9,7 +9,7 @@ import {
 import PropTypes from "prop-types";
 import {checkHost} from "@/utils/DecoratorUtil.js";
 
-function Frame({user}) {
+function Frame({user, updateMozzi}) {
   const frame = useSelector((state) => state.clipReducer.frame);
   const dispatch = useDispatch();
   const drag = useSelector((state) => state.clipReducer.drag);
@@ -20,6 +20,7 @@ function Frame({user}) {
 
 
   useEffect(() => {
+    UpdateMozzi(frame)
     frameNum.forEach((i) => {
       frameRef.current[i].style.height = `${imgRef.current.height*frame[i]['height']}px`;
       frameRef.current[i].style.width = `${imgRef.current.width*frame[i]['width']}px`;
@@ -27,6 +28,11 @@ function Frame({user}) {
       frameRef.current[i].style.left = `${frame[i]['x']*imgRef.current.width}px`;
     })
   }, [frame])
+
+  function UpdateMozzi(){
+    updateMozzi(frame)
+  }
+  UpdateMozzi = checkHost(UpdateMozzi, user.isHost)
 
   function clickVideo(event) {
     dispatch(
@@ -144,4 +150,5 @@ Frame.propTypes = {
     email: PropTypes.string,
     isHost: PropTypes.number,
   }),
+  updateMozzi: PropTypes.func,
 };

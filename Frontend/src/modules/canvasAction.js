@@ -1,9 +1,10 @@
 export const setMainCanvas = "setMainCanvas";
-export const addCamCanvas = "addCamCanvas";
-export const resetCamCanvases = "resetCamCanvases";
-export const setMyLayer = "setMyLayer";
-export const setMyLayerSource = "setMyLayerSource";
-export const resizeMyLayer = "resizeMyLayer";
+export const resizeLayer = "resizeLayer";
+export const updateSubVideoMap = "updateSubVideoMap";
+export const updatePubVideoMap = "updatePubVideoMap";
+export const updatePosition = "updatePosition"
+export const setDegree = "setDegree"
+export const setScale = "setScale"
 
 export const setMainCanvasAction = (res) => {
   return {
@@ -11,34 +12,44 @@ export const setMainCanvasAction = (res) => {
     payload : res,
   }
 };
-export const addCamCanvasAction = (res) => {
+
+export const resizeLayerAction = (res) => {
   return {
-    type : addCamCanvas,
-    payload : res,
-  }
-};
-export const resetCamCanvasesAction = (res) => {
-  return {
-    type : resetCamCanvases,
+    type : resizeLayer,
     payload : res,
   }
 };
 
-export const setMyLayerAction = (res) => {
+export const updateSubVideoMapAction = (res) => {
   return {
-    type : setMyLayer,
+    type : updateSubVideoMap,
     payload : res,
   }
 };
-export const setMyLayerSourceAction = (res) => {
+
+export const updatePubVideoMapAction = (res) => {
   return {
-    type : setMyLayerSource,
+    type : updatePubVideoMap,
     payload : res,
   }
 };
-export const resizeMyLayerAction = (res) => {
+
+export const updatePositionAction = (res) => {
   return {
-    type : resizeMyLayer,
+    type : updatePosition,
+    payload : res,
+  }
+};
+
+export const setDegreeAction = (res) => {
+  return {
+    type : setDegree,
+    payload : res,
+  }
+};
+export const setScaleAction = (res) => {
+  return {
+    type : setScale,
     payload : res,
   }
 };
