@@ -10,6 +10,7 @@ import MyRadioGroup from "@/components/MyRadioGroup";
 import { useSelector, useDispatch } from "react-redux";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import boothApi from "@/api/boothApi.js";
+import CamSetting from '@/components/CamSetting.jsx';
 
 function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition, sendFileName, shareSecret }) {
   const timers = [3, 5, 10];
@@ -120,6 +121,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
   return (
     <Layout>
       <>
+        <CamSetting />
         <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} />
         <div className="w-full pt-4 ps-4">
           <div>

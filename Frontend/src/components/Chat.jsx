@@ -31,7 +31,7 @@ function Chat({ sendMessage, chatLists, user }) {
   return (
     <div className="fixed bottom-5 right-5 z-20">
       {visible && (
-        <div className="flex-col w-80 h-fit rounded-xl bg-white">
+        <div className="flex-col w-80 h-fit rounded-xl bg-white my-3">
           <div className=" text-lg p-3">채팅</div>
           <hr />
           <div

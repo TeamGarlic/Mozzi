@@ -1,7 +1,7 @@
 import {
   setMainCanvas,
   resizeLayer,
-  updateSubVideoMap, updatePubVideoMap, updatePosition,
+  updateSubVideoMap, updatePubVideoMap, updatePosition, setDegree, setScale,
 } from '@/modules/canvasAction';
 
 const canvasState = {
@@ -22,6 +22,10 @@ const canvasState = {
     nickname:undefined,
   },
   subCanvases : {},
+  canvasConfig : {
+    degree : 0,
+    scale : 100,
+  },
   position: [],
 }
 
@@ -99,6 +103,18 @@ const canvasReducer = (state = canvasState, action) => {
         }
       }
       console.log(state.position)
+      return {
+        ...state
+      }
+    }
+    case setDegree: {
+      state.canvasConfig.degree = action.payload
+      return {
+        ...state
+      }
+    }
+    case setScale: {
+      state.canvasConfig.scale = action.payload
       return {
         ...state
       }
