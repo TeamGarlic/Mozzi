@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MozzirollItem {
+    private long id;
     private String objectName;
     private LocalDateTime createdAt;
     private UserItem creator;

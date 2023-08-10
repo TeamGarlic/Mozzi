@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
+import com.ssafy.mozzi.api.request.PostUserMozzirollPostReq;
 import com.ssafy.mozzi.api.response.MozzirollLikeRes;
 import com.ssafy.mozzi.api.response.PopularUserMozzirolGetlRes;
+import com.ssafy.mozzi.api.response.PostUserMozzirollPostRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.common.dto.PopularUserMozzirollEntityDto;
 import com.ssafy.mozzi.common.exception.handler.AlreadyLinkedMozziException;
@@ -193,5 +195,36 @@ public class MozzirollServiceImpl implements MozzirollService {
             pageRequest);
         List<PopularUserMozzirollEntityDto> userMozzirolls = page.getContent();
         return MozzirollMapper.toPopularUserMozzirollGetRes(userMozzirolls, page.getTotalPages());
+    }
+
+    /**
+     * 유저의 모찌롤을 커뮤니티에 등록 or 해제합니다.
+     * @param accessToken JWT Access Token
+     * @param postUserMozzirollPostReq PostUserMozzirollPostReq
+     * @return PostUserMozzirollPostRes
+     */
+    @Override
+    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
+    public PostUserMozzirollPostRes postUserMozziroll(String accessToken,
+        PostUserMozzirollPostReq postUserMozzirollPostReq) {
+        User user = userService.findUserByToken(accessToken);
+        if (user == null)
+            throw new UnAuthorizedException("You are not authorized to post/unpost user's mozziroll");
+
+        Optional<UserMozziroll> userMozziroll = userMozzirollRepository.findByIdAndUserId(
+            postUserMozzirollPostReq.getUserMozzirollId(), user.getId());
+
+        boolean posted = false;
+        if (userMozziroll.isPresent()) {
+            if (userMozziroll.get().getPosted() == true)
+                posted = true;
+
+            posted = !posted;
+            userMozziroll.get().setPosted(posted);
+        } else {
+            throw new MozzirollNotExistsException("This is no userMozziroll for post/unpost user's mozziroll");
+        }
+
+        return MozzirollMapper.toPostUserMozzirollPostRes(userMozziroll.get());
     }
 }
