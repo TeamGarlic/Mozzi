@@ -54,7 +54,7 @@ export default function BigCam({myId, updatePosition}) {
           minWidth={W*ratio/15}
           minHeight={H*ratio/15}
           ref={rndRef}
-          bounds="parent"
+          // bounds="parent"
           className={"w-full h-full"} style={{'border':'dashed 1px white'}}
       >
       </Rnd>
