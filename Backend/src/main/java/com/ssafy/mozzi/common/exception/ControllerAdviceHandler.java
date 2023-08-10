@@ -5,12 +5,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.ssafy.mozzi.common.exception.handler.BadRequestException;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
-import com.ssafy.mozzi.common.exception.handler.UserEmailNotExists;
-import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
-import com.ssafy.mozzi.common.exception.handler.UserLoginFailException;
-import com.ssafy.mozzi.common.exception.handler.UserRegisterException;
-import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
+import com.ssafy.mozzi.common.exception.handler.NotFoundException;
+import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,8 +45,8 @@ public class ControllerAdviceHandler {
      * Access Token이 필요하나 존재하지 않을 때 (AccessTokenNotExists, 7)
      * 요청을 처리하는데 필요한 권한이 존재하지 않음 (UnAuthorized, 11)
      */
-    @ExceptionHandler(UnAuthorizationException.class) // 401
-    public ResponseEntity<ErrorResponse> handleUnAuthorization(UnAuthorizationException exception) {
+    @ExceptionHandler(UnAuthorizedException.class) // 401
+    public ResponseEntity<ErrorResponse> handleUnAuthorization(UnAuthorizedException exception) {
         MozziAPIErrorCode code = exception.getCode();
         if (exception.getLog() != null) {
             log.info("{} : {}", code.name(), exception.getLog());
@@ -100,55 +98,4 @@ public class ControllerAdviceHandler {
                 "Internal Server Error - " + exception.getMessage()));
     }
 
-
-    /**
-     * 이미 존재하는 Id일 경우의 응답을 반환한다. (Mozzi code : 1, Http Status 404)
-     * @see UserIdNotExistsException
-     * @see com.ssafy.mozzi.api.service.UserService
-     */
-    @ExceptionHandler(UserIdNotExistsException.class)
-    public ResponseEntity<? extends BaseErrorResponse> handleUserIdNotExistsException(
-        UserIdNotExistsException exception) {
-        log.error("[UserIdNotExistsException] : {}", exception.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(new UserIdNotExistsException.UserIdNotExistsResponse("User ID not exists."));
-    }
-
-
-    /**
-     * 중복된 ID가 존재할 경우의 응답을 반환한다. (Mozzi code : 3, Http Status 400)
-     * @see UserRegisterException
-     * @see com.ssafy.mozzi.api.service.UserService
-     */
-    @ExceptionHandler(UserRegisterException.class)
-    public ResponseEntity<? extends BaseErrorResponse> handleDuplicateUserIdException(
-        UserRegisterException exception) {
-        log.error("[DuplicatedUserIdException] : {}", exception.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(new UserRegisterException.UserRegisterResponse("You requested duplicated User ID"));
-    }
-
-    /**
-     * 사용자 로그인에 실패한 경우의 응답을 반환한다 (Mozzi code : 4, Http Status 400)
-     * @see UserLoginFailException
-     * @see com.ssafy.mozzi.api.service.UserService
-     */
-    @ExceptionHandler(UserLoginFailException.class)
-    public ResponseEntity<? extends BaseErrorResponse> handleUserLoginFailException(UserLoginFailException exception) {
-        log.error("[UserLoginFailException] : {}", exception.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(new UserLoginFailException.UserLoginFailResponse("User login failure"));
-    }
-
-
-
-
-    /**
-     * 사용자의 email이 필요하나, email이 존재하지 않을 때 발생하는 Exception 입니다 (Mozzi code : 14, Http Status 404)
-     */
-    @ExceptionHandler(UserEmailNotExists.class)
-    public ResponseEntity<? extends BaseErrorResponse> handleUserEmailNotExists(UserEmailNotExists exception) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(new UserRegisterException.UserRegisterResponse(exception.getMessage()));
-    }
 }

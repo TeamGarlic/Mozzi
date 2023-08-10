@@ -13,7 +13,9 @@ import com.oracle.bmc.objectstorage.responses.PutObjectResponse;
 import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
 import com.ssafy.mozzi.common.auth.ObjectStorageClient;
 import com.ssafy.mozzi.common.dto.ObjectFileItem;
+import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
+import com.ssafy.mozzi.common.exception.handler.NotFoundException;
 import com.ssafy.mozzi.common.util.FileUtil;
 import com.ssafy.mozzi.common.util.mapper.FileMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
@@ -46,7 +48,7 @@ public class FileServiceImpl implements FileService {
      * @see FileRepository
      * @see FileMozzirollPostRes
      * @see CloudStorageSaveFailException (Mozzi code : 0, Http Status 500)
-     * @throws com.ssafy.mozzi.common.exception.NotFoundException (UserIdNotExists, 1)
+     * @throws NotFoundException (UserIdNotExists, 1)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
@@ -57,8 +59,7 @@ public class FileServiceImpl implements FileService {
         // User 찾기
         User user = userService.findUserByToken(accessToken);
         if (user == null)
-            throw new CloudStorageSaveFailException(
-                "파일 저장 유저 없음"); // TODO: 요청된 Token에 대해 매칭되는 사용자가 없는 게 Internal Server Error가 맞나 고민해봐야할 것 같아요. Bad Request 쪽의 User Not Exists 이 맞을 것 같아요.
+            throw new NotFoundException(MozziAPIErrorCode.UserIdNotExists, "Requested User not exists");
         // Mozziroll 테이블에 정보 추가.
         Mozziroll mozziroll = mozzirollRepository.save(
             Mozziroll.builder()

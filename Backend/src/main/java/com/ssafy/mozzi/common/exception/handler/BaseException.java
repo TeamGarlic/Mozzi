@@ -1,4 +1,7 @@
-package com.ssafy.mozzi.common.exception;
+package com.ssafy.mozzi.common.exception.handler;
+
+import com.ssafy.mozzi.common.exception.ErrorResponse;
+import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
 
 import lombok.Builder;
 import lombok.Data;
@@ -10,13 +13,13 @@ public class BaseException extends RuntimeException {
     private String message; // Mozzi API Error message
     private String log; // Internal Logging message (nullable)
 
-    BaseException(MozziAPIErrorCode code, String message) {
+    public BaseException(MozziAPIErrorCode code, String message) {
         this.code = code;
         this.message = message;
         this.log = null;
     }
 
-    BaseException(MozziAPIErrorCode code, String message, String log) {
+    public BaseException(MozziAPIErrorCode code, String message, String log) {
         this.code = code;
         this.message = message;
         this.log = log;

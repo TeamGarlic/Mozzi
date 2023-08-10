@@ -11,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
 import com.ssafy.mozzi.api.response.MozzirollLikeRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
-import com.ssafy.mozzi.common.exception.BadRequestException;
 import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
-import com.ssafy.mozzi.common.exception.NotFoundException;
+import com.ssafy.mozzi.common.exception.handler.BadRequestException;
+import com.ssafy.mozzi.common.exception.handler.NotFoundException;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.common.util.mapper.MozzirollMapper;
@@ -53,9 +53,9 @@ public class MozzirollServiceImpl implements MozzirollService {
      * 사용자 계정에 Mozziroll 연결 요청을 유효성 확인 후 연결합니다.
      * @param request MozziLinked Request
      * @param accessToken JWT Access Token
-     * @throws com.ssafy.mozzi.common.exception.BadRequestException (AlreadyLinkedMozzi, 8)
-     * @throws UnAuthorizedException (Mozzi code : 11, Http Status 401)
-     * @throws com.ssafy.mozzi.common.exception.NotFoundException (UserIdNotExists, 1), (BoothNotExists, 10), (MozzirollNotExists, 9)
+     * @throws BadRequestException (AlreadyLinkedMozzi, 8)
+     * @throws UnAuthorizedException (UnAuthorized, 11)
+     * @throws NotFoundException (UserIdNotExists, 1), (BoothNotExists, 10), (MozzirollNotExists, 9)
      */
     @Override
     public Long link(MozziLinkPostRequest request, String accessToken) {
@@ -81,7 +81,8 @@ public class MozzirollServiceImpl implements MozzirollService {
         boolean authorized = boothUserRepository.findByBoothIdAndUserId(boothId, creatorId).isPresent();
 
         if (!authorized) {
-            throw new UnAuthorizedException("You are not authorized to linked mozziroll");
+            throw new UnAuthorizedException(MozziAPIErrorCode.UnAuthorized,
+                "You are not authorized to linked mozziroll");
         }
 
         UserMozziroll userMozziroll = userMozzirollRepository.save(
@@ -100,7 +101,7 @@ public class MozzirollServiceImpl implements MozzirollService {
      * @param pageNum int
      * @param pageSize int
      * @return UserMozzirollGetRes
-     * @throws com.ssafy.mozzi.common.exception.NotFoundException (UserIdNotExists, 1)
+     * @throws NotFoundException (UserIdNotExists, 1)
      */
     @Override
     public UserMozzirollGetRes getMozzirollsByUser(String accessToken, int pageNum, int pageSize) {
@@ -116,7 +117,7 @@ public class MozzirollServiceImpl implements MozzirollService {
      * @param accessToken JWT Access Token
      * @param userMozzirollId long
      * @return MozzirollLikeRes
-     * @throws com.ssafy.mozzi.common.exception.NotFoundException (UserIdNotExists, 1), (MozzirollNotExists, 9)
+     * @throws NotFoundException (UserIdNotExists, 1), (MozzirollNotExists, 9)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)

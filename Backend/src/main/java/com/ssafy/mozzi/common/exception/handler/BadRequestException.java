@@ -1,4 +1,6 @@
-package com.ssafy.mozzi.common.exception;
+package com.ssafy.mozzi.common.exception.handler;
+
+import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
 
 /**
  * 유효하지 않은 Refresh Token에 대한 응답 (InvalidRefreshToken, 2)

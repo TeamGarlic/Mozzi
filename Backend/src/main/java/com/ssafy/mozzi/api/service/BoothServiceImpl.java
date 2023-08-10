@@ -17,10 +17,9 @@ import com.ssafy.mozzi.api.request.SessionPostReq;
 import com.ssafy.mozzi.api.response.ConnectionPostRes;
 import com.ssafy.mozzi.api.response.SessionRes;
 import com.ssafy.mozzi.api.response.TemporalFileSavePostRes;
-import com.ssafy.mozzi.common.exception.BadRequestException;
 import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
-import com.ssafy.mozzi.common.exception.NotFoundException;
-import com.ssafy.mozzi.common.exception.UnAuthorizationException;
+import com.ssafy.mozzi.common.exception.handler.BadRequestException;
+import com.ssafy.mozzi.common.exception.handler.NotFoundException;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.common.util.mapper.BoothMapper;
@@ -76,15 +75,15 @@ public class BoothServiceImpl implements BoothService {
      * @see Session
      * @see SessionPostReq
      * @see BoothMapper
-     * @throws com.ssafy.mozzi.common.exception.BadRequestException (DuplicateShareCode, 5)
-     * @throws com.ssafy.mozzi.common.exception.UnAuthorizationException (AccessTokenNotExists, 7)
+     * @throws BadRequestException (DuplicateShareCode, 5)
+     * @throws UnAuthorizedException (AccessTokenNotExists, 7)
      * @throws RuntimeException (Mozzi code : 0, Http Status 500)
      */
     @Override
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     public SessionRes createBooth(SessionPostReq request, String accessToken) {
         if (accessToken == null) {
-            throw new UnAuthorizationException(MozziAPIErrorCode.AccessTokenNotExists, "There is no access Token");
+            throw new UnAuthorizedException(MozziAPIErrorCode.AccessTokenNotExists, "There is no access Token");
         }
 
         String shareCode = request.getShareCode();
@@ -261,8 +260,8 @@ public class BoothServiceImpl implements BoothService {
 
     /**
      * 부스에서 사용되는 임시 파일을 access token을 이용하여 부스 내의 인원이 맞는 지 확인 후 저장합니다.
-     * @throws com.ssafy.mozzi.common.exception.NotFoundException (UserIdNotExists, 1), (BoothNotExists, 10), (FileAlreadyExists, 15)
-     * @throws UnAuthorizationException (UnAuthorized, 11)
+     * @throws NotFoundException (UserIdNotExists, 1), (BoothNotExists, 10), (FileAlreadyExists, 15)
+     * @throws UnAuthorizedException (UnAuthorized, 11)
      */
     @Override
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
@@ -277,7 +276,7 @@ public class BoothServiceImpl implements BoothService {
         Optional<BoothUser> boothUserCandidate = boothUserRepository.findByBoothIdAndUserId(booth.getId(),
             user.getId());
         if (boothUserCandidate.isEmpty()) {
-            throw new UnAuthorizationException(MozziAPIErrorCode.UnAuthorized, "You are not member of booth");
+            throw new UnAuthorizedException(MozziAPIErrorCode.UnAuthorized, "You are not member of booth");
         }
         HashMap<String, byte[]> fileMap = null;
         if (map.containsKey(shareCode)) {
@@ -305,7 +304,7 @@ public class BoothServiceImpl implements BoothService {
      * 존재하는 부스의 임시 파일을 가져와서 반환합니다.
      * @throws BadRequestException (FileNotExists, 16)
      * @throws NotFoundException (BoothNotExists, 10), (FileNotExists, 16)
-     * @throws UnAuthorizationException (UnAuthorized, 11)
+     * @throws UnAuthorizedException (UnAuthorized, 11)
      */
     @Override
     public Resource getTemporalFile(String shareCode, String shareSecret, String fileName) {
@@ -319,7 +318,7 @@ public class BoothServiceImpl implements BoothService {
         Booth booth = boothCandidate.get();
 
         if (!booth.getShareSecret().equals(shareSecret)) {
-            throw new UnAuthorizationException(MozziAPIErrorCode.UnAuthorized, "You are not allowed to read file");
+            throw new UnAuthorizedException(MozziAPIErrorCode.UnAuthorized, "You are not allowed to read file");
         }
 
         HashMap<String, byte[]> fileMap = map.get(shareCode);
@@ -333,8 +332,8 @@ public class BoothServiceImpl implements BoothService {
 
     /**
      * 방장으로부터 참여 제한을 하고 싶은 부스 정보를 받아, 열려 있다면 닫고, 닫혀있다면 그대로 둡니다.
-     * @throws com.ssafy.mozzi.common.exception.NotFoundException (UserIdNotExists, 1), (BoothNotExists, 10)
-     * @throws UnAuthorizedException (Mozzi code : 11, Http Status 401)
+     * @throws NotFoundException (UserIdNotExists, 1), (BoothNotExists, 10)
+     * @throws UnAuthorizedException (UnAuthorized, 11)
      */
     @Override
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
@@ -346,7 +345,7 @@ public class BoothServiceImpl implements BoothService {
         }
         Booth booth = boothCandidate.get();
         if (!Objects.equals(booth.getCreator(), user.getId())) {
-            throw new UnAuthorizedException("You are not the creator of booth");
+            throw new UnAuthorizedException(MozziAPIErrorCode.UnAuthorized, "You are not the creator of booth");
         }
         boolean result = !booth.getClosed();
         booth.setClosed(true);
