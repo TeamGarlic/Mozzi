@@ -4,18 +4,24 @@ import com.ssafy.mozzi.api.request.ConnectionPostReq;
 import com.ssafy.mozzi.api.request.SessionPostReq;
 import com.ssafy.mozzi.api.response.ConnectionPostRes;
 import com.ssafy.mozzi.api.response.SessionRes;
-import com.ssafy.mozzi.common.model.response.BaseResponseBody;
+import com.ssafy.mozzi.api.response.TemporalFileSavePostRes;
 
 /**
  * Openvidu 부스 관리 Service 입니다.
  */
 public interface BoothService {
-    BaseResponseBody<SessionRes> createBooth(SessionPostReq request, String accessToken) throws Exception;
+    SessionRes createBooth(SessionPostReq request, String accessToken) throws Exception;
 
-    BaseResponseBody<SessionRes> joinBooth(String shareCode);
+    SessionRes joinBooth(String shareCode);
 
-    BaseResponseBody<ConnectionPostRes> getConnectionToken(ConnectionPostReq request, String accessToken) throws
+    ConnectionPostRes getConnectionToken(ConnectionPostReq request, String accessToken) throws
         Exception;
 
-    BaseResponseBody<SessionRes> deleteBooth(String sessionId) throws Exception;
+    SessionRes deleteBooth(String sessionId) throws Exception;
+
+    TemporalFileSavePostRes temporalFileSave(String accessToken, String shareCode, String fileName, String file);
+
+    String getTemporalFile(String shareCode, String shareSecret, String fileName);
+
+    boolean close(String accessToken, String shareCode);
 }

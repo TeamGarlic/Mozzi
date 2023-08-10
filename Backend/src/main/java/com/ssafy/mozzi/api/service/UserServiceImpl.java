@@ -2,9 +2,6 @@ package com.ssafy.mozzi.api.service;
 
 import java.util.Optional;
 
-import com.ssafy.mozzi.api.request.UserUpdatePutReq;
-import com.ssafy.mozzi.api.response.UserUpdateRes;
-import com.ssafy.mozzi.common.exception.handler.NoDataException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,23 +12,29 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.mozzi.api.request.ReIssuePostReq;
 import com.ssafy.mozzi.api.request.UserLoginPostReq;
 import com.ssafy.mozzi.api.request.UserRegisterPostReq;
+import com.ssafy.mozzi.api.request.UserUpdatePutReq;
 import com.ssafy.mozzi.api.response.ReIssuePostRes;
 import com.ssafy.mozzi.api.response.UserIdCheckRes;
 import com.ssafy.mozzi.api.response.UserInfoRes;
 import com.ssafy.mozzi.api.response.UserLoginPostRes;
+import com.ssafy.mozzi.api.response.UserPasswordResetPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
+import com.ssafy.mozzi.api.response.UserUpdateRes;
 import com.ssafy.mozzi.common.auth.JwtTokenProvider;
-import com.ssafy.mozzi.common.exception.handler.DuplicatedUserIdException;
 import com.ssafy.mozzi.common.exception.handler.InvalidRefreshTokenException;
+import com.ssafy.mozzi.common.exception.handler.NoDataException;
+import com.ssafy.mozzi.common.exception.handler.UserEmailNotExists;
 import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.UserLoginFailException;
-import com.ssafy.mozzi.common.model.response.BaseResponseBody;
+import com.ssafy.mozzi.common.exception.handler.UserRegisterException;
+import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.common.util.mapper.UserMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
 import com.ssafy.mozzi.db.entity.remote.User;
 import com.ssafy.mozzi.db.repository.remote.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *  User 요청에 대한 Service/비즈니스 로직 구현
@@ -39,18 +42,22 @@ import lombok.RequiredArgsConstructor;
  * @see UserRepository
  * @see User
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final JwtTokenProvider jwtTokenProvider;
+    private final MozziUtil mozziUtil;
+    private final EmailService emailService;
 
     /**
      *  회원 가입 Service/비즈니스 로직
      *
      * @param request UserRegisterPostReq
      * @return UserRegisterPostRes
+     * @throws UserRegisterException (Mozzi code : 3, Http Status 400)
      * @see UserRepository
      */
     @Override
@@ -60,8 +67,10 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         try {
             userRepository.save(user);
-        } catch (Exception e) {
-            throw new DuplicatedUserIdException(String.format("Duplicated user id(%s)", request.getUserId()));
+        } catch (
+            Exception e) {
+            log.error("[User Save error] : {}", e.getMessage());
+            throw new UserRegisterException(String.format("Duplicated user id(%s)", request.getUserId()));
         }
         return UserMapper.toRegistRes(user);
     }
@@ -71,6 +80,8 @@ public class UserServiceImpl implements UserService {
      *
      * @param request UserLoginPostReq
      * @return UserLoginPostRes
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     * @throws UserLoginFailException (Mozzi code : 4, Http Status 400)
      * @see UserRepository
      */
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
@@ -98,15 +109,10 @@ public class UserServiceImpl implements UserService {
      * @return user id 사용 가능 여부를 반환
      */
     @Override
-    public BaseResponseBody<UserIdCheckRes> userIdCheck(String userId) {
+    public UserIdCheckRes userIdCheck(String userId) {
         Optional<User> user = userRepository.findByUserId(userId);
         boolean result = user.isEmpty();
-        return BaseResponseBody.<UserIdCheckRes>builder()
-            .message(String.format("Requested User ID%s available", (result ? "" : " not")))
-            .data(
-                new UserIdCheckRes(result)
-            )
-            .build();
+        return new UserIdCheckRes(result);
     }
 
     /**
@@ -114,15 +120,14 @@ public class UserServiceImpl implements UserService {
      *
      * @param reissueInfo reissuePostReq
      * @return reissuePostRes
+     * @throws InvalidRefreshTokenException (Mozzi code : 2, Http Status 400)
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
      * @see UserRepository
      * @see JwtTokenProvider
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     public ReIssuePostRes reissue(ReIssuePostReq reissueInfo) {
-        if (!jwtTokenProvider.validateTokenExceptExpiration(reissueInfo.getRefreshToken()))
-            throw new InvalidRefreshTokenException("expired refreshToken");
-
         User user = findUserByToken(reissueInfo.getAccessToken());
 
         if (!user.getRefreshToken().equals(reissueInfo.getRefreshToken()))
@@ -139,6 +144,7 @@ public class UserServiceImpl implements UserService {
      *  Token으로 User를 찾는 Service/비즈니스 로직
      * @param accessToken String
      * @return User
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
      * @see UserRepository
      * @see JwtTokenProvider
      */
@@ -159,30 +165,29 @@ public class UserServiceImpl implements UserService {
      *  헤더에서 입력받은 accessToken으로 유저 정보를 반환하는 로직
      * @param accessToken String
      * @return BaseResponseBody<UserInfoRes>
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
      * @see UserInfoRes
      */
     @Override
-    public BaseResponseBody<UserInfoRes> getUserInfo(String accessToken) {
+    public UserInfoRes getUserInfo(String accessToken) {
         User user = findUserByToken(accessToken);
 
         if (user == null) {
             throw new UserIdNotExistsException("user not exists");
         }
 
-        return BaseResponseBody.<UserInfoRes>builder()
-            .message("user exists")
-            .data(UserMapper.toUserInfoRes(user))
-            .build();
+        return UserMapper.toUserInfoRes(user);
     }
 
     /**
      *  헤더에서 입력받은 accessToken 으로 유저의 리프레쉬 토큰을 null 값으로 변경하는 로직
      * @param accessToken String
      * @return BaseResponseBody<String>
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
-    public BaseResponseBody<String> logout(String accessToken) {
+    public void logout(String accessToken) {
         User user = findUserByToken(accessToken);
 
         if (user == null) {
@@ -190,22 +195,18 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setRefreshToken(null);
-
-        return BaseResponseBody.<String>builder()
-            .message("logout success")
-            .data("")
-            .build();
     }
 
     /**
      * 유저 데이터 변경 요청을 받아 유저 데이터를 수정합니다.
      * @param request
      * @return BaseResponseBody<Long> 성공시 User Id를 같이 반환합니다.
-     * @throws UserIdNotExistsException
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     * @throws NoDataException (Mozzi code : 13, Http Status 400)
      */
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     @Override
-    public BaseResponseBody<UserUpdateRes> update(UserUpdatePutReq request) {
+    public UserUpdateRes update(UserUpdatePutReq request) {
         User user = findUserByToken(request.getAccessToken());
 
         if (request.getEmail() == null && request.getNickname() == null && request.getPassword() == null) {
@@ -223,9 +224,50 @@ public class UserServiceImpl implements UserService {
             user.setEmail(request.getEmail());
         }
 
-        return BaseResponseBody.<UserUpdateRes>builder()
-            .message(String.format("User(%s) data updated.", user.getUserId()))
-            .data(UserUpdateRes.builder().id(user.getId()).build())
-            .build();
+        return UserMapper.toUserUpdateRes(user);
+    }
+
+    /**
+     * 사용자의 패스워드 초기화 요청을 받아서 새로운 패스워드를 메일로 보냅니다.
+     * @param userId 초기화할 유저의 ID
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     * @throws com.ssafy.mozzi.common.exception.handler.UserEmailNotExists (Mozzi code : 14, Http Status 400)
+     */
+    @Override
+    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
+    public UserPasswordResetPostRes reset(String userId) {
+        Optional<User> candidateUser = userRepository.findByUserId(userId);
+
+        if (candidateUser.isEmpty()) {
+            throw new UserIdNotExistsException("User Id not exists");
+        }
+
+        User user = candidateUser.get();
+        if (user.getEmail() == null || user.getEmail().equals("")) {
+            throw new UserEmailNotExists(String.format("%s don't have email address.", userId));
+        }
+
+        String newPassword = mozziUtil.generateString(10, true);
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.flush();
+
+        emailService.passwordReset(user.getEmail(), newPassword);
+
+        return new UserPasswordResetPostRes(user.getEmail());
+    }
+
+    /**
+     * 사용자의 accessToken을 입력 받아서 해당 유저를 삭제합니다.
+     * @param accessToekn 유저의 accessToken
+     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     * @throws com.ssafy.mozzi.common.exception.handler.UserEmailNotExists (Mozzi code : 14, Http Status 400)
+     */
+    @Override
+    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
+    public UserInfoRes withdrawUser(String accessToekn) {
+
+        User user = findUserByToken(accessToekn);
+        userRepository.delete(user);
+        return UserMapper.toUserInfoRes(user);
     }
 }

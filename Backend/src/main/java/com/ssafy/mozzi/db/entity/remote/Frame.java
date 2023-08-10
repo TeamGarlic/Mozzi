@@ -9,6 +9,8 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import com.ssafy.mozzi.db.entity.BaseEntity;
 
@@ -33,6 +35,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE frame SET deleted = true WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Frame extends BaseEntity {
 
     @NotNull

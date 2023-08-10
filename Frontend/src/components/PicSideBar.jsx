@@ -6,7 +6,7 @@ import { UsersIcon } from "@heroicons/react/24/outline";
 import { ComputerDesktopIcon } from "@heroicons/react/24/outline";
 import PropTypes from "prop-types";
 
-export default function PicSideBar({user, bgList}) {
+export default function PicSideBar({user, bgList, changeBg, position, sendPosition, setPosition}) {
   const [menu, setMenu] = useState(0);
 
   return (
@@ -31,14 +31,18 @@ export default function PicSideBar({user, bgList}) {
           {menu === 1 && (
             <div className="h-full">
               <UserList
-                user={user}/>
+                user={user}
+                position={position}
+                sendPosition={sendPosition}
+                setPosition={setPosition}
+              />
             </div>
           )}
           {menu === 2 && (
             <div className="h-full">
               배경 변경하기
               {bgList.map((bg) => (
-                <BgCard bgName="gdgd" key={bg.id} bgSrc={bg.objectName} user={user}/>
+                <BgCard bgName="gdgd" key={bg.id} bgSrc={bg.objectName} user={user} changeBg={changeBg}/>
               ))}
             </div>
           )}
@@ -58,4 +62,8 @@ PicSideBar.propTypes = {
     email: PropTypes.string,
     isHost: PropTypes.number,
   }),
+  changeBg: PropTypes.func,
+  position: PropTypes.array,
+  sendPosition: PropTypes.func,
+  setPosition: PropTypes.func,
 };

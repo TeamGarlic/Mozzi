@@ -14,9 +14,9 @@ function ClipLog({user}) {
   const clipList = useSelector((state) => state.clipReducer.clipList);
   const drag = useSelector((state) => state.clipReducer.drag);
   const dispatch = useDispatch();
-  const clipNum = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-  const [idx, setIdx] = useState(3);
+  const clipNum = Array.from({length: clipList['n']}, (v, i) => i+1);
+  const [idx, setIdx] = useState(0);
+  const frame = useSelector((state) => state.clipReducer.frame);
   function addVideo() {
     dispatch(
       AddClipAction({
@@ -28,7 +28,6 @@ function ClipLog({user}) {
   }
 
   function clickVideo(event) {
-    console.log("click");
     dispatch(
       Clip2FrameAction({
         clipIdx: event.target.id[4],

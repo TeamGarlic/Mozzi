@@ -1,23 +1,18 @@
 import UserCard from "@/components/UserCard"
-import {useState} from "react"
+import {useEffect, useState} from "react"
 import {checkHost} from "@/utils/DecoratorUtil.js"
 import PropTypes from "prop-types";
 
-function UserList({user}){
-  const [userList, setUserList] = useState([
-    { item: "🦜", name: "Parrot", onMic: 1, onCam: 1, isHost: 1 },
-    { item: "🦖", name: "Dinosaur", onMic: 1, onCam: 1, isHost: 0 },
-    { item: "🦆", name: "Duck", onMic: 1, onCam: 1, isHost: 0 },
-    { item: "🦔", name: "Porkypine", onMic: 1, onCam: 1, isHost: 0 },
-    { item: "🐤", name: "Chick", onMic: 1, onCam: 1, isHost: 0 },
-    { item: "🐧", name: "Penguin", onMic: 1, onCam: 1, isHost: 0 },
-    { item: "🦜", name: "Parrot", onMic: 1, onCam: 1, isHost: 0 },
-    { item: "🦖", name: "Dinosaur", onMic: 1, onCam: 1, isHost: 0 },
-    { item: "🦆", name: "Duck", onMic: 1, onCam: 1, isHost: 0 },
-    { item: "🦔", name: "Porkypine", onMic: 1, onCam: 1, isHost: 0 },
-    { item: "🐤", name: "Chick", onMic: 1, onCam: 1, isHost: 0 },
-    { item: "🐧", name: "Penguin", onMic: 1, onCam: 1, isHost: 0 },
-  ]);
+function UserList({user, position, sendPosition, setPosition}){
+  const [userList, setUserList] = useState(position.map((user) => {
+    return {
+      id: user.id,
+      name: "dummy",
+      onMic: 1,
+      onCam: 1,
+      isHost: 0
+    }
+  }))
   const [drag, setDrag] = useState(null);
   let height = 0;
   let moveY = 0;
@@ -25,6 +20,10 @@ function UserList({user}){
   const borderTop = "border-t-2";
   const borderBottom = "border-b-2";
   const borderColor = "border-blue-500";
+
+  useEffect(() => {
+    console.log(position)
+  }, []);
 
   function onDragOver(event){
     event.preventDefault();
@@ -75,6 +74,8 @@ function UserList({user}){
     const targetIdx = Number(event.currentTarget.dataset.index);
     const _userList = [...userList];
     const _user = _userList[dragIdx];
+    const _position = [...position];
+    const _targetPosition = _position[dragIdx];
 
     event.currentTarget.classList.remove(borderBottom);
     event.currentTarget.classList.remove(borderTop);
@@ -85,21 +86,32 @@ function UserList({user}){
     if (dragIdx < targetIdx) {
       if(movePosition > moveY){
         _userList.splice(dragIdx, 1);
+        _position.splice(dragIdx, 1);
         _userList.splice(targetIdx - 1, 0, _user);
+        _position.splice(targetIdx - 1, 0, _targetPosition);
+
       } else {
         _userList.splice(dragIdx, 1);
+        _position.splice(dragIdx, 1);
         _userList.splice(targetIdx, 0, _user);
+        _position.splice(targetIdx, 0, _targetPosition);
       }
     } else {
       if(movePosition > moveY){
         _userList.splice(dragIdx, 1);
+        _position.splice(dragIdx, 1);
         _userList.splice(targetIdx, 0, _user);
+        _position.splice(targetIdx, 0, _targetPosition);
       } else {
         _userList.splice(dragIdx, 1);
+        _position.splice(dragIdx, 1);
         _userList.splice(targetIdx+1, 0, _user);
+        _position.splice(targetIdx+1, 0, _targetPosition);
       }
     }
     setUserList(_userList);
+    setPosition(_position);
+    sendPosition(_position);
   }
 
   function setTool(idx, tool){
@@ -158,4 +170,7 @@ UserList.propTypes = {
     email: PropTypes.string,
     isHost: PropTypes.number,
   }),
+  position: PropTypes.array,
+  sendPosition: PropTypes.func,
+  setPosition: PropTypes.func,
 };

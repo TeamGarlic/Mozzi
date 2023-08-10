@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import PicSideBar from "../components/PicSideBar";
@@ -8,13 +8,12 @@ import Chat from "@/components/Chat";
 import PropTypes from "prop-types";
 import MyRadioGroup from "@/components/MyRadioGroup";
 import { useSelector, useDispatch } from "react-redux";
-import { AddClipAction } from "@/modules/clipAction";
-import {checkHost} from "@/utils/DecoratorUtil.js";
+import { checkHost } from "@/utils/DecoratorUtil.js";
+import boothApi from "@/api/boothApi.js";
+import CamSetting from '@/components/CamSetting.jsx';
 
-function TakePic({ shareCode, sendMessage, chatLists, user, bgList }) {
+function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition, sendFileName, shareSecret, publisher}) {
   const timers = [3, 5, 10];
-  const [taken, setTaken] = new useState(1);
-  const [timer, setTimer] = useState(3);
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
   var interval;
@@ -24,6 +23,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // const clipList = useSelector(state => state.clipReducer.clipList);
+
   function recordClip(idx) {
     const mediaStream = mainCanvas.canvas.current.captureStream();
     mediaRecorder = new MediaRecorder(mediaStream);
@@ -32,72 +32,97 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList }) {
     };
     mediaRecorder.onstop = () => {
       const blob = new Blob(arrClipData);
-
-      // blob 데이터를 활용해 webm 파일로 변환
-      const ClipFile = new File([blob], `clip${idx}.webm`, {
-        type: "video/webm",
+      const fileName = `clip${taken}.webm`;
+      const file = new File([blob], fileName, {type: "video/webm"})
+      const fileToBase64 = file => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        return new Promise(resolve => {
+          reader.onloadend = () => {
+            resolve(reader.result);
+          };
+        });
+      };
+      fileToBase64(file).then(res => {
+        uploadClip(res, fileName, taken)
       });
-      // Todo: webm file url => 백엔드와 통신해서 url 주소를 재설정 해야함
-      const fileURL = window.URL.createObjectURL(ClipFile);
-      dispatch(AddClipAction({ idx, src: fileURL }));
+      // uploadClip(file, fileName, taken)
       arrClipData.splice(0);
     };
 
     // 녹화 시작
     mediaRecorder.start();
+    console.log("촬영시작");
     // Todo: 현재는 시간에 dependent => 프레임 단위로 전환 필요함
     setTimeout(() => {
       // 녹화 종료
       mediaRecorder.stop();
-      console.log(idx);
-      // Todo: taken에 따른 로직 take 함수에 넣기(비동기 필요)
       if (taken == 4) {
-        // console.log(clipList);
-        navigate(`/${shareCode}/aftertake`, {state: {user: user}});
+        goNext();
       } else {
-        // console.log(clipList);
-        setTaken(taken + 1);
+        finishTaking();
       }
     }, 5000);
   }
-  function timeChange(e) {
-    setTimer(e.target.value);
-    // console.log(timer + "로 설정");
-    setCount(e.target.value);
+
+  async function uploadClip(file, fileName, idx) {
+    try {
+      let res = await boothApi.uploadClip(fileName, shareCode, file);
+      if (res.status === 200) {
+        sendFileName(idx, fileName, shareSecret)
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  function setTime(e) {
+    timeChange(e.target.value)
   }
 
   function take() {
+    startTaking();
+    // startCount();
+  }
+
+  function startCount() {
+    let isTaking = 0;
     setTimerVisible(true);
     // console.log(timer + "초 후 촬영");
     interval = setInterval(() => {
       // console.log(interval);
       setCount((prev) => {
         let next = prev - 1;
-        if (next === 0) {
+        if (isTaking === 0 && next === 0) {
+          // 대기 시간 후 촬영 시작(next 초 만큼)
+          next = 5;
+          isTaking = 1;
+          recordClip(taken);
+        } else if (isTaking === 1 && next === 0) {
           clearInterval(interval);
           setTimerVisible(false);
+          isTaking = 0;
           return timer;
         }
         return next;
       });
     }, 1000);
-
-    recordClip(taken);
   }
-  take = checkHost(take, user.isHost)
+  take = checkHost(take, user.isHost);
+  recordClip = checkHost(recordClip, user.isHost);
 
-  // useEffect(() => {
-  //   if (count === 0) {
-  //     alert("찰칵!");
-  //     clearInterval(interval);
-  //     setCount(timer);
-  //     setTimerVisible(false);
-  //   }
-  // }, [count]);
+  useEffect(() => {
+    if (nowTaking) startCount();
+  }, [nowTaking])
+
+  useEffect(() => {
+    setCount(timer);
+  }, [timer]);
   return (
     <Layout>
       <>
-        <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} />
+        <CamSetting />
+        <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} publisher={publisher}/>
         <div className="w-full pt-4 ps-4">
           <div>
             <div className=" text-sm text-gray-500">
@@ -105,12 +130,10 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList }) {
             </div>
             <div className="text-2xl">MOZZI</div>
           </div>
-          <PicSideBar
-            bgList={bgList}
-            user={user}/>
+          <PicSideBar bgList={bgList} user={user} changeBg={changeBg} position={position} sendPosition={sendPosition} setPosition={setPosition}/>
           {/* <div className="float-right mr-10 text-2xl">taken : {taken}/10</div> */}
         </div>
-        <BigCam />
+        <BigCam myId={myId} updatePosition={updatePosition} setPosition={setPosition} />
         {/* <Link to="/aftertake" className="block relative mx-auto w-fit">
         찰칵
       </Link> */}
@@ -119,7 +142,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList }) {
             <MyRadioGroup
               arr={timers}
               name="timer"
-              onChange={timeChange}
+              onChange={setTime}
               nowState={Number(timer)}
               text={"⏲️"}
             />
@@ -148,6 +171,8 @@ TakePic.propTypes = {
   sendMessage: PropTypes.func,
   chatLists: PropTypes.array,
   bgList: PropTypes.array,
+  goNext: PropTypes.func,
+  publisher:PropTypes.any,
   user: PropTypes.shape({
     id: PropTypes.number,
     userId: PropTypes.string,
@@ -155,4 +180,18 @@ TakePic.propTypes = {
     email: PropTypes.string,
     isHost: PropTypes.number,
   }),
+  timer: PropTypes.number,
+  taken: PropTypes.number,
+  timeChange: PropTypes.func,
+  startTaking: PropTypes.func,
+  finishTaking: PropTypes.func,
+  nowTaking: PropTypes.bool,
+  myId: PropTypes.string,
+  updatePosition: PropTypes.func,
+  changeBg: PropTypes.func,
+  position: PropTypes.array,
+  sendPosition: PropTypes.func,
+  setPosition: PropTypes.func,
+  sendFileName: PropTypes.func,
+  shareSecret: PropTypes.string,
 };

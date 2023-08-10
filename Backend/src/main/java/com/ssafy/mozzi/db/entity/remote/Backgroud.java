@@ -5,6 +5,8 @@ import java.util.Objects;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import com.ssafy.mozzi.db.entity.BaseEntity;
 
@@ -25,6 +27,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE background SET deleted = true WHERE id = ?")
+@Where(clause = "deleted = false")
 public class Backgroud extends BaseEntity {
 
     @NotNull
