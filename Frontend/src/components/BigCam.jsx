@@ -15,6 +15,18 @@ export default function BigCam({myId, updatePosition, setPosition}) {
   const canvasRef = useRef();
   const canvasContextRef = useRef();
 
+
+  const updateLocalPos = (npos) =>{
+    setPosition((prev)=>{
+      const newPosition = [];
+      for(let pos of prev){
+        newPosition.push((pos.id===myId)?npos:pos);
+      }
+      return newPosition;
+    });
+    updatePosition(npos);
+  }
+
   const updateSize = () =>{
     console.log(myId);
     const npos= {
@@ -25,13 +37,7 @@ export default function BigCam({myId, updatePosition, setPosition}) {
       height : rndRef.current.resizable.state.height/(ratio*H),
     };
     dispatch(resizeLayerAction(npos));
-    setPosition((prev)=>{
-      const newPosition = [];
-      for(let pos of prev){
-        newPosition.push((pos.id===myId)?npos:pos);
-      }
-      return newPosition;
-    });
+    updateLocalPos(npos);
     updatePosition(npos);
   }
 
