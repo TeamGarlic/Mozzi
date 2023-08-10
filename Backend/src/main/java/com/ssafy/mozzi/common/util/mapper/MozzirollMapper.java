@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ssafy.mozzi.api.response.MozzirollLikeRes;
+import com.ssafy.mozzi.api.response.PopularUserMozzirolGetlRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.common.dto.MozzirollItem;
+import com.ssafy.mozzi.common.dto.PopularUserMozzirollEntityDto;
+import com.ssafy.mozzi.common.dto.PopularUserMozzirollItem;
 import com.ssafy.mozzi.db.entity.remote.UserMozziroll;
 
 /**
@@ -61,6 +64,32 @@ public class MozzirollMapper {
         return MozzirollLikeRes.builder()
             .likeCount(likeCount)
             .isLiked(isLiked)
+            .build();
+    }
+
+    /**
+     * PopularUserMozzirollEntityDto 의 정보를 PopularUserMozzirollRes 로 변환
+     * @param userMozzirolls PopularUserMozzirollEntityDto
+     * @param pages int
+     * @return PopularUserMozzirollRes
+     */
+    public static PopularUserMozzirolGetlRes toPopularUserMozzirollGetRes(
+        List<PopularUserMozzirollEntityDto> userMozzirolls, int pages) {
+        List<PopularUserMozzirollItem> popularUserMozzirollItems = new ArrayList<>();  // 반환 할 List 객체
+
+        for (PopularUserMozzirollEntityDto userMozziroll : userMozzirolls) {
+            popularUserMozzirollItems.add(PopularUserMozzirollItem.builder()
+                .id(userMozziroll.getId())
+                .objectName(userMozziroll.getObjectName())
+                .title(userMozziroll.getTitle())
+                .isLiked(userMozziroll.getIsLiked())
+                .likeCount(userMozziroll.getLikeCount())
+                .build());
+        }
+
+        return PopularUserMozzirolGetlRes.builder()
+            .popularUserMozzirolls(popularUserMozzirollItems)
+            .pages(pages)
             .build();
     }
 }

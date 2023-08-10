@@ -10,7 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
 import com.ssafy.mozzi.api.response.MozzirollLikeRes;
+import com.ssafy.mozzi.api.response.PopularUserMozzirolGetlRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
+import com.ssafy.mozzi.common.dto.PopularUserMozzirollEntityDto;
 import com.ssafy.mozzi.common.exception.handler.AlreadyLinkedMozziException;
 import com.ssafy.mozzi.common.exception.handler.BoothNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.MozzirollNotExistsException;
@@ -168,5 +170,28 @@ public class MozzirollServiceImpl implements MozzirollService {
         }
 
         return MozzirollMapper.toMozzirollLikeRes(userMozziroll.getLikedUsers().size(), isLiked);
+    }
+
+    /**
+     * 좋아요 순으로 모찌롤들을 반환해줍니다. posted 값이 true 이며, deleted 값이 false 인 게시물만 출력합니다.
+     * @param accessToken JWT Access Token
+     * @param pageNum int
+     * @param pageSize int
+     * @return PopularUserMozzirolGetlRes
+     */
+    @Override
+    public PopularUserMozzirolGetlRes getPopularUserMozzirolls(String accessToken, int pageNum, int pageSize) {
+        long userId;
+
+        if (accessToken.equals(""))
+            userId = 0;
+        else
+            userId = userService.findUserByToken(accessToken).getId();
+
+        PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);
+        Page<PopularUserMozzirollEntityDto> page = userMozzirollRepository.findAllOrderByMozzirollLikeCount(userId,
+            pageRequest);
+        List<PopularUserMozzirollEntityDto> userMozzirolls = page.getContent();
+        return MozzirollMapper.toPopularUserMozzirollGetRes(userMozzirolls, page.getTotalPages());
     }
 }
