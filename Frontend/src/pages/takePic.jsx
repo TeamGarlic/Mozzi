@@ -8,11 +8,10 @@ import Chat from "@/components/Chat";
 import PropTypes from "prop-types";
 import MyRadioGroup from "@/components/MyRadioGroup";
 import { useSelector, useDispatch } from "react-redux";
-import { AddClipAction } from "@/modules/clipAction";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import boothApi from "@/api/boothApi.js";
 
-function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, sendBlob, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition }) {
+function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition, sendFileName, shareSecret }) {
   const timers = [3, 5, 10];
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
@@ -32,8 +31,21 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
     };
     mediaRecorder.onstop = () => {
       const blob = new Blob(arrClipData);
-      const file = new File([blob], `clip${taken}.webm`, {type: "video/webm"})
-      uploadClip(file)
+      const fileName = `clip${taken}.webm`;
+      const file = new File([blob], fileName, {type: "video/webm"})
+      const fileToBase64 = file => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        return new Promise(resolve => {
+          reader.onloadend = () => {
+            resolve(reader.result);
+          };
+        });
+      };
+      fileToBase64(file).then(res => {
+        uploadClip(res, fileName, taken)
+      });
+      // uploadClip(file, fileName, taken)
       arrClipData.splice(0);
     };
 
@@ -52,11 +64,11 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
     }, 5000);
   }
 
-  async function uploadClip(file) {
+  async function uploadClip(file, fileName, idx) {
     try {
-      let res = await boothApi.uploadClip(`clip${taken}.webm`, shareCode, file);
+      let res = await boothApi.uploadClip(fileName, shareCode, file);
       if (res.status === 200) {
-        console.log(res.data.data)
+        sendFileName(idx, fileName, shareSecret)
       }
     } catch (e) {
       console.log(e);
@@ -165,7 +177,6 @@ TakePic.propTypes = {
     email: PropTypes.string,
     isHost: PropTypes.number,
   }),
-  sendBlob: PropTypes.func,
   timer: PropTypes.number,
   taken: PropTypes.number,
   timeChange: PropTypes.func,
@@ -178,4 +189,6 @@ TakePic.propTypes = {
   position: PropTypes.array,
   sendPosition: PropTypes.func,
   setPosition: PropTypes.func,
+  sendFileName: PropTypes.func,
+  shareSecret: PropTypes.string,
 };
