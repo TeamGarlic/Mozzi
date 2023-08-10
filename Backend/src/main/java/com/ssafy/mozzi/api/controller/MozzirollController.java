@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
 import com.ssafy.mozzi.api.response.MozzirollLikeRes;
+import com.ssafy.mozzi.api.response.PopularUserMozzirolGetlRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.api.service.MozzirollService;
 import com.ssafy.mozzi.common.exception.handler.AlreadyLinkedMozziException;
@@ -127,6 +128,34 @@ public class MozzirollController {
                 BaseResponseBody.<MozzirollLikeRes>builder()
                     .message("mozziroll like or dislike success")
                     .data(mozzirollService.likeMozziroll(accessToken, userMozzirollId))
+                    .build()
+            );
+    }
+
+    /**
+     * 좋아요 순으로 유저 모찌롤 목록을 조회합니다. posted 값이 true 이며, deleted 값이 false 인 게시물만 출력합니다.
+     * @param accessToken 사용자의 Token
+     * @param pageNum 페이지 숫자
+     * @param pageSize 페이지 크기
+     * @see MozzirollService
+     */
+    @Operation(summary = "좋아요 순으로 유저 모찌롤 목록 조회", description = "좋아요 순으로 유저 모찌롤 목록을 조회합니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "좋아요 순 userMozziroll 페이징 조회 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+    })
+    @GetMapping("/popular")
+    public ResponseEntity<? extends BaseResponseBody<PopularUserMozzirolGetlRes>> getPopularUserMozzirolls(
+        @RequestHeader(value = "Authorization", required = false) String accessToken,
+        @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        return ResponseEntity.ok()
+            .cacheControl(CacheControl.noCache())
+            .body(
+                BaseResponseBody.<PopularUserMozzirolGetlRes>builder()
+                    .message("get popular user mozziroll list success")
+                    .data(mozzirollService.getPopularUserMozzirolls(accessToken, pageNum, pageSize))
                     .build()
             );
     }
