@@ -5,7 +5,6 @@ import {useDispatch} from "react-redux";
 import {setFrameAction, AddClipAction, updateFrameAction} from "@/modules/clipAction.js";
 import {changeBgAction} from "@/modules/bgAction.js";
 
-
 function useSession(shareCode) {
   const [session, setSession] = useState(undefined);
   const [publisher, setPublisher] = useState(undefined);
@@ -183,9 +182,12 @@ function useSession(shareCode) {
   };
 
   const sendMessage = async (message, userName) => {
-    // console.log({ from: userName + "", message: message });
     await session.signal({
-      data: JSON.stringify({ from: userName + "", message: message }),
+      data: JSON.stringify({
+        from: userName + "",
+        message: message,
+        connectionId : publisher.stream.connection.connectionId
+      }),
       to: [],
       type: "chat",
     });

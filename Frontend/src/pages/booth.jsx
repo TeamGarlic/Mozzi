@@ -98,7 +98,6 @@ function Booth() {
   startTake = checkHost(startTake, user ? user.isHost : undefined);
 
   const onResults = (results) => {
-    // drawMask(bgRemovedRef.current, bgRemovedContextRef.current, results, canvasConfig.degree*Math.PI/180, canvasConfig.scale);
     drawMask(bgRemovedRef.current, bgRemovedContextRef.current, results, canvasConfig.degree*Math.PI/180, canvasConfig.scale/100);
     chromaKey(pubVideoMap.canvasRef, pubVideoMap.canvasContextRef, pubVideoMap.vidRef);
     for (let key in subVideoMap) {
@@ -352,6 +351,7 @@ function Booth() {
               setPosition={setPosition}
               sendFileName={sendFileName}
               shareSecret={shareSecret}
+              publisher={publisher}
             />
           )}
           {now === "MODIFING" && (
