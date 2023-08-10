@@ -7,8 +7,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,7 +56,7 @@ public class BoothServiceImpl implements BoothService {
     private final MozziUtil mozziUtil;
 
     private final OpenVidu openVidu;
-    private final HashMap<String, HashMap<String, byte[]>> map = new HashMap<>();
+    private final HashMap<String, HashMap<String, String>> map = new HashMap<>();
 
     @Autowired
     BoothServiceImpl(BoothRepository boothRepository, BoothUserRepository boothUserRepository, UserService userService,
@@ -249,7 +247,7 @@ public class BoothServiceImpl implements BoothService {
         if (boothCandidate.isPresent()) {
             Booth booth = boothCandidate.get();
             if (map.containsKey(booth.getShareCode())) {
-                HashMap<String, byte[]> fileMap = map.remove(booth.getShareCode());
+                HashMap<String, String> fileMap = map.remove(booth.getShareCode());
                 fileMap.clear();
             }
             boothRepository.delete(booth);
@@ -268,7 +266,7 @@ public class BoothServiceImpl implements BoothService {
     @Override
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     public TemporalFileSavePostRes temporalFileSave(String accessToken, String shareCode, String fileName,
-        Resource file) {
+        String file) {
         User user = userService.findUserByToken(accessToken);
         Optional<Booth> boothCandidate = boothRepository.findByShareCode(shareCode);
         if (boothCandidate.isEmpty()) {
@@ -280,7 +278,7 @@ public class BoothServiceImpl implements BoothService {
         if (boothUserCandidate.isEmpty()) {
             throw new UnAuthorizedException("You are not member of booth");
         }
-        HashMap<String, byte[]> fileMap = null;
+        HashMap<String, String> fileMap = null;
         if (map.containsKey(shareCode)) {
             fileMap = map.get(shareCode);
         } else {
@@ -292,8 +290,7 @@ public class BoothServiceImpl implements BoothService {
             throw new FileAlreadyExistsException(String.format("%s already exists", fileName));
         }
         try {
-
-            fileMap.put(fileName, file.getContentAsByteArray());
+            fileMap.put(fileName, file);
         } catch (Exception e) {
             throw new RuntimeException();
         }
@@ -308,7 +305,7 @@ public class BoothServiceImpl implements BoothService {
      * @throws UnAuthorizedException (Mozzi code : 11, Http Status 401)
      */
     @Override
-    public Resource getTemporalFile(String shareCode, String shareSecret, String fileName) {
+    public String getTemporalFile(String shareCode, String shareSecret, String fileName) {
         if (!map.containsKey(shareCode)) {
             throw new BoothNotExistsException("Requested Booth not exists");
         }
@@ -322,12 +319,12 @@ public class BoothServiceImpl implements BoothService {
             throw new UnAuthorizedException("You are not allowed to read file");
         }
 
-        HashMap<String, byte[]> fileMap = map.get(shareCode);
+        HashMap<String, String> fileMap = map.get(shareCode);
         if (!fileMap.containsKey(fileName)) {
             throw new FileNotExistsException(String.format("Request file %s not exists.", fileName));
         }
 
-        return new ByteArrayResource(fileMap.get(fileName));
+        return fileMap.get(fileName);
     }
 
     /**

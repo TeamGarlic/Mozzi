@@ -1,12 +1,6 @@
 package com.ssafy.mozzi.api.controller;
 
-import java.nio.charset.StandardCharsets;
-
-import org.springframework.core.io.Resource;
 import org.springframework.http.CacheControl;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.mozzi.api.request.ConnectionPostReq;
 import com.ssafy.mozzi.api.request.SessionPostReq;
@@ -163,17 +156,16 @@ public class BoothController {
         @ApiResponse(responseCode = "401", description = "해당 부스에 없어서 임시 파일 저장 할 수 없음", content = @Content(schema = @Schema(implementation = UnAuthorizedException.UnAuthorizedResponse.class))),
         @ApiResponse(responseCode = "400", description = "해당하는 파일이 이미 존재", content = @Content(schema = @Schema(implementation = FileAlreadyExistsException.FileAlreadyExistsResponse.class)))
     })
-    @PostMapping(value = "/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/file")
     public ResponseEntity<? extends BaseResponseBody<TemporalFileSavePostRes>> temporalFileSave(
-        @RequestHeader String Authorization, @RequestParam("shareCode") String shareCode,
-        @RequestParam("fileName") String fileName,
-        @RequestParam("file") MultipartFile file) {
+        @RequestHeader String Authorization, @RequestHeader String shareCode,
+        @RequestHeader String fileName, @RequestBody String file) {
         return ResponseEntity.ok()
             .cacheControl(APICacheControl.noCache)
             .body(BaseResponseBody.<TemporalFileSavePostRes>builder()
                 .message("Temporal File Save Success")
                 .data(
-                    boothService.temporalFileSave(Authorization, shareCode, fileName, file.getResource())
+                    boothService.temporalFileSave(Authorization, shareCode, fileName, file)
                 )
                 .build()
             );
@@ -193,18 +185,21 @@ public class BoothController {
         @ApiResponse(responseCode = "401", description = "비밀키 불일치로 권한 없음", content = @Content(schema = @Schema(implementation = UnAuthorizedException.UnAuthorizedResponse.class)))
     })
     @GetMapping("/file")
-    public ResponseEntity<Resource> getTemporalFile(@RequestHeader String shareSecret, @RequestParam String shareCode,
+    public ResponseEntity<String> getTemporalFile(@RequestHeader String shareSecret, @RequestParam String shareCode,
         @RequestParam String fileName) {
-        Resource resource = boothService.getTemporalFile(shareCode, shareSecret, fileName);
+        String resource = boothService.getTemporalFile(shareCode, shareSecret, fileName);
 
         return ResponseEntity.ok()
             .cacheControl(APICacheControl.temporalCache)
-            .contentType(MediaType.APPLICATION_OCTET_STREAM)
-            .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment() // (6)
-                .filename(fileName, StandardCharsets.UTF_8)
-                .build()
-                .toString())
             .body(resource);
+        // return ResponseEntity.ok()
+        //     .cacheControl(APICacheControl.temporalCache)
+        //     .contentType(MediaType.APPLICATION_OCTET_STREAM)
+        //     .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment() // (6)
+        //         .filename(fileName, StandardCharsets.UTF_8)
+        //         .build()
+        //         .toString())
+        //     .body(resource);
     }
 
     @Operation(summary = "부스 접속 제한", description = "부스에 사용자가 더 참여 못 하게 부스를 닫습니다.")
