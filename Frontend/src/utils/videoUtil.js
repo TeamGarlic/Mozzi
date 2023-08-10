@@ -1,4 +1,4 @@
-export const drawMask = function(canvas, context, result, degree) {
+export const drawMask = function(canvas, context, result, degree = 0) {
   // 배경 제거된 영상을 캔버스에 그리는 함수
   if(!canvas) return;
   context.save();
