@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.mozzi.api.service.BoothService;
-import com.ssafy.mozzi.common.exception.handler.InvalidSessionIdException;
 import com.ssafy.mozzi.db.datasource.LocalDatasource;
 import com.ssafy.mozzi.db.entity.local.Booth;
 import com.ssafy.mozzi.db.repository.local.BoothRepository;
@@ -40,8 +39,6 @@ public class ScheduleTasks {
             if (booth.getCreatedAt().compareTo(LocalDateTime.now().plusHours(1)) > 0) {
                 try {
                     boothService.deleteBooth(booth.getSessionId());
-                } catch (InvalidSessionIdException exception) {
-                    log.info("[BoothScheduler] {} already removed", booth.getSessionId());
                 } catch (Exception e) {
                     log.error("[BoothScheduler] :{}", e.getMessage());
                 }
