@@ -46,10 +46,11 @@ public class ItemController {
     private final ItemService itemService;
 
     /**
-     * 배경 화면 GET 응답을 위한 메소드
+     * 배경 화면/즐겨찾기 배경 화면 GET 응답을 위한 메소드
      *
      * @param pageNum int
      * @param pageSize int
+     * @param isFavorite boolean, false: 전체 배경 리스트/true:유저가 즐겨찾기한 배경 리스트
      * @return ResponseEntity<? extends ItemBackgroundGetRes>
      * @see ItemService
      */
@@ -61,15 +62,16 @@ public class ItemController {
     })
     @GetMapping("/backgrounds")
     public ResponseEntity<? extends BaseResponseBody<ItemBackgroundGetRes>> getBackgrounds(
-        @RequestHeader(defaultValue = "") String authorization,
+        @RequestHeader(required = false, defaultValue = "") String authorization,
         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+        @RequestParam(value = "isFavorite", defaultValue = "false") boolean isFavorite) {
 
         return ResponseEntity.ok()
             .cacheControl(APICacheControl.usePublicCache)
             .body(BaseResponseBody.<ItemBackgroundGetRes>builder()
-                .message("Background list" + pageNum)
-                .data(itemService.getBackgroundRes(authorization, pageNum, pageSize))
+                .message((isFavorite ? "My" : "All") + " Background list. pageNum: " + pageNum)
+                .data(itemService.getBackgroundRes(authorization, pageNum, pageSize, isFavorite))
                 .build()
             );
     }
