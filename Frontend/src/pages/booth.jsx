@@ -98,8 +98,7 @@ function Booth() {
   startTake = checkHost(startTake, user ? user.isHost : undefined);
 
   const onResults = (results) => {
-
-    drawMask(bgRemovedRef.current, bgRemovedContextRef.current, results, Math.PI);
+    drawMask(bgRemovedRef.current, bgRemovedContextRef.current, results);
     chromaKey(pubVideoMap.canvasRef, pubVideoMap.canvasContextRef, pubVideoMap.vidRef);
     for (let key in subVideoMap) {
       chromaKey(subVideoMap[key].canvasRef, subVideoMap[key].canvasContextRef, subVideoMap[key].vidRef);
