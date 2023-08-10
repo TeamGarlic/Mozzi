@@ -1,7 +1,5 @@
 package com.ssafy.mozzi.api.service;
 
-import org.springframework.core.io.Resource;
-
 import com.ssafy.mozzi.api.request.ConnectionPostReq;
 import com.ssafy.mozzi.api.request.SessionPostReq;
 import com.ssafy.mozzi.api.response.ConnectionPostRes;
@@ -21,10 +19,9 @@ public interface BoothService {
 
     SessionRes deleteBooth(String sessionId) throws Exception;
 
-    TemporalFileSavePostRes temporalFileSave(String accessToken, String shareCode, String fileName,
-        Resource file);
+    TemporalFileSavePostRes temporalFileSave(String accessToken, String shareCode, String fileName, String file);
 
-    Resource getTemporalFile(String shareCode, String shareSecret, String fileName);
+    String getTemporalFile(String shareCode, String shareSecret, String fileName);
 
     boolean close(String accessToken, String shareCode);
 }
