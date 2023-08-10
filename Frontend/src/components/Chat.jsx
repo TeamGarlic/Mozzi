@@ -31,7 +31,7 @@ function Chat({ sendMessage, chatLists, user, publisher }) {
   },[])
 
   useEffect(() => {
-    console.log(chattingLog.current.scrollTop, chattingLog.current.scrollHeight );
+    // console.log(chattingLog.current.scrollTop, chattingLog.current.scrollHeight );
     const lastMsg = chatLists[chatLists.length-1];
     if(lastMsg){
       lastMsg.connectionId === publisher.stream.connection.connectionId ?
