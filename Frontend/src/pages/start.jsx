@@ -2,7 +2,7 @@ import Layout from "@/components/Layout";
 import NavBar from "@/components/NavBar";
 import useUser from "@/hooks/useUser";
 import useInput from "@/hooks/useInput";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import TextInput from "@/components/TextInput";
 import boothApi from "@/api/boothApi";
 import { useNavigate } from "react-router-dom";
@@ -52,6 +52,11 @@ function Start() {
       alert("해당 코드로 생성된 부스가 없습니다.");
     }
   }
+
+  useEffect(()=>{
+
+  });
+
   return (
     <Layout>
       <>
