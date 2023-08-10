@@ -1,7 +1,6 @@
 package com.ssafy.mozzi.api.controller;
 
 import java.nio.charset.StandardCharsets;
-import java.util.concurrent.TimeUnit;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.CacheControl;
@@ -36,6 +35,7 @@ import com.ssafy.mozzi.common.exception.handler.InvalidSessionIdException;
 import com.ssafy.mozzi.common.exception.handler.ShareCodeNotExistException;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
+import com.ssafy.mozzi.common.model.APICacheControl;
 import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
@@ -73,7 +73,7 @@ public class BoothController {
         @RequestBody SessionPostReq request) throws Exception {
 
         return ResponseEntity.ok()
-            .cacheControl(CacheControl.noCache())
+            .cacheControl(APICacheControl.noCache)
             .body(BaseResponseBody.<SessionRes>builder()
                 .message("Requested booth created")
                 .data(boothService.createBooth(request, Authorization))
@@ -95,7 +95,7 @@ public class BoothController {
     @GetMapping("/{shareCode}")
     public ResponseEntity<? extends BaseResponseBody<SessionRes>> joinBooth(@PathVariable String shareCode) {
         return ResponseEntity.ok()
-            .cacheControl(CacheControl.noCache())
+            .cacheControl(APICacheControl.noCache)
             .body(BaseResponseBody.<SessionRes>builder()
                 .message("Requested booth exists")
                 .data(boothService.joinBooth(shareCode))
@@ -120,7 +120,7 @@ public class BoothController {
         Exception {
 
         return ResponseEntity.ok()
-            .cacheControl(CacheControl.noCache())
+            .cacheControl(APICacheControl.noCache)
             .body(BaseResponseBody.<ConnectionPostRes>builder()
                 .message("Connection Token created")
                 .data(boothService.getConnectionToken(request, Authorization))
@@ -143,7 +143,7 @@ public class BoothController {
         Exception {
 
         return ResponseEntity.ok()
-            .cacheControl(CacheControl.noCache())
+            .cacheControl(APICacheControl.noCache)
             .body(BaseResponseBody.<SessionRes>builder()
                 .message("deleted exist booth")
                 .data(boothService.deleteBooth(sessionId))
@@ -169,7 +169,7 @@ public class BoothController {
         @RequestParam("fileName") String fileName,
         @RequestParam("file") MultipartFile file) {
         return ResponseEntity.ok()
-            .cacheControl(CacheControl.noStore())
+            .cacheControl(APICacheControl.noCache)
             .body(BaseResponseBody.<TemporalFileSavePostRes>builder()
                 .message("Temporal File Save Success")
                 .data(
@@ -198,11 +198,7 @@ public class BoothController {
         Resource resource = boothService.getTemporalFile(shareCode, shareSecret, fileName);
 
         return ResponseEntity.ok()
-            .cacheControl(
-                CacheControl
-                    .maxAge(10, TimeUnit.MINUTES)
-                    .sMaxAge(10, TimeUnit.MINUTES)
-            )
+            .cacheControl(APICacheControl.temporalCache)
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
             .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment() // (6)
                 .filename(fileName, StandardCharsets.UTF_8)
@@ -222,12 +218,14 @@ public class BoothController {
     public ResponseEntity<? extends BaseResponseBody<Boolean>> closeBooth(@RequestHeader String Authorization,
         @RequestParam String shareCode) {
         boolean result = boothService.close(Authorization, shareCode);
-        return ResponseEntity.ok(
-            BaseResponseBody.<Boolean>builder()
-                .message(String.format("Requested Booth %s", (result ? "closed" : "already closed")))
-                .data(result)
-                .build()
-        );
+        return ResponseEntity.ok()
+            .cacheControl(APICacheControl.noCache)
+            .body(
+                BaseResponseBody.<Boolean>builder()
+                    .message(String.format("Requested Booth %s", (result ? "closed" : "already closed")))
+                    .data(result)
+                    .build()
+            );
     }
 
     @Operation(ignoreJsonView = true)

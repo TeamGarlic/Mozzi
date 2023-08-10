@@ -1,6 +1,5 @@
 package com.ssafy.mozzi.api.controller;
 
-import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +21,7 @@ import com.ssafy.mozzi.common.exception.handler.BoothNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.MozzirollNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
+import com.ssafy.mozzi.common.model.APICacheControl;
 import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
@@ -67,6 +67,7 @@ public class MozzirollController {
     MozziLinkPostRequest request) {
 
         return ResponseEntity.ok()
+            .cacheControl(APICacheControl.noCache)
             .body(
                 BaseResponseBody.<Long>builder()
                     .message("Mozziroll Linked")
@@ -94,7 +95,7 @@ public class MozzirollController {
         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         return ResponseEntity.ok()
-            .cacheControl(CacheControl.noCache())
+            .cacheControl(APICacheControl.noCache)
             .body(
                 BaseResponseBody.<UserMozzirollGetRes>builder()
                     .message("Mozziroll list by user success")
@@ -123,7 +124,7 @@ public class MozzirollController {
         @RequestHeader("Authorization") String accessToken,
         @PathVariable long userMozzirollId) {
         return ResponseEntity.ok()
-            .cacheControl(CacheControl.noCache())
+            .cacheControl(APICacheControl.noCache)
             .body(
                 BaseResponseBody.<MozzirollLikeRes>builder()
                     .message("mozziroll like or dislike success")
