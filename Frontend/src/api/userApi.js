@@ -48,17 +48,15 @@ PrivateUserApi.interceptors.response.use(
           let res = await axios(originRequest);
           return res;
         } else {
-          alert("세션 만료. 다시 로그인해 주세요");
           window.localStorage.removeItem("accessToken");
           window.localStorage.removeItem("refreshToken");
-          window.location.replace("/login");
+          window.location.replace("/");
         }
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          alert("세션 만료. 다시 로그인해 주세요");
           window.localStorage.removeItem("accessToken");
           window.localStorage.removeItem("refreshToken");
-          window.location.replace("/login");
+          window.location.replace("/");
         }
       }
     }
