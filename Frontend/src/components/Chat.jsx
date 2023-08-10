@@ -73,7 +73,7 @@ function Chat({ sendMessage, chatLists, user }) {
           </div>
         </div>
       )}
-      <div className=" w-10 h-10 float-right">
+      <div className=" w-12 h-12 float-right p-1 rounded-full bg-[#ffffff] border-2 border-blue-500">
         {visible ? (
           <HideChat
             onClick={() => {

@@ -7,7 +7,7 @@ import {
 } from '@/modules/canvasAction.js';
 import PropTypes from 'prop-types';
 
-export default function BigCam({myId, updatePosition}) {
+export default function BigCam({myId, updatePosition, setPosition}) {
   const W = 1440, H = 960, ratio = 1080/1440;
   const rndRef = useRef();
   const dispatch = useDispatch();
@@ -17,15 +17,22 @@ export default function BigCam({myId, updatePosition}) {
 
   const updateSize = () =>{
     console.log(myId);
-    const pos= {
+    const npos= {
       id : myId,
       x : (rndRef.current.draggable.state.x - canvasRef.current.offsetLeft)/(ratio*W),
       y : (rndRef.current.draggable.state.y - canvasRef.current.offsetTop)/(ratio*H),
       width : rndRef.current.resizable.state.width/(ratio*W),
       height : rndRef.current.resizable.state.height/(ratio*H),
     };
-    dispatch(resizeLayerAction(pos));
-    updatePosition(pos);
+    dispatch(resizeLayerAction(npos));
+    setPosition((prev)=>{
+      const newPosition = [];
+      for(let pos of prev){
+        newPosition.push((pos.id===myId)?npos:pos);
+      }
+      return newPosition;
+    });
+    updatePosition(npos);
   }
 
   useEffect(() => {
@@ -54,7 +61,7 @@ export default function BigCam({myId, updatePosition}) {
           minWidth={W*ratio/15}
           minHeight={H*ratio/15}
           ref={rndRef}
-          bounds="parent"
+          // bounds="parent"
           className={"w-full h-full"} style={{'border':'dashed 1px white'}}
       >
       </Rnd>
@@ -65,4 +72,5 @@ export default function BigCam({myId, updatePosition}) {
 BigCam.propTypes = {
   myId: PropTypes.string,
   updatePosition: PropTypes.func,
+  setPosition: PropTypes.func,
 };

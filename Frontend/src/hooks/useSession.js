@@ -93,7 +93,7 @@ function useSession(shareCode) {
 
       session.on("signal:updatePosition", async (event) => {
         const data = await JSON.parse(event.data);
-        // if(data.id===publisher.stream.connection.connectionId) return;
+        if(data.id===publisher.stream.connection.connectionId) return;
         setPosition((prev)=>{
           // console.log(prev);
           // console.log(data);
