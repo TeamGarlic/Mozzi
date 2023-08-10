@@ -17,6 +17,7 @@ function useSession(shareCode) {
   const [position, setPosition] = useState([]);
   const dispatch = useDispatch();
   const [mozzi, setMozzi] = useState("");
+  const [shareSecret, setShareSecret] = useState("");
 
   const leaveSession = () => {
     if (session) {
@@ -129,6 +130,11 @@ function useSession(shareCode) {
         const frame = JSON.parse(event.data)
         console.log(frame);
         // dispatch(updateFrameAction(frame))
+      })
+
+      session.on("signal:sendShareSecret", async (event) => {
+        const data = JSON.parse(event.data)
+        setShareSecret(data.shareSecret)
       })
 
       session.on("streamDestroyed", (event) => {
@@ -292,6 +298,14 @@ function useSession(shareCode) {
     });
   };
 
+  const sendShareSecret = async (secret) => {
+    await session.signal({
+      data: JSON.stringify({shareSecret: secret}),
+      to: [],
+      type: "sendShareSecret"
+    })
+  }
+
   const getToken = async (code) => {
     let idRes = await boothApi.getSessionID(code);
     const {
@@ -337,6 +351,8 @@ function useSession(shareCode) {
     mozzi,
     sendMozzi,
     updateMozzi,
+    shareSecret,
+    sendShareSecret,
   };
 }
 

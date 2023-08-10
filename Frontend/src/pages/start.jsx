@@ -45,12 +45,9 @@ function Start() {
     try {
       let res = await boothApi.getSessionID(code.value);
       // console.log(res);
-      const {
-        data: {
-          data: { shareCode },
-        },
-      } = res;
-      navigate(`/${shareCode}/booth`, {state: {isHost: 0}});
+      const shareCode = res.data.data.shareCode;
+      const shareSecret = res.data.data.shareSecret
+      navigate(`/${shareCode}/booth`, {state: {isHost: 0, shareSecret: shareSecret}});
     } catch {
       alert("해당 코드로 생성된 부스가 없습니다.");
     }
