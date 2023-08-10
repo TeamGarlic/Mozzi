@@ -27,4 +27,8 @@ public enum MozziAPIErrorCode {
     MozziAPIErrorCode(int code) {
         this.code = code;
     }
+
+    public int getCode() {
+        return this.code;
+    }
 }
