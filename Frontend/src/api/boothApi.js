@@ -20,12 +20,6 @@ const PrivateBoothApi = axios.create({
 
 const uploadApi = axios.create({
   baseURL: "https://api.mozzi.lol/sessions",
-  config: {
-    headers: {
-      "Content-Type": "multipart/form-data",
-      Authorization: window.localStorage.getItem("accessToken"),
-    },
-  },
 });
 
 PrivateBoothApi.interceptors.request.use((config) => {
@@ -101,11 +95,20 @@ const boothApi = {
   },
 
   uploadClip: async (fileName, shareCode, file) => {
-    const res = await uploadApi.post("file", {
-      fileName: fileName,
-      shareCode: shareCode,
-      file: file,
-    })
+    const res = await uploadApi.post(
+      "file",
+      {
+        fileName: fileName,
+        shareCode: shareCode,
+        file: file,
+      },
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: window.localStorage.getItem("accessToken"),
+        },
+      }
+    )
     return res
   },
 };

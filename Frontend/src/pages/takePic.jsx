@@ -24,20 +24,6 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
   const navigate = useNavigate();
   // const clipList = useSelector(state => state.clipReducer.clipList);
 
-  async function uploadClip(file) {
-    console.log(window.localStorage.getItem("accessToken"))
-    try {
-      console.log(`clip${taken}.mp4`, shareCode, file);
-      let res = await boothApi.uploadClip(`clip${taken}.webm`, shareCode, file);
-      console.log(res)
-      if (res.status === 200) {
-        console.log(res.data.data)
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
   function recordClip(idx) {
     const mediaStream = mainCanvas.canvas.current.captureStream();
     mediaRecorder = new MediaRecorder(mediaStream);
@@ -47,25 +33,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
     mediaRecorder.onstop = () => {
       const blob = new Blob(arrClipData);
       const file = new File([blob], `clip${taken}.webm`, {type: "video/webm"})
-      // const fileToBase64 = file => {
-      //   const reader = new FileReader();
-      //   reader.readAsDataURL(file);
-      //   return new Promise(resolve => {
-      //     reader.onloadend = () => {
-      //       resolve(reader.result);
-      //     };
-      //   });
-      // };
-      // fileToBase64(file).then(res => {
-      //   // console.log(res);
-      //   // sendBlob(idx, res);
-      //   dispatch(AddClipAction({ idx, src: res }));
-      // });
-
       uploadClip(file)
-
-      const fileURL = window.URL.createObjectURL(blob)
-      dispatch(AddClipAction({idx, src: fileURL}))
       arrClipData.splice(0);
     };
 
@@ -83,6 +51,18 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
       }
     }, 5000);
   }
+
+  async function uploadClip(file) {
+    try {
+      let res = await boothApi.uploadClip(`clip${taken}.webm`, shareCode, file);
+      if (res.status === 200) {
+        console.log(res.data.data)
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   function setTime(e) {
     timeChange(e.target.value)
   }
