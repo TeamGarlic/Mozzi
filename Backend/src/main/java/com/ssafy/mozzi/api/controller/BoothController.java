@@ -1,6 +1,7 @@
 package com.ssafy.mozzi.api.controller;
 
 import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.mozzi.api.request.ConnectionPostReq;
 import com.ssafy.mozzi.api.request.SessionPostReq;
+import com.ssafy.mozzi.api.request.TemporalFilePostReq;
 import com.ssafy.mozzi.api.response.ConnectionPostRes;
 import com.ssafy.mozzi.api.response.SessionRes;
 import com.ssafy.mozzi.api.response.TemporalFileSavePostRes;
@@ -158,14 +160,14 @@ public class BoothController {
     })
     @PostMapping(value = "/file")
     public ResponseEntity<? extends BaseResponseBody<TemporalFileSavePostRes>> temporalFileSave(
-        @RequestHeader String Authorization, @RequestHeader String shareCode,
-        @RequestHeader String fileName, @RequestBody String file) {
+        @RequestHeader String Authorization, @RequestBody TemporalFilePostReq request) {
         return ResponseEntity.ok()
             .cacheControl(APICacheControl.noCache)
             .body(BaseResponseBody.<TemporalFileSavePostRes>builder()
                 .message("Temporal File Save Success")
                 .data(
-                    boothService.temporalFileSave(Authorization, shareCode, fileName, file)
+                    boothService.temporalFileSave(Authorization, request.getShareCode(), request.getFileName(),
+                        request.getFile())
                 )
                 .build()
             );
@@ -190,16 +192,9 @@ public class BoothController {
         String resource = boothService.getTemporalFile(shareCode, shareSecret, fileName);
 
         return ResponseEntity.ok()
+            .contentType(MediaType.TEXT_PLAIN)
             .cacheControl(APICacheControl.temporalCache)
             .body(resource);
-        // return ResponseEntity.ok()
-        //     .cacheControl(APICacheControl.temporalCache)
-        //     .contentType(MediaType.APPLICATION_OCTET_STREAM)
-        //     .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment() // (6)
-        //         .filename(fileName, StandardCharsets.UTF_8)
-        //         .build()
-        //         .toString())
-        //     .body(resource);
     }
 
     @Operation(summary = "부스 접속 제한", description = "부스에 사용자가 더 참여 못 하게 부스를 닫습니다.")
