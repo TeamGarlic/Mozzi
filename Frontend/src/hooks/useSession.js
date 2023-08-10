@@ -5,6 +5,7 @@ import {useDispatch} from "react-redux";
 import {setFrameAction, AddClipAction, updateFrameAction} from "@/modules/clipAction.js";
 import {changeBgAction} from "@/modules/bgAction.js";
 
+
 function useSession(shareCode) {
   const [session, setSession] = useState(undefined);
   const [publisher, setPublisher] = useState(undefined);
@@ -72,14 +73,6 @@ function useSession(shareCode) {
         dispatch(setFrameAction(frame))
       });
 
-      session.on("signal:sendBlob", async (event) => {
-        const data = await JSON.parse(event.data);
-        // Todo: blob이 비어있을 경우 에러 발생
-        // 합성 로직 이후 확인 필요
-        console.log("sendBlob");
-        dispatch(AddClipAction({idx: data.idx, src: data.src}));
-      });
-
       session.on("signal:timeChange", async (event) => {
         const data = await JSON.parse(event.data);
         setTimer(Number(data.time));
@@ -95,8 +88,6 @@ function useSession(shareCode) {
         const data = await JSON.parse(event.data);
         if(data.id===publisher.stream.connection.connectionId) return;
         setPosition((prev)=>{
-          // console.log(prev);
-          // console.log(data);
           const newPosition = [];
           for(let pos of prev){
             newPosition.push((pos.id===data.id)?data:pos);
@@ -132,9 +123,17 @@ function useSession(shareCode) {
         // dispatch(updateFrameAction(frame))
       })
 
-      session.on("signal:sendShareSecret", async (event) => {
-        const data = JSON.parse(event.data)
-        setShareSecret(data.shareSecret)
+      session.on("signal:sendFileName", async (event) => {
+        const data = JSON.parse(event.data) // data.idx, data.fileName
+        try {
+          let res = await boothApi.downloadClip(data.fileName, data.shareSecret, shareCode);
+          if (res.status === 200) {
+            console.log(res)
+            dispatch(AddClipAction({idx: data.idx, src: res.data}))
+          }
+        } catch (e) {
+          console.log(e);
+        }
       })
 
       session.on("streamDestroyed", (event) => {
@@ -223,13 +222,6 @@ function useSession(shareCode) {
     });
   };
 
-  const sendBlob = async (idx, src) => {
-    await session.signal({
-      data: JSON.stringify({idx:idx, src:src}),
-      to: [],
-      type: "sendBlob",
-    });
-  };
 
   const timeChange = async (time) => {
     setTimer(time);
@@ -273,8 +265,17 @@ function useSession(shareCode) {
   };
 
   const updateMozzi = async (frame) => {
+    const frameNum = Array.from({length: frame['n']}, (v, i) => i+1);
+    const data = {}
+    frameNum.forEach((n) => {
+      data[n] = {
+        n: {
+          clipIdx: frame[n].clipIdx
+        }
+      }
+    })
     await session.signal({
-      data: JSON.stringify(frame),
+      data: JSON.stringify(data),
       to: [],
       type: "updateMozzi"
     })
@@ -298,11 +299,16 @@ function useSession(shareCode) {
     });
   };
 
-  const sendShareSecret = async (secret) => {
+
+  const sendFileName = async (idx, fileName, shareSecret) => {
     await session.signal({
-      data: JSON.stringify({shareSecret: secret}),
+      data: JSON.stringify({
+        idx: idx,
+        fileName: fileName,
+        shareSecret: shareSecret,
+      }),
       to: [],
-      type: "sendShareSecret"
+      type: "sendFileName"
     })
   }
 
@@ -337,7 +343,6 @@ function useSession(shareCode) {
     nowTaking,
     now,
     setFrame,
-    sendBlob,
     timer,
     taken,
     timeChange,
@@ -352,7 +357,8 @@ function useSession(shareCode) {
     sendMozzi,
     updateMozzi,
     shareSecret,
-    sendShareSecret,
+    setShareSecret,
+    sendFileName
   };
 }
 
