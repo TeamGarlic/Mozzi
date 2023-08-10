@@ -17,6 +17,7 @@ import itemApi from "@/api/itemApi.js";
 import userApi from "@/api/userApi.js";
 import {AppStore} from "@/store/AppStore.js";
 import Spinner from "@/components/Spinner.jsx"
+import {usePreventGoBack} from "@/hooks/usePreventGoBack.js";
 
 function Booth() {
 
@@ -57,12 +58,9 @@ function Booth() {
   // global variables
   let localVideoMap = {};
   let userConfig= {};
-  try{
-    userConfig = {isHost : location.state.isHost};
-  }catch{
-    alert("잘못된 접근입니다.");
-    window.location.href = "/";
-  }
+
+
+  usePreventGoBack();
 
   // useState
   const [user,setUser] = useState(userConfig);
@@ -155,9 +153,23 @@ function Booth() {
       console.log(e);
     }
   }
+  const initiateUser = async()=>{
+    try{
+      userConfig = await {isHost : location.state.isHost};
+    }catch{
+      userConfig = undefined;
+    }
+  }
 
   const userJoin = async (initialState, ref)=> {
+    if(!userConfig) {
+      alert("잘못된 접근입니다.");
+      window.location.href="/";
+      return;
+    }
+
     let res = await userApi.getUser();
+    res = res ? res : {status:404};
     if(res.status ===200){
       const userData = res.data.data
       setUser((prev)=>{
@@ -214,6 +226,7 @@ function Booth() {
         requestAnimationFrame(sendToMediaPipe);
       }
     };
+    initiateUser();
     userJoin(userConfig,  bgRemovedRef.current.captureStream(30).getVideoTracks()[0])
   }, []);
 
