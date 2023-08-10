@@ -11,6 +11,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { AddClipAction } from "@/modules/clipAction";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import boothApi from "@/api/boothApi.js";
+import CamSetting from '@/components/CamSetting.jsx';
 
 function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, sendBlob, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition }) {
   const timers = [3, 5, 10];
@@ -76,7 +77,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
     setTimeout(() => {
       // 녹화 종료
       mediaRecorder.stop();
-      if (taken == 4) {
+      if (taken == 1) {
         goNext();
       } else {
         finishTaking();
@@ -128,6 +129,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
   return (
     <Layout>
       <>
+        <CamSetting />
         <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} />
         <div className="w-full pt-4 ps-4">
           <div>
