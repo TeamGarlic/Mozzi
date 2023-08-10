@@ -8,11 +8,11 @@ import Chat from "@/components/Chat";
 import PropTypes from "prop-types";
 import MyRadioGroup from "@/components/MyRadioGroup";
 import { useSelector, useDispatch } from "react-redux";
-import { AddClipAction } from "@/modules/clipAction";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import boothApi from "@/api/boothApi.js";
+import CamSetting from '@/components/CamSetting.jsx';
 
-function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, sendBlob, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition, publisher }) {
+function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition, sendFileName, shareSecret, publisher}) {
   const timers = [3, 5, 10];
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
@@ -24,20 +24,6 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
   const navigate = useNavigate();
   // const clipList = useSelector(state => state.clipReducer.clipList);
 
-  async function uploadClip(file) {
-    console.log(window.localStorage.getItem("accessToken"))
-    try {
-      console.log(`clip${taken}.mp4`, shareCode, file);
-      let res = await boothApi.uploadClip(`clip${taken}.webm`, shareCode, file);
-      console.log(res)
-      if (res.status === 200) {
-        console.log(res.data.data)
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
   function recordClip(idx) {
     const mediaStream = mainCanvas.canvas.current.captureStream();
     mediaRecorder = new MediaRecorder(mediaStream);
@@ -46,26 +32,21 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
     };
     mediaRecorder.onstop = () => {
       const blob = new Blob(arrClipData);
-      const file = new File([blob], `clip${taken}.webm`, {type: "video/webm"})
-      // const fileToBase64 = file => {
-      //   const reader = new FileReader();
-      //   reader.readAsDataURL(file);
-      //   return new Promise(resolve => {
-      //     reader.onloadend = () => {
-      //       resolve(reader.result);
-      //     };
-      //   });
-      // };
-      // fileToBase64(file).then(res => {
-      //   // console.log(res);
-      //   // sendBlob(idx, res);
-      //   dispatch(AddClipAction({ idx, src: res }));
-      // });
-
-      uploadClip(file)
-
-      const fileURL = window.URL.createObjectURL(blob)
-      dispatch(AddClipAction({idx, src: fileURL}))
+      const fileName = `clip${taken}.webm`;
+      const file = new File([blob], fileName, {type: "video/webm"})
+      const fileToBase64 = file => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        return new Promise(resolve => {
+          reader.onloadend = () => {
+            resolve(reader.result);
+          };
+        });
+      };
+      fileToBase64(file).then(res => {
+        uploadClip(res, fileName, taken)
+      });
+      // uploadClip(file, fileName, taken)
       arrClipData.splice(0);
     };
 
@@ -83,6 +64,18 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
       }
     }, 5000);
   }
+
+  async function uploadClip(file, fileName, idx) {
+    try {
+      let res = await boothApi.uploadClip(fileName, shareCode, file);
+      if (res.status === 200) {
+        sendFileName(idx, fileName, shareSecret)
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   function setTime(e) {
     timeChange(e.target.value)
   }
@@ -128,6 +121,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
   return (
     <Layout>
       <>
+        <CamSetting />
         <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} publisher={publisher}/>
         <div className="w-full pt-4 ps-4">
           <div>
@@ -186,7 +180,6 @@ TakePic.propTypes = {
     email: PropTypes.string,
     isHost: PropTypes.number,
   }),
-  sendBlob: PropTypes.func,
   timer: PropTypes.number,
   taken: PropTypes.number,
   timeChange: PropTypes.func,
@@ -199,4 +192,6 @@ TakePic.propTypes = {
   position: PropTypes.array,
   sendPosition: PropTypes.func,
   setPosition: PropTypes.func,
+  sendFileName: PropTypes.func,
+  shareSecret: PropTypes.string,
 };

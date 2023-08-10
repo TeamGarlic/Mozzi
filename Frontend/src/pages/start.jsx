@@ -25,14 +25,10 @@ function Start() {
       alert("로그인해주세요!");
       return;
     }
-
     let res = await boothApi.createBooth();
-    let {
-      data: {
-        data: { shareCode },
-      },
-    } = res;
-    navigate(`/${shareCode}/booth`, {state: {isHost: 1}});
+    const shareCode = res.data.data.shareCode
+    const shareSecret = res.data.data.shareSecret
+    navigate(`/${shareCode}/booth`, {state: {isHost: 1, shareSecret: shareSecret}});
   }
 
   const activeEnter = (e) => {

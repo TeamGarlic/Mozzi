@@ -42,7 +42,7 @@ function useSession(shareCode) {
       });
 
       session.on("signal:chat", async (event) => {
-        console.log(event);
+        // console.log(event);
         let data = await JSON.parse(event.data);
         setChatLists((prev) => {
           return [...prev, data];
@@ -50,31 +50,26 @@ function useSession(shareCode) {
       });
 
       session.on("signal:gotoTakePic", async (event) => {
-        console.log("방장이 사진찍재!!");
+        // console.log("방장이 사진찍재!!");
+        // setNowTaking(true);
         setNow("TAKING");
       });
 
       session.on("signal:gotoModifing", async (event) => {
-        console.log("방장이 편집하쟤!!");
+        // console.log("방장이 편집하쟤!!");
+        // setNowTaking(true);
         setNow("MODIFING");
       });
 
       session.on("signal:gotoFinish", async (event) => {
-        console.log("방장이 사진찍재!!");
+        // console.log("방장이 사진찍재!!");
+        // setNowTaking(true);
         setNow("FINISH");
       });
 
       session.on("signal:setFrame", async (event) => {
         const frame = await JSON.parse(event.data);
         dispatch(setFrameAction(frame))
-      });
-
-      session.on("signal:sendBlob", async (event) => {
-        const data = await JSON.parse(event.data);
-        // Todo: blob이 비어있을 경우 에러 발생
-        // 합성 로직 이후 확인 필요
-        console.log("sendBlob");
-        dispatch(AddClipAction({idx: data.idx, src: data.src}));
       });
 
       session.on("signal:timeChange", async (event) => {
@@ -92,8 +87,6 @@ function useSession(shareCode) {
         const data = await JSON.parse(event.data);
         if(data.id===publisher.stream.connection.connectionId) return;
         setPosition((prev)=>{
-          // console.log(prev);
-          // console.log(data);
           const newPosition = [];
           for(let pos of prev){
             newPosition.push((pos.id===data.id)?data:pos);
@@ -125,20 +118,29 @@ function useSession(shareCode) {
 
       session.on("signal:updateMozzi", async (event) => {
         const frame = JSON.parse(event.data)
-        console.log(frame);
-        // dispatch(updateFrameAction(frame))
+        if (event.from.connectionId !== session.connection.connectionId){
+          dispatch(updateFrameAction(frame))
+        }
       })
 
-      session.on("signal:sendShareSecret", async (event) => {
-        const data = JSON.parse(event.data)
-        setShareSecret(data.shareSecret)
+      session.on("signal:sendFileName", async (event) => {
+        const data = JSON.parse(event.data) // data.idx, data.fileName
+        try {
+          let res = await boothApi.downloadClip(data.fileName, data.shareSecret, shareCode);
+          if (res.status === 200) {
+            // console.log(res)
+            dispatch(AddClipAction({idx: data.idx, src: res.data}))
+          }
+        } catch (e) {
+          console.log(e);
+        }
       })
 
       session.on("streamDestroyed", (event) => {
         setSubscribers((prev) => {
           const newSubscribers = [...prev];
           const idx = newSubscribers.indexOf(event.stream.streamManager);
-          console.log(newSubscribers);
+          // console.log(newSubscribers);
           if (idx < 0) return;
           newSubscribers.splice(idx, 1);
           return [...newSubscribers];
@@ -223,13 +225,6 @@ function useSession(shareCode) {
     });
   };
 
-  const sendBlob = async (idx, src) => {
-    await session.signal({
-      data: JSON.stringify({idx:idx, src:src}),
-      to: [],
-      type: "sendBlob",
-    });
-  };
 
   const timeChange = async (time) => {
     setTimer(time);
@@ -273,8 +268,14 @@ function useSession(shareCode) {
   };
 
   const updateMozzi = async (frame) => {
+    const frameNum = Array.from({length: frame['n']}, (v, i) => i+1);
+    const data = {}
+    frameNum.forEach((n) => {
+      data[n] = frame[n].clipIdx
+      }
+    )
     await session.signal({
-      data: JSON.stringify(frame),
+      data: JSON.stringify(data),
       to: [],
       type: "updateMozzi"
     })
@@ -298,11 +299,16 @@ function useSession(shareCode) {
     });
   };
 
-  const sendShareSecret = async (secret) => {
+
+  const sendFileName = async (idx, fileName, shareSecret) => {
     await session.signal({
-      data: JSON.stringify({shareSecret: secret}),
+      data: JSON.stringify({
+        idx: idx,
+        fileName: fileName,
+        shareSecret: shareSecret,
+      }),
       to: [],
-      type: "sendShareSecret"
+      type: "sendFileName"
     })
   }
 
@@ -337,7 +343,6 @@ function useSession(shareCode) {
     nowTaking,
     now,
     setFrame,
-    sendBlob,
     timer,
     taken,
     timeChange,
@@ -352,7 +357,8 @@ function useSession(shareCode) {
     sendMozzi,
     updateMozzi,
     shareSecret,
-    sendShareSecret,
+    setShareSecret,
+    sendFileName
   };
 }
 

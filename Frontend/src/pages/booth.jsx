@@ -38,7 +38,6 @@ function Booth() {
     nowTaking,
     now,
     setFrame,
-    sendBlob,
     timer,
     taken,
     timeChange,
@@ -53,7 +52,8 @@ function Booth() {
     sendMozzi,
     updateMozzi,
     shareSecret,
-    sendShareSecret,
+    setShareSecret,
+    sendFileName,
   } = useSession(shareCode);
 
 
@@ -74,6 +74,7 @@ function Booth() {
   const pubVideoMap = useSelector((state) => state.canvasReducer.pubVideoMap);
   const subVideoMap = useSelector((state) => state.canvasReducer.subVideoMap);
   const localPosition = useSelector((state) => state.canvasReducer.position);
+  const canvasConfig = useSelector((state) => state.canvasReducer.canvasConfig);
   const bgNow = useSelector((state) => state.bgReducer.bgNow);
   const pickedFrame = useSelector((state) => state.clipReducer.frame);
 
@@ -91,14 +92,13 @@ function Booth() {
     if (pickedFrame.id === 0) return;
     sendPosition(position);
     setFrame(pickedFrame);
-    sendShareSecret(location.state.shareSecret)
     gotoTakePic();
-    // sendShareSecret();
+    setShareSecret(location.state.shareSecret);
   }
   startTake = checkHost(startTake, user ? user.isHost : undefined);
 
   const onResults = (results) => {
-    drawMask(bgRemovedRef.current, bgRemovedContextRef.current, results);
+    drawMask(bgRemovedRef.current, bgRemovedContextRef.current, results, canvasConfig.degree*Math.PI/180, canvasConfig.scale/100);
     chromaKey(pubVideoMap.canvasRef, pubVideoMap.canvasContextRef, pubVideoMap.vidRef);
     for (let key in subVideoMap) {
       chromaKey(subVideoMap[key].canvasRef, subVideoMap[key].canvasContextRef, subVideoMap[key].vidRef);
@@ -337,7 +337,6 @@ function Booth() {
               user={user}
               bgList={bgList}
               goNext={gotoModifing}
-              sendBlob={sendBlob}
               timer={timer}
               timeChange={timeChange}
               taken={taken}
@@ -350,6 +349,8 @@ function Booth() {
               position={position}
               sendPosition={sendPosition}
               setPosition={setPosition}
+              sendFileName={sendFileName}
+              shareSecret={shareSecret}
               publisher={publisher}
             />
           )}
