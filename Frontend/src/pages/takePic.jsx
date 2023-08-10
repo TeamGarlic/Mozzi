@@ -139,7 +139,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, send
           <PicSideBar bgList={bgList} user={user} changeBg={changeBg} position={position} sendPosition={sendPosition} setPosition={setPosition}/>
           {/* <div className="float-right mr-10 text-2xl">taken : {taken}/10</div> */}
         </div>
-        <BigCam myId={myId} updatePosition={updatePosition} />
+        <BigCam myId={myId} updatePosition={updatePosition} setPosition={setPosition} />
         {/* <Link to="/aftertake" className="block relative mx-auto w-fit">
         찰칵
       </Link> */}
