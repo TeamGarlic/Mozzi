@@ -27,7 +27,6 @@ import com.ssafy.mozzi.api.response.ConnectionPostRes;
 import com.ssafy.mozzi.api.response.SessionRes;
 import com.ssafy.mozzi.api.response.TemporalFileSavePostRes;
 import com.ssafy.mozzi.api.service.BoothService;
-import com.ssafy.mozzi.common.exception.handler.DuplicateShareCodeException;
 import com.ssafy.mozzi.common.model.APICacheControl;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
@@ -232,7 +231,7 @@ public class BoothController {
             sessionId = boothService.createBooth(req,
                     "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjkwOTU0NzYwLCJleHAiOjEyMTY5MDk1NDc2MH0.RF8qFqAwbcbDdS1jl9Q9vAb5RzOZ8j6xmjMqWAApKio")
                 .getSessionId();
-        } catch (DuplicateShareCodeException exception) {
+        } catch (Exception exception) {
             sessionId = boothService.joinBooth(shareCode).getSessionId();
         }
 

@@ -11,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
 import com.ssafy.mozzi.api.response.MozzirollLikeRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
-import com.ssafy.mozzi.common.exception.handler.AlreadyLinkedMozziException;
-import com.ssafy.mozzi.common.exception.handler.BoothNotExistsException;
-import com.ssafy.mozzi.common.exception.handler.MozzirollNotExistsException;
+import com.ssafy.mozzi.common.exception.BadRequestException;
+import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
+import com.ssafy.mozzi.common.exception.NotFoundException;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.common.util.mapper.MozzirollMapper;
@@ -53,11 +53,9 @@ public class MozzirollServiceImpl implements MozzirollService {
      * 사용자 계정에 Mozziroll 연결 요청을 유효성 확인 후 연결합니다.
      * @param request MozziLinked Request
      * @param accessToken JWT Access Token
-     * @throws AlreadyLinkedMozziException (Mozzi code : 8, Http Status 400)
+     * @throws com.ssafy.mozzi.common.exception.BadRequestException (AlreadyLinkedMozzi, 8)
      * @throws UnAuthorizedException (Mozzi code : 11, Http Status 401)
-     * @throws MozzirollNotExistsException (Mozzi code : 9, Http Status 404)
-     * @throws BoothNotExistsException (Mozzi code : 10, Http Status 404)
-     * @throws com.ssafy.mozzi.common.exception.NotFoundException (UserIdNotExists, 1)
+     * @throws com.ssafy.mozzi.common.exception.NotFoundException (UserIdNotExists, 1), (BoothNotExists, 10), (MozzirollNotExists, 9)
      */
     @Override
     public Long link(MozziLinkPostRequest request, String accessToken) {
@@ -66,16 +64,16 @@ public class MozzirollServiceImpl implements MozzirollService {
             request.getMozzirollId(), userId);
 
         if (userMozzirollCheck.isPresent()) {
-            throw new AlreadyLinkedMozziException(
+            throw new BadRequestException(MozziAPIErrorCode.AlreadyLinkedMozzi,
                 String.format("Mozzi %d is already registered Mozzi.", request.getMozzirollId()));
         }
         Optional<Mozziroll> mozziroll = mozzirollRepository.findById(request.getMozzirollId());
         if (mozziroll.isEmpty()) {
-            throw new MozzirollNotExistsException("Requested Mozziroll not exists");
+            throw new NotFoundException(MozziAPIErrorCode.MozzirollNotExists, "Requested Mozziroll not exists");
         }
         Optional<Booth> booth = boothRepository.findByShareCode(request.getShareCode());
         if (booth.isEmpty()) {
-            throw new BoothNotExistsException("Requested Booth not exists");
+            throw new NotFoundException(MozziAPIErrorCode.BoothNotExists, "Requested Booth not exists");
         }
 
         long boothId = booth.get().getId();
@@ -118,19 +116,19 @@ public class MozzirollServiceImpl implements MozzirollService {
      * @param accessToken JWT Access Token
      * @param userMozzirollId long
      * @return MozzirollLikeRes
-     * @throws com.ssafy.mozzi.common.exception.NotFoundException (UserIdNotExists, 1)
+     * @throws com.ssafy.mozzi.common.exception.NotFoundException (UserIdNotExists, 1), (MozzirollNotExists, 9)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
-    public MozzirollLikeRes likeMozziroll(String accessToken, long userMozzirollId) throws
-        MozzirollNotExistsException {
+    public MozzirollLikeRes likeMozziroll(String accessToken, long userMozzirollId) {
         User user = userService.findUserByToken(accessToken);
         UserMozziroll userMozziroll;
 
         if (userMozzirollRepository.findById(userMozzirollId).isPresent()) {
             userMozziroll = userMozzirollRepository.findById(userMozzirollId).get();
-        } else
-            throw new MozzirollNotExistsException("Requested userMozziroll not exists");
+        } else {
+            throw new NotFoundException(MozziAPIErrorCode.MozzirollNotExists, "Requested UserMozziroll not exists");
+        }
 
         // 좋아요가 없을 경우
         boolean isLiked = true;

@@ -14,7 +14,7 @@ package com.ssafy.mozzi.common.exception;
  */
 public class BadRequestException extends BaseException {
 
-    BadRequestException(MozziAPIErrorCode code, String message) {
+    public BadRequestException(MozziAPIErrorCode code, String message) {
         super(code, message);
     }
 

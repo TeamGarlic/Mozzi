@@ -21,10 +21,9 @@ import com.ssafy.mozzi.api.response.UserPasswordResetPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
 import com.ssafy.mozzi.api.response.UserUpdateRes;
 import com.ssafy.mozzi.common.auth.JwtTokenProvider;
+import com.ssafy.mozzi.common.exception.BadRequestException;
 import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
 import com.ssafy.mozzi.common.exception.NotFoundException;
-import com.ssafy.mozzi.common.exception.handler.InvalidRefreshTokenException;
-import com.ssafy.mozzi.common.exception.handler.NoDataException;
 import com.ssafy.mozzi.common.exception.handler.UserEmailNotExists;
 import com.ssafy.mozzi.common.exception.handler.UserLoginFailException;
 import com.ssafy.mozzi.common.exception.handler.UserRegisterException;
@@ -121,7 +120,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param reissueInfo reissuePostReq
      * @return reissuePostRes
-     * @throws InvalidRefreshTokenException (Mozzi code : 2, Http Status 400)
+     * @throws BadRequestException (InvalidRefreshToken, 2)
      * @throws com.ssafy.mozzi.common.exception.NotFoundException (UserIdNotExists, 1)
      * @see UserRepository
      * @see JwtTokenProvider
@@ -131,8 +130,9 @@ public class UserServiceImpl implements UserService {
     public ReIssuePostRes reissue(ReIssuePostReq reissueInfo) {
         User user = findUserByToken(reissueInfo.getAccessToken());
 
-        if (!user.getRefreshToken().equals(reissueInfo.getRefreshToken()))
-            throw new InvalidRefreshTokenException("refresh token is not validated");
+        if (!user.getRefreshToken().equals(reissueInfo.getRefreshToken())) {
+            throw new BadRequestException(MozziAPIErrorCode.InvalidRefreshToken, "refresh token is not validated");
+        }
 
         String accessToken = jwtTokenProvider.createToken(user.getId().toString());
         String refreshToken = jwtTokenProvider.createRefreshToken();
@@ -202,8 +202,8 @@ public class UserServiceImpl implements UserService {
      * 유저 데이터 변경 요청을 받아 유저 데이터를 수정합니다.
      * @param request
      * @return BaseResponseBody<Long> 성공시 User Id를 같이 반환합니다.
+     * @throws BadRequestException (NoData, 13)
      * @throws com.ssafy.mozzi.common.exception.NotFoundException (UserIdNotExists, 1)
-     * @throws NoDataException (Mozzi code : 13, Http Status 400)
      */
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     @Override
@@ -211,7 +211,7 @@ public class UserServiceImpl implements UserService {
         User user = findUserByToken(request.getAccessToken());
 
         if (request.getEmail() == null && request.getNickname() == null && request.getPassword() == null) {
-            throw new NoDataException("There is no data for update");
+            throw new BadRequestException(MozziAPIErrorCode.NoData, "There is no data for update");
         }
 
         if (request.getPassword() != null && !request.getPassword().equals(user.getPassword())) {
