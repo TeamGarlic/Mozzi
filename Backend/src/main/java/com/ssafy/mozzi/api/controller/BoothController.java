@@ -67,7 +67,7 @@ public class BoothController {
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "부스 생성 성공", useReturnTypeSchema = true),
         @ApiResponse(responseCode = "400", description = "중복된 공유 코드", content = @Content(schema = @Schema(implementation = DuplicateShareCodeException.DuplicateShareCodeResponse.class))),
         @ApiResponse(responseCode = "401", description = "JWT TOKEN 없음", content = @Content(schema = @Schema(implementation = AccessTokenNotExistsException.AccessTokenNotExistsResponse.class))),
-        @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))})
+        @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))})
     @PostMapping
     public ResponseEntity<? extends BaseResponseBody<SessionRes>> createBooth(@RequestHeader String Authorization,
         @RequestBody SessionPostReq request) throws Exception {
