@@ -15,13 +15,7 @@ import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
 import com.ssafy.mozzi.api.response.MozzirollLikeRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.api.service.MozzirollService;
-import com.ssafy.mozzi.common.exception.handler.AlreadyLinkedMozziException;
-import com.ssafy.mozzi.common.exception.handler.BoothNotExistsException;
-import com.ssafy.mozzi.common.exception.handler.MozzirollNotExistsException;
-import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
-import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.model.APICacheControl;
-import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,17 +43,17 @@ public class MozzirollController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Mozziroll 연결 성공", useReturnTypeSchema = true),
         @ApiResponse(responseCode = "400", description = "이미 사용자에게 연결 되어 있는 Mozziroll 입니다.",
-            content = @Content(schema = @Schema(implementation = AlreadyLinkedMozziException.AlreadyLinkedMozziResponse.class))),
+            content = @Content(schema = @Schema(ref = "#/components/schemas/AlreadyLinkedMozzi"))),
         @ApiResponse(responseCode = "401", description = "요청한 모찌롤의 주인(방장)과 같은 방에 없어 권한이 부족합니다",
-            content = @Content(schema = @Schema(implementation = UnAuthorizedException.UnAuthorizedResponse.class))),
+            content = @Content(schema = @Schema(ref = "#/components/schemas/UnAuthorized"))),
         @ApiResponse(responseCode = "404", description = "요청한 모찌롤이 존재하지 않습니다.",
-            content = @Content(schema = @Schema(implementation = MozzirollNotExistsException.MozzirollNotExistsResponse.class))),
+            content = @Content(schema = @Schema(ref = "#/components/schemas/MozzirollNotExists"))),
         @ApiResponse(responseCode = "404", description = "요청한 부스가 존재하지 않습니다.",
-            content = @Content(schema = @Schema(implementation = BoothNotExistsException.BoothNotExistsResponse.class))),
+            content = @Content(schema = @Schema(ref = "#/components/schemas/BoothNotExists"))),
         @ApiResponse(responseCode = "404", description = "User Id가 존재하지 않습니다.",
-            content = @Content(schema = @Schema(implementation = UserIdNotExistsException.UserIdNotExistsResponse.class))),
+            content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
         @ApiResponse(responseCode = "500", description = "서버 에러",
-            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @PostMapping("/link")
     public ResponseEntity<? extends BaseResponseBody<Long>> link(@RequestHeader String Authorization, @RequestBody
@@ -84,9 +78,9 @@ public class MozzirollController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "사용자 Mozziroll 페이징 조회 성공", useReturnTypeSchema = true),
         @ApiResponse(responseCode = "404", description = "User Id가 존재하지 않습니다.",
-            content = @Content(schema = @Schema(implementation = UserIdNotExistsException.UserIdNotExistsResponse.class))),
+            content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
         @ApiResponse(responseCode = "500", description = "서버 에러",
-            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @GetMapping()
     public ResponseEntity<? extends BaseResponseBody<UserMozzirollGetRes>> userMozziroll(
@@ -114,9 +108,9 @@ public class MozzirollController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "사용자 Mozziroll 페이징 조회 성공", useReturnTypeSchema = true),
         @ApiResponse(responseCode = "400", description = "잘못된 요청 정보",
-            content = @Content(schema = @Schema(implementation = UserIdNotExistsException.UserIdNotExistsResponse.class))),
+            content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
         @ApiResponse(responseCode = "500", description = "서버 에러",
-            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @PostMapping("/like/{userMozzirollId}")
     public ResponseEntity<? extends BaseResponseBody<MozzirollLikeRes>> likeMozziroll(
