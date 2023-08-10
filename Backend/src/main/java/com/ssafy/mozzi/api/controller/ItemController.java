@@ -62,7 +62,7 @@ public class ItemController {
     })
     @GetMapping("/backgrounds")
     public ResponseEntity<? extends BaseResponseBody<ItemBackgroundGetRes>> getBackgrounds(
-        @RequestHeader(defaultValue = "") String authorization,
+        @RequestHeader(required = false, defaultValue = "") String authorization,
         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
         @RequestParam(value = "isFavorite", defaultValue = "false") boolean isFavorite) {
