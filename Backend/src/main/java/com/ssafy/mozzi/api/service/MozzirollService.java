@@ -2,6 +2,7 @@ package com.ssafy.mozzi.api.service;
 
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
 import com.ssafy.mozzi.api.response.MozzirollLikeRes;
+import com.ssafy.mozzi.api.response.PopularUserMozzirolGetlRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 
 /**
@@ -13,5 +14,6 @@ public interface MozzirollService {
     UserMozzirollGetRes getMozzirollsByUser(String accessToken, int pageNum, int pageSize);
 
     MozzirollLikeRes likeMozziroll(String accessToken, long userMozzirollId);
-    UserMozzirollGetRes getPopularUserMozzirolls(String accessToken, int pageNum, int pageSize);
+
+    PopularUserMozzirolGetlRes getPopularUserMozzirolls(String accessToken, int pageNum, int pageSize);
 }
