@@ -57,8 +57,7 @@ function Booth() {
 
   // global variables
   let localVideoMap = {};
-  let userConfig= {};
-
+  const userConfig =  location.state ? {isHost : location.state.isHost} : undefined;
 
   usePreventGoBack();
 
@@ -92,7 +91,7 @@ function Booth() {
     setFrame(pickedFrame);
     gotoTakePic();
   }
-  startTake = checkHost(startTake, user.isHost);
+  startTake = checkHost(startTake, user ? user.isHost : undefined);
 
   const onResults = (results) => {
 
@@ -153,16 +152,10 @@ function Booth() {
       console.log(e);
     }
   }
-  const initiateUser = async()=>{
-    try{
-      userConfig = await {isHost : location.state.isHost};
-    }catch{
-      userConfig = undefined;
-    }
-  }
 
   const userJoin = async (initialState, ref)=> {
-    if(!userConfig) {
+    console.log(userConfig);
+    if(userConfig === undefined) {
       alert("잘못된 접근입니다.");
       window.location.href="/";
       return;
@@ -226,7 +219,7 @@ function Booth() {
         requestAnimationFrame(sendToMediaPipe);
       }
     };
-    initiateUser();
+    // initiateUser();
     userJoin(userConfig,  bgRemovedRef.current.captureStream(30).getVideoTracks()[0])
   }, []);
 
