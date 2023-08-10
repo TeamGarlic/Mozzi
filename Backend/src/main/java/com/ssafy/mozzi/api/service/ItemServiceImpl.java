@@ -70,14 +70,17 @@ public class ItemServiceImpl implements ItemService {
      * @see BackgroundEntityDto
      */
     @Override
-    public ItemBackgroundGetRes getBackgroundRes(String authorization, int pageNum, int pageSize) {
+    public ItemBackgroundGetRes getBackgroundRes(String authorization, int pageNum, int pageSize, boolean isFavorite) {
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);  // Page 객체를 갖고오기 위한 PageRequest 객체 생성
         Page<BackgroundEntityDto> page = null;
         if (authorization.equals("")) {
             page = backgroundRepository.findAllWithFavorite(pageRequest);
+        } else if (isFavorite) {
+            Long userId = mozziUtil.findUserIdByToken(authorization);
+            page = backgroundRepository.findByUserAllWithFavoriteAndUser(userId, pageRequest);
         } else {
             Long userId = mozziUtil.findUserIdByToken(authorization);
-            page = backgroundRepository.findAllWithFavoriteAndUser(userId, pageRequest);  // Page 객체 생성
+            page = backgroundRepository.findAllWithFavoriteAndUser(userId, pageRequest);
         }
 
         List<BackgroundEntityDto> backgrounds = page.getContent();  // Page 의 Method 를 이용하여 Background 객체들의 리스트를 만듦
