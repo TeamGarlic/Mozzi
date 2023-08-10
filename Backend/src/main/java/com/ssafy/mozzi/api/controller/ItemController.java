@@ -1,6 +1,5 @@
 package com.ssafy.mozzi.api.controller;
 
-import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,7 @@ import com.ssafy.mozzi.api.response.ItemBackgroundPostRes;
 import com.ssafy.mozzi.api.response.ItemStickerGetRes;
 import com.ssafy.mozzi.api.service.ItemService;
 import com.ssafy.mozzi.common.dto.FrameClipItem;
-import com.ssafy.mozzi.common.model.ItemCacheControl;
+import com.ssafy.mozzi.common.model.APICacheControl;
 import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
@@ -45,7 +44,6 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "Item 컨트롤러", description = "Mozzi에서 사용되는 프레임, 배경 화면 등을 관리하는 컨트롤러입니다.")
 public class ItemController {
     private final ItemService itemService;
-    private final ItemCacheControl cacheControl;
 
     /**
      * 배경 화면 GET 응답을 위한 메소드
@@ -68,7 +66,7 @@ public class ItemController {
         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
         return ResponseEntity.ok()
-            .cacheControl(cacheControl.getCacheControl())
+            .cacheControl(APICacheControl.usePublicCache)
             .body(BaseResponseBody.<ItemBackgroundGetRes>builder()
                 .message("Background list" + pageNum)
                 .data(itemService.getBackgroundRes(authorization, pageNum, pageSize))
@@ -96,7 +94,7 @@ public class ItemController {
         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
 
         return ResponseEntity.ok()
-            .cacheControl(cacheControl.getCacheControl())
+            .cacheControl(APICacheControl.usePublicCache)
             .body(
                 BaseResponseBody.<ItemStickerGetRes>builder()
                     .message("sticker list page " + pageNum)
@@ -121,7 +119,7 @@ public class ItemController {
     public ResponseEntity<? extends BaseResponseBody<FrameListGetRes>> getFrames() {
 
         return ResponseEntity.ok()
-            .cacheControl(cacheControl.getCacheControl())
+            .cacheControl(APICacheControl.usePublicCache)
             .body(
                 BaseResponseBody.<FrameListGetRes>builder()
                     .message("frame list success")
@@ -150,7 +148,7 @@ public class ItemController {
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .cacheControl(CacheControl.noStore())
+            .cacheControl(APICacheControl.noCache)
             .body(
                 BaseResponseBody.<ItemBackgroundPostRes>builder()
                     .message("Save background success")
@@ -180,7 +178,7 @@ public class ItemController {
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .cacheControl(CacheControl.noStore())
+            .cacheControl(APICacheControl.noCache)
             .body(
                 BaseResponseBody.<String>builder()
                     .message("frame upload success")
@@ -210,7 +208,7 @@ public class ItemController {
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
-            .cacheControl(CacheControl.noStore())
+            .cacheControl(APICacheControl.noCache)
             .body(
                 BaseResponseBody.<String>builder()
                     .message("frame upload success")
@@ -237,7 +235,7 @@ public class ItemController {
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .cacheControl(CacheControl.noStore())
+            .cacheControl(APICacheControl.noCache)
             .body(
                 BaseResponseBody.<BackgroundFavoritePostRes>builder()
                     .message("background favorite success")

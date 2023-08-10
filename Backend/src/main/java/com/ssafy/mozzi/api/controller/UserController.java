@@ -1,6 +1,5 @@
 package com.ssafy.mozzi.api.controller;
 
-import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -33,6 +32,7 @@ import com.ssafy.mozzi.common.exception.handler.UserEmailNotExists;
 import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.exception.handler.UserLoginFailException;
 import com.ssafy.mozzi.common.exception.handler.UserRegisterException;
+import com.ssafy.mozzi.common.model.APICacheControl;
 import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
@@ -72,7 +72,7 @@ public class UserController {
         @RequestBody UserRegisterPostReq request) {
 
         return ResponseEntity.status(HttpStatus.CREATED)
-            .cacheControl(CacheControl.noCache())
+            .cacheControl(APICacheControl.noCache)
             .body(BaseResponseBody.<UserRegisterPostRes>builder()
                 .message("User register success")
                 .data(userService.register(request))
@@ -95,7 +95,7 @@ public class UserController {
     public ResponseEntity<? extends BaseResponseBody<UserLoginPostRes>> login(@RequestBody UserLoginPostReq request) {
 
         return ResponseEntity.ok()
-            .cacheControl(CacheControl.noCache())
+            .cacheControl(APICacheControl.noCache)
             .body(BaseResponseBody.<UserLoginPostRes>builder()
                 .message("User login success")
                 .data(userService.login(request))
@@ -117,11 +117,14 @@ public class UserController {
         @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))})
     @PostMapping("/reissue")
     public ResponseEntity<? extends BaseResponseBody<ReIssuePostRes>> reissue(@RequestBody ReIssuePostReq request) {
-
-        return new ResponseEntity<>(BaseResponseBody.<ReIssuePostRes>builder()
-            .message("reissue access token by refresh token")
-            .data(userService.reissue(request))
-            .build(), HttpStatus.OK);
+        return ResponseEntity.ok()
+            .cacheControl(APICacheControl.noCache)
+            .body(
+                BaseResponseBody.<ReIssuePostRes>builder()
+                    .message("reissue access token by refresh token")
+                    .data(userService.reissue(request))
+                    .build()
+            );
     }
 
     /**
@@ -136,7 +139,7 @@ public class UserController {
     public ResponseEntity<? extends BaseResponseBody<UserIdCheckRes>> userIdCheck(@RequestParam String userId) {
         UserIdCheckRes userIdCheckRes = userService.userIdCheck(userId);
         return ResponseEntity.ok()
-            .cacheControl(CacheControl.noCache())
+            .cacheControl(APICacheControl.noCache)
             .body(BaseResponseBody.<UserIdCheckRes>builder()
                 .message(String.format("Requested User ID%s available", (userIdCheckRes.isResult() ? "" : " not")))
                 .data(userIdCheckRes)
@@ -156,7 +159,7 @@ public class UserController {
     public ResponseEntity<? extends BaseResponseBody<UserInfoRes>> userInfo(
         @RequestHeader("Authorization") String accessToken) {
         return ResponseEntity.ok()
-            .cacheControl(CacheControl.noCache())
+            .cacheControl(APICacheControl.noCache)
             .body(BaseResponseBody.<UserInfoRes>builder()
                 .message("user exists")
                 .data(userService.getUserInfo(accessToken))
@@ -178,7 +181,7 @@ public class UserController {
         userService.logout(accessToken);
 
         return ResponseEntity.ok()
-            .cacheControl(CacheControl.noCache())
+            .cacheControl(APICacheControl.noCache)
             .body(BaseResponseBody.<String>builder().message("logout success").data("").build());
     }
 
@@ -197,7 +200,7 @@ public class UserController {
         UserUpdateRes userUpdateRes = userService.update(request);
 
         return ResponseEntity.ok()
-            .cacheControl(CacheControl.noCache())
+            .cacheControl(APICacheControl.noCache)
             .body(BaseResponseBody.<UserUpdateRes>builder()
                 .message(String.format("User(%s) data updated.", userUpdateRes.getId()))
                 .data(userUpdateRes)
@@ -213,7 +216,7 @@ public class UserController {
     public ResponseEntity<? extends BaseResponseBody<UserPasswordResetPostRes>> reset(
         @RequestBody UserPasswordResetPostReq request) {
         return ResponseEntity.ok()
-            .cacheControl(CacheControl.noCache())
+            .cacheControl(APICacheControl.noCache)
             .body(BaseResponseBody.<UserPasswordResetPostRes>builder()
                 .message(String.format("User %s password reseted", request.getUserId()))
                 .data(userService.reset(request.getUserId()))
@@ -228,7 +231,7 @@ public class UserController {
     public ResponseEntity<? extends BaseResponseBody<UserInfoRes>> withdrawUser(
         @RequestHeader("Authorization") String accessToken) {
         return ResponseEntity.ok()
-            .cacheControl(CacheControl.noCache())
+            .cacheControl(APICacheControl.noCache)
             .body(BaseResponseBody.<UserInfoRes>builder()
                 .message(String.format("withdraw User success"))
                 .data(userService.withdrawUser(accessToken))
