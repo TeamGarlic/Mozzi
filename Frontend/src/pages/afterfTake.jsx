@@ -84,7 +84,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
 
   function drawVid() {
     frameNum.forEach((idx) => {
-      if (frame[idx].src !== "") {
+      if (frame[idx].clipIdx > 0) {
         completeClipContextRef.current.drawImage(
           videoRef.current[idx],
           completeClipRef.current.width * frame[idx]["x"],
@@ -117,7 +117,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
       </div>
       <div className={`flex ${delay ? "invisible":"" }`}>
         <div className="w-full h-screen p-4 flex-col">
-          <ClipLog user={user} updateMozzi={updateMozzi}/>
+          <ClipLog user={user}/>
         </div>
         <div className="float-right min-w-[calc(32rem)] w-[calc(32rem)] h-screen bg-white flex-col rounded-s-xl p-4 justify-center items-center text-center overflow-y-scroll scrollbar-hide">
           프레임

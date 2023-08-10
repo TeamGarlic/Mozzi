@@ -10,7 +10,7 @@ import {
 import PropTypes from "prop-types";
 import {checkHost} from "@/utils/DecoratorUtil.js";
 
-function ClipLog({user, updateMozzi}) {
+function ClipLog({user}) {
   const clipList = useSelector((state) => state.clipReducer.clipList);
   const drag = useSelector((state) => state.clipReducer.drag);
   const dispatch = useDispatch();
@@ -35,7 +35,6 @@ function ClipLog({user, updateMozzi}) {
         frameIdx: 0,
       })
     );
-    updateMozzi(frame)
   }
 
   function onDragStart(event) {
@@ -56,7 +55,6 @@ function ClipLog({user, updateMozzi}) {
           frameIdx: drag["endIdx"],
         })
       );
-      updateMozzi(frame)
     }
     dispatch(DragClearAction());
   }
@@ -128,5 +126,4 @@ ClipLog.propTypes = {
     email: PropTypes.string,
     isHost: PropTypes.number,
   }),
-  updateMozzi: PropTypes.func,
 };

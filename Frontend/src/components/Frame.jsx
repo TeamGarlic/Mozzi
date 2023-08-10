@@ -20,6 +20,7 @@ function Frame({user, updateMozzi}) {
 
 
   useEffect(() => {
+    UpdateMozzi(frame)
     frameNum.forEach((i) => {
       frameRef.current[i].style.height = `${imgRef.current.height*frame[i]['height']}px`;
       frameRef.current[i].style.width = `${imgRef.current.width*frame[i]['width']}px`;
@@ -27,6 +28,11 @@ function Frame({user, updateMozzi}) {
       frameRef.current[i].style.left = `${frame[i]['x']*imgRef.current.width}px`;
     })
   }, [frame])
+
+  function UpdateMozzi(){
+    updateMozzi(frame)
+  }
+  UpdateMozzi = checkHost(UpdateMozzi, user.isHost)
 
   function clickVideo(event) {
     dispatch(
