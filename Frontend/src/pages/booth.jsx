@@ -99,7 +99,7 @@ function Booth() {
 
   const onResults = (results) => {
 
-    drawMask(bgRemovedRef.current, bgRemovedContextRef.current, results);
+    drawMask(bgRemovedRef.current, bgRemovedContextRef.current, results, Math.PI);
     chromaKey(pubVideoMap.canvasRef, pubVideoMap.canvasContextRef, pubVideoMap.vidRef);
     for (let key in subVideoMap) {
       chromaKey(subVideoMap[key].canvasRef, subVideoMap[key].canvasContextRef, subVideoMap[key].vidRef);
@@ -194,7 +194,7 @@ function Booth() {
     getFrameList();
     const bgImg = new Image();
     // TODO : 배경이미지 API로 받아오기
-    getBgList(1, 10);
+    getBgList(1, 100);
     bgImg.src = "https://api.mozzi.lol/files/object/1691022079984_bg2.jpg";
     bgImg.crossOrigin = "anonymous";
     dispatch(changeBgAction({ img: bgImg }));
