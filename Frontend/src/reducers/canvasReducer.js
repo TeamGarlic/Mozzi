@@ -49,7 +49,7 @@ const canvasReducer = (state = canvasState, action) => {
           pos.height = action.payload.height;
         }
       }
-      console.log(state.position);
+      // console.log(state.position);
       return  {
         ...state
       }
@@ -102,7 +102,7 @@ const canvasReducer = (state = canvasState, action) => {
           })
         }
       }
-      console.log(state.position)
+      // console.log(state.position);
       return {
         ...state
       }
