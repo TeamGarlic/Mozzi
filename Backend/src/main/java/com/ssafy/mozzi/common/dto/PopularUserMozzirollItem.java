@@ -21,6 +21,8 @@ public class PopularUserMozzirollItem {
     private String objectName;
     private String title;
     private LocalDateTime createdAt;
+    private int width;
+    private int height;
     @NotNull
     private boolean isLiked = false;
     private int likeCount;

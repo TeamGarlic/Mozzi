@@ -16,6 +16,10 @@ public interface PopularUserMozzirollEntityDto {
 
     LocalDateTime getCreatedAt();
 
+    int getWidth();
+
+    int getHeight();
+
     int getLikeCount();
 
     boolean getIsLiked();

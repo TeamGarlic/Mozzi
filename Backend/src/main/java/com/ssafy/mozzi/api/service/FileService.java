@@ -7,7 +7,7 @@ import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
 import com.ssafy.mozzi.common.dto.ObjectFileItem;
 
 public interface FileService {
-    FileMozzirollPostRes saveMozziroll(MultipartFile file, String title, String accessToken);
+    FileMozzirollPostRes saveMozziroll(MultipartFile file, String title, String accessToken, int width, int height);
 
     ObjectFileItem downloadMozziroll(String mozzirollId);
 
