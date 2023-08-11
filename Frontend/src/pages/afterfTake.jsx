@@ -57,7 +57,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
 
   async function saveClip(file, title) {
     try {
-      let res = await fileApi.saveClip(file, title);
+      let res = await fileApi.saveClip(file, title, bg.width, bg.height);
       if (res.status === 201) {
         sendMozzi(res.data.data.id);
       }

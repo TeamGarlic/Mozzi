@@ -16,12 +16,14 @@ const PrivateFileApi = axios.create({
 });
 
 const fileApi = {
-  saveClip: async (file, title) => {
+  saveClip: async (file, title, width, height) => {
     const res = await PrivateFileApi.post(
       "mozziroll/upload",
       {
         file: file,
         title: title,
+        width: width,
+        height: height,
       }
     );
     return res;

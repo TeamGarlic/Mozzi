@@ -1,4 +1,4 @@
-export const drawMask = function(canvas, context, result, degree = 0, scale = 1) {
+export const drawMask = function(canvas, context, result, visibility=true, degree = 0, scale = 1) {
   // 배경 제거된 영상을 캔버스에 그리는 함수
   if(!canvas) return;
   context.save();
@@ -10,30 +10,32 @@ export const drawMask = function(canvas, context, result, degree = 0, scale = 1)
     canvas.height
   );
 
-  context.translate(canvas.width/2,canvas.height/2);
-  context.rotate(degree);
-  context.translate(-canvas.width/2,-canvas.height/2);
-  // context.filter = "contrast(1.4) sepia(1)";
 
-  context.translate(canvas.width*(1-scale)/2,canvas.height*(1-scale)/2);
-  context.globalCompositeOperation = 'source-out';
-  context.drawImage(
-    result.segmentationMask,
-    0,
-    0,
-    canvas.width*scale,
-    canvas.height*scale,
-  );
-  context.globalCompositeOperation = 'source-in';
-  context.drawImage(
-    result.image,
-    0,
-    0,
-    canvas.width*scale,
-    canvas.height*scale,
-  );
+  if(visibility){
+    context.translate(canvas.width/2,canvas.height/2);
+    context.rotate(degree);
+    context.translate(-canvas.width/2,-canvas.height/2);
+    // context.filter = "contrast(1.4) sepia(1)";
 
-  context.restore();
+    context.translate(canvas.width*(1-scale)/2,canvas.height*(1-scale)/2);
+    context.globalCompositeOperation = 'source-out';
+    context.drawImage(
+      result.segmentationMask,
+      0,
+      0,
+      canvas.width*scale,
+      canvas.height*scale,
+    );
+    context.globalCompositeOperation = 'source-in';
+    context.drawImage(
+      result.image,
+      0,
+      0,
+      canvas.width*scale,
+      canvas.height*scale,
+    );
+    context.restore();
+  }
   context.globalCompositeOperation = 'destination-over';
   context.fillStyle = '#00FF00';
   context.fillRect(
