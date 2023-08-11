@@ -58,12 +58,12 @@ function Start() {
     <Layout>
       <>
         <NavBar user={user} />
-        <div className="w-[calc(40rem)] flex-col justify-center items-center text-center mx-auto pt-40">
+        <div className="w-[calc(60rem)] flex-col justify-center items-center text-center mx-auto pt-40">
           <div className=" text-2xl items-center">
             <img src={mozzilogo} className=" mx-auto w-72 h-72" />
           </div>
-          <div className=" flex justify-center text-center gap-20">
-            <div className="w-48 h-fit flex-col p-4">
+          <div className=" flex justify-center text-center gap-15 pt-20">
+            <div className="w-96 h-fit flex-col p-1">
               <button onClick={makeBooth} className="text-center">
                 <img
                   src={makebooth}
@@ -72,7 +72,7 @@ function Start() {
               </button>
               <div className="mt-4 h-14 leading-10 text-lg">부스 만들기</div>
             </div>
-            <div className="w-48 h-fit flex-col p-4">
+            <div className="w-96 h-fit flex-col p-1">
               <button onClick={showCodeLine} className="text-center">
                 <img
                   src={gotobooth}
@@ -101,13 +101,14 @@ function Start() {
                 </div>
               )}
             </div>
-            <div className="w-48 h-fit flex-col p-4">
-              <Link to="/community" className="text-center">
+            <div className="w-96 h-fit flex-col p-1">
+              <div className="text-center w-fit mx-auto">
                 <img
+                    onClick={()=>navigate("/community")}
                   src={gotocommu}
-                  className=" w-20 h-20 mx-auto hover:ring-2 rounded-xl ring-offset-2 ring-offset-transparent"
+                  className="hover:cursor-pointer w-20 h-20 mx-auto hover:ring-2 rounded-xl ring-offset-2 ring-offset-transparent"
                 />
-              </Link>
+              </div>
               <div className="mt-4 h-14 leading-10 text-lg">커뮤니티</div>
             </div>
           </div>

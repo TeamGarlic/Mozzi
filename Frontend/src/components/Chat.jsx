@@ -15,7 +15,11 @@ function Chat({ sendMessage, chatLists, user, publisher }) {
     if(user.isHost === 1){
     sendMessage(msg.value, user.userData.userNickname);
     }else if(user.isHost === 0){
+      if(user.userData){
+        sendMessage(msg.value, user.userData.userNickname);
+      }else{
       sendMessage(msg.value, user.userNickname);
+      }
     }
     msg.reset();
   }
@@ -29,6 +33,10 @@ function Chat({ sendMessage, chatLists, user, publisher }) {
   useEffect(()=>{
     console.log(user);
   },[])
+
+  useEffect(()=>{
+    console.log(chatLists);
+  },[chatLists]);
 
   useEffect(() => {
     // console.log(chattingLog.current.scrollTop, chattingLog.current.scrollHeight );
