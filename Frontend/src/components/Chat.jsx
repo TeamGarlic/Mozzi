@@ -30,14 +30,6 @@ function Chat({ sendMessage, chatLists, user, publisher }) {
     }
   }
 
-  useEffect(()=>{
-    // console.log(user);
-  },[])
-
-  useEffect(()=>{
-    console.log(chatLists);
-  },[chatLists]);
-
   useEffect(() => {
     // console.log(chattingLog.current.scrollTop, chattingLog.current.scrollHeight );
     const lastMsg = chatLists[chatLists.length-1];
