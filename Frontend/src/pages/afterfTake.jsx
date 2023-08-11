@@ -9,9 +9,11 @@ import { checkHost } from "@/utils/DecoratorUtil.js";
 import fileApi from "@/api/fileApi.js";
 import Spinner from "@/components/Spinner.jsx";
 import {AppStore} from "@/store/AppStore.js";
+import useInterval from '@/hooks/useInterval.js';
 
 function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
   const [delay, setDelay] = useState(false);
+  const [recording, setRecording] = useState(false);
   const { code: shareCode } = useParams();
   const frame = useSelector((state) => state.clipReducer.frame);
   const frameNum = Array.from({ length: frame["n"] }, (v, i) => i + 1);
@@ -47,13 +49,19 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
 
     // 녹화 시작
     mediaRecorder.start();
+    setRecording(true);
     // Todo: 현재는 시간에 dependent => 프레임 단위로 전환 필요함
+
     setTimeout(() => {
       // 녹화 종료
       mediaRecorder.stop();
-      // console.log("stop")
+      setRecording(false);
     }, 5000);
   }
+
+  useInterval(()=>{
+    drawVid();
+  },recording?30:null);
 
   async function saveClip(file, title) {
     try {
@@ -94,7 +102,6 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
         );
       }
     });
-    requestAnimationFrame(drawVid);
   }
 
   useEffect(() => {
@@ -135,7 +142,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
           ref={completeClipRef}
           width={bg.width}
           height={bg.height}
-          className="hidden"
+          className="collapse absolute"
         ></canvas>
         {frameNum.map((i) => {
           if (frame[i]["src"]) {
@@ -144,8 +151,9 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
                 key={`hidden${i}`}
                 ref={(el) => (videoRef.current[i] = el)}
                 id={`hidden${i}`}
-                className="hidden"
+                className="collapse absolute"
                 src={frame[i]["src"]}
+                // autoPlay={true}
               ></video>
             );
           }
