@@ -64,9 +64,9 @@ PrivateMozziRollApi.interceptors.response.use(
 );
 
 const mozziRollApi = {
-    getMozziRolls: async () => {
+    getMozziRolls: async (page, size) => {
         if (!window.localStorage.getItem("accessToken")) return;
-        let res = await PrivateMozziRollApi.get("");
+        let res = await PrivateMozziRollApi.get(``, { pageNum: page, pageSize: size });
         return res;
     },
 };

@@ -1,11 +1,11 @@
-import Layout from "../components/Layout";
-import UserSideBar from "../components/UserSideBar";
+import Layout from "@/components/Layout";
+import UserSideBar from "@/components/UserSideBar";
 import EnterDialog from "@/components/EnterDialog";
 import PropTypes from "prop-types";
 import { useState } from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {setFrameAction} from "@/modules/clipAction.js";
-import {checkHost} from "@/utils/DecoratorUtil.js";
+import { useDispatch, useSelector } from "react-redux";
+import { setFrameAction } from "@/modules/clipAction.js";
+import { checkHost } from "@/utils/DecoratorUtil.js";
 
 function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, user }) {
   const [visibility, setVisibility] = useState(true);
@@ -25,7 +25,7 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
     });
   }
 
-  function clickFrame(event, frame){
+  function clickFrame(event, frame) {
     const res = {
       id: frame.id,
       title: frame.title,
@@ -80,10 +80,10 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
             <div className="gap-6 p-4 mr-[calc(17rem)]  overflow-x-scroll scrollbar-thumb-gray-900 scrollbar-track-gray-100">
               <div className=" inline-flex flex-nowrap h-[calc(25rem)]  items-center gap-4 p-4">
                 {frameList.map((frame) => (
-                    <div onClick={(e)=>clickFrame(e, frame)} key={frame.id} className={`border-8 ${pickedFrame.id === frame.id ? "border-blue-500" : ""}`}>
-                      <img src={`https://api.mozzi.lol/files/object/${frame.objectName}`} alt={frame.objectName} className={"max-w-[calc(50rem)] max-h-[calc(22.75rem)]"}></img>
-                    </div>
-                  )
+                  <div onClick={(e) => clickFrame(e, frame)} key={frame.id} className={`border-8 ${pickedFrame.id === frame.id ? "border-blue-500" : ""}`}>
+                    <img src={`https://api.mozzi.lol/files/object/${frame.objectName}`} alt={frame.objectName} className={"max-w-[calc(50rem)] max-h-[calc(22.75rem)]"}></img>
+                  </div>
+                )
                 )}
               </div>
             </div>
@@ -112,7 +112,7 @@ MakeBooth.propTypes = {
   startTake: PropTypes.func,
   shareCode: PropTypes.string,
   leaveSession: PropTypes.func,
-  gotoTakePic : PropTypes.func,
+  gotoTakePic: PropTypes.func,
   frameList: PropTypes.array,
   user: PropTypes.shape({
     id: PropTypes.number,

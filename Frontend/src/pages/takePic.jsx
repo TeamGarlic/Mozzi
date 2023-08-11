@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 // import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import PicSideBar from "../components/PicSideBar";
-import Layout from "../components/Layout";
-import BigCam from "../components/BigCam";
+import PicSideBar from "@/components/PicSideBar";
+import Layout from "@/components/Layout";
+import BigCam from "@/components/BigCam";
 import Chat from "@/components/Chat";
 import PropTypes from "prop-types";
 import MyRadioGroup from "@/components/MyRadioGroup";
@@ -12,7 +12,7 @@ import { checkHost } from "@/utils/DecoratorUtil.js";
 import boothApi from "@/api/boothApi.js";
 import CamSetting from '@/components/CamSetting.jsx';
 
-function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition, sendFileName, shareSecret, publisher}) {
+function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition, sendFileName, shareSecret, publisher }) {
   const timers = [3, 5, 10];
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
@@ -33,7 +33,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
     mediaRecorder.onstop = () => {
       const blob = new Blob(arrClipData);
       const fileName = `clip${taken}.webm`;
-      const file = new File([blob], fileName, {type: "video/webm"})
+      const file = new File([blob], fileName, { type: "video/webm" })
       const fileToBase64 = file => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -122,7 +122,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
     <Layout>
       <>
         <CamSetting />
-        <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} publisher={publisher}/>
+        <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} publisher={publisher} />
         <div className="w-full pt-4 ps-4">
           <div>
             <div className=" text-sm text-gray-500">
@@ -130,7 +130,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
             </div>
             <div className="text-2xl">MOZZI</div>
           </div>
-          <PicSideBar bgList={bgList} user={user} changeBg={changeBg} position={position} sendPosition={sendPosition} setPosition={setPosition}/>
+          <PicSideBar bgList={bgList} user={user} changeBg={changeBg} position={position} sendPosition={sendPosition} setPosition={setPosition} />
           {/* <div className="float-right mr-10 text-2xl">taken : {taken}/10</div> */}
         </div>
         <BigCam myId={myId} updatePosition={updatePosition} setPosition={setPosition} />
@@ -172,7 +172,7 @@ TakePic.propTypes = {
   chatLists: PropTypes.array,
   bgList: PropTypes.array,
   goNext: PropTypes.func,
-  publisher:PropTypes.any,
+  publisher: PropTypes.any,
   user: PropTypes.shape({
     id: PropTypes.number,
     userId: PropTypes.string,

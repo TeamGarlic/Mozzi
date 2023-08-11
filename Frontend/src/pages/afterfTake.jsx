@@ -1,14 +1,14 @@
-import Layout from "../components/Layout";
+import Layout from "@/components/Layout";
 import ClipLog from "@/components/ClipLog";
 import Frame from "@/components/Frame";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import {useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import fileApi from "@/api/fileApi.js";
 import Spinner from "@/components/Spinner.jsx";
-import {AppStore} from "@/store/AppStore.js";
+import { AppStore } from "@/store/AppStore.js";
 
 function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
   const [delay, setDelay] = useState(false);
@@ -112,46 +112,46 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
   return (
     <Layout>
       <>
-      <div className={`flex ${delay ? "":"invisible" }`}>
-        <Spinner></Spinner>
-      </div>
-      <div className={`flex ${delay ? "invisible":"" }`}>
-        <div className="w-full h-screen p-4 flex-col">
-          <ClipLog user={user}/>
+        <div className={`flex ${delay ? "" : "invisible"}`}>
+          <Spinner></Spinner>
         </div>
-        <div className="float-right min-w-[calc(32rem)] w-[calc(32rem)] h-screen bg-white flex-col rounded-s-xl p-4 justify-center items-center text-center overflow-y-scroll scrollbar-hide">
-          프레임
-          <div className="mx-auto bottom-5 justify-center items-center text-center">
-            <Frame user={user} updateMozzi={updateMozzi}/>
-            <button
-              className="w-1/2 h-10 rounded-3xl bg-yellow-100 shadow-[5px_5px_5px_0px_rgba(0,0,0,0.5)]"
-              onClick={makeClip}
-            >
-              공유하기
-            </button>
+        <div className={`flex ${delay ? "invisible" : ""}`}>
+          <div className="w-full h-screen p-4 flex-col">
+            <ClipLog user={user} />
           </div>
+          <div className="float-right min-w-[calc(32rem)] w-[calc(32rem)] h-screen bg-white flex-col rounded-s-xl p-4 justify-center items-center text-center overflow-y-scroll scrollbar-hide">
+            프레임
+            <div className="mx-auto bottom-5 justify-center items-center text-center">
+              <Frame user={user} updateMozzi={updateMozzi} />
+              <button
+                className="w-1/2 h-10 rounded-3xl bg-yellow-100 shadow-[5px_5px_5px_0px_rgba(0,0,0,0.5)]"
+                onClick={makeClip}
+              >
+                공유하기
+              </button>
+            </div>
+          </div>
+          <canvas
+            ref={completeClipRef}
+            width={bg.width}
+            height={bg.height}
+            className="hidden"
+          ></canvas>
+          {frameNum.map((i) => {
+            if (frame[i]["src"]) {
+              return (
+                <video
+                  key={`hidden${i}`}
+                  ref={(el) => (videoRef.current[i] = el)}
+                  id={`hidden${i}`}
+                  className="hidden"
+                  src={frame[i]["src"]}
+                ></video>
+              );
+            }
+          })}
         </div>
-        <canvas
-          ref={completeClipRef}
-          width={bg.width}
-          height={bg.height}
-          className="hidden"
-        ></canvas>
-        {frameNum.map((i) => {
-          if (frame[i]["src"]) {
-            return (
-              <video
-                key={`hidden${i}`}
-                ref={(el) => (videoRef.current[i] = el)}
-                id={`hidden${i}`}
-                className="hidden"
-                src={frame[i]["src"]}
-              ></video>
-            );
-          }
-        })}
-      </div>
-        </>
+      </>
     </Layout>
   );
 }

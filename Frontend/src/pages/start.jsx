@@ -2,13 +2,14 @@ import Layout from "@/components/Layout";
 import NavBar from "@/components/NavBar";
 import useUser from "@/hooks/useUser";
 import useInput from "@/hooks/useInput";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import TextInput from "@/components/TextInput";
 import boothApi from "@/api/boothApi";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import mozzilogo from "@/assets/img/mozzi.png";
 import gotobooth from "@/assets/img/gotobooth.png";
 import makebooth from "@/assets/img/makebooth.png";
+import gotocommu from "@/assets/img/gotocommu.png";
 
 function Start() {
   const [showCode, setShowCode] = useState(false);
@@ -28,11 +29,11 @@ function Start() {
     let res = await boothApi.createBooth();
     const shareCode = res.data.data.shareCode
     const shareSecret = res.data.data.shareSecret
-    navigate(`/${shareCode}/booth`, {state: {isHost: 1, shareSecret: shareSecret}});
+    navigate(`/${shareCode}/booth`, { state: { isHost: 1, shareSecret: shareSecret } });
   }
 
   const activeEnter = (e) => {
-    if(e.key === "Enter") {
+    if (e.key === "Enter") {
       gotoBooth();
     }
   }
@@ -43,13 +44,13 @@ function Start() {
       // console.log(res);
       const shareCode = res.data.data.shareCode;
       const shareSecret = res.data.data.shareSecret
-      navigate(`/${shareCode}/booth`, {state: {isHost: 0, shareSecret: shareSecret}});
+      navigate(`/${shareCode}/booth`, { state: { isHost: 0, shareSecret: shareSecret } });
     } catch {
       alert("해당 코드로 생성된 부스가 없습니다.");
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
 
   });
 
@@ -99,6 +100,15 @@ function Start() {
                   </span>
                 </div>
               )}
+            </div>
+            <div className="w-48 h-fit flex-col p-4">
+              <Link to="/community" className="text-center">
+                <img
+                  src={gotocommu}
+                  className=" w-20 h-20 mx-auto hover:ring-2 rounded-xl ring-offset-2 ring-offset-transparent"
+                />
+              </Link>
+              <div className="mt-4 h-14 leading-10 text-lg">커뮤니티</div>
             </div>
           </div>
         </div>
