@@ -27,7 +27,7 @@ function Chat({ sendMessage, chatLists, user, publisher }) {
   }
 
   useEffect(()=>{
-    console.log(user);
+    // console.log(user);
   },[])
 
   useEffect(() => {
