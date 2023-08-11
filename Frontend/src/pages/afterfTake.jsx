@@ -9,9 +9,11 @@ import { checkHost } from "@/utils/DecoratorUtil.js";
 import fileApi from "@/api/fileApi.js";
 import Spinner from "@/components/Spinner.jsx";
 import { AppStore } from "@/store/AppStore.js";
+import useInterval from '@/hooks/useInterval.js';
 
 function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
   const [delay, setDelay] = useState(false);
+  const [recording, setRecording] = useState(false);
   const { code: shareCode } = useParams();
   const frame = useSelector((state) => state.clipReducer.frame);
   const frameNum = Array.from({ length: frame["n"] }, (v, i) => i + 1);
@@ -47,13 +49,19 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
 
     // 녹화 시작
     mediaRecorder.start();
+    setRecording(true);
     // Todo: 현재는 시간에 dependent => 프레임 단위로 전환 필요함
+
     setTimeout(() => {
       // 녹화 종료
       mediaRecorder.stop();
-      // console.log("stop")
+      setRecording(false);
     }, 5000);
   }
+
+  useInterval(()=>{
+    drawVid();
+  },recording?30:null);
 
   async function saveClip(file, title) {
     try {
@@ -94,7 +102,6 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
         );
       }
     });
-    requestAnimationFrame(drawVid);
   }
 
   useEffect(() => {
@@ -112,46 +119,47 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
   return (
     <Layout>
       <>
-        <div className={`flex ${delay ? "" : "invisible"}`}>
-          <Spinner></Spinner>
+      <div className={`flex ${delay ? "":"invisible" }`}>
+        <Spinner></Spinner>
+      </div>
+      <div className={`flex ${delay ? "invisible":"" }`}>
+        <div className="w-full h-screen p-4 flex-col">
+          <ClipLog user={user}/>
         </div>
-        <div className={`flex ${delay ? "invisible" : ""}`}>
-          <div className="w-full h-screen p-4 flex-col">
-            <ClipLog user={user} />
+        <div className="float-right min-w-[calc(32rem)] w-[calc(32rem)] h-screen bg-white flex-col rounded-s-xl p-4 justify-center items-center text-center overflow-y-scroll scrollbar-hide">
+          프레임
+          <div className="mx-auto bottom-5 justify-center items-center text-center">
+            <Frame user={user} updateMozzi={updateMozzi}/>
+            <button
+              className="w-1/2 h-10 rounded-3xl bg-yellow-100 shadow-[5px_5px_5px_0px_rgba(0,0,0,0.5)]"
+              onClick={makeClip}
+            >
+              공유하기
+            </button>
           </div>
-          <div className="float-right min-w-[calc(32rem)] w-[calc(32rem)] h-screen bg-white flex-col rounded-s-xl p-4 justify-center items-center text-center overflow-y-scroll scrollbar-hide">
-            프레임
-            <div className="mx-auto bottom-5 justify-center items-center text-center">
-              <Frame user={user} updateMozzi={updateMozzi} />
-              <button
-                className="w-1/2 h-10 rounded-3xl bg-yellow-100 shadow-[5px_5px_5px_0px_rgba(0,0,0,0.5)]"
-                onClick={makeClip}
-              >
-                공유하기
-              </button>
-            </div>
-          </div>
-          <canvas
-            ref={completeClipRef}
-            width={bg.width}
-            height={bg.height}
-            className="hidden"
-          ></canvas>
-          {frameNum.map((i) => {
-            if (frame[i]["src"]) {
-              return (
-                <video
-                  key={`hidden${i}`}
-                  ref={(el) => (videoRef.current[i] = el)}
-                  id={`hidden${i}`}
-                  className="hidden"
-                  src={frame[i]["src"]}
-                ></video>
-              );
-            }
-          })}
         </div>
-      </>
+        <canvas
+          ref={completeClipRef}
+          width={bg.width}
+          height={bg.height}
+          className="collapse absolute"
+        ></canvas>
+        {frameNum.map((i) => {
+          if (frame[i]["src"]) {
+            return (
+              <video
+                key={`hidden${i}`}
+                ref={(el) => (videoRef.current[i] = el)}
+                id={`hidden${i}`}
+                className="collapse absolute"
+                src={frame[i]["src"]}
+                // autoPlay={true}
+              ></video>
+            );
+          }
+        })}
+      </div>
+        </>
     </Layout>
   );
 }
