@@ -9,17 +9,17 @@ import MyPage from "@/pages/myPage";
 
 function Router() {
   return (
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Start />} />
-          <Route path="/login" element={<LogIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/modify" element={<ModifyUser />} />
-          <Route path="/mypage" element={<MyPage />} />
-          <Route path="/:code/booth" element={<Booth />} />
-          <Route path="*" element={<NoFile />} />
-        </Routes>
-      </BrowserRouter>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Start />} />
+        <Route path="/login" element={<LogIn />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/modify" element={<ModifyUser />} />
+        <Route path="/mypage" element={<MyPage />} />
+        <Route path="/:code/booth" element={<Booth />} />
+        <Route path="*" element={<NoFile />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 export default Router;

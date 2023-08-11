@@ -3,10 +3,10 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   updatePositionAction, updatePubVideoMapAction, updateSubVideoMapAction,
 } from '@/modules/canvasAction.js';
-import MakeBooth from "./makeBooth";
-import TakePic from "./takePic";
-import AfterTake from "./afterfTake";
-import Finish from "./finish";
+import MakeBooth from "@/pages/makeBooth";
+import TakePic from "@/pages/takePic";
+import AfterTake from "@/pages/afterfTake";
+import Finish from "@/pages/finish";
 import { useParams, useLocation } from "react-router-dom";
 import { SelfieSegmentation } from "@mediapipe/selfie_segmentation";
 import { drawCanvas, drawMask, chromaKey } from "@/utils/videoUtil.js";
@@ -15,9 +15,9 @@ import { changeBgAction } from "@/modules/bgAction.js";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import itemApi from "@/api/itemApi.js";
 import userApi from "@/api/userApi.js";
-import {AppStore} from "@/store/AppStore.js";
+import { AppStore } from "@/store/AppStore.js";
 import Spinner from "@/components/Spinner.jsx"
-import {usePreventGoBack} from "@/hooks/usePreventGoBack.js";
+import { usePreventGoBack } from "@/hooks/usePreventGoBack.js";
 
 function Booth() {
 
@@ -59,12 +59,12 @@ function Booth() {
 
   // global variables
   let localVideoMap = {};
-  const userConfig =  location.state ? {isHost : location.state.isHost} : undefined;
+  const userConfig = location.state ? { isHost: location.state.isHost } : undefined;
 
   usePreventGoBack();
 
   // useState
-  const [user,setUser] = useState(userConfig);
+  const [user, setUser] = useState(userConfig);
   const [bgList, setBgList] = useState([]);
   const [delay, setDelay] = useState(true);
   const [frameList, setFrameList] = useState([]);
@@ -98,37 +98,37 @@ function Booth() {
   startTake = checkHost(startTake, user ? user.isHost : undefined);
 
   const onResults = (results) => {
-    drawMask(bgRemovedRef.current, bgRemovedContextRef.current, results, canvasConfig.degree*Math.PI/180, canvasConfig.scale/100);
+    drawMask(bgRemovedRef.current, bgRemovedContextRef.current, results, canvasConfig.degree * Math.PI / 180, canvasConfig.scale / 100);
     chromaKey(pubVideoMap.canvasRef, pubVideoMap.canvasContextRef, pubVideoMap.vidRef);
     for (let key in subVideoMap) {
       chromaKey(subVideoMap[key].canvasRef, subVideoMap[key].canvasContextRef, subVideoMap[key].vidRef);
     }
 
-    if (mainCanvas.canvas){
+    if (mainCanvas.canvas) {
       drawCanvas(mainCanvas.canvas.current, mainCanvas.context.current, bgNow.img, localPosition);
     }
   };
 
   const initPosition = () => {
-    if(publisher&&(now === "MAKING")){
+    if (publisher && (now === "MAKING")) {
       const newPosition = [];
       newPosition.push({
-        id : publisher.stream.connection.connectionId,
-        x:0,
-        y:0,
-        width:0.4,
-        height:0.4,
+        id: publisher.stream.connection.connectionId,
+        x: 0,
+        y: 0,
+        width: 0.4,
+        height: 0.4,
       })
       let d = 0.1;
-      subscribers.forEach((sub) =>{
+      subscribers.forEach((sub) => {
         newPosition.push({
-          id : sub.stream.connection.connectionId,
-          x:d,
-          y:d,
-          width:0.4,
-          height:0.4,
+          id: sub.stream.connection.connectionId,
+          x: d,
+          y: d,
+          width: 0.4,
+          height: 0.4,
         })
-        d+=0.1
+        d += 0.1
       });
       setPosition(newPosition);
     }
@@ -156,31 +156,31 @@ function Booth() {
     }
   }
 
-  const userJoin = async (initialState, ref)=> {
+  const userJoin = async (initialState, ref) => {
     console.log(userConfig);
-    if(userConfig === undefined) {
+    if (userConfig === undefined) {
       alert("잘못된 접근입니다.");
-      window.location.href="/";
+      window.location.href = "/";
       return;
     }
 
     let res = await userApi.getUser();
-    res = res ? res : {status:404};
-    if(res.status ===200){
+    res = res ? res : { status: 404 };
+    if (res.status === 200) {
       const userData = res.data.data
-      setUser((prev)=>{
+      setUser((prev) => {
         joinSession(userData.userNickname, ref);
-        return {...prev, userData}
+        return { ...prev, userData }
       });
-    }else{
+    } else {
       let guest = prompt("이름을 입력하세요", "GUEST");
       if (!guest) {
         alert("메인 화면으로 돌아갑니다.");
-        window.location.href="/";
+        window.location.href = "/";
       }
-      setUser((prev)=>{
+      setUser((prev) => {
         joinSession(guest, ref);
-        return {...prev, userNickname:guest}
+        return { ...prev, userNickname: guest }
       });
     }
   }
@@ -223,7 +223,7 @@ function Booth() {
       }
     };
     // initiateUser();
-    userJoin(userConfig,  bgRemovedRef.current.captureStream(30).getVideoTracks()[0])
+    userJoin(userConfig, bgRemovedRef.current.captureStream(30).getVideoTracks()[0])
   }, []);
 
 
@@ -252,7 +252,7 @@ function Booth() {
           canvasContextRef:
             subCanvasRefs.current[
               sub.stream.connection.connectionId
-              ].getContext("2d", { willReadFrequently: true }),
+            ].getContext("2d", { willReadFrequently: true }),
         };
         sub.addVideoElement(
           subVideoRefs.current[sub.stream.connection.connectionId]
@@ -268,16 +268,16 @@ function Booth() {
 
   // useEffect : [publisher]
   useEffect(() => {
-    if (publisher){
+    if (publisher) {
       setDelay(false);
       AppStore.setStopSpinner();
       // console.log(publisher.session.connection.data);
       publisher.addVideoElement(pubVideoRef.current);
       dispatch(updatePubVideoMapAction({
-        vidRef:pubVideoRef.current,
-        canvasRef:pubCanvasRef.current,
-        canvasContextRef:pubCanvasRef.current.getContext("2d", { willReadFrequently: true }),
-        nickname : JSON.parse(publisher.stream.connection.data).clientData
+        vidRef: pubVideoRef.current,
+        canvasRef: pubCanvasRef.current,
+        canvasContextRef: pubCanvasRef.current.getContext("2d", { willReadFrequently: true }),
+        nickname: JSON.parse(publisher.stream.connection.data).clientData
       }));
     }
     initPosition();
@@ -293,9 +293,9 @@ function Booth() {
   return (
     <>
       <video autoPlay ref={webcamRef} className="collapse absolute" />
-      <canvas ref={bgRemovedRef}  width={1280} height={720} className="collapse absolute" />
+      <canvas ref={bgRemovedRef} width={1280} height={720} className="collapse absolute" />
       <video ref={pubVideoRef} className="collapse absolute" ></video>
-      <canvas ref={pubCanvasRef}  width={1280} height={720} className="collapse absolute" />
+      <canvas ref={pubCanvasRef} width={1280} height={720} className="collapse absolute" />
       {subscribers &&
         subscribers.map((sub) => {
           return (
@@ -316,8 +316,8 @@ function Booth() {
           );
         })}
       {delay ? (
-        <Spinner/>
-      ): (
+        <Spinner />
+      ) : (
         <>
           {now === "MAKING" && (
             <MakeBooth
@@ -363,11 +363,11 @@ function Booth() {
             />
           )}
           {now === "FINISH" && (
-              <Finish
+            <Finish
               mozzi={mozzi}
-              subscribers ={subscribers}
+              subscribers={subscribers}
               publisher={publisher}
-          />)}
+            />)}
         </>
       )}
     </>
