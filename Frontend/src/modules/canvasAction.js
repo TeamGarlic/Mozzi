@@ -3,6 +3,7 @@ export const resizeLayer = "resizeLayer";
 export const updateSubVideoMap = "updateSubVideoMap";
 export const updatePubVideoMap = "updatePubVideoMap";
 export const updatePosition = "updatePosition"
+export const setVisibility = "setVisibility"
 export const setDegree = "setDegree"
 export const setScale = "setScale"
 
@@ -47,6 +48,14 @@ export const setDegreeAction = (res) => {
     payload : res,
   }
 };
+
+export const setVisibilityAction = (res) => {
+  return {
+    type : setVisibility,
+    payload : res,
+  }
+};
+
 export const setScaleAction = (res) => {
   return {
     type : setScale,
