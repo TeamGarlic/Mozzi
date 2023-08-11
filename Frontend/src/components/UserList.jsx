@@ -3,16 +3,9 @@ import {useEffect, useState} from "react"
 import {checkHost} from "@/utils/DecoratorUtil.js"
 import PropTypes from "prop-types";
 
-function UserList({user, position, sendPosition, setPosition}){
-  const [userList, setUserList] = useState(position.map((user) => {
-    return {
-      id: user.id,
-      name: "dummy",
-      onMic: 1,
-      onCam: 1,
-      isHost: 0
-    }
-  }))
+function UserList({user, position, sendPosition, setPosition, subscribers, publisher}){
+  const [userList, setUserList] = useState([])
+
   const [drag, setDrag] = useState(null);
   let height = 0;
   let moveY = 0;
@@ -22,8 +15,25 @@ function UserList({user, position, sendPosition, setPosition}){
   const borderColor = "border-blue-500";
 
   useEffect(() => {
-    console.log(position)
-  }, []);
+    setUserList(position.map((user) => {
+      let name = ""
+      const subscriber = subscribers && subscribers.find((el)=>{
+        return el.stream.connection.connectionId === user.id
+      })
+      if (subscriber) {
+        name = JSON.parse(subscriber.stream.connection.data).clientData;
+      } else {
+        name = JSON.parse(publisher.stream.connection.data).clientData;
+      }
+      return {
+        id: user.id,
+        name: name,
+        onMic: 1,
+        onCam: 1,
+        isHost: user.isHost,
+      }
+    }))
+  }, [position]);
 
   function onDragOver(event){
     event.preventDefault();
@@ -173,4 +183,6 @@ UserList.propTypes = {
   position: PropTypes.array,
   sendPosition: PropTypes.func,
   setPosition: PropTypes.func,
+  subscribers: PropTypes.array,
+  publisher: PropTypes.any,
 };

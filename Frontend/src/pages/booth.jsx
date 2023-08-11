@@ -20,7 +20,6 @@ import Spinner from "@/components/Spinner.jsx"
 import { usePreventGoBack } from "@/hooks/usePreventGoBack.js";
 
 function Booth() {
-
   // hooks
   const { code: shareCode } = useParams();
   const dispatch = useDispatch();
@@ -352,6 +351,7 @@ function Booth() {
               sendFileName={sendFileName}
               shareSecret={shareSecret}
               publisher={publisher}
+              subscribers={subscribers}
             />
           )}
           {now === "MODIFING" && (
