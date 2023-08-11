@@ -1,15 +1,15 @@
-import Layout from "../components/Layout";
+import Layout from "@/components/Layout";
 import PropTypes from "prop-types";
 import mozzilogo from "@/assets/img/mozzi.png";
 
-function Finish({mozzi, subscribers, publisher}) {
-  const goHome =()=>{
-    window.location.href="/";
+function Finish({ mozzi, subscribers, publisher }) {
+  const goHome = () => {
+    window.location.href = "/";
   }
 
   const names = [];
 
-  for(let item of subscribers){
+  for (let item of subscribers) {
     const name = JSON.parse(item.stream.connection.data).clientData;
     names.push(name);
   }
@@ -29,15 +29,15 @@ function Finish({mozzi, subscribers, publisher}) {
               {new Date().toLocaleDateString()}의 추억
               <br />
               with
-              <br/>
+              <br />
               {publisher && JSON.parse(publisher.stream.connection.data).clientData}
               <br />
-              {names.map((userName)=>{
+              {names.map((userName) => {
                 return (
-                    <>
-                      <br/>
-                      {userName}
-                    </>
+                  <>
+                    <br />
+                    {userName}
+                  </>
                 )
               })}
             </div>
@@ -60,6 +60,6 @@ export default Finish;
 
 Finish.propTypes = {
   mozzi: PropTypes.string,
-  subscribers : PropTypes.array,
-  publisher : PropTypes.any
+  subscribers: PropTypes.array,
+  publisher: PropTypes.any
 }

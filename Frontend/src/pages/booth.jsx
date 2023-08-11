@@ -3,10 +3,10 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   updatePositionAction, updatePubVideoMapAction, updateSubVideoMapAction,
 } from '@/modules/canvasAction.js';
-import MakeBooth from "./makeBooth";
-import TakePic from "./takePic";
-import AfterTake from "./afterfTake";
-import Finish from "./finish";
+import MakeBooth from "@/pages/makeBooth";
+import TakePic from "@/pages/takePic";
+import AfterTake from "@/pages/afterfTake";
+import Finish from "@/pages/finish";
 import { useParams, useLocation } from "react-router-dom";
 import { SelfieSegmentation } from "@mediapipe/selfie_segmentation";
 import { drawCanvas, drawMask, chromaKey } from "@/utils/videoUtil.js";
@@ -15,9 +15,9 @@ import { changeBgAction } from "@/modules/bgAction.js";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import itemApi from "@/api/itemApi.js";
 import userApi from "@/api/userApi.js";
-import {AppStore} from "@/store/AppStore.js";
+import { AppStore } from "@/store/AppStore.js";
 import Spinner from "@/components/Spinner.jsx"
-import {usePreventGoBack} from "@/hooks/usePreventGoBack.js";
+import { usePreventGoBack } from "@/hooks/usePreventGoBack.js";
 
 function Booth() {
 
@@ -59,12 +59,12 @@ function Booth() {
 
   // global variables
   let localVideoMap = {};
-  const userConfig =  location.state ? {isHost : location.state.isHost} : undefined;
+  const userConfig = location.state ? { isHost: location.state.isHost } : undefined;
 
   usePreventGoBack();
 
   // useState
-  const [user,setUser] = useState(userConfig);
+  const [user, setUser] = useState(userConfig);
   const [bgList, setBgList] = useState([]);
   const [delay, setDelay] = useState(true);
   const [frameList, setFrameList] = useState([]);

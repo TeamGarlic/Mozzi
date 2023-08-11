@@ -1,14 +1,14 @@
-import Layout from "../components/Layout";
+import Layout from "@/components/Layout";
 import ClipLog from "@/components/ClipLog";
 import Frame from "@/components/Frame";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import {useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import fileApi from "@/api/fileApi.js";
 import Spinner from "@/components/Spinner.jsx";
-import {AppStore} from "@/store/AppStore.js";
+import { AppStore } from "@/store/AppStore.js";
 import useInterval from '@/hooks/useInterval.js';
 
 function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
