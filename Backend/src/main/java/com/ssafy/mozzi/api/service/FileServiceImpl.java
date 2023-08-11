@@ -51,7 +51,8 @@ public class FileServiceImpl implements FileService {
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
-    public FileMozzirollPostRes saveMozziroll(MultipartFile file, String title, String accessToken) {
+    public FileMozzirollPostRes saveMozziroll(MultipartFile file, String title, String accessToken, int width,
+        int height) {
         final String OBJECT_NAME = String.format("%s_%s", System.currentTimeMillis(), file.getOriginalFilename());
         String contentType = "multipart/form-data";
 
@@ -65,6 +66,8 @@ public class FileServiceImpl implements FileService {
             Mozziroll.builder()
                 .objectName(OBJECT_NAME)
                 .creator(user)
+                .width(width)
+                .height(height)
                 .build());
         // UserMozziroll 테이블에 정보 추가
         userMozzirollRepository.save(UserMozziroll.builder()

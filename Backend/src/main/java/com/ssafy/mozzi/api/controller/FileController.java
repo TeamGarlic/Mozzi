@@ -61,7 +61,9 @@ public class FileController {
     @PostMapping(value = "/mozziroll/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<? extends BaseResponseBody<FileMozzirollPostRes>> saveMozziroll(
         @RequestHeader("Authorization") String accessToken, @RequestParam("file") MultipartFile file,
-        @RequestParam("title") String title) {
+        @RequestParam("title") String title,
+        @RequestParam("width") int width,
+        @RequestParam("height") int height) {
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
@@ -69,7 +71,7 @@ public class FileController {
             .body(
                 BaseResponseBody.<FileMozzirollPostRes>builder()
                     .message("Save mozziroll success")
-                    .data(fileService.saveMozziroll(file, title, accessToken))
+                    .data(fileService.saveMozziroll(file, title, accessToken, width, height))
                     .build()
             );
     }
