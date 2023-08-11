@@ -17,5 +17,5 @@ import lombok.NoArgsConstructor;
 public class UserMozzirollDeleteRes {
     private boolean deleted;
     private String title;
-    long id;
+    private long id;
 }

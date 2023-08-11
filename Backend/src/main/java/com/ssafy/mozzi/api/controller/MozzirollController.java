@@ -166,6 +166,7 @@ public class MozzirollController {
     /**
      * userMozzirollId 에 해당하는 userMozziroll 을 삭제합니다. (soft delete) 만든 사람 외에는 삭제가 불가능 합니다.
      * @param accessToken 사용자의 Token
+     * @param userMozzirollId 유저 모찌롤의 Id
      * @see MozzirollService
      */
     @Operation(summary = "유저 모찌롤 삭제", description = "userMozzirollId 에 해당하는 userMozziroll 을 삭제합니다. (soft delete) 만든 사람 외에는 삭제가 불가능 합니다. 만약 삭제될 때 관계된 mozziroll 의 부모가 더이상 없을경우 mozziroll 또한 같이 삭제합니다.")

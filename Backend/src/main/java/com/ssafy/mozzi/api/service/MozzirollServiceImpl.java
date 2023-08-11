@@ -202,11 +202,12 @@ public class MozzirollServiceImpl implements MozzirollService {
      * @param accessToken JWT Access Token
      * @param userMozzirollId long
      * @return UserMozzirollDeleteRes
+     * @throws MozzirollNotExistsException
+     * @throws UnAuthorizedException
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
-    public UserMozzirollDeleteRes deleteUserMozziroll(String accessToken, long userMozzirollId) throws
-        MozzirollNotExistsException {
+    public UserMozzirollDeleteRes deleteUserMozziroll(String accessToken, long userMozzirollId) {
         User user = userService.findUserByToken(accessToken);
         Optional<UserMozziroll> userMozziroll = userMozzirollRepository.findById(userMozzirollId);
         if (!userMozziroll.isPresent()) {
@@ -216,13 +217,14 @@ public class MozzirollServiceImpl implements MozzirollService {
         Mozziroll mozziroll = userMozziroll.get().getMozziroll();
         UserMozzirollDeleteRes userMozzirollDeleteRes = MozzirollMapper.toUserMozzirollDeleteRes(userMozziroll.get());
 
-        if (userMozziroll.get().getUser().equals(user)) {
+        if (userMozzirollRepository.existsByIdAndUser(userMozzirollId, user)) {
             mozziroll.getUserMozzirolls().remove(userMozziroll.get());
             userMozzirollRepository.delete(userMozziroll.get());
         } else
             throw new UnAuthorizedException("user is not userMozziroll's owner");
 
         // 만약 mozziroll 이 더이상 어떤 userMozziroll 과 연결 되어있지 않으면 삭제
+        // TODO: 파일 삭제도 필요!
         if (mozziroll.getUserMozzirolls().size() == 0) {
             mozzirollRepository.delete(mozziroll);
         }
