@@ -214,13 +214,8 @@ public class MozzirollServiceImpl implements MozzirollService {
         Optional<UserMozziroll> userMozziroll = userMozzirollRepository.findByIdAndUserId(
             postUserMozzirollPostReq.getUserMozzirollId(), user.getId());
 
-        boolean posted = false;
         if (userMozziroll.isPresent()) {
-            if (userMozziroll.get().getPosted() == true)
-                posted = true;
-
-            posted = !posted;
-            userMozziroll.get().setPosted(posted);
+            userMozziroll.get().setPosted(!userMozziroll.get().getPosted());
         } else {
             throw new MozzirollNotExistsException("This is no userMozziroll for post/unpost user's mozziroll");
         }
