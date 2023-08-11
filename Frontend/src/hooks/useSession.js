@@ -79,7 +79,6 @@ function useSession(shareCode) {
 
       session.on("signal:sendPosition", async (event) => {
         const data = await JSON.parse(event.data);
-        // console.log(data);
         setPosition(data);
       });
 

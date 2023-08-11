@@ -6,7 +6,7 @@ import { UsersIcon } from "@heroicons/react/24/outline";
 import { ComputerDesktopIcon } from "@heroicons/react/24/outline";
 import PropTypes from "prop-types";
 
-export default function PicSideBar({user, bgList, changeBg, position, sendPosition, setPosition}) {
+export default function PicSideBar({user, bgList, changeBg, position, sendPosition, setPosition, subscribers, publisher}) {
   const [menu, setMenu] = useState(0);
 
   return (
@@ -35,6 +35,8 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
                 position={position}
                 sendPosition={sendPosition}
                 setPosition={setPosition}
+                subscribers={subscribers}
+                publisher={publisher}
               />
             </div>
           )}
@@ -66,4 +68,6 @@ PicSideBar.propTypes = {
   position: PropTypes.array,
   sendPosition: PropTypes.func,
   setPosition: PropTypes.func,
+  subscribers: PropTypes.array,
+  publisher: PropTypes.any
 };

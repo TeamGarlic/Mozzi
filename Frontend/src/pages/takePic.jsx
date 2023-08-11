@@ -12,7 +12,7 @@ import { checkHost } from "@/utils/DecoratorUtil.js";
 import boothApi from "@/api/boothApi.js";
 import CamSetting from '@/components/CamSetting.jsx';
 
-function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition, sendFileName, shareSecret, publisher }) {
+function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition, sendFileName, shareSecret, publisher, subscribers }) {
   const timers = [3, 5, 10];
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
@@ -130,7 +130,16 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
             </div>
             <div className="text-2xl">MOZZI</div>
           </div>
-          <PicSideBar bgList={bgList} user={user} changeBg={changeBg} position={position} sendPosition={sendPosition} setPosition={setPosition} />
+          <PicSideBar
+            bgList={bgList}
+            user={user}
+            changeBg={changeBg}
+            position={position}
+            sendPosition={sendPosition}
+            setPosition={setPosition}
+            subscribers={subscribers}
+            publisher={publisher}
+          />
           {/* <div className="float-right mr-10 text-2xl">taken : {taken}/10</div> */}
         </div>
         <BigCam myId={myId} updatePosition={updatePosition} setPosition={setPosition} />
@@ -194,4 +203,5 @@ TakePic.propTypes = {
   setPosition: PropTypes.func,
   sendFileName: PropTypes.func,
   shareSecret: PropTypes.string,
+  subscribers: PropTypes.array,
 };
