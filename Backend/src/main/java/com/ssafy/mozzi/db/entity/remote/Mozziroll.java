@@ -42,11 +42,9 @@ public class Mozziroll extends BaseEntity {
     @Column(name = "object_name")
     private String objectName;
 
-    @NotNull
     @Column(name = "width")
     private int width;
 
-    @NotNull
     @Column(name = "height")
     private int height;
 
