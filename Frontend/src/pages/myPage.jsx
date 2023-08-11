@@ -6,14 +6,13 @@ import mozziRollApi from "@/api/mozziRollApi.js";
 
 function MyPage() {
     const { user } = useUser();
-    const [mozziRollPage, setMozziRollPage] = useState(1);
+    const [mozziRollPage, setMozziRollPage] = useState(2);
     const [myMozziRolls, setMyMozziRolls] = useState([]);
 
     useEffect(() => {
         async function getMyMozziRolls() {
-            let res = await mozziRollApi.getMozziRolls();
-            console.log(res);
-            const { data: { data: { mozzirollItems } } } = await res;
+            let res = await mozziRollApi.getMozziRolls(mozziRollPage,20);
+            const { data: { data: { mozzirollItems } } } = res;
             console.log(mozzirollItems);
             setMyMozziRolls(mozzirollItems);
         }
@@ -42,9 +41,17 @@ function MyPage() {
                                     return (
                                         <div key={item.createdAt} className="justify-center items-center text-center flex-col hover:shadow-inner p-3">
                                             <video className="h-80 mx-auto" src={`https://api.mozzi.lol/files/object/${item.objectName}`} />
-                                            <div>
-                                                <div className="float-left">{item.objectName}</div>
-                                                <div className="float-right">{item.createdAt}</div>
+                                            <div className=" overflow-hidden p-1">
+                                                <div className="float-left">{item.objectName.slice(0,13)}</div>
+                                                <div className="float-right">{item.createdAt.slice(0,10)}</div>
+                                            </div>
+                                            <div  className=" overflow-hidden p-1">
+                                                    <button className="float-right">
+                                                        삭제하기
+                                                    </button>
+                                                    <button className="float-right">
+                                                        다운로드
+                                                    </button>
                                             </div>
                                         </div>)
                                 }

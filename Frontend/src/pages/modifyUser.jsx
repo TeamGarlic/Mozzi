@@ -65,6 +65,20 @@ function ModifyUser() {
     }
   }
 
+  async function signOut(){
+    let confirm = window.confirm("정말 탈퇴하시겠습니까?");
+    if(confirm){
+        let res = await userApi.signOut();
+        console.log(res);
+        if(res.status === 200){
+         alert(res.message);
+         window.location.href="/";
+        }else{
+          alert("요청이 실패했습니다.");
+      }
+    }
+  }
+
   return (
     <Layout>
       {user ? <>
@@ -103,7 +117,7 @@ function ModifyUser() {
             >
               정보 수정
             </button>
-            <button
+            <button onClick={signOut}
               type="button"
               className="w-1/2 h-12 leading-3 rounded-e-2xl bg-red-400"
             >
