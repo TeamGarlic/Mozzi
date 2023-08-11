@@ -6,7 +6,7 @@ import mozziRollApi from "@/api/mozziRollApi.js";
 
 function MyPage() {
     const { user } = useUser();
-    const [mozziRollPage, setMozziRollPage] = useState(2);
+    const [mozziRollPage, setMozziRollPage] = useState(1);
     const [myMozziRolls, setMyMozziRolls] = useState([]);
 
     useEffect(() => {
