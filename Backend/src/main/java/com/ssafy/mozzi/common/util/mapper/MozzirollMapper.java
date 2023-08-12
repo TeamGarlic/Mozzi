@@ -6,6 +6,7 @@ import java.util.List;
 import com.ssafy.mozzi.api.response.MozzirollLikeRes;
 import com.ssafy.mozzi.api.response.PopularUserMozzirolGetlRes;
 import com.ssafy.mozzi.api.response.UserMozzirollDeleteRes;
+import com.ssafy.mozzi.api.response.PostUserMozzirollPostRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.common.dto.MozzirollItem;
 import com.ssafy.mozzi.common.dto.PopularUserMozzirollEntityDto;
@@ -23,6 +24,7 @@ public class MozzirollMapper {
      */
     public static MozzirollItem toMozzirollItem(UserMozziroll usermozziroll) {
         return MozzirollItem.builder()
+            .id(usermozziroll.getId())
             .creator(UserMapper.toUserItem(usermozziroll.getUser()))
             .createdAt(usermozziroll.getMozziroll().getCreatedAt())
             .objectName(usermozziroll.getMozziroll().getObjectName())
@@ -107,6 +109,18 @@ public class MozzirollMapper {
             .deleted(true)
             .id(userMozziroll.getId())
             .title(userMozziroll.getTitle())
+            .build();
+    }
+
+    /**
+     * UserMozziroll Entity 의 정보를 PostUserMozzirollPostRes 로 변환
+     * @param userMozziroll UserMozziroll Entity
+     * @return PostUserMozzirollPostRes
+     */
+    public static PostUserMozzirollPostRes toPostUserMozzirollPostRes(UserMozziroll userMozziroll) {
+        return PostUserMozzirollPostRes.builder()
+            .userMozzirollId(userMozziroll.getId())
+            .post(userMozziroll.getPosted())
             .build();
     }
 }

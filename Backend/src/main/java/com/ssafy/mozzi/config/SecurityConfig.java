@@ -77,6 +77,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/mozzirolls/link").authenticated()
                 .requestMatchers(HttpMethod.POST, "/mozzirolls/like/{userMozzirollId}").authenticated()
                 .requestMatchers(HttpMethod.GET, "/mozzirolls/popular").permitAll()
+                .requestMatchers(HttpMethod.POST, "/mozzirolls/post").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/mozzirolls/{userMozzirollId}").authenticated()
             )
             .headers(headers ->
