@@ -104,7 +104,7 @@ function Start() {
             <div className="w-96 h-fit flex-col p-1">
               <div className="text-center w-fit mx-auto">
                 <img
-                    onClick={()=>navigate("/community")}
+                    onClick={()=>navigate("/community?status=like&page=1")}
                   src={gotocommu}
                   className="hover:cursor-pointer w-20 h-20 mx-auto hover:ring-2 rounded-xl ring-offset-2 ring-offset-transparent"
                 />

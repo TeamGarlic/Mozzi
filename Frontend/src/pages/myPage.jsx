@@ -3,30 +3,31 @@ import useUser from "@/hooks/useUser";
 import NavBar from "@/components/NavBar";
 import { useEffect, useState } from "react";
 import mozziRollApi from "@/api/mozziRollApi.js";
-import fileApi from "@/api/fileApi.js";
+import MozziRollMenu from "@/components/MozziRollMenu.jsx";
 
 function MyPage() {
     const { user } = useUser();
-    const [mozziRollPage, setMozziRollPage] = useState(1);
-    const [myMozziRolls, setMyMozziRolls] = useState([]);
+    const [myMozziRollData, setMyMozziRollData] = useState({});
+    const [page, setPage] = useState(1);
+
+    async function getMyMozziRolls(pageNum, size) {
+        let res = await mozziRollApi.getMozziRolls(pageNum,size);
+        setMyMozziRollData(res.data.data);
+        setPage(res.data.data.pages);
+    }
 
     useEffect(() => {
-        async function getMyMozziRolls() {
-            let res = await mozziRollApi.getMozziRolls(mozziRollPage,30);
-            const { data: { data: { mozzirollItems } } } = res;
-            console.log(mozzirollItems);
-            setMyMozziRolls(mozzirollItems);
-        }
-
-        getMyMozziRolls();
-    }, [mozziRollPage]);
+        if(page===0) return;
+        getMyMozziRolls(page, 10);
+        console.log(myMozziRollData);
+    }, [page]);
 
     function goNext(){
-        setMozziRollPage(prev=>prev+1);
+        setPage(prev=>prev+1);
     }
 
     function goPrev(){
-        setMozziRollPage(prev=>prev-1);
+        setPage(prev=>prev-1);
     }
 
     function goModify() {
@@ -34,8 +35,13 @@ function MyPage() {
     }
 
     async function deleteMozziRolls(id){
+        const confirm = window.confirm("삭제하시겠습니까?");
+        if(!confirm) return;
         let res = await mozziRollApi.deleteMozziRolls(id);
         console.log(res);
+        if(res.status ===200){
+            await getMyMozziRolls(page, 10);
+        }
         return res;
     }
 
@@ -51,33 +57,19 @@ function MyPage() {
                         </div>
                         <div className="py-5">
                             <h1>내 모찌롤</h1>
-                            <div className="flex flex-wrap gap-2 justify-center items-center text-center">
-                                {myMozziRolls.map((item) => {
+                            <div className="flex flex-wrap gap-5 justify-center items-center text-center">
+                                {myMozziRollData.userMozzirollItems && myMozziRollData.userMozzirollItems.map((item, idx) => {
                                     return (
-                                        <div key={item.createdAt} className="justify-center items-center text-center flex-col hover:shadow-innerpink p-3">
-                                            <video className="h-80 mx-auto" src={`https://api.mozzi.lol/files/object/${item.objectName}`} />
-                                            <div className=" overflow-hidden p-1">
-                                                <div className="float-left">{item.id}</div>
-                                                <div className="float-right">{item.createdAt.slice(0,10)}</div>
-                                            </div>
-                                            <div  className=" overflow-hidden p-1">
-                                                <span className="float-left">❤️ 0</span>
-                                                    <button className="float-right bg-red-500 p-1 rounded-e-xl text-white" onClick={()=>deleteMozziRolls(item.id)}>
-                                                        삭제하기
-                                                    </button>
-                                                    <a href={`https://api.mozzi.lol/files/object/${item.objectName}`} target="blank" className="float-right bg-blue-500 p-1 rounded-s-xl text-white">
-                                                        다운로드
-                                                    </a>
-                                            </div>
-                                        </div>)
+                                        <MozziRollMenu key={item.createdAt} item={item} idx={idx} deleteFunc={deleteMozziRolls}/>
+                                        )
                                     }
                                 )}
                             </div>
-                                {myMozziRolls &&
-                                    <div className="flex items-center justify-center text-center gap-4">
-                                        {mozziRollPage>1 && <span>이전</span>}
-                                        {mozziRollPage}페이지
-                                        {mozziRollPage * 20  < myMozziRolls.length &&<span>다음</span>}
+                                {myMozziRollData.userMozzirollItems &&
+                                    <div className="flex items-center justify-center text-center gap-4 my-5 rounded-2xl w-fit mx-auto bg-blue-200 p-3">
+                                        {page>1 && <span onClick={goPrev}>이전</span>}
+                                        {page}/{myMozziRollData.pages}페이지
+                                        {page < myMozziRollData.pages &&<span onClick={goNext}>다음</span>}
                                     </div>
                                 }
                         </div>
