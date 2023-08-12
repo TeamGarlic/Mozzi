@@ -78,6 +78,29 @@ const mozziRollApi = {
         let res = await PrivateMozziRollApi.delete(`${userMozziRollId}`);
         console.log(res);
         return res;
+    },
+
+    getCommunityMozziRolls:async(state, pageNum, size)=>{
+        let res;
+        console.log(window.localStorage.getItem('accessToken'))
+        if(window.localStorage.getItem('accessToken')){
+            res = await PrivateMozziRollApi.get("popular",{
+                params:{
+                    sorted:state,
+                    pageNum:pageNum,
+                    pageSize:size,
+                }
+            });
+        }else{
+            res = await PublicMozziRollApi.get("popular",{
+                params:{
+                    sorted:state,
+                    pageNum:pageNum,
+                    pageSize:size,
+                }
+            });
+        }
+        return res;
     }
 };
 

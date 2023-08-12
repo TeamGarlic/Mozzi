@@ -102,7 +102,6 @@ const userApi = {
   getUser: async () => {
     if (!window.localStorage.getItem("accessToken")) return;
     let res = await PrivateUserApi.get("");
-    console.log(res);
     return res;
   },
 
