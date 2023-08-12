@@ -140,7 +140,7 @@ function UserList({user, position, sendPosition, setPosition, subscribers, publi
   onDragEnd = checkHost(onDragEnd, user.isHost)
   onDragLeave = checkHost(onDragLeave, user.isHost)
   onDrop = checkHost(onDrop, user.isHost)
-  
+
   return (
     <>
       대충 사용자 목록
@@ -154,7 +154,7 @@ function UserList({user, position, sendPosition, setPosition, subscribers, publi
              onDragLeave={onDragLeave}
              onDragOver={onDragOver}
              onDrop={onDrop}
-             className="mt-1 mb-1"
+             className="mt-1 mb-1 h-fit w-full px-2"
              draggable>
           <UserCard
             setTool={setTool}
