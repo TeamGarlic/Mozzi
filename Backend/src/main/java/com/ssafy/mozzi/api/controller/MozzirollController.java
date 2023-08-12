@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
+import com.ssafy.mozzi.api.request.PostUserMozzirollPostReq;
 import com.ssafy.mozzi.api.response.MozzirollLikeRes;
 import com.ssafy.mozzi.api.response.PopularUserMozzirolGetlRes;
+import com.ssafy.mozzi.api.response.PostUserMozzirollPostRes;
 import com.ssafy.mozzi.api.response.UserMozzirollDeleteRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.api.service.MozzirollService;
@@ -136,7 +138,7 @@ public class MozzirollController {
      * @param pageSize 페이지 크기
      * @see MozzirollService
      */
-    @Operation(summary = "좋아요 순으로 유저 모찌롤 목록 조회", description = "좋아요 순으로 유저 모찌롤 목록을 조회합니다.")
+    @Operation(summary = "커뮤니티의 유저 모찌롤을 좋아요 순 목록으로 조회", description = "커뮤니티의 유저 모찌롤을 좋아요 순 목록으로 조회")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "좋아요 순 userMozziroll 페이징 조회 성공", useReturnTypeSchema = true),
         @ApiResponse(responseCode = "500", description = "서버 에러",
@@ -153,6 +155,37 @@ public class MozzirollController {
                 BaseResponseBody.<PopularUserMozzirolGetlRes>builder()
                     .message("get popular user mozziroll list success")
                     .data(mozzirollService.getPopularUserMozzirolls(accessToken, pageNum, pageSize))
+                    .build()
+            );
+    }
+
+    /**
+     * 유저의 모찌롤을 커뮤니티에 등록/해제를 하는 기능입니다.
+     * @param accessToken 사용자의 Token
+     * @param postUserMozzirollPostReq UserMozziroll의 id가 있는 DTO
+     * @see MozzirollService
+     * @see MozzirollLikeRes
+     */
+    @Operation(summary = "유저의 모찌롤을 커뮤니티에 등록/해제하는 Toggle", description = "유저의 모찌롤을 커뮤니티에 등록->해제 or 해제->등록합니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "유저의 모찌롤 커뮤니티에 등록/해제 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "400", description = "잘못된 요청 정보",
+            content = @Content(schema = @Schema(ref = "#/components/schemas/MozzirollNotExists"))),
+        @ApiResponse(responseCode = "404", description = "User Id가 존재하지 않습니다.",
+            content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
+        @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
+    })
+    @PostMapping("/post")
+    public ResponseEntity<? extends BaseResponseBody<PostUserMozzirollPostRes>> postUserMozziroll(
+        @RequestHeader("Authorization") String accessToken,
+        @RequestBody PostUserMozzirollPostReq postUserMozzirollPostReq) {
+        return ResponseEntity.ok()
+            .cacheControl(APICacheControl.noCache)
+            .body(
+                BaseResponseBody.<PostUserMozzirollPostRes>builder()
+                    .message("UserMozziroll post or unpost in community success")
+                    .data(mozzirollService.postUserMozziroll(accessToken, postUserMozzirollPostReq))
                     .build()
             );
     }
