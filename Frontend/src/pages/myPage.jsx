@@ -1,7 +1,7 @@
 import Layout from "@/components/Layout";
 import useUser from "@/hooks/useUser";
 import NavBar from "@/components/NavBar";
-import { useEffect, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import mozziRollApi from "@/api/mozziRollApi.js";
 import MozziRollMenu from "@/components/MozziRollMenu.jsx";
 
@@ -9,6 +9,7 @@ function MyPage() {
     const { user } = useUser();
     const [myMozziRollData, setMyMozziRollData] = useState({});
     const [page, setPage] = useState(1);
+    const itemRefs = useRef({});
 
     async function getMyMozziRolls(pageNum, size) {
         let res = await mozziRollApi.getMozziRolls(pageNum,size);
@@ -19,7 +20,6 @@ function MyPage() {
     useEffect(() => {
         if(page===0) return;
         getMyMozziRolls(page, 10);
-        console.log(myMozziRollData);
     }, [page]);
 
     function goNext(){
@@ -60,7 +60,7 @@ function MyPage() {
                             <div className="flex flex-wrap gap-5 justify-center items-center text-center">
                                 {myMozziRollData.userMozzirollItems && myMozziRollData.userMozzirollItems.map((item, idx) => {
                                     return (
-                                        <MozziRollMenu key={item.createdAt} item={item} idx={idx} deleteFunc={deleteMozziRolls}/>
+                                        <MozziRollMenu key={item.createdAt} item={item} idx={idx} deleteFunc={deleteMozziRolls} myRef={itemRefs[item.mozzirollInfo.id]}/>
                                         )
                                     }
                                 )}

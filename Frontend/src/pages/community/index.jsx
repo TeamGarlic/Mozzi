@@ -1,7 +1,6 @@
 import Layout from "@/components/Layout";
 import NavBar from "@/components/NavBar";
-import { useEffect, useState } from "react";
-import userApi from "@/api/userApi.js";
+import {useEffect, useRef, useState} from "react";
 import useUser from "@/hooks/useUser.js";
 import {useNavigate} from "react-router-dom";
 import mozziRollApi from "@/api/mozziRollApi.js";
@@ -13,6 +12,7 @@ function Community() {
     const page = new URLSearchParams(window.location.search).get("page");
     const status = new URLSearchParams(window.location.search).get("status");
     const [mozziRollsData, setMozziRollsData] = useState([]);
+    const itemRefs = useRef({});
     const navigate = useNavigate();
 
     const bgs = ["bg-yellow-200","bg-green-200","bg-purple-200","bg-red-200"];
@@ -59,7 +59,7 @@ function Community() {
                             <div className="flex flex-wrap gap-5 justify-center items-center text-center">
                                 {mozziRollsData.userMozzirollItems && mozziRollsData.userMozzirollItems.map((item, idx) => {
                                         return (
-                                            <MozziRollMenu key={item.createdAt} item={item} idx={idx}/>
+                                            <MozziRollMenu key={item.createdAt} item={item} idx={idx} myRef={itemRefs[item.mozzirollInfo.id]}/>
                                         )
                                     }
                                 )}
