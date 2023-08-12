@@ -16,12 +16,14 @@ import com.ssafy.mozzi.api.response.PostUserMozzirollPostRes;
 import com.ssafy.mozzi.api.response.UserMozzirollDeleteRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.common.dto.PopularUserMozzirollEntityDto;
+import com.ssafy.mozzi.common.dto.UserMozzirollItemDto;
 import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
 import com.ssafy.mozzi.common.exception.handler.BadRequestException;
 import com.ssafy.mozzi.common.exception.handler.NotFoundException;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.common.util.mapper.MozzirollMapper;
+import com.ssafy.mozzi.common.util.mapper.UserMozzirollMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
 import com.ssafy.mozzi.db.entity.local.Booth;
 import com.ssafy.mozzi.db.entity.remote.Mozziroll;
@@ -112,9 +114,9 @@ public class MozzirollServiceImpl implements MozzirollService {
     public UserMozzirollGetRes getMozzirollsByUser(String accessToken, int pageNum, int pageSize) {
         User user = userService.findUserByToken(accessToken);
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);
-        Page<UserMozziroll> page = userMozzirollRepository.findByUserId(user.getId(), pageRequest);
-        List<UserMozziroll> userMozzirolls = page.getContent();
-        return MozzirollMapper.toUserMozzirollGetRes(userMozzirolls, page.getTotalPages());
+        Page<UserMozzirollItemDto> page = userMozzirollRepository.findByUserId(user.getId(), pageRequest);
+        List<UserMozzirollItemDto> userMozzirolls = page.getContent();
+        return UserMozzirollMapper.toUserMozzirollGetRes(userMozzirolls, page.getTotalPages());
     }
 
     /**

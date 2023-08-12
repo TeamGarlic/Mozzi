@@ -5,12 +5,12 @@ import java.util.List;
 
 import com.ssafy.mozzi.api.response.MozzirollLikeRes;
 import com.ssafy.mozzi.api.response.PopularUserMozzirolGetlRes;
-import com.ssafy.mozzi.api.response.UserMozzirollDeleteRes;
 import com.ssafy.mozzi.api.response.PostUserMozzirollPostRes;
-import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
+import com.ssafy.mozzi.api.response.UserMozzirollDeleteRes;
 import com.ssafy.mozzi.common.dto.MozzirollItem;
 import com.ssafy.mozzi.common.dto.PopularUserMozzirollEntityDto;
 import com.ssafy.mozzi.common.dto.PopularUserMozzirollItem;
+import com.ssafy.mozzi.db.entity.remote.Mozziroll;
 import com.ssafy.mozzi.db.entity.remote.UserMozziroll;
 
 /**
@@ -18,42 +18,17 @@ import com.ssafy.mozzi.db.entity.remote.UserMozziroll;
  */
 public class MozzirollMapper {
     /**
-     * UserMozziroll 엔티티 를 MozzirollItem 로 변환
-     * @param usermozziroll UserMozziroll
+     * Mozziroll 엔티티 를 MozzirollItem 로 변환
+     * @param mozziroll Mozziroll
      * @return MozzirollItem
      */
-    public static MozzirollItem toMozzirollItem(UserMozziroll usermozziroll) {
+    public static MozzirollItem toMozzirollItem(Mozziroll mozziroll) {
         return MozzirollItem.builder()
-            .id(usermozziroll.getId())
-            .creator(UserMapper.toUserItem(usermozziroll.getUser()))
-            .createdAt(usermozziroll.getMozziroll().getCreatedAt())
-            .objectName(usermozziroll.getMozziroll().getObjectName())
-            .build();
-    }
-
-    /**
-     * UserMozziroll 엔티티 집합을를 MozzirollItem 집합으로 변환
-     * @param usermozzirolls List UserMozziroll
-     * @return List MozzirollItem
-     */
-    public static List<MozzirollItem> toMozzirollItems(List<UserMozziroll> usermozzirolls) {
-        List<MozzirollItem> mozzirollItems = new ArrayList<>();
-        for (UserMozziroll usermozziroll : usermozzirolls) {
-            mozzirollItems.add(toMozzirollItem(usermozziroll));
-        }
-        return mozzirollItems;
-    }
-
-    /**
-     * UserMozziroll 엔티티 집합을를 UserMozzirollGetRes 로 변환
-     * @param mozzirollItems List UserMozziroll
-     * @param pages int
-     * @return UserMozzirollGetRes
-     */
-    public static UserMozzirollGetRes toUserMozzirollGetRes(List<UserMozziroll> mozzirollItems, int pages) {
-        return UserMozzirollGetRes.builder()
-            .mozzirollItems(toMozzirollItems(mozzirollItems))
-            .pages(pages)
+            .id(mozziroll.getId())
+            .objectName(mozziroll.getObjectName())
+            .width(mozziroll.getWidth())
+            .height(mozziroll.getHeight())
+            .createdAt(mozziroll.getCreatedAt())
             .build();
     }
 
