@@ -16,12 +16,11 @@ import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
 import com.ssafy.mozzi.api.request.PostUserMozzirollPostReq;
 import com.ssafy.mozzi.api.response.MozzirollLikeRes;
 import com.ssafy.mozzi.api.response.PopularUserMozzirolGetlRes;
-import com.ssafy.mozzi.api.response.UserMozzirollDeleteRes;
 import com.ssafy.mozzi.api.response.PostUserMozzirollPostRes;
+import com.ssafy.mozzi.api.response.UserMozzirollDeleteRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.api.service.MozzirollService;
 import com.ssafy.mozzi.common.model.APICacheControl;
-import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -171,11 +170,11 @@ public class MozzirollController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "유저의 모찌롤 커뮤니티에 등록/해제 성공", useReturnTypeSchema = true),
         @ApiResponse(responseCode = "400", description = "잘못된 요청 정보",
-            content = @Content(schema = @Schema(implementation = MozzirollNotExistsException.MozzirollNotExistsResponse.class))),
+            content = @Content(schema = @Schema(ref = "#/components/schemas/MozzirollNotExists"))),
         @ApiResponse(responseCode = "404", description = "User Id가 존재하지 않습니다.",
-            content = @Content(schema = @Schema(implementation = UserIdNotExistsException.UserIdNotExistsResponse.class))),
+            content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
         @ApiResponse(responseCode = "500", description = "서버 에러",
-            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @PostMapping("/post")
     public ResponseEntity<? extends BaseResponseBody<PostUserMozzirollPostRes>> postUserMozziroll(
