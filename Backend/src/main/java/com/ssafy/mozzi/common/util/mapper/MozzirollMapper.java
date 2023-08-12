@@ -85,7 +85,9 @@ public class MozzirollMapper {
                 .title(userMozziroll.getTitle())
                 .isLiked(userMozziroll.getIsLiked())
                 .likeCount(userMozziroll.getLikeCount())
-                .creator(UserMapper.toUserItem(userMozziroll.getUser()))
+                .createdAt(userMozziroll.getCreatedAt())
+                .height(userMozziroll.getHeight())
+                .width(userMozziroll.getWidth())
                 .build());
         }
 

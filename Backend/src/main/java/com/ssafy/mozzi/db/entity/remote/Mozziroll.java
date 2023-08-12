@@ -42,6 +42,12 @@ public class Mozziroll extends BaseEntity {
     @Column(name = "object_name")
     private String objectName;
 
+    @Column(name = "width")
+    private int width;
+
+    @Column(name = "height")
+    private int height;
+
     @ColumnDefault("CURRENT_TIMESTAMP")
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)

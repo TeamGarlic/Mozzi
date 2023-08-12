@@ -5,58 +5,80 @@ import PropTypes from "prop-types";
 import useInput from "@/hooks/useInput.js";
 import TextInput from "@/components/TextInput.jsx";
 
-function Chat({ sendMessage, chatLists, user }) {
+function Chat({ sendMessage, chatLists, user, publisher }) {
   const [visible, setVisible] = useState(false);
   const chattingLog = useRef();
+  const chattingCase = useRef();
   const msg = useInput();
   function send() {
     if (msg.value.length === 0) return;
-    sendMessage(msg.value, user.userNickname);
+    if(user.isHost === 1){
+    sendMessage(msg.value, user.userData.userNickname);
+    }else if(user.isHost === 0){
+      sendMessage(msg.value, user.userNickname);
+    }
     msg.reset();
-    setTimeout(() => {
-      chattingLog.current.scrollTop = chattingLog.current.scrollHeight;
-    }, 100);
   }
 
+  function onKeyDown(event) {
+    if (event.key === "Enter") {
+      send();
+    }
+  }
+
+  useEffect(()=>{
+    console.log(user);
+  },[])
+
   useEffect(() => {
-    console.log(chatLists);
+    // console.log(chattingLog.current.scrollTop, chattingLog.current.scrollHeight );
+    const lastMsg = chatLists[chatLists.length-1];
+    if(lastMsg){
+      lastMsg.connectionId === publisher.stream.connection.connectionId ?
+          chattingLog.current.scrollTop = chattingLog.current.scrollHeight
+          :
+          console.log(lastMsg);
+    }
   }, [chatLists]);
 
   return (
     <div className="fixed bottom-5 right-5 z-20">
       {visible && (
-        <div className="flex-col w-80 h-fit rounded-xl bg-white">
+        <div className="flex-col w-80 h-fit rounded-xl bg-white my-3">
           <div className=" text-lg p-3">채팅</div>
           <hr />
+          <div className="h-full" ref={chattingCase}>
           <div
             className="overflow-scroll p-3 h-72 scrollbar-hide"
             ref={chattingLog}
           >
             {chatLists &&
-              chatLists.map((item) => {
-                return item.from === user.userNickname ? (
-                  <div>
+              chatLists.map((item, idx) => {
+                return item.connectionId === publisher.stream.connection.connectionId ? (
+                  <div key={`chat : ${idx}`} id={`chat : ${idx}`}>
                     <div className="text-right flex-col pb-2">
-                      <div className="text-sm text-gray-500">
-                        {item.from}
-                      </div>
-                      <div>{item.message}</div>
+                      <div className="text-sm text-gray-500">{item.from}</div>
+                      <div className="w-full break-all" >{item.message}</div>
                     </div>
                   </div>
                 ) : (
-                  <div>
+                    <div key={`chat : ${idx}`} id={`chat : ${idx}`}>
                     <div className="text-left flex-col pb-2">
-                      <div className="text-sm text-gray-500">
-                        {item.from}
-                      </div>
-                      <div>{item.message}</div>
+                      <div className="text-sm text-gray-500">{item.from}</div>
+                      <div className="w-full break-all">{item.message}</div>
                     </div>
                   </div>
                 );
               })}
           </div>
+          </div>
           <div className="flex p-3 border-t-2 gap-1">
-            <TextInput placeholder="채팅 입력..." type="text" {...msg} />
+            <TextInput
+              placeholder="채팅 입력..."
+              type="text"
+              {...msg}
+              onKeyDown={onKeyDown}
+            />
             <button
               onClick={send}
               className="rounded-xl bg-blue-500 text-white w-1/3 my-2"
@@ -66,7 +88,7 @@ function Chat({ sendMessage, chatLists, user }) {
           </div>
         </div>
       )}
-      <div className=" w-10 h-10 float-right">
+      <div className=" w-12 h-12 float-right p-1 rounded-full bg-[#ffffff] border-2 border-blue-500">
         {visible ? (
           <HideChat
             onClick={() => {
@@ -90,10 +112,15 @@ export default Chat;
 Chat.propTypes = {
   sendMessage: PropTypes.func,
   chatLists: PropTypes.array,
+  publisher:PropTypes.any,
   user: PropTypes.shape({
+    isHost :PropTypes.number,
+    userNickname:PropTypes.string,
+    userData : PropTypes.shape({
     id: PropTypes.number,
     userId: PropTypes.string,
     userNickname: PropTypes.string,
     email: PropTypes.string,
+    })
   }),
 };

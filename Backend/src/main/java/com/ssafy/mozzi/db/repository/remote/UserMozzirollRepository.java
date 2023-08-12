@@ -28,12 +28,14 @@ public interface UserMozzirollRepository extends JpaRepository<UserMozziroll, Lo
     @Query("select userMozziroll.id as id, "
         + "userMozziroll.mozziroll.objectName as objectName, "
         + "userMozziroll.title as title, "
-        + "count(like.likedUserMozziroll.id) as likeCount, "
-        + "CASE WHEN EXISTS (SELECT likedUser.id FROM userMozziroll.likedUsers likedUser WHERE likedUser.likedUser.id = :userId) THEN true ELSE false END AS isLiked, "
-        + "userMozziroll.user as user from UserMozziroll "
+        + "count(like.likedUserMozziroll.id) as likeCount,"
+        + "userMozziroll.mozziroll.createdAt as createdAt, "
+        + "userMozziroll.mozziroll.height as height, "
+        + "userMozziroll.mozziroll.width as width, "
+        + "CASE WHEN EXISTS (SELECT likedUser.id FROM userMozziroll.likedUsers likedUser WHERE likedUser.likedUser.id = :userId) THEN true ELSE false END AS isLiked from UserMozziroll "
         + "userMozziroll left join MozzirollLike as like on userMozziroll.id = like.likedUserMozziroll.id "
         + "where userMozziroll.deleted = false and userMozziroll.posted "
-        + "group by userMozziroll.id order by count(like.likedUserMozziroll.id) desc")
+        + "group by userMozziroll.id order by count(like.likedUserMozziroll.id) desc, userMozziroll.mozziroll.createdAt asc")
     Page<PopularUserMozzirollEntityDto> findAllOrderByMozzirollLikeCount(@Param("userId") Long userId,
         Pageable pageable);
 
