@@ -23,16 +23,20 @@ public interface UserMozzirollRepository extends JpaRepository<UserMozziroll, Lo
     Optional<UserMozziroll> findByMozzirollIdAndUserId(long mozzirollId, long userId);
 
     // TODO: 쿼리 개선 생각
-    @Query("select userMozziroll.id as id, "
-        + "userMozziroll.title as title, "
-        + "userMozziroll.posted as posted, "
-        + "userMozziroll.user as user, "
-        + "userMozziroll.mozziroll as mozziroll, "
-        + "count(like.likedUserMozziroll.id) as likeCount,"
-        + "CASE WHEN EXISTS (SELECT likedUser.id FROM userMozziroll.likedUsers likedUser WHERE likedUser.likedUser.id = :userId) THEN true ELSE false END AS isLiked "
-        + "from UserMozziroll userMozziroll left join MozzirollLike as like on userMozziroll.id = like.likedUserMozziroll.id "
-        + "where userMozziroll.deleted = false and userMozziroll.user.id=:userId "
-        + "group by userMozziroll.id")
+    @Query("""
+            select userMozziroll.id as id, 
+            userMozziroll.title as title, 
+            userMozziroll.posted as posted, 
+            userMozziroll.user as user, 
+            userMozziroll.mozziroll as mozziroll, 
+            count(like.likedUserMozziroll.id) as likeCount, 
+            CASE WHEN EXISTS (SELECT likedUser.id FROM userMozziroll.likedUsers likedUser WHERE likedUser.likedUser.id = :userId) THEN true 
+            ELSE false 
+            END AS isLiked 
+            from UserMozziroll userMozziroll left join MozzirollLike as like on userMozziroll.id = like.likedUserMozziroll.id 
+            where userMozziroll.deleted = false and userMozziroll.user.id=:userId 
+            group by userMozziroll.id 
+        """)
     Page<UserMozzirollItemDto> findByUserId(@Param("userId") Long userId, Pageable pageable);
 
     Optional<UserMozziroll> findByIdAndUserId(long id, long userId);

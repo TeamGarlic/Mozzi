@@ -18,12 +18,20 @@ import com.ssafy.mozzi.db.entity.remote.Backgroud;
 @Repository
 public interface BackgroundRepository extends JpaRepository<Backgroud, Long> {
     // 나중에 JPQL로 case when 문으로 한번에 처리할 수 있음
-    @Query("SELECT b.id as id,b.objectName as objectName,b.title as title FROM Backgroud b")
+    @Query("SELECT b.id as id,b.objectName as objectName,b.title as title FROM Backgroud b WHERE b.deleted=false")
     Page<BackgroundEntityDto> findAllWithFavorite(Pageable pageable);
 
-    @Query("SELECT b.id as id,b.objectName as objectName,b.title as title, bf.id as favoriteId FROM Backgroud b LEFT JOIN BackgroundFavorite bf ON b.id=bf.background.id AND bf.user.id=:userId")
+    @Query("""
+        SELECT b.id as id,b.objectName as objectName,b.title as title, bf.id as favoriteId 
+        FROM Backgroud b LEFT JOIN BackgroundFavorite bf ON b.id=bf.background.id AND bf.user.id=:userId 
+        WHERE b.deleted=false
+        """)
     Page<BackgroundEntityDto> findAllWithFavoriteAndUser(@Param("userId") Long userId, Pageable pageable);
 
-    @Query("SELECT b.id as id,b.objectName as objectName,b.title as title, bf.id as favoriteId FROM Backgroud b INNER JOIN BackgroundFavorite bf ON b.id=bf.background.id AND bf.user.id=:userId")
+    @Query("""
+        SELECT b.id as id,b.objectName as objectName,b.title as title, bf.id as favoriteId 
+        FROM Backgroud b INNER JOIN BackgroundFavorite bf ON b.id=bf.background.id AND bf.user.id=:userId
+        WHERE b.deleted=false
+        """)
     Page<BackgroundEntityDto> findByUserAllWithFavoriteAndUser(@Param("userId") Long userId, Pageable pageable);
 }

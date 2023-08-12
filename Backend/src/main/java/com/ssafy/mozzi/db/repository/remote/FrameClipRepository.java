@@ -10,5 +10,4 @@ import com.ssafy.mozzi.db.entity.remote.FrameClip;
  * @see FrameClip
  */
 public interface FrameClipRepository extends JpaRepository<FrameClip, Long> {
-    // Set<FrameClip> findByFrame(Frame frame);
 }
