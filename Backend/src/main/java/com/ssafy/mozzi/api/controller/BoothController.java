@@ -21,17 +21,7 @@ import com.ssafy.mozzi.api.response.ConnectionPostRes;
 import com.ssafy.mozzi.api.response.SessionRes;
 import com.ssafy.mozzi.api.response.TemporalFileSavePostRes;
 import com.ssafy.mozzi.api.service.BoothService;
-import com.ssafy.mozzi.common.exception.handler.AccessTokenNotExistsException;
-import com.ssafy.mozzi.common.exception.handler.BoothNotExistsException;
-import com.ssafy.mozzi.common.exception.handler.DuplicateShareCodeException;
-import com.ssafy.mozzi.common.exception.handler.FileAlreadyExistsException;
-import com.ssafy.mozzi.common.exception.handler.FileNotExistsException;
-import com.ssafy.mozzi.common.exception.handler.InvalidSessionIdException;
-import com.ssafy.mozzi.common.exception.handler.ShareCodeNotExistException;
-import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
-import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.model.APICacheControl;
-import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,9 +50,9 @@ public class BoothController {
      */
     @Operation(summary = "부스 생성", description = "JWT 토큰과 생성하고자 하는 부스의 공유 코드(생략 가능)을 받아 새로운 부스를 생성합니다")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "부스 생성 성공", useReturnTypeSchema = true),
-        @ApiResponse(responseCode = "400", description = "중복된 공유 코드", content = @Content(schema = @Schema(implementation = DuplicateShareCodeException.DuplicateShareCodeResponse.class))),
-        @ApiResponse(responseCode = "401", description = "JWT TOKEN 없음", content = @Content(schema = @Schema(implementation = AccessTokenNotExistsException.AccessTokenNotExistsResponse.class))),
-        @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))})
+        @ApiResponse(responseCode = "400", description = "중복된 공유 코드", content = @Content(schema = @Schema(ref = "#/components/schemas/DuplicateShareCode"))),
+        @ApiResponse(responseCode = "401", description = "JWT TOKEN 없음", content = @Content(schema = @Schema(ref = "#/components/schemas/AccessTokenNotExists"))),
+        @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))})
     @PostMapping
     public ResponseEntity<? extends BaseResponseBody<SessionRes>> createBooth(@RequestHeader String Authorization,
         @RequestBody SessionPostReq request) throws Exception {
@@ -85,8 +75,8 @@ public class BoothController {
     @Operation(summary = "부스 참여", description = "부스의 공유 코드를 이용하여 부스의 session id를 얻습니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "부스 참여 정보 획득 성공", useReturnTypeSchema = true),
-        @ApiResponse(responseCode = "400", description = "존재하지 않는 공유 코드", content = @Content(schema = @Schema(implementation = ShareCodeNotExistException.ShareCodeNotExistResponse.class))),
-        @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))})
+        @ApiResponse(responseCode = "400", description = "존재하지 않는 공유 코드", content = @Content(schema = @Schema(ref = "#/components/schemas/ShareCodeNotExists"))),
+        @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))})
     @GetMapping("/{shareCode}")
     public ResponseEntity<? extends BaseResponseBody<SessionRes>> joinBooth(@PathVariable String shareCode) {
         return ResponseEntity.ok()
@@ -107,8 +97,8 @@ public class BoothController {
     @Operation(summary = "Connection 생성", description = "Openvidu Session Id를 이용하여 Websocket connection을 생성합니다")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Connection 생성 성공", useReturnTypeSchema = true),
-        @ApiResponse(responseCode = "400", description = "존재하지 않는 Session ID", content = @Content(schema = @Schema(implementation = InvalidSessionIdException.InvalidSessionIdResponse.class))),
-        @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))})
+        @ApiResponse(responseCode = "400", description = "존재하지 않는 Session ID", content = @Content(schema = @Schema(ref = "#/components/schemas/InvalidSessionId"))),
+        @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))})
     @PostMapping("/connections")
     public ResponseEntity<? extends BaseResponseBody<ConnectionPostRes>> createConnection(
         @RequestHeader(required = false) String Authorization, @RequestBody ConnectionPostReq request) throws
@@ -131,8 +121,8 @@ public class BoothController {
      */
     @Operation(summary = "부스 삭제", description = "Openvidu Session Id를 이용해 Session을 삭제합니다.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "부스 삭제 성공", useReturnTypeSchema = true),
-        @ApiResponse(responseCode = "400", description = "존재하지 않는 Session ID", content = @Content(schema = @Schema(implementation = InvalidSessionIdException.InvalidSessionIdResponse.class))),
-        @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))})
+        @ApiResponse(responseCode = "400", description = "존재하지 않는 Session ID", content = @Content(schema = @Schema(ref = "#/components/schemas/InvalidSessionId"))),
+        @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))})
     @DeleteMapping("/{sessionId}")
     public ResponseEntity<? extends BaseResponseBody<SessionRes>> deleteBooth(@PathVariable String sessionId) throws
         Exception {
@@ -148,15 +138,13 @@ public class BoothController {
     /**
      * 사용자에게 부스의 공유 코드와, 파일 이름, 파일을 받아서 임시로 서버 메모리에 저장합니다.
      * @param Authorization JWT Access Token
-     * @param shareCode MOZZI API Booth share Code
-     * @param file temporal upload file
      * @see BoothService
      */
     @Operation(summary = "임시 파일 업로드", description = "서버에 부스의 임시 파일을 업로드 합니다")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "임시 파일 업로드 성공", useReturnTypeSchema = true),
-        @ApiResponse(responseCode = "401", description = "해당 부스에 없어서 임시 파일 저장 할 수 없음", content = @Content(schema = @Schema(implementation = UnAuthorizedException.UnAuthorizedResponse.class))),
-        @ApiResponse(responseCode = "400", description = "해당하는 파일이 이미 존재", content = @Content(schema = @Schema(implementation = FileAlreadyExistsException.FileAlreadyExistsResponse.class)))
+        @ApiResponse(responseCode = "401", description = "해당 부스에 없어서 임시 파일 저장 할 수 없음", content = @Content(schema = @Schema(ref = "#/components/schemas/UnAuthorized"))),
+        @ApiResponse(responseCode = "400", description = "해당하는 파일이 이미 존재", content = @Content(schema = @Schema(ref = "#/components/schemas/FileAlreadyExists")))
     })
     @PostMapping(value = "/file")
     public ResponseEntity<? extends BaseResponseBody<TemporalFileSavePostRes>> temporalFileSave(
@@ -183,8 +171,8 @@ public class BoothController {
     @Operation(summary = "임시 파일 다운로드", description = "부스에 존재하는 임시 파일을 다운로드 합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "파일 다운로드 성공", useReturnTypeSchema = true),
-        @ApiResponse(responseCode = "400", description = "파일이 존재하지 않음", content = @Content(schema = @Schema(implementation = FileNotExistsException.FileNotExistsResponse.class))),
-        @ApiResponse(responseCode = "401", description = "비밀키 불일치로 권한 없음", content = @Content(schema = @Schema(implementation = UnAuthorizedException.UnAuthorizedResponse.class)))
+        @ApiResponse(responseCode = "400", description = "파일이 존재하지 않음", content = @Content(schema = @Schema(ref = "#/components/schemas/FileNotExists"))),
+        @ApiResponse(responseCode = "401", description = "비밀키 불일치로 권한 없음", content = @Content(schema = @Schema(ref = "#/components/schemas/UnAuthorized")))
     })
     @GetMapping("/file")
     public ResponseEntity<String> getTemporalFile(@RequestHeader String shareSecret, @RequestParam String shareCode,
@@ -200,9 +188,9 @@ public class BoothController {
     @Operation(summary = "부스 접속 제한", description = "부스에 사용자가 더 참여 못 하게 부스를 닫습니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "부스 닫기 여부", useReturnTypeSchema = true),
-        @ApiResponse(responseCode = "401", description = "부스의 방장이 아니여서 권한이 없음", content = @Content(schema = @Schema(implementation = UnAuthorizedException.UnAuthorizedResponse.class))),
-        @ApiResponse(responseCode = "404", description = "유저가 존재하지 않음", content = @Content(schema = @Schema(implementation = UserIdNotExistsException.UserIdNotExistsResponse.class))),
-        @ApiResponse(responseCode = "404", description = "부스가 존재하지 않음", content = @Content(schema = @Schema(implementation = BoothNotExistsException.BoothNotExistsResponse.class)))
+        @ApiResponse(responseCode = "401", description = "부스의 방장이 아니여서 권한이 없음", content = @Content(schema = @Schema(ref = "#/components/schemas/UnAuthorized"))),
+        @ApiResponse(responseCode = "404", description = "유저가 존재하지 않음", content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
+        @ApiResponse(responseCode = "404", description = "부스가 존재하지 않음", content = @Content(schema = @Schema(ref = "#/components/schemas/BoothNotExists")))
     })
     @GetMapping("/close")
     public ResponseEntity<? extends BaseResponseBody<Boolean>> closeBooth(@RequestHeader String Authorization,
@@ -230,7 +218,7 @@ public class BoothController {
             sessionId = boothService.createBooth(req,
                     "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjkwOTU0NzYwLCJleHAiOjEyMTY5MDk1NDc2MH0.RF8qFqAwbcbDdS1jl9Q9vAb5RzOZ8j6xmjMqWAApKio")
                 .getSessionId();
-        } catch (DuplicateShareCodeException exception) {
+        } catch (Exception exception) {
             sessionId = boothService.joinBooth(shareCode).getSessionId();
         }
 

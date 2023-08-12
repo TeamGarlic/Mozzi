@@ -20,8 +20,9 @@ import com.ssafy.mozzi.api.response.ItemStickerGetRes;
 import com.ssafy.mozzi.common.auth.ObjectStorageClient;
 import com.ssafy.mozzi.common.dto.BackgroundEntityDto;
 import com.ssafy.mozzi.common.dto.FrameClipItem;
+import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
+import com.ssafy.mozzi.common.exception.handler.BadRequestException;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
-import com.ssafy.mozzi.common.exception.handler.NoDataException;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.util.FileUtil;
 import com.ssafy.mozzi.common.util.MozziUtil;
@@ -214,6 +215,8 @@ public class ItemServiceImpl implements ItemService {
      * @see BackgroundRepository
      * @see BackgroundFavoriteRepository
      * @see ItemMapper
+     * @throws UnAuthorizedException (UnAuthorized, 11)
+     * @throws BadRequestException (NoData, 13)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
@@ -221,11 +224,14 @@ public class ItemServiceImpl implements ItemService {
         String accessToken) {
         long userId = mozziUtil.findUserIdByToken(accessToken);
         Optional<User> user = userRepository.findById(userId);
-        if (!user.isPresent())
-            throw new UnAuthorizedException("You are not authorized to save favorite-background");
+        if (user.isEmpty()) {
+            throw new UnAuthorizedException(MozziAPIErrorCode.UnAuthorized,
+                "You are not authorized to save favorite-background");
+        }
         Optional<Backgroud> backgroud = backgroundRepository.findById(backgroundFavoritePostReq.getBackgroundId());
-        if (!backgroud.isPresent())
-            throw new NoDataException("This is no data for save favorite-background");
+        if (backgroud.isEmpty()) {
+            throw new BadRequestException(MozziAPIErrorCode.NoData, "This is no data for save favorite-background");
+        }
 
         Optional<BackgroundFavorite> backgroundFavorite = backgroundFavoriteRepository.findByUserAndBackground(
             user.get(),

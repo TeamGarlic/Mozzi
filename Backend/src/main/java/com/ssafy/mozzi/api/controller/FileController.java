@@ -21,9 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
 import com.ssafy.mozzi.api.service.FileService;
 import com.ssafy.mozzi.common.dto.ObjectFileItem;
-import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.model.APICacheControl;
-import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,9 +52,9 @@ public class FileController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "업로드 성공", useReturnTypeSchema = true),
         @ApiResponse(responseCode = "404", description = "User Id 존재 X",
-            content = @Content(schema = @Schema(implementation = UserIdNotExistsException.UserIdNotExistsResponse.class))),
+            content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
         @ApiResponse(responseCode = "500", description = "서버 에러",
-            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @PostMapping(value = "/mozziroll/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<? extends BaseResponseBody<FileMozzirollPostRes>> saveMozziroll(
@@ -89,7 +87,7 @@ public class FileController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "모찌롤 다운로드 성공", useReturnTypeSchema = true),
         @ApiResponse(responseCode = "500", description = "서버 에러",
-            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @GetMapping(value = "/mozziroll/{mozzirollId}")
     public ResponseEntity<Resource> downloadMozziroll(@PathVariable("mozzirollId") String mozzirollId) {
@@ -117,7 +115,7 @@ public class FileController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "파일 다운로드 성공", useReturnTypeSchema = true),
         @ApiResponse(responseCode = "500", description = "서버 에러",
-            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @GetMapping(value = "/object/{objectName}")
     public ResponseEntity<Resource> getObject(
