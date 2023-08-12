@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.ssafy.mozzi.common.dto.PopularUserMozzirollEntityDto;
 import com.ssafy.mozzi.common.dto.UserMozzirollItemDto;
 import com.ssafy.mozzi.db.entity.remote.User;
 import com.ssafy.mozzi.db.entity.remote.UserMozziroll;
@@ -24,35 +23,48 @@ public interface UserMozzirollRepository extends JpaRepository<UserMozziroll, Lo
     Optional<UserMozziroll> findByMozzirollIdAndUserId(long mozzirollId, long userId);
 
     // TODO: 쿼리 개선 생각
-    @Query("select userMozziroll.id as id, "
-        + "userMozziroll.title as title, "
-        + "userMozziroll.posted as posted, "
-        + "userMozziroll.user as user, "
-        + "userMozziroll.mozziroll as mozziroll, "
-        + "count(like.likedUserMozziroll.id) as likeCount,"
-        + "CASE WHEN EXISTS (SELECT likedUser.id FROM userMozziroll.likedUsers likedUser WHERE likedUser.likedUser.id = :userId) THEN true ELSE false END AS isLiked "
-        + "from UserMozziroll userMozziroll left join MozzirollLike as like on userMozziroll.id = like.likedUserMozziroll.id "
-        + "where userMozziroll.deleted = false and userMozziroll.user.id=:userId "
-        + "group by userMozziroll.id")
+    @Query("""
+            select userMozziroll.id as id, 
+            userMozziroll.title as title, 
+            userMozziroll.posted as posted, 
+            userMozziroll.user as user, 
+            userMozziroll.mozziroll as mozziroll, 
+            count(like.likedUserMozziroll.id) as likeCount, 
+            CASE WHEN EXISTS (SELECT likedUser.id FROM userMozziroll.likedUsers likedUser WHERE likedUser.likedUser.id = :userId) THEN true 
+            ELSE false 
+            END AS isLiked 
+            from UserMozziroll userMozziroll left join MozzirollLike as like on userMozziroll.id = like.likedUserMozziroll.id 
+            where userMozziroll.deleted = false and userMozziroll.user.id=:userId 
+            group by userMozziroll.id 
+        """)
     Page<UserMozzirollItemDto> findByUserId(@Param("userId") Long userId, Pageable pageable);
 
     Optional<UserMozziroll> findByIdAndUserId(long id, long userId);
 
-    // 좋아요 순으로 정렬하고 삭제 되지 않고 post 하기로 설정한 게시물만 가져옵니다.
+    // 좋아요/id(time) 순으로 정렬하고 삭제 되지 않고 post 하기로 설정한 게시물만 가져옵니다.
     // TODO: posted 를 어떻게 설정할지 프론트랑 논의 해봐야됨, default를 true로 할지...
-    @Query("select userMozziroll.id as id, "
-        + "userMozziroll.mozziroll.objectName as objectName, "
-        + "userMozziroll.title as title, "
-        + "count(like.likedUserMozziroll.id) as likeCount,"
-        + "userMozziroll.mozziroll.createdAt as createdAt, "
-        + "userMozziroll.mozziroll.height as height, "
-        + "userMozziroll.mozziroll.width as width, "
-        + "CASE WHEN EXISTS (SELECT likedUser.id FROM userMozziroll.likedUsers likedUser WHERE likedUser.likedUser.id = :userId) THEN true ELSE false END AS isLiked from UserMozziroll "
-        + "userMozziroll left join MozzirollLike as like on userMozziroll.id = like.likedUserMozziroll.id "
-        + "where userMozziroll.deleted = false and userMozziroll.posted "
-        + "group by userMozziroll.id order by count(like.likedUserMozziroll.id) desc, userMozziroll.mozziroll.createdAt asc")
-    Page<PopularUserMozzirollEntityDto> findAllOrderByMozzirollLikeCount(@Param("userId") Long userId,
-        Pageable pageable);
+    @Query("""
+            select userMozziroll.id as id, 
+            userMozziroll.title as title, 
+            userMozziroll.posted as posted, 
+            userMozziroll.user as user, 
+            userMozziroll.mozziroll as mozziroll, 
+            count(like.likedUserMozziroll.id) as likeCount,
+            CASE 
+            WHEN :userId=null THEN false 
+            WHEN EXISTS (SELECT likedUser.id FROM userMozziroll.likedUsers likedUser WHERE likedUser.likedUser.id = :userId) THEN true 
+            ELSE false END AS isLiked 
+            from UserMozziroll userMozziroll left join MozzirollLike as like on userMozziroll.id = like.likedUserMozziroll.id 
+            where userMozziroll.deleted = false and userMozziroll.posted 
+            group by userMozziroll.id 
+            order by 
+            CASE 
+            WHEN :sorted='like' THEN count(like.likedUserMozziroll.id) END
+            desc,
+            userMozziroll.id desc
+        """)
+    Page<UserMozzirollItemDto> findAllOrderByMozzirollLikeCount(@Param("userId") Long userId,
+        @Param("sorted") String sorted, Pageable pageable);
 
     boolean existsByIdAndUser(Long id, User user);
 }

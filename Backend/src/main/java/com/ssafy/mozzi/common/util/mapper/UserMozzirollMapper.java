@@ -3,6 +3,7 @@ package com.ssafy.mozzi.common.util.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ssafy.mozzi.api.response.PopularUserMozzirollGetlRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.common.dto.UserMozzirollItem;
 import com.ssafy.mozzi.common.dto.UserMozzirollItemDto;
@@ -50,6 +51,21 @@ public class UserMozzirollMapper {
     public static UserMozzirollGetRes toUserMozzirollGetRes(List<UserMozzirollItemDto> userMozzirollItemDtos,
         int pages) {
         return UserMozzirollGetRes.builder()
+            .userMozzirollItems(toUserMozzirollItems(userMozzirollItemDtos))
+            .pages(pages)
+            .build();
+    }
+
+    /**
+     * UserMozzirollItemDto 엔티티 집합을를 PopularUserMozzirollGetRes 로 변환
+     * @param userMozzirollItemDtos List UserMozzirollItemDto
+     * @param pages int
+     * @return PopularUserMozzirollGetlRes
+     */
+    public static PopularUserMozzirollGetlRes toPopularUserMozzirollGetRes(
+        List<UserMozzirollItemDto> userMozzirollItemDtos,
+        int pages) {
+        return PopularUserMozzirollGetlRes.builder()
             .userMozzirollItems(toUserMozzirollItems(userMozzirollItemDtos))
             .pages(pages)
             .build();
