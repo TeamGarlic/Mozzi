@@ -167,7 +167,7 @@ public class MozzirollController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "유저 모찌롤 삭제 성공", useReturnTypeSchema = true),
         @ApiResponse(responseCode = "500", description = "서버 에러",
-            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @DeleteMapping("/{userMozzirollId}")
     public ResponseEntity<? extends BaseResponseBody<UserMozzirollDeleteRes>> deleteUserMozziroll(

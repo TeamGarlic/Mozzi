@@ -199,7 +199,7 @@ public class MozzirollServiceImpl implements MozzirollService {
      * @param accessToken JWT Access Token
      * @param userMozzirollId long
      * @return UserMozzirollDeleteRes
-     * @throws MozzirollNotExistsException
+     * @throws NotFoundException
      * @throws UnAuthorizedException
      */
     @Override
@@ -207,8 +207,8 @@ public class MozzirollServiceImpl implements MozzirollService {
     public UserMozzirollDeleteRes deleteUserMozziroll(String accessToken, long userMozzirollId) {
         User user = userService.findUserByToken(accessToken);
         Optional<UserMozziroll> userMozziroll = userMozzirollRepository.findById(userMozzirollId);
-        if (!userMozziroll.isPresent()) {
-            throw new MozzirollNotExistsException("user Mozziroll not exists");
+        if (userMozziroll.isEmpty()) {
+            throw new NotFoundException(MozziAPIErrorCode.MozzirollNotExists, "User Mozziroll not exists");
         }
 
         Mozziroll mozziroll = userMozziroll.get().getMozziroll();
@@ -217,12 +217,13 @@ public class MozzirollServiceImpl implements MozzirollService {
         if (userMozzirollRepository.existsByIdAndUser(userMozzirollId, user)) {
             mozziroll.getUserMozzirolls().remove(userMozziroll.get());
             userMozzirollRepository.delete(userMozziroll.get());
-        } else
-            throw new UnAuthorizedException("user is not userMozziroll's owner");
+        } else {
+            throw new UnAuthorizedException(MozziAPIErrorCode.UnAuthorized, "User is not userMozziroll's owner");
+        }
 
         // 만약 mozziroll 이 더이상 어떤 userMozziroll 과 연결 되어있지 않으면 삭제
         // TODO: 파일 삭제도 필요!
-        if (mozziroll.getUserMozzirolls().size() == 0) {
+        if (mozziroll.getUserMozzirolls().isEmpty()) {
             mozzirollRepository.delete(mozziroll);
         }
 
