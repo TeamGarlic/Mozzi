@@ -20,6 +20,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
   const completeClipRef = useRef();
   const completeClipContextRef = useRef();
   const videoRef = useRef({});
+  const playTogetherRef = useRef();
   const bg = new Image();
   bg.src = frame.src;
   bg.crossOrigin = "anonymous";
@@ -104,6 +105,11 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
     });
   }
 
+  function setPlayTogether(func){
+    playTogetherRef.current.onclick = func;
+    console.log(playTogetherRef)
+  }
+
   useEffect(() => {
     completeClipContextRef.current = completeClipRef.current.getContext("2d");
     completeClipContextRef.current.drawImage(
@@ -116,6 +122,8 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
     drawVid();
   });
 
+  console.log(playTogetherRef);
+
   return (
     <Layout>
       <>
@@ -127,22 +135,29 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
           <ClipLog user={user}/>
         </div>
         <div className="float-right min-w-[calc(32rem)] w-[calc(32rem)] h-screen bg-white flex-col rounded-s-xl p-4 justify-center items-center text-center overflow-y-scroll scrollbar-hide">
-          프레임
           <div className="mx-auto bottom-5 justify-center items-center text-center">
-            <Frame user={user} updateMozzi={updateMozzi}/>
-            <button
-              className="w-1/2 h-10 rounded-3xl bg-yellow-100 shadow-[5px_5px_5px_0px_rgba(0,0,0,0.5)]"
-              onClick={makeClip}
-            >
-              공유하기
-            </button>
+            <div className="flex">
+              <button
+                  className="w-1/2 h-10 rounded-3xl bg-yellow-100 shadow-[5px_5px_5px_0px_rgba(0,0,0,0.5)] m-2"
+                  ref={playTogetherRef}
+              >
+                동시재생
+              </button>
+              <button
+                  className="w-1/2 h-10 rounded-3xl bg-yellow-100 shadow-[5px_5px_5px_0px_rgba(0,0,0,0.5)] m-2"
+                  onClick={makeClip}
+              >
+                공유하기
+              </button>
+            </div>
+            <Frame user={user} updateMozzi={updateMozzi} setPlayTogether={setPlayTogether}/>
           </div>
         </div>
         <canvas
           ref={completeClipRef}
           width={bg.width}
           height={bg.height}
-          className="collapse absolute"
+          className="hidden"
         ></canvas>
         {frameNum.map((i) => {
           if (frame[i]["src"]) {
@@ -151,7 +166,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
                 key={`hidden${i}`}
                 ref={(el) => (videoRef.current[i] = el)}
                 id={`hidden${i}`}
-                className="collapse absolute"
+                className="hidden"
                 src={frame[i]["src"]}
                 // autoPlay={true}
               ></video>

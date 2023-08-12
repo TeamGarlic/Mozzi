@@ -9,7 +9,7 @@ import {
 import PropTypes from "prop-types";
 import {checkHost} from "@/utils/DecoratorUtil.js";
 
-function Frame({user, updateMozzi}) {
+function Frame({user, updateMozzi, setPlayTogether}) {
   const frame = useSelector((state) => state.clipReducer.frame);
   const dispatch = useDispatch();
   const drag = useSelector((state) => state.clipReducer.drag);
@@ -27,6 +27,13 @@ function Frame({user, updateMozzi}) {
       frameRef.current[i].style.top = `${frame[i]['y']*imgRef.current.height}px`;
       frameRef.current[i].style.left = `${frame[i]['x']*imgRef.current.width}px`;
     })
+    setPlayTogether(()=>{
+      frameNum.forEach((i) => {
+        if (videoRef.current[i]){
+          videoRef.current[i].load();
+        }
+      })
+    });
   }, [frame])
 
   function UpdateMozzi(){
@@ -78,13 +85,6 @@ function Frame({user, updateMozzi}) {
     event.preventDefault();
   }
 
-  function playTogether(){
-    frameNum.forEach((i) => {
-      if (videoRef.current[i]){
-        videoRef.current[i].load();
-      }
-    })
-  }
 
   clickVideo = checkHost(clickVideo, user.isHost);
   onDragStart = checkHost(onDragStart, user.isHost);
@@ -93,9 +93,10 @@ function Frame({user, updateMozzi}) {
   onDragOver = checkHost(onDragOver, user.isHost);
   onDragEnter = checkHost(onDragEnter, user.isHost);
 
+
   return (
     <div>
-      <div className="relative">
+      <div className="relative m-2">
         <img src={frame.src} alt="frame" ref={imgRef}></img>
         {frameNum.map((i) => {
           if (frame[i]["src"]) {
@@ -130,11 +131,6 @@ function Frame({user, updateMozzi}) {
           );
         })}
       </div>
-
-      <button className="w-1/2 h-10 rounded-3xl bg-yellow-100 shadow-[5px_5px_5px_0px_rgba(0,0,0,0.5)]"
-              onClick={playTogether}>
-        동시재생
-      </button>
     </div>
   );
 }
@@ -151,4 +147,5 @@ Frame.propTypes = {
     isHost: PropTypes.number,
   }),
   updateMozzi: PropTypes.func,
+  setPlayTogether: PropTypes.func,
 };
