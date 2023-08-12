@@ -10,6 +10,7 @@ import org.hibernate.annotations.Where;
 
 import com.ssafy.mozzi.db.entity.BaseEntity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -57,7 +58,7 @@ public class UserMozziroll extends BaseEntity {
     @JoinColumn(name = "mozziroll_id")
     private Mozziroll mozziroll;
 
-    @OneToMany(mappedBy = "likedUserMozziroll")
+    @OneToMany(mappedBy = "likedUserMozziroll", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<MozzirollLike> likedUsers = new HashSet<>();
 
     @Override

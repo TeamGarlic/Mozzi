@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.mozzi.common.dto.PopularUserMozzirollEntityDto;
+import com.ssafy.mozzi.db.entity.remote.User;
 import com.ssafy.mozzi.db.entity.remote.UserMozziroll;
 
 /**
@@ -37,4 +38,6 @@ public interface UserMozzirollRepository extends JpaRepository<UserMozziroll, Lo
         + "group by userMozziroll.id order by count(like.likedUserMozziroll.id) desc, userMozziroll.mozziroll.createdAt asc")
     Page<PopularUserMozzirollEntityDto> findAllOrderByMozzirollLikeCount(@Param("userId") Long userId,
         Pageable pageable);
+
+    boolean existsByIdAndUser(Long id, User user);
 }

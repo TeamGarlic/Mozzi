@@ -2,6 +2,7 @@ package com.ssafy.mozzi.api.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
 import com.ssafy.mozzi.api.response.MozzirollLikeRes;
 import com.ssafy.mozzi.api.response.PopularUserMozzirolGetlRes;
+import com.ssafy.mozzi.api.response.UserMozzirollDeleteRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.api.service.MozzirollService;
 import com.ssafy.mozzi.common.exception.handler.AlreadyLinkedMozziException;
@@ -157,6 +159,32 @@ public class MozzirollController {
                 BaseResponseBody.<PopularUserMozzirolGetlRes>builder()
                     .message("get popular user mozziroll list success")
                     .data(mozzirollService.getPopularUserMozzirolls(accessToken, pageNum, pageSize))
+                    .build()
+            );
+    }
+
+    /**
+     * userMozzirollId 에 해당하는 userMozziroll 을 삭제합니다. (soft delete) 만든 사람 외에는 삭제가 불가능 합니다.
+     * @param accessToken 사용자의 Token
+     * @param userMozzirollId 유저 모찌롤의 Id
+     * @see MozzirollService
+     */
+    @Operation(summary = "유저 모찌롤 삭제", description = "userMozzirollId 에 해당하는 userMozziroll 을 삭제합니다. (soft delete) 만든 사람 외에는 삭제가 불가능 합니다. 만약 삭제될 때 관계된 mozziroll 의 부모가 더이상 없을경우 mozziroll 또한 같이 삭제합니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "유저 모찌롤 삭제 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+    })
+    @DeleteMapping("/{userMozzirollId}")
+    public ResponseEntity<? extends BaseResponseBody<UserMozzirollDeleteRes>> deleteUserMozziroll(
+        @RequestHeader(value = "Authorization", required = false) String accessToken,
+        @PathVariable("userMozzirollId") long userMozzirollId) {
+        return ResponseEntity.ok()
+            .cacheControl(APICacheControl.noCache)
+            .body(
+                BaseResponseBody.<UserMozzirollDeleteRes>builder()
+                    .message("delete userMozziroll success")
+                    .data(mozzirollService.deleteUserMozziroll(accessToken, userMozzirollId))
                     .build()
             );
     }

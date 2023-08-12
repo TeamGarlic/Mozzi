@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.ssafy.mozzi.api.response.MozzirollLikeRes;
 import com.ssafy.mozzi.api.response.PopularUserMozzirolGetlRes;
+import com.ssafy.mozzi.api.response.UserMozzirollDeleteRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.common.dto.MozzirollItem;
 import com.ssafy.mozzi.common.dto.PopularUserMozzirollEntityDto;
@@ -93,6 +94,19 @@ public class MozzirollMapper {
         return PopularUserMozzirolGetlRes.builder()
             .popularUserMozzirolls(popularUserMozzirollItems)
             .pages(pages)
+            .build();
+    }
+
+    /**
+     * userMozziroll 의 정보를 PopularUserMozzirollRes 로 변환
+     * @param userMozziroll UserMozziroll
+     * @return UserMozzirollDeleteRes
+     */
+    public static UserMozzirollDeleteRes toUserMozzirollDeleteRes(UserMozziroll userMozziroll) {
+        return UserMozzirollDeleteRes.builder()
+            .deleted(true)
+            .id(userMozziroll.getId())
+            .title(userMozziroll.getTitle())
             .build();
     }
 }
