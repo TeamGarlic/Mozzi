@@ -50,13 +50,13 @@ PrivateUserApi.interceptors.response.use(
       } else {
         window.localStorage.removeItem("accessToken");
         window.localStorage.removeItem("refreshToken");
-        // window.location.replace("/");
+        window.location.replace("/");
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         window.localStorage.removeItem("accessToken");
         window.localStorage.removeItem("refreshToken");
-        // window.location.replace("/");
+        window.location.replace("/");
       }
     }
   }
@@ -137,7 +137,8 @@ const userApi = {
   },
 
   signOut: async () => {
-    let res = await PrivateUserApi.delete("",{});
+    let res = await PrivateUserApi.delete("");
+    console.log(res);
     return res;
   }
 };

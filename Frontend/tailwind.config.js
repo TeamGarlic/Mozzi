@@ -7,7 +7,8 @@ export const theme = {
       backimg: "url('/src/assets/img/background2.png')",
     },
     boxShadow: {
-      inner: 'inset 0 0 0 2px #000000'
+      innerblack: 'inset 0 0 0 2px #000000',
+      innerpink: 'inset 0 0 0 2px #fa8ee5'
     }
   },
 };
