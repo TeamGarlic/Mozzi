@@ -31,7 +31,7 @@ const fileApi = {
 
   downloadClip: async (id) => {
     const res = await PublicFileApi.get(
-      `mozziroll/${id}`,
+      `object/${id}`,
     );
     return res;
   }

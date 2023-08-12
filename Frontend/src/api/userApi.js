@@ -137,7 +137,9 @@ const userApi = {
   },
 
   signOut: async () => {
-
+    let res = await PrivateUserApi.delete("");
+    console.log(res);
+    return res;
   }
 };
 

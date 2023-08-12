@@ -38,7 +38,7 @@ function NavBar({ user }) {
             onClick={goHome}
         />
         {user ? (
-            <div className=" float-right flex-col">
+            <div className=" float-right flex-col z-10">
               <button
                   onClick={showMenu}
                   className=" float-right leading-[calc(1.875rem)]"
@@ -46,14 +46,14 @@ function NavBar({ user }) {
                 {user.userNickname}
               </button>
               {menu && (
-                  <ul className="mt-10 border-4 rounded-lg p-4">
-                    <li className=" my-2">
+                  <ul className="mt-10 border-4 rounded-lg p-4 z-10">
+                    <li className=" my-2 z-10">
                       <Link to={`/mypage`}>마이페이지</Link>
                     </li>
-                    <li className=" my-2">
+                    <li className=" my-2 z-10">
                       <Link to="/modify">내정보수정</Link>
                     </li>
-                    <li className=" my-2 hover:cursor-pointer" onClick={logOut}>
+                    <li className=" my-2 hover:cursor-pointer z-10" onClick={logOut}>
                       로그아웃
                     </li>
                   </ul>

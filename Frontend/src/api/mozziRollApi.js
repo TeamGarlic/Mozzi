@@ -65,10 +65,20 @@ PrivateMozziRollApi.interceptors.response.use(
 
 const mozziRollApi = {
     getMozziRolls: async (page, size) => {
-        if (!window.localStorage.getItem("accessToken")) return;
-        let res = await PrivateMozziRollApi.get(``, { pageNum: page, pageSize: size });
+        let res = await PrivateMozziRollApi.get("",
+        {params:
+            {pageNum: page, pageSize: size}
+        }
+            );
+        console.log(res);
         return res;
     },
+
+    deleteMozziRolls:async(userMozziRollId)=>{
+        let res = await PrivateMozziRollApi.delete(`${userMozziRollId}`);
+        console.log(res);
+        return res;
+    }
 };
 
 export default mozziRollApi;
