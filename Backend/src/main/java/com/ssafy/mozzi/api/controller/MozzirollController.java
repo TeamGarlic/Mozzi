@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
 import com.ssafy.mozzi.api.request.PostUserMozzirollPostReq;
 import com.ssafy.mozzi.api.response.MozzirollLikeRes;
-import com.ssafy.mozzi.api.response.PopularUserMozzirolGetlRes;
+import com.ssafy.mozzi.api.response.PopularUserMozzirollGetlRes;
 import com.ssafy.mozzi.api.response.PostUserMozzirollPostRes;
 import com.ssafy.mozzi.api.response.UserMozzirollDeleteRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
@@ -145,16 +145,17 @@ public class MozzirollController {
             content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @GetMapping("/popular")
-    public ResponseEntity<? extends BaseResponseBody<PopularUserMozzirolGetlRes>> getPopularUserMozzirolls(
+    public ResponseEntity<? extends BaseResponseBody<PopularUserMozzirollGetlRes>> getPopularUserMozzirolls(
         @RequestHeader(value = "Authorization", required = false) String accessToken,
         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+        @RequestParam(value = "sorted", defaultValue = "time") String sorted) {
         return ResponseEntity.ok()
             .cacheControl(APICacheControl.noCache)
             .body(
-                BaseResponseBody.<PopularUserMozzirolGetlRes>builder()
+                BaseResponseBody.<PopularUserMozzirollGetlRes>builder()
                     .message("get popular user mozziroll list success")
-                    .data(mozzirollService.getPopularUserMozzirolls(accessToken, pageNum, pageSize))
+                    .data(mozzirollService.getPopularUserMozzirolls(accessToken, pageNum, pageSize, sorted))
                     .build()
             );
     }
