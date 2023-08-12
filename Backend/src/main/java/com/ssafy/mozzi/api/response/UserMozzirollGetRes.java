@@ -2,8 +2,7 @@ package com.ssafy.mozzi.api.response;
 
 import java.util.List;
 
-import com.ssafy.mozzi.common.dto.BackgroundItem;
-import com.ssafy.mozzi.common.dto.MozzirollItem;
+import com.ssafy.mozzi.common.dto.UserMozzirollItem;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,14 +10,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 가상 배경 리스트 응답 Object
- * @see BackgroundItem
+ * 유저 모찌롤 리스트 응답 Object
+ * @see UserMozzirollItem
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserMozzirollGetRes {
-    private List<MozzirollItem> mozzirollItems;
+    private List<UserMozzirollItem> userMozzirollItems;
     private int pages;  // 총 페이지 수
 }

@@ -11,17 +11,18 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.mozzi.api.request.MozziLinkPostRequest;
 import com.ssafy.mozzi.api.request.PostUserMozzirollPostReq;
 import com.ssafy.mozzi.api.response.MozzirollLikeRes;
-import com.ssafy.mozzi.api.response.PopularUserMozzirolGetlRes;
+import com.ssafy.mozzi.api.response.PopularUserMozzirollGetlRes;
 import com.ssafy.mozzi.api.response.PostUserMozzirollPostRes;
 import com.ssafy.mozzi.api.response.UserMozzirollDeleteRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
-import com.ssafy.mozzi.common.dto.PopularUserMozzirollEntityDto;
+import com.ssafy.mozzi.common.dto.UserMozzirollItemDto;
 import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
 import com.ssafy.mozzi.common.exception.handler.BadRequestException;
 import com.ssafy.mozzi.common.exception.handler.NotFoundException;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.common.util.mapper.MozzirollMapper;
+import com.ssafy.mozzi.common.util.mapper.UserMozzirollMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
 import com.ssafy.mozzi.db.entity.local.Booth;
 import com.ssafy.mozzi.db.entity.remote.Mozziroll;
@@ -112,9 +113,9 @@ public class MozzirollServiceImpl implements MozzirollService {
     public UserMozzirollGetRes getMozzirollsByUser(String accessToken, int pageNum, int pageSize) {
         User user = userService.findUserByToken(accessToken);
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);
-        Page<UserMozziroll> page = userMozzirollRepository.findByUserId(user.getId(), pageRequest);
-        List<UserMozziroll> userMozzirolls = page.getContent();
-        return MozzirollMapper.toUserMozzirollGetRes(userMozzirolls, page.getTotalPages());
+        Page<UserMozzirollItemDto> page = userMozzirollRepository.findByUserId(user.getId(), pageRequest);
+        List<UserMozzirollItemDto> userMozzirolls = page.getContent();
+        return UserMozzirollMapper.toUserMozzirollGetRes(userMozzirolls, page.getTotalPages());
     }
 
     /**
@@ -180,19 +181,19 @@ public class MozzirollServiceImpl implements MozzirollService {
      * @return PopularUserMozzirolGetlRes
      */
     @Override
-    public PopularUserMozzirolGetlRes getPopularUserMozzirolls(String accessToken, int pageNum, int pageSize) {
-        long userId;
+    public PopularUserMozzirollGetlRes getPopularUserMozzirolls(String accessToken, int pageNum, int pageSize,
+        String sorted) {
+        Long userId = null;
 
-        if (accessToken.equals(""))
-            userId = 0;
-        else
+        if (accessToken != null && !accessToken.equals("")) {
             userId = userService.findUserByToken(accessToken).getId();
+        }
 
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);
-        Page<PopularUserMozzirollEntityDto> page = userMozzirollRepository.findAllOrderByMozzirollLikeCount(userId,
-            pageRequest);
-        List<PopularUserMozzirollEntityDto> userMozzirolls = page.getContent();
-        return MozzirollMapper.toPopularUserMozzirollGetRes(userMozzirolls, page.getTotalPages());
+        Page<UserMozzirollItemDto> page = userMozzirollRepository.findAllOrderByMozzirollLikeCount(userId,
+            sorted, pageRequest);
+        List<UserMozzirollItemDto> userMozzirolls = page.getContent();
+        return UserMozzirollMapper.toPopularUserMozzirollGetRes(userMozzirolls, page.getTotalPages());
     }
 
     /**

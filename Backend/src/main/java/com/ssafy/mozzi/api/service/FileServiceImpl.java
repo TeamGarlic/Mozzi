@@ -102,7 +102,7 @@ public class FileServiceImpl implements FileService {
         GetObjectResponse getObjectResponse = fileRepository.getObject(client.getClient(),
             mozziroll.get().getObjectName());
 
-        return FileMapper.toMozzirollItem(getObjectResponse, mozziroll);
+        return FileMapper.toObjectFileItem(getObjectResponse, mozziroll);
     }
 
     /**

@@ -33,8 +33,7 @@ public class FileMapper {
      * @param mozziroll Optional Mozziroll
      * @return ObjectFileItem
      */
-    public static ObjectFileItem toMozzirollItem(GetObjectResponse getObjectResponse,
-        Optional<Mozziroll> mozziroll) {
+    public static ObjectFileItem toObjectFileItem(GetObjectResponse getObjectResponse, Optional<Mozziroll> mozziroll) {
         return ObjectFileItem.builder()
             .file(toResource(getObjectResponse))
             .fileName(mozziroll.get().getObjectName())

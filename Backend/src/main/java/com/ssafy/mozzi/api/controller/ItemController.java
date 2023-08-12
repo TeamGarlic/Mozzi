@@ -67,7 +67,7 @@ public class ItemController {
         @RequestParam(value = "isFavorite", defaultValue = "false") boolean isFavorite) {
 
         return ResponseEntity.ok()
-            .cacheControl(APICacheControl.usePublicCache)
+            .cacheControl(APICacheControl.noCache)
             .body(BaseResponseBody.<ItemBackgroundGetRes>builder()
                 .message((isFavorite ? "My" : "All") + " Background list. pageNum: " + pageNum)
                 .data(itemService.getBackgroundRes(authorization, pageNum, pageSize, isFavorite))
