@@ -96,7 +96,7 @@ function ClipLog({user}) {
               return (
                 <div
                   key={`clip${i}`}
-                  className=" w-96 h-[calc(13.5rem)] bg-slate-300 mx-auto"
+                  className=" w-96 h-[calc(16rem)] bg-slate-300 mx-auto"
                 >
                   <video
                     draggable
