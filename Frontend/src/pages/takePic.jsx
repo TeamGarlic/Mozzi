@@ -87,18 +87,21 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
   }
 
   function startCount() {
+    let localTaking = 0;
+    setIsTaking(false);
     setTimerVisible(true);
     // console.log(timer + "초 후 촬영");
     interval = setInterval(() => {
       // console.log(interval);
       setCount((prev) => {
         let next = prev - 1;
-        if (isTaking === false && next === 0) {
+        if (localTaking === 0 && next === 0) {
           // 대기 시간 후 촬영 시작(next 초 만큼)
           next = 5;
           setIsTaking(true);
+          localTaking = 1;
           recordClip(taken);
-        } else if (isTaking === 1 && next === 0) {
+        } else if (localTaking === 1 && next === 0) {
           clearInterval(interval);
           setTimerVisible(false);
           setIsTaking(false);
