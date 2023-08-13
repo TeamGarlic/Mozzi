@@ -76,7 +76,7 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
               </div>
               <div className="text-2xl">프레임 선택</div>
             </div>
-            <div className="gap-6 p-4 mr-[calc(17rem)] overflow-scroll scrollbar-hide">
+            <div className="p-4 mr-[calc(17rem)] overflow-scroll scrollbar-hide">
                 <div className="flex flex-wrap w-full items-center gap-4 p-4">
                 {frameList.map((frame) => (
                   <div onClick={(e) => clickFrame(e, frame)} key={frame.id} className={`border-8 ${pickedFrame.id === frame.id ? "border-blue-500" : ""}`}>

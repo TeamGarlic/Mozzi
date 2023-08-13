@@ -76,13 +76,11 @@ const mozziRollApi = {
 
     deleteMozziRolls:async(userMozziRollId)=>{
         let res = await PrivateMozziRollApi.delete(`${userMozziRollId}`);
-        console.log(res);
         return res;
     },
 
     getCommunityMozziRolls:async(state, pageNum, size)=>{
         let res;
-        console.log(window.localStorage.getItem('accessToken'))
         if(window.localStorage.getItem('accessToken')){
             res = await PrivateMozziRollApi.get("popular",{
                 params:{
@@ -100,6 +98,26 @@ const mozziRollApi = {
                 }
             });
         }
+        return res;
+    },
+
+    getDetail:async(id)=>{
+        let res;
+        try{
+            if(window.localStorage.getItem('accessToken')){
+                res = await PrivateMozziRollApi.get(`${id}`);
+            }else{
+                res = await PublicMozziRollApi.get(`${id}`);
+            }
+            return res;
+        }catch{
+            alert("글이 존재하지 않거나 잘못된 접근입니다.");
+            window.location.href= "/";
+        }
+    },
+
+    like:async (id)=>{
+        let res = await PrivateMozziRollApi.post(`like/${id}`);
         return res;
     }
 };
