@@ -124,12 +124,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
         <CamSetting />
         <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} publisher={publisher} />
         <div className="w-full pt-4 ps-4">
-          <div>
-            <div className=" text-sm text-gray-500">
-              초대 코드 : {shareCode}
-            </div>
-            <div className="text-2xl">MOZZI</div>
-          </div>
+          <div className="text-2xl">촬영 부스</div>
           <PicSideBar
             bgList={bgList}
             user={user}
