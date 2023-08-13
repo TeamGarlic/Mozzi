@@ -1,11 +1,11 @@
 import PropTypes from "prop-types";
 import {checkHost} from "@/utils/DecoratorUtil.js";
 
-function BgCard({ bgName, bgSrc, user, changeBg }) {
+function BgCard({ bgName, bgSrc, user, changeBg, setAlertModal }) {
   function setBg(event){
     changeBg(event.target.src)
   }
-  setBg = checkHost(setBg, user.isHost)
+  setBg = checkHost(setBg, user.isHost, setAlertModal)
 
   return (
     <div className="flex-col shadow border select-none cursor-pointer bg-white dark:bg-gray-800 rounded-md flex flex-1 items-center p-4 my-2 w-full h-[9/16]">
@@ -27,6 +27,6 @@ BgCard.propTypes = {
     email: PropTypes.string,
     isHost: PropTypes.number,
   }),
-  changeBg: PropTypes.func,
+  setAlertModal: PropTypes.func,
 };
 

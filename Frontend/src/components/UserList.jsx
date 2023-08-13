@@ -3,7 +3,7 @@ import {useEffect, useState} from "react"
 import {checkHost} from "@/utils/DecoratorUtil.js"
 import PropTypes from "prop-types";
 
-function UserList({user, position, sendPosition, setPosition, subscribers, publisher}){
+function UserList({user, position, sendPosition, setPosition, subscribers, publisher, setAlertModal}){
   const [userList, setUserList] = useState([])
 
   const [drag, setDrag] = useState(null);
@@ -134,12 +134,12 @@ function UserList({user, position, sendPosition, setPosition, subscribers, publi
     setUserList(_userList);
   }
 
-  onDragOver = checkHost(onDragOver, user.isHost)
-  onDragEnter = checkHost(onDragEnter, user.isHost)
-  onDragStart = checkHost(onDragStart, user.isHost)
-  onDragEnd = checkHost(onDragEnd, user.isHost)
-  onDragLeave = checkHost(onDragLeave, user.isHost)
-  onDrop = checkHost(onDrop, user.isHost)
+  onDragOver = checkHost(onDragOver, user.isHost, setAlertModal)
+  onDragEnter = checkHost(onDragEnter, user.isHost, setAlertModal)
+  onDragStart = checkHost(onDragStart, user.isHost, setAlertModal)
+  onDragEnd = checkHost(onDragEnd, user.isHost, setAlertModal)
+  onDragLeave = checkHost(onDragLeave, user.isHost, setAlertModal)
+  onDrop = checkHost(onDrop, user.isHost, setAlertModal)
 
   return (
     <>
@@ -185,4 +185,5 @@ UserList.propTypes = {
   setPosition: PropTypes.func,
   subscribers: PropTypes.array,
   publisher: PropTypes.any,
+  setAlertModal: PropTypes.func,
 };
