@@ -4,8 +4,10 @@ import useInput from "@/hooks/useInput.js";
 import LoginNav from "@/components/LoginNav.jsx";
 import TextInput from "@/components/TextInput.jsx";
 import userApi from "@/api/userApi";
+import {useNavigate} from "react-router-dom";
 
 function SignUp() {
+  const navigate = useNavigate();
   const id = useInput();
   const idRegex = /^[a-z\d]{4,16}$/;
   const email = useInput();
@@ -137,6 +139,9 @@ function SignUp() {
         <div className="relative w-[calc(30rem)] min-h-[calc(30rem)] flex-col rounded-lg  justify-center items-center text-center mx-auto pt-60">
           <div className="w-full h-10">
             <span className=" float-left text-lg">회원가입</span>
+            <span className=" float-right text-sm text-slate-600 hover:cursor-pointer hover:text-blue-500" onClick={()=>navigate("/login")}>
+              이미 가입하셨나요?
+            </span>
           </div>
           <div className="flex-col">
             <TextInput type="text" placeholder="아이디" {...id} onBlur={checkId} />
