@@ -14,6 +14,7 @@ import com.ssafy.mozzi.api.response.MozzirollLikeRes;
 import com.ssafy.mozzi.api.response.PopularUserMozzirollGetlRes;
 import com.ssafy.mozzi.api.response.PostUserMozzirollPostRes;
 import com.ssafy.mozzi.api.response.UserMozzirollDeleteRes;
+import com.ssafy.mozzi.api.response.UserMozzirollDetailGetRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.common.dto.UserMozzirollItemDto;
 import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
@@ -262,5 +263,32 @@ public class MozzirollServiceImpl implements MozzirollService {
         }
 
         return MozzirollMapper.toPostUserMozzirollPostRes(userMozziroll.get());
+    }
+
+    /**
+     * 유저모찌롤의 상세 데이터를 반환합니다.
+     * @param accessToken JWT Access Token
+     * @param userMozzirollId long
+     * @return UserMozzirollDetailGetRes
+     * @throws UnAuthorizedException
+     * @throws NotFoundException
+     */
+    @Override
+    public UserMozzirollDetailGetRes getDetailUserMozziroll(String accessToken, long userMozzirollId) {
+        Long userId = null;
+        // Exception 추가해서 사용자 없어도 에러 안나도록 해야하나?
+        if (accessToken != null && !accessToken.equals("")) {
+            userId = userService.findUserByToken(accessToken).getId();
+        }
+
+        Optional<UserMozzirollItemDto> userMozziroll = userMozzirollRepository.findUserMozzirollByIdAndUserId(
+            userMozzirollId, userId);
+
+        if (!userMozziroll.isPresent()) {
+            throw new NotFoundException(MozziAPIErrorCode.MozzirollNotExists,
+                "This is no userMozziroll for post/unpost user's mozziroll");
+        }
+
+        return UserMozzirollMapper.toUserMozzirollGetRes(userMozziroll.get());
     }
 }

@@ -6,6 +6,7 @@ import com.ssafy.mozzi.api.response.MozzirollLikeRes;
 import com.ssafy.mozzi.api.response.PopularUserMozzirollGetlRes;
 import com.ssafy.mozzi.api.response.PostUserMozzirollPostRes;
 import com.ssafy.mozzi.api.response.UserMozzirollDeleteRes;
+import com.ssafy.mozzi.api.response.UserMozzirollDetailGetRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 
 /**
@@ -23,4 +24,6 @@ public interface MozzirollService {
     UserMozzirollDeleteRes deleteUserMozziroll(String accessToken, long userMozzirollId);
 
     PostUserMozzirollPostRes postUserMozziroll(String accessToken, PostUserMozzirollPostReq postUserMozzirollPostReq);
+
+    UserMozzirollDetailGetRes getDetailUserMozziroll(String accessToken, long userMozzirollId);
 }

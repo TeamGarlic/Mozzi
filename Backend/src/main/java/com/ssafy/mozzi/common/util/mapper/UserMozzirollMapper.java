@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ssafy.mozzi.api.response.PopularUserMozzirollGetlRes;
+import com.ssafy.mozzi.api.response.UserMozzirollDetailGetRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.common.dto.UserMozzirollItem;
 import com.ssafy.mozzi.common.dto.UserMozzirollItemDto;
@@ -68,6 +69,23 @@ public class UserMozzirollMapper {
         return PopularUserMozzirollGetlRes.builder()
             .userMozzirollItems(toUserMozzirollItems(userMozzirollItemDtos))
             .pages(pages)
+            .build();
+    }
+
+    /**
+     * UserMozzirollItemDto 엔티티를 UserMozzirollDetailGetRes 로 변환
+     * @param userMozzirollItemDto UserMozzirollItemDto
+     * @return UserMozzirollDetailGetRes
+     */
+    public static UserMozzirollDetailGetRes toUserMozzirollGetRes(UserMozzirollItemDto userMozzirollItemDto) {
+        return UserMozzirollDetailGetRes.builder()
+            .id(userMozzirollItemDto.getId())
+            .title(userMozzirollItemDto.getTitle())
+            .posted(userMozzirollItemDto.getPosted())
+            .user(UserMapper.toUserItem(userMozzirollItemDto.getUser()))
+            .mozzirollInfo(MozzirollMapper.toMozzirollItem(userMozzirollItemDto.getMozziroll()))
+            .isLiked(userMozzirollItemDto.getIsLiked())
+            .likeCount(userMozzirollItemDto.getLikeCount())
             .build();
     }
 }
