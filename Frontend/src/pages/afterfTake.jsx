@@ -11,8 +11,7 @@ import Spinner from "@/components/Spinner.jsx";
 import { AppStore } from "@/store/AppStore.js";
 import useInterval from '@/hooks/useInterval.js';
 
-function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal }) {
-  const [delay, setDelay] = useState(false);
+function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, recordingMozzi, sendRecordingSignal }) {
   const [recording, setRecording] = useState(false);
   const { code: shareCode } = useParams();
   const frame = useSelector((state) => state.clipReducer.frame);
@@ -29,8 +28,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal }) {
   const arrClipData = [];
 
   function recordClip() {
-    setDelay(true);
-    AppStore.setRunningSpinner();
+    sendRecordingSignal(true);
     const mediaStream = completeClipRef.current.captureStream();
     mediaRecorder = new MediaRecorder(mediaStream);
     mediaRecorder.ondataavailable = (event) => {
@@ -44,7 +42,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal }) {
       // Todo: webm file url => 백엔드와 통신해서 url 주소를 재설정 해야함
       arrClipData.splice(0);
       saveClip(ClipFile, "test");
-      AppStore.setStopSpinner();
+      sendRecordingSignal(false);
       goNext();
     };
 
@@ -127,10 +125,10 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal }) {
   return (
     <Layout>
       <>
-      <div className={`flex ${delay ? "":"invisible" }`}>
+      <div className={`flex ${recordingMozzi ? "":"invisible" }`}>
         <Spinner></Spinner>
       </div>
-      <div className={`flex ${delay ? "invisible":"" }`}>
+      <div className={`flex ${recordingMozzi ? "invisible":"" }`}>
         <div className="w-full h-screen p-4 flex-col">
         <ClipLog user={user} setAlertModal={setAlertModal}/>
         </div>
@@ -193,4 +191,6 @@ AfterTake.propTypes = {
   sendMozzi: PropTypes.func,
   updateMozzi: PropTypes.func,
   setAlertModal: PropTypes.func,
+  sendRecordingSignal: PropTypes.func,
+  recordingMozzi: PropTypes.bool,
 };

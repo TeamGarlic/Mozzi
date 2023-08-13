@@ -4,6 +4,7 @@ import boothApi from "@/api/boothApi.js";
 import {useDispatch} from "react-redux";
 import {setFrameAction, AddClipAction, updateFrameAction} from "@/modules/clipAction.js";
 import {changeBgAction} from "@/modules/bgAction.js";
+import { AppStore } from "@/store/AppStore";
 
 function useSession(shareCode) {
   const [session, setSession] = useState(undefined);
@@ -18,6 +19,7 @@ function useSession(shareCode) {
   const dispatch = useDispatch();
   const [mozzi, setMozzi] = useState("");
   const [shareSecret, setShareSecret] = useState("");
+  const [recordingMozzi, setRecordingMozzi] = useState(false);
 
   const leaveSession = () => {
     if (session) {
@@ -135,6 +137,16 @@ function useSession(shareCode) {
         }
       })
 
+      session.on("signal:sendRecordingSignal", async (event) => {
+        const data = JSON.parse(event.data)
+        setRecordingMozzi(Boolean(data.signal));
+        if (data.signal) {
+          AppStore.setRunningSpinner();
+        } else {
+          AppStore.setStopSpinner();
+        }
+      })
+
       session.on("streamDestroyed", (event) => {
         setSubscribers((prev) => {
           const newSubscribers = [...prev];
@@ -178,6 +190,14 @@ function useSession(shareCode) {
       alert("연결 중 오류가 발생했습니다.");
       window.location.href="/";
     }
+  };
+
+  const sendRecordingSignal = async (signal=false) => {
+    await session.signal({
+      data: JSON.stringify({signal: signal}),
+      to: [],
+      type: "sendRecordingSignal",
+    })
   };
 
   const sendMessage = async (message, userName) => {
@@ -357,7 +377,9 @@ function useSession(shareCode) {
     updateMozzi,
     shareSecret,
     setShareSecret,
-    sendFileName
+    sendFileName,
+    sendRecordingSignal,
+    recordingMozzi,
   };
 }
 
