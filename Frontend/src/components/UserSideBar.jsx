@@ -3,12 +3,15 @@ import TextInput from "./TextInput";
 import UserVideoComponent from "./UserVideoComponents";
 import PropTypes from "prop-types";
 import { useSelector } from 'react-redux';
+import {useEffect} from "react";
 
 export default function UserSideBar({ leaveSession ,user }) {
 
   const pubCanvas = useSelector((state) => state.canvasReducer.pubCanvas);
   const subCanvases = useSelector((state) => state.canvasReducer.subCanvases);
-// console.log(subCanvases);
+  useEffect(()=>{
+    console.log(subCanvases)
+  },[subCanvases])
   return (
     <Card
       id="sideMenu"
@@ -31,6 +34,9 @@ export default function UserSideBar({ leaveSession ,user }) {
           Object.keys(subCanvases).map(key=>(
             <div key={key} className="stream-container col-md-6 col-xs-6">
               <UserVideoComponent canvas={subCanvases[key]} />
+              {/*추가 코드*/}
+              {key}
+              {/*추가 코드*/}
               <hr />
             </div>
           ))}

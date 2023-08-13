@@ -8,7 +8,6 @@ import PropTypes from "prop-types";
 
 export default function PicSideBar({user, bgList, changeBg, position, sendPosition, setPosition, subscribers, publisher}) {
   const [menu, setMenu] = useState(0);
-
   return (
       <>
         <div className={`fixed z-10 flex-col gap-3 p-4 h-fit top-5 ${menu === 0 ? "right-0" : "right-64"}`}>
@@ -44,7 +43,7 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
             <div className="h-full">
               배경 변경하기
               {bgList.map((bg) => (
-                <BgCard bgName="gdgd" key={bg.id} bgSrc={bg.objectName} user={user} changeBg={changeBg}/>
+                <BgCard bgName={bg.title} key={bg.id} bgSrc={bg.objectName} user={user} changeBg={changeBg}/>
               ))}
             </div>
           )}
