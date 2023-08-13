@@ -83,7 +83,7 @@ function SignUp() {
   function checkNick() {
     if (!nickRegex.test(nickname.value)) {
       setNickValid(false);
-      setNickComment("사용 불가능한 닉네임입니다.");
+      setNickComment("띄어쓰기 없이 2~16자의 닉네임을 입력하세요");
       return;
     }
     setNickValid(true);
