@@ -79,6 +79,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/mozzirolls/popular").permitAll()
                 .requestMatchers(HttpMethod.POST, "/mozzirolls/post").authenticated()
                 .requestMatchers(HttpMethod.DELETE, "/mozzirolls/{userMozzirollId}").authenticated()
+                .requestMatchers(HttpMethod.GET, "/mozzirolls/{userMozzirollId}").permitAll()
             )
             .headers(headers ->
                 headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)

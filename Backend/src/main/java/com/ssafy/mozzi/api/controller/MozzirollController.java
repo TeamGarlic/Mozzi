@@ -18,6 +18,7 @@ import com.ssafy.mozzi.api.response.MozzirollLikeRes;
 import com.ssafy.mozzi.api.response.PopularUserMozzirollGetlRes;
 import com.ssafy.mozzi.api.response.PostUserMozzirollPostRes;
 import com.ssafy.mozzi.api.response.UserMozzirollDeleteRes;
+import com.ssafy.mozzi.api.response.UserMozzirollDetailGetRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.api.service.MozzirollService;
 import com.ssafy.mozzi.common.model.APICacheControl;
@@ -213,6 +214,33 @@ public class MozzirollController {
                 BaseResponseBody.<UserMozzirollDeleteRes>builder()
                     .message("delete userMozziroll success")
                     .data(mozzirollService.deleteUserMozziroll(accessToken, userMozzirollId))
+                    .build()
+            );
+    }
+
+    /**
+     * 유저모찌롤의 상세 페이지 데이터를 반환합니다.
+     * @param accessToken 사용자의 Token
+     * @see MozzirollService
+     */
+    @Operation(summary = "UserMozziroll 상세 조회", description = "유저모찌롤의 상세 정보를 반환합니다.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "UserMozziroll 상세 정보 조회 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "404", description = "요청한 모찌롤이 존재하지 않습니다.",
+            content = @Content(schema = @Schema(ref = "#/components/schemas/MozzirollNotExists"))),
+        @ApiResponse(responseCode = "500", description = "서버 에러",
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
+    })
+    @GetMapping("/{userMozzirollId}")
+    public ResponseEntity<? extends BaseResponseBody<UserMozzirollDetailGetRes>> getDetailUserMozziroll(
+        @RequestHeader(value = "Authorization", required = false) String accessToken,
+        @PathVariable("userMozzirollId") long userMozzirollId) {
+        return ResponseEntity.ok()
+            .cacheControl(APICacheControl.noCache)
+            .body(
+                BaseResponseBody.<UserMozzirollDetailGetRes>builder()
+                    .message("detail UserMozziroll")
+                    .data(mozzirollService.getDetailUserMozziroll(accessToken, userMozzirollId))
                     .build()
             );
     }

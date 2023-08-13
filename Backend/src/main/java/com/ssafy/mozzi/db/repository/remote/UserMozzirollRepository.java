@@ -67,4 +67,19 @@ public interface UserMozzirollRepository extends JpaRepository<UserMozziroll, Lo
         @Param("sorted") String sorted, Pageable pageable);
 
     boolean existsByIdAndUser(Long id, User user);
+
+    @Query("""
+            select userMozziroll.id as id, 
+            userMozziroll.title as title, 
+            userMozziroll.posted as posted, 
+            userMozziroll.user as user, 
+            userMozziroll.mozziroll as mozziroll, 
+            (SELECT COUNT(id) FROM MozzirollLike ml WHERE userMozziroll.id=ml.likedUserMozziroll.id) as likeCount, 
+            CASE WHEN :userId is not null and EXISTS (SELECT likedUser.id FROM userMozziroll.likedUsers likedUser WHERE likedUser.likedUser.id = :userId) THEN true 
+            ELSE false 
+            END AS isLiked 
+            from UserMozziroll userMozziroll
+            where userMozziroll.id=:id and userMozziroll.deleted=false and userMozziroll.posted=true
+        """)
+    Optional<UserMozzirollItemDto> findUserMozzirollByIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);
 }
