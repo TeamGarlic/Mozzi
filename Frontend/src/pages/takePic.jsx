@@ -12,7 +12,7 @@ import { checkHost } from "@/utils/DecoratorUtil.js";
 import boothApi from "@/api/boothApi.js";
 import CamSetting from '@/components/CamSetting.jsx';
 
-function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition, sendFileName, shareSecret, publisher, subscribers }) {
+function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition, sendFileName, shareSecret, publisher, subscribers, setAlertModal, setRecordingModal }) {
   const timers = [3, 5, 10];
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
@@ -101,18 +101,21 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
           setIsTaking(true);
           localTaking = 1;
           recordClip(taken);
+          setRecordingModal(true);
         } else if (localTaking === 1 && next === 0) {
           clearInterval(interval);
           setTimerVisible(false);
           setIsTaking(false);
+          setRecordingModal(false);
           return timer;
         }
         return next;
       });
     }, 1000);
   }
-  take = checkHost(take, user.isHost);
-  recordClip = checkHost(recordClip, user.isHost);
+  take = checkHost(take, user.isHost, setAlertModal);
+  recordClip = checkHost(recordClip, user.isHost, setRecordingModal);
+  setTime = checkHost(setTime, user.isHost, setAlertModal);
 
   useEffect(() => {
     if (nowTaking) startCount();
@@ -137,6 +140,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
             setPosition={setPosition}
             subscribers={subscribers}
             publisher={publisher}
+            setAlertModal={setAlertModal}
           />
           {/* <div className="float-right mr-10 text-2xl">taken : {taken}/10</div> */}
         </div>
@@ -202,4 +206,6 @@ TakePic.propTypes = {
   sendFileName: PropTypes.func,
   shareSecret: PropTypes.string,
   subscribers: PropTypes.array,
+  setAlertModal: PropTypes.func,
+  setRecordingModal: PropTypes.func,
 };

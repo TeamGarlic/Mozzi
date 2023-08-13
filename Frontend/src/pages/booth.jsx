@@ -67,6 +67,8 @@ function Booth() {
   const [bgList, setBgList] = useState([]);
   const [delay, setDelay] = useState(true);
   const [frameList, setFrameList] = useState([]);
+  const [alertModal, setAlertModal] = useState(false);
+  const [recordingModal, setRecordingModal] = useState(false);
 
   // useSelector
   const mainCanvas = useSelector((state) => state.canvasReducer.mainCanvas);
@@ -94,7 +96,7 @@ function Booth() {
     gotoTakePic();
     setShareSecret(location.state.shareSecret);
   }
-  startTake = checkHost(startTake, user ? user.isHost : undefined);
+  startTake = checkHost(startTake, user ? user.isHost : undefined, setAlertModal);
 
   const onResults = (results) => {
     drawMask(bgRemovedRef.current, bgRemovedContextRef.current, results, canvasConfig.visibility, canvasConfig.degree*Math.PI/180, canvasConfig.scale/100);
@@ -184,6 +186,13 @@ function Booth() {
     }
   }
 
+  function closeAlertModal(){
+    setAlertModal(false)
+  }
+
+  function closeRecordingModal(){
+    setRecordingModal(false)
+  }
 
   // useEffect : []
   useEffect(() => {
@@ -318,6 +327,23 @@ function Booth() {
         <Spinner/>
       ): (
         <>
+          {alertModal && (
+            <div class="w-64 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded fixed left-1/4 top-8" role="alert">
+              <strong class="font-bold">방장만 가능한 기능입니다.</strong>
+              {/* <span class="block sm:inline">Something seriously bad happened.</span> */}
+              <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg onClick={closeAlertModal} class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+              </span>
+            </div>
+          )}
+          {recordingModal && (
+            <div class="w-64 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded fixed left-1/4 top-16" role="alert">
+              <strong class="font-bold">촬영중입니다.</strong>
+              <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg onClick={closeRecordingModal} class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+              </span>
+            </div>
+          )}
           {now === "MAKING" && (
             <MakeBooth
               startTake={startTake}
@@ -326,6 +352,7 @@ function Booth() {
               frameList={frameList}
               user={user}
               setFrame={setFrame}
+              setAlertModal={setAlertModal}
             />
           )}
           {now === "TAKING" && (
@@ -352,6 +379,8 @@ function Booth() {
               shareSecret={shareSecret}
               publisher={publisher}
               subscribers={subscribers}
+              setAlertModal={setAlertModal}
+              setRecordingModal={setRecordingModal}
             />
           )}
           {now === "MODIFING" && (
@@ -360,6 +389,7 @@ function Booth() {
               user={user}
               sendMozzi={sendMozzi}
               updateMozzi={updateMozzi}
+              setAlertModal={setAlertModal}
             />
           )}
           {now === "FINISH" && (

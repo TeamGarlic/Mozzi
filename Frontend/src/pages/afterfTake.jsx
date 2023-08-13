@@ -11,7 +11,7 @@ import Spinner from "@/components/Spinner.jsx";
 import { AppStore } from "@/store/AppStore.js";
 import useInterval from '@/hooks/useInterval.js';
 
-function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
+function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal }) {
   const [delay, setDelay] = useState(false);
   const [recording, setRecording] = useState(false);
   const { code: shareCode } = useParams();
@@ -89,7 +89,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
       recordClip();
     }
   }
-  makeClip = checkHost(makeClip, user.isHost);
+  makeClip = checkHost(makeClip, user.isHost, setAlertModal);
 
   function drawVid() {
     frameNum.forEach((idx) => {
@@ -132,7 +132,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
       </div>
       <div className={`flex ${delay ? "invisible":"" }`}>
         <div className="w-full h-screen p-4 flex-col">
-          <ClipLog user={user}/>
+        <ClipLog user={user} setAlertModal={setAlertModal}/>
         </div>
         <div className="float-right min-w-[calc(32rem)] w-[calc(32rem)] h-screen bg-white flex-col rounded-s-xl p-4 justify-center items-center text-center overflow-y-scroll scrollbar-hide">
           <div className="mx-auto bottom-5 justify-center items-center text-center">
@@ -150,7 +150,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi }) {
                 공유하기
               </button>
             </div>
-            <Frame user={user} updateMozzi={updateMozzi} setPlayTogether={setPlayTogether}/>
+            <Frame user={user} updateMozzi={updateMozzi} setPlayTogether={setPlayTogether} setAlertModal={setAlertModal}/>
           </div>
         </div>
         <canvas
@@ -192,4 +192,5 @@ AfterTake.propTypes = {
   }),
   sendMozzi: PropTypes.func,
   updateMozzi: PropTypes.func,
+  setAlertModal: PropTypes.func,
 };

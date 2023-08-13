@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setFrameAction } from "@/modules/clipAction.js";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 
-function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, user }) {
+function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, user, setAlertModal }) {
   const [visibility, setVisibility] = useState(true);
   const [toggleVoice, setToggleVoice] = useState(true);
   const pickedFrame = useSelector((state) => state.clipReducer.frame);
@@ -42,7 +42,7 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
     dispatch(setFrameAction(res));
     setFrame(res);
   }
-  clickFrame = checkHost(clickFrame, user.isHost);
+  clickFrame = checkHost(clickFrame, user.isHost, setAlertModal);
 
   return (
     <>
@@ -121,4 +121,5 @@ MakeBooth.propTypes = {
     isHost: PropTypes.number,
   }),
   setFrame: PropTypes.func,
+  setAlertModal: PropTypes.func,
 };

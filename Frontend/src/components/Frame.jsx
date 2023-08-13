@@ -9,7 +9,7 @@ import {
 import PropTypes from "prop-types";
 import {checkHost} from "@/utils/DecoratorUtil.js";
 
-function Frame({user, updateMozzi, setPlayTogether}) {
+function Frame({user, updateMozzi, setPlayTogether, setAlertModal}) {
   const frame = useSelector((state) => state.clipReducer.frame);
   const dispatch = useDispatch();
   const drag = useSelector((state) => state.clipReducer.drag);
@@ -39,7 +39,7 @@ function Frame({user, updateMozzi, setPlayTogether}) {
   function UpdateMozzi(){
     updateMozzi(frame)
   }
-  UpdateMozzi = checkHost(UpdateMozzi, user.isHost)
+  UpdateMozzi = checkHost(UpdateMozzi, user.isHost, setAlertModal)
 
   function clickVideo(event) {
     dispatch(
@@ -86,12 +86,12 @@ function Frame({user, updateMozzi, setPlayTogether}) {
   }
 
 
-  clickVideo = checkHost(clickVideo, user.isHost);
-  onDragStart = checkHost(onDragStart, user.isHost);
-  onDragEnd = checkHost(onDragEnd, user.isHost);
-  onDrop = checkHost(onDrop, user.isHost);
-  onDragOver = checkHost(onDragOver, user.isHost);
-  onDragEnter = checkHost(onDragEnter, user.isHost);
+  clickVideo = checkHost(clickVideo, user.isHost, setAlertModal);
+  onDragStart = checkHost(onDragStart, user.isHost, setAlertModal);
+  onDragEnd = checkHost(onDragEnd, user.isHost, setAlertModal);
+  onDrop = checkHost(onDrop, user.isHost, setAlertModal);
+  onDragOver = checkHost(onDragOver, user.isHost, setAlertModal);
+  onDragEnter = checkHost(onDragEnter, user.isHost, setAlertModal);
 
 
   return (
@@ -148,4 +148,5 @@ Frame.propTypes = {
   }),
   updateMozzi: PropTypes.func,
   setPlayTogether: PropTypes.func,
+  setAlertModal: PropTypes.func,
 };

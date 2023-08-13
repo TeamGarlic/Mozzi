@@ -6,7 +6,7 @@ import { UsersIcon } from "@heroicons/react/24/outline";
 import { ComputerDesktopIcon } from "@heroicons/react/24/outline";
 import PropTypes from "prop-types";
 
-export default function PicSideBar({user, bgList, changeBg, position, sendPosition, setPosition, subscribers, publisher}) {
+export default function PicSideBar({user, bgList, changeBg, position, sendPosition, setPosition, subscribers, publisher, setAlertModal}) {
   const [menu, setMenu] = useState(0);
   return (
       <>
@@ -36,6 +36,7 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
                 setPosition={setPosition}
                 subscribers={subscribers}
                 publisher={publisher}
+                setAlertModal={setAlertModal}
               />
             </div>
           )}
@@ -43,7 +44,14 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
             <div className="h-full">
               배경 변경하기
               {bgList.map((bg) => (
-                <BgCard bgName={bg.title} key={bg.id} bgSrc={bg.objectName} user={user} changeBg={changeBg}/>
+                <BgCard 
+                  bgName="gdgd" 
+                  key={bg.id} 
+                  bgSrc={bg.objectName} 
+                  user={user} 
+                  changeBg={changeBg}
+                  setAlertModal={setAlertModal}
+                />
               ))}
             </div>
           )}
@@ -68,5 +76,6 @@ PicSideBar.propTypes = {
   sendPosition: PropTypes.func,
   setPosition: PropTypes.func,
   subscribers: PropTypes.array,
-  publisher: PropTypes.any
+  publisher: PropTypes.any,
+  setAlertModal: PropTypes.func,
 };
