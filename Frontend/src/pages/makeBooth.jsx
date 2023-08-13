@@ -74,9 +74,8 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
                   />
                 </svg>
               </div>
-              <div className="text-2xl">MOZZI</div>
+              <div className="text-2xl">프레임 선택</div>
             </div>
-            <div className=" text-2xl p-4">프레임 선택</div>
             <div className="gap-6 p-4 mr-[calc(17rem)]  overflow-x-scroll scrollbar-thumb-gray-900 scrollbar-track-gray-100">
               <div className=" inline-flex flex-nowrap h-[calc(25rem)]  items-center gap-4 p-4">
                 {frameList.map((frame) => (

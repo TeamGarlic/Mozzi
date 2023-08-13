@@ -15,7 +15,7 @@ function MyRadioGroup({ arr, name, onChange, nowState, text }) {
                 : "  px-5 rounded-3xl"
             }`}
           >
-            {`${item}s`}
+            {`${item}초`}
             <MyRadioButton
               name={name}
               value={item + ""}

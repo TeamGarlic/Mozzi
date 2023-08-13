@@ -37,13 +37,10 @@ function CamSetting() {
     setScale(115+parseInt(85*Math.sin(count/4)));
   },scaleChecked?1:null);
 
-  useEffect(() => {
-  }, []);
-
 
   return (
     <div className="fixed bottom-5 left-5 z-30">
-      <div className={`flex-col w-80 h-fit rounded-xl bg-white my-3 ${visible?"hidden":""}`}>
+      <div className={`flex-col w-80 h-fit rounded-xl bg-white my-3 ${visible?"":"hidden"}`}>
         <div className="columns-2 relative">
           <div className=" text-lg p-3">카메라 설정</div>
           <div className="w-10 h-10 float-right self-center m-2">

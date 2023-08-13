@@ -17,15 +17,6 @@ function ClipLog({user}) {
   const clipNum = Array.from({length: clipList['n']}, (v, i) => i+1);
   const [idx, setIdx] = useState(0);
   const frame = useSelector((state) => state.clipReducer.frame);
-  function addVideo() {
-    dispatch(
-      AddClipAction({
-        idx: idx,
-        src: "https://www.kmdb.or.kr/trailer/play/MK041673_P02.mp4",
-      })
-    );
-    setIdx(idx + 1);
-  }
 
   function clickVideo(event) {
     dispatch(
@@ -80,8 +71,8 @@ function ClipLog({user}) {
 
   return (
     <>
-      <span onClick={addVideo} className="text-3xl">
-        Select
+      <span className="text-3xl">
+        원하는 클립을 클릭하세요
       </span>
       <div
         className=" overflow-y-scroll scrollbar-hide h-[calc(100%-2.5rem)]"
