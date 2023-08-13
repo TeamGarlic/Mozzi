@@ -15,7 +15,7 @@ export default function UserSideBar({ leaveSession ,user }) {
   return (
     <Card
       id="sideMenu"
-      className="fixed top-0 right-0 w-64 h-screen p-4 shadow-xl shadow-blue-gray-900/5 bg-transparent"
+      className="fixed top-0 right-0 w-64 h-screen p-4 pb-0 shadow-xl shadow-blue-gray-900/5 bg-transparent"
     >
       <div className="p-4">
         <span className=" text-xl">사용자</span>
@@ -41,13 +41,8 @@ export default function UserSideBar({ leaveSession ,user }) {
             </div>
           ))}
       </ul>
-      <div className="px-4">
-        <TextInput type="text" placeholder="이름 변경..." className="" />
-      </div>
-      <button type="button" className="w-full h-10">
-        이름 변경
-      </button>
-      <button className="w-full h-10 text-center leading-10" onClick={leaveSession}>
+
+      <button className="mx-auto mt-4 w-full h-10 text-center leading-10 " onClick={leaveSession}>
         나가기
       </button>
     </Card>

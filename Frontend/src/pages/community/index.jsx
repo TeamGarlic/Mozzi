@@ -15,8 +15,6 @@ function Community() {
     const itemRefs = useRef({});
     const navigate = useNavigate();
 
-    const bgs = ["bg-yellow-200","bg-green-200","bg-purple-200","bg-red-200"];
-
     useEffect(() => {
         async function getCommunityMozziRolls(page, size){
             let res = await mozziRollApi.getCommunityMozziRolls(status,page, size);
@@ -29,6 +27,18 @@ function Community() {
         getCommunityMozziRolls(page,20);
     }, [page]);
 
+    useEffect(() => {
+        async function getCommunityMozziRolls(page, size){
+            let res = await mozziRollApi.getCommunityMozziRolls(status,page, size);
+            if(res.status === 200){
+                setMozziRollsData(res.data.data);
+                console.log(res.data.data)
+            }
+        }
+
+        getCommunityMozziRolls(page,20);
+    }, [status]);
+
     useEffect(()=>{
         if(!mozziRollsData) return;
         if(mozziRollsData.pages < page || page<1){
@@ -36,6 +46,10 @@ function Community() {
         }
     },[mozziRollsData]);
 
+    function switchPage(mode){
+        if(mode === status) return;
+        navigate(`?status=${mode}&page=1`);
+    }
 
     function goPrev(){
         navigate(`?status=${status}&page=${page-1}`);
@@ -50,12 +64,21 @@ function Community() {
                 <>
                     <NavBar user={user} />
                     <div className="flex-col mt-36 px-20">
-                        <div className="w-full flex-col">
-                            <div className="text-2 text-gray-600">커뮤니티</div>
-                            {/*<div className="text-4xl">{user.userNickname}</div>*/}
-                        </div>
                         <div className="py-5">
-                            <h1>좋아요 많은 모찌롤</h1>
+                            <div className="text-3xl text-gray-600">커뮤니티</div>
+                            <div className="flex gap-5 py-4">
+                                <span
+                                    className={`p-3 hover:cursor-pointer ${status === "like" ? "bg-blue-500 rounded-2xl text-white":""}`}
+                                    onClick={()=>{switchPage("like")}}
+                                >
+                                    좋아요순
+                                </span>
+                                <span className={`p-3 hover:cursor-pointer ${status === "time" ? "bg-blue-500 rounded-2xl text-white":""}`}
+                                    onClick={()=>{switchPage("time")}}
+                                >
+                                    최신순
+                                </span>
+                            </div>
                             <div className="flex flex-wrap gap-5 justify-center items-center text-center">
                                 {mozziRollsData.userMozzirollItems && mozziRollsData.userMozzirollItems.map((item, idx) => {
                                         return (

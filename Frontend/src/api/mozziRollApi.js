@@ -51,13 +51,13 @@ PrivateMozziRollApi.interceptors.response.use(
             } else {
                 window.localStorage.removeItem("accessToken");
                 window.localStorage.removeItem("refreshToken");
-                window.location.replace("/login");
+                window.location.replace("/");
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 window.localStorage.removeItem("accessToken");
                 window.localStorage.removeItem("refreshToken");
-                window.location.replace("/login");
+                window.location.replace("/");
             }
         }
     }
