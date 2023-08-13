@@ -303,9 +303,13 @@ function Booth() {
   return (
     <>
       <video autoPlay ref={webcamRef} className="collapse absolute" />
-      <canvas ref={bgRemovedRef}  width={1280} height={720} className="collapse absolute" />
+      {/*<canvas ref={bgRemovedRef}  width={1280} height={720} className="collapse absolute" />*/}
+      <canvas ref={bgRemovedRef}  width={1280} height={720} className="collapse fixed" />
+
       <video ref={pubVideoRef} className="collapse absolute" ></video>
-      <canvas ref={pubCanvasRef}  width={1280} height={720} className="collapse absolute" />
+      {/*<canvas ref={pubCanvasRef}  width={1280} height={720} className="collapse absolute" />*/}
+      <canvas ref={pubCanvasRef}  width={1280} height={720} className="collapse fixed" />
+
       {subscribers &&
         subscribers.map((sub) => {
           return (
