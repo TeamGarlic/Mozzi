@@ -50,13 +50,13 @@ function MyPage() {
             {user ?
                 <>
                     <NavBar user={user} />
-                    <div className="flex-col mt-36 px-20">
+                    <div className="flex-col mt-28 px-20">
                         <div className="w-full flex-col">
                             <div className="text-2 text-gray-600">마이페이지</div>
                             <div className="text-4xl">{user.userNickname}</div>
                         </div>
                         <div className="py-5">
-                            <h1>내 모찌롤</h1>
+                            <h1>내 클립</h1>
                             <div className="flex flex-wrap gap-5 justify-center items-center text-center">
                                 {myMozziRollData.userMozzirollItems && myMozziRollData.userMozzirollItems.map((item, idx) => {
                                     return (
