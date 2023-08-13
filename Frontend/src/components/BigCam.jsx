@@ -7,7 +7,7 @@ import {
 } from '@/modules/canvasAction.js';
 import PropTypes from 'prop-types';
 
-export default function BigCam({myId, updatePosition, setPosition}) {
+export default function BigCam({myId, updatePosition, setPosition, isTaking}) {
   const W = 1440, H = 960, ratio = 1080/1440;
   const rndRef = useRef();
   const dispatch = useDispatch();
@@ -45,8 +45,8 @@ export default function BigCam({myId, updatePosition, setPosition}) {
 
   return (
     <div
-      className="bg-slate-300 m-auto my-10"
-      style={{"width" : `${W*ratio}px`, "height" : `${H*ratio}px`}}
+      className={`bg-blue-200 m-auto my-10 border-4 ${isTaking?"border-red-500":"border-yellow-200"}`}
+      style={{"width" : `${W*ratio+8}px`, "height" : `${H*ratio+8}px`}}
     >
       <canvas ref={canvasRef} width={W} height={H} style={{"width" : `${W*ratio}px`, "height" : `${H*ratio}px`}}></canvas>
       <Rnd
@@ -73,4 +73,5 @@ BigCam.propTypes = {
   myId: PropTypes.string,
   updatePosition: PropTypes.func,
   setPosition: PropTypes.func,
+  isTaking: PropTypes.bool
 };

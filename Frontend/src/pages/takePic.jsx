@@ -16,6 +16,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
   const timers = [3, 5, 10];
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
+  const [isTaking, setIsTaking] = useState(false);
   var interval;
   const mainCanvas = useSelector((state) => state.canvasReducer.mainCanvas);
   let mediaRecorder = null;
@@ -86,22 +87,21 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
   }
 
   function startCount() {
-    let isTaking = 0;
     setTimerVisible(true);
     // console.log(timer + "초 후 촬영");
     interval = setInterval(() => {
       // console.log(interval);
       setCount((prev) => {
         let next = prev - 1;
-        if (isTaking === 0 && next === 0) {
+        if (isTaking === false && next === 0) {
           // 대기 시간 후 촬영 시작(next 초 만큼)
           next = 5;
-          isTaking = 1;
+          setIsTaking(true);
           recordClip(taken);
         } else if (isTaking === 1 && next === 0) {
           clearInterval(interval);
           setTimerVisible(false);
-          isTaking = 0;
+          setIsTaking(false);
           return timer;
         }
         return next;
@@ -137,7 +137,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
           />
           {/* <div className="float-right mr-10 text-2xl">taken : {taken}/10</div> */}
         </div>
-        <BigCam myId={myId} updatePosition={updatePosition} setPosition={setPosition} />
+        <BigCam myId={myId} updatePosition={updatePosition} setPosition={setPosition} isTaking={isTaking} />
         {/* <Link to="/aftertake" className="block relative mx-auto w-fit">
         찰칵
       </Link> */}
