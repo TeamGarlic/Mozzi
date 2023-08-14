@@ -8,7 +8,7 @@ function CamSetting() {
   const [visible, setVisible] = useState(false);
   const [camVisibility, setCamVisibility] = useState(true);
   const [count, setCount] = useState(0);
-  const [degreeValue, setDegreeValue] = useState(0);
+  const [degreeValue, setDegreeValue] = useState(360);
   const [scaleValue, setScaleValue] = useState(100);
   const [degreeChecked, setDegreeChecked] = useState(false);
   const [scaleChecked, setScaleChecked] = useState(false);
@@ -25,7 +25,7 @@ function CamSetting() {
     setDegreeValue(val);
   }
   useInterval(()=>{
-    setDegree((degreeValue+20)%360);
+    setDegree((degreeValue+17)%720);
   },degreeChecked?1:null);
 
   const setScale = (val)=>{
@@ -69,10 +69,10 @@ function CamSetting() {
             <input id="degreeCheckbox" type="checkbox" onChange={(e)=>{setDegreeChecked(e.target.checked)}}
                    className="w-4 h-4 mr-1 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
             <label htmlFor="degreeCheckbox"
-                   className="block text-sm font-medium text-gray-900">저는 관종입니다</label>
+                   className="block text-sm font-medium text-gray-900">계속 회전</label>
             </div>
           </div>
-          <input type="range" min="0" max="360" value={degreeValue} onChange={(e)=>{setDegree(e.target.value)}}
+          <input type="range" min="0" max="720" value={degreeValue} onChange={(e)=>{setDegree(e.target.value)}}
                  className="w-full h-2 mb-10 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
           <hr  className="my-2"/>
           <div className="columns-2">
@@ -81,7 +81,7 @@ function CamSetting() {
               <input id="scaleCheckbox" type="checkbox" onChange={(e)=>{setScaleChecked(e.target.checked)}}
                      className="w-4 h-4 mr-1 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
               <label htmlFor="scaleCheckbox"
-                     className="block text-sm font-medium text-gray-900">저는 관종입니다</label>
+                     className="block text-sm font-medium text-gray-900">계속 확대</label>
             </div>
           </div>
           <input type="range" min="30" max="200" value={scaleValue} onChange={(e)=>{setScale(e.target.value)}}
