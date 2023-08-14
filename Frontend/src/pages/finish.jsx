@@ -15,7 +15,7 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
     window.location.href = "/";
   }
 
-  console.log(isHost);
+  // console.log(isHost);
 
   const names = [];
 
