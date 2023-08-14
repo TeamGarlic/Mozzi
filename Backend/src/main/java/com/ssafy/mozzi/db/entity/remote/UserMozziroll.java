@@ -18,7 +18,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,9 +40,8 @@ public class UserMozziroll extends BaseEntity {
     @Column(nullable = false)
     private Boolean deleted = false;
 
-    @NotNull
     @Size(max = 100)
-    private String title;
+    private String title = "default title";
 
     @Builder.Default
     @ColumnDefault("true")
