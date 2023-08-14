@@ -1,9 +1,9 @@
 package com.ssafy.mozzi.db.entity.remote;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
@@ -59,7 +59,7 @@ public class Frame extends BaseEntity {
 
     @Fetch(FetchMode.SUBSELECT)
     @OneToMany(mappedBy = "frame", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<FrameClip> frameClips = new HashSet<>();
+    private List<FrameClip> frameClips = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

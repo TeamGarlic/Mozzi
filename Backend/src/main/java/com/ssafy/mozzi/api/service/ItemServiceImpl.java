@@ -2,7 +2,6 @@ package com.ssafy.mozzi.api.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -97,7 +96,7 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     public FrameListGetRes getFrameList() {
-        Set<Frame> frames = frameRepository.findAllJoinFetch();
+        List<Frame> frames = frameRepository.findAllJoinFetch();
 
         return ItemMapper.toFrameListGetRes(frames);
     }
@@ -186,7 +185,7 @@ public class ItemServiceImpl implements ItemService {
 
         Frame frame = frameRepository.findById(frameId).get();
 
-        Set<FrameClip> frameClips = frame.getFrameClips();
+        List<FrameClip> frameClips = frame.getFrameClips();
 
         for (FrameClipItem frameClipItem : frameClipItems) {
             FrameClip frameClip = frameClipRepository.save(

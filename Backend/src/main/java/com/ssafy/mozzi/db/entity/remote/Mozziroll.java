@@ -1,11 +1,8 @@
 package com.ssafy.mozzi.db.entity.remote;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
-import jakarta.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
@@ -13,6 +10,10 @@ import org.hibernate.annotations.Where;
 
 import com.ssafy.mozzi.db.entity.BaseEntity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -53,9 +54,6 @@ public class Mozziroll extends BaseEntity {
     @ColumnDefault("false")
     @Column(nullable = false)
     private Boolean deleted = false;
-
-    @OneToMany(mappedBy = "mozziroll", fetch= FetchType.EAGER)
-    private Set<UserMozziroll> userMozzirolls = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "creator_id")
