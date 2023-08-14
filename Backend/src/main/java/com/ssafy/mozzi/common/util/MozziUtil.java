@@ -4,4 +4,6 @@ public interface MozziUtil {
     long findUserIdByToken(String accessToken);
 
     String generateString(int length, boolean includeSpecial);
+
+    String generateKoreanToken();
 }
