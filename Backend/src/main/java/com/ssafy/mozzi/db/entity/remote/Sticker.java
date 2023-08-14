@@ -37,7 +37,7 @@ public class Sticker extends BaseEntity {
     private String objectName;
 
     @Size(max = 20)
-    private String title;
+    private String title = "fault title";
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @CreationTimestamp
