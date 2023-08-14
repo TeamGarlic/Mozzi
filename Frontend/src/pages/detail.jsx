@@ -59,7 +59,6 @@ function Detail() {
 
     const giveLike =async(id)=>{
         if(!user) return;
-        console.log(id);
         let res = await mozziRollApi.like(id);
         if(res.status ===200){
             setLiked(res.data.data.liked);
