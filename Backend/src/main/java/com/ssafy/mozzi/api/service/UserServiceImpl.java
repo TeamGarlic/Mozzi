@@ -24,6 +24,7 @@ import com.ssafy.mozzi.common.auth.JwtTokenProvider;
 import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
 import com.ssafy.mozzi.common.exception.handler.BadRequestException;
 import com.ssafy.mozzi.common.exception.handler.NotFoundException;
+import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.common.util.mapper.UserMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
@@ -143,12 +144,17 @@ public class UserServiceImpl implements UserService {
      * @param accessToken String
      * @return User
      * @throws NotFoundException (UserIdNotExistsException, 1)
+     * @throws UnAuthorizedException (InvalidAccessToken, 17)
      * @see UserRepository
      * @see JwtTokenProvider
      */
 
     @Override
     public User findUserByToken(String accessToken) {
+        if (!jwtTokenProvider.validateTokenExceptExpiration(accessToken)) {
+            throw new UnAuthorizedException(MozziAPIErrorCode.InvalidAccessToken, "Invalid Access Token");
+        }
+
         Authentication auth = jwtTokenProvider.getAuthentication(accessToken);
         UserDetails userDetails = (UserDetails)auth.getPrincipal();
         String id = userDetails.getUsername();
