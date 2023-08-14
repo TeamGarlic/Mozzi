@@ -242,10 +242,14 @@ public class BoothServiceImpl implements BoothService {
                 String.format("You requested invalid session(%s). It could be destroyed.", sessionId));
         }
         session.close();
+        String shareCode = "";
 
         Optional<Booth> boothCandidate = boothRepository.findBySessionId(sessionId);
         if (boothCandidate.isPresent()) {
             Booth booth = boothCandidate.get();
+            boothUserRepository.deleteByBoothId(booth.getId());
+            shareCode = booth.getShareCode();
+
             if (map.containsKey(booth.getShareCode())) {
                 HashMap<String, String> fileMap = map.remove(booth.getShareCode());
                 fileMap.clear();
@@ -253,7 +257,7 @@ public class BoothServiceImpl implements BoothService {
             boothRepository.delete(booth);
         }
 
-        return BoothMapper.toSessionRes(sessionId, "", null);
+        return BoothMapper.toSessionRes(sessionId, shareCode, null);
     }
 
     /**
