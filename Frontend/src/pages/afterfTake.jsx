@@ -95,6 +95,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
           videoRef.current[i].play();
         }
       });
+      drawVid();
       recordClip();
     } else if (mozziTitle.value === "") {
       alert("제목을 입력해주세요");
@@ -132,7 +133,6 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
       completeClipRef.current.width,
       completeClipRef.current.height
     );
-    drawVid();
   });
 
   // console.log(playTogetherRef);
@@ -184,7 +184,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
                 id={`hidden${i}`}
                 className="hidden"
                 src={frame[i]["src"]}
-                // autoPlay={true}
+                autoPlay={true}
               ></video>
             );
           }
