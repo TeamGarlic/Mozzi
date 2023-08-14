@@ -68,10 +68,6 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Boolean deleted = false;
 
-    // TODO: 양방향 관계를 이후에 삭제할 지 고민 해야 됨
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<UserMozziroll> userMozzirolls = new HashSet<>();
-
     @OneToMany(mappedBy = "likedUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<MozzirollLike> likedMozzirolls = new HashSet<>();
 

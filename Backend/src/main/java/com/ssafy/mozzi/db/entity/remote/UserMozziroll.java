@@ -5,6 +5,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -52,10 +54,12 @@ public class UserMozziroll extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "mozziroll_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Mozziroll mozziroll;
 
     @OneToMany(mappedBy = "likedUserMozziroll", cascade = CascadeType.ALL, orphanRemoval = true)
