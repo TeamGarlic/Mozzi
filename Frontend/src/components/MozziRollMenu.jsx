@@ -43,6 +43,7 @@ function MozziRollMenu({item, idx, deleteFunc, myRef}){
                 // onMouseOver={()=>myRef.play()}
                 onMouseOver={play}
                 onMouseOut={pause}
+                crossOrigin="anonymous"
             />
             <div className=" overflow-hidden p-1">
                 <div className="float-left">{item.title}</div>

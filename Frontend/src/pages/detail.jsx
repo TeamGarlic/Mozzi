@@ -83,6 +83,7 @@ function Detail() {
                                src={`https://api.mozzi.lol/files/object/${mozzi.mozzirollInfo.objectName}`}
                                controls
                                autoPlay
+                               crossOrigin="anonymous"
                            />
                        </div>
                        <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "w-full":"h-full w-1/2 my-auto"} p-5 flex-col`}>

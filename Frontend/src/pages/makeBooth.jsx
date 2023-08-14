@@ -80,7 +80,7 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
                 <div className="flex flex-wrap w-full items-center gap-4 p-4">
                 {frameList.map((frame) => (
                   <div onClick={(e) => clickFrame(e, frame)} key={frame.id} className={`border-8 ${pickedFrame.id === frame.id ? "border-blue-500" : ""}`}>
-                    <img src={`https://api.mozzi.lol/files/object/${frame.objectName}`} alt={frame.objectName} className={"max-w-[calc(50rem)] max-h-[calc(22.75rem)]"}></img>
+                    <img src={`https://api.mozzi.lol/files/object/${frame.objectName}`} alt={frame.objectName} className={"max-w-[calc(50rem)] max-h-[calc(22.75rem)]"} crossOrigin="anonymous"></img>
                   </div>
                 )
                 )}
