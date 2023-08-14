@@ -23,7 +23,7 @@ function useSession(shareCode) {
 
   const leaveSession = async() => {
     if (session) {
-      console.log(session);
+      // console.log(session);
       let isHost = await JSON.parse(session.connection.data).isHost;
       console.log(isHost);
       if(isHost === 1){
