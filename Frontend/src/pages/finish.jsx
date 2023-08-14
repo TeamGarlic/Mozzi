@@ -1,7 +1,6 @@
 import Layout from "@/components/Layout";
 import PropTypes from "prop-types";
 import mozzilogo from "@/assets/img/mozzi.png";
-import {createFFmpeg, fetchFile} from '@ffmpeg/ffmpeg';
 
 function Finish({ mozzi, subscribers, publisher }) {
   const goHome = () => {
@@ -13,23 +12,6 @@ function Finish({ mozzi, subscribers, publisher }) {
   for (let item of subscribers) {
     const name = JSON.parse(item.stream.connection.data).clientData;
     names.push(name);
-  }
-
-  const ffmpeg = createFFmpeg({log : true})
-
-  const handleDownload = async () => {
-    await ffmpeg.load();
-    ffmpeg.FS("writeFile","download.webm",await fetchFile(`https://api.mozzi.lol/files/mozziroll/${mozzi}`));
-    await ffmpeg.run("-i","download.webm","download.mp4");
-    const mp4File = ffmpeg.FS("readFile","download.mp4");
-    const mp4Blob = new Blob([mp4File.buffer], {type:"video/mp4"});
-    const mp4Url = URL.createObjectURL(mp4Blob);
-    console.log(mp4Url);
-    const a = document.createElement("a");
-    a.href = mp4Url;
-    document.body.appendChild(a);
-    a.download = "download.mp4";
-    a.click();
   }
 
   return (
@@ -61,9 +43,6 @@ function Finish({ mozzi, subscribers, publisher }) {
             </div>
             <ul className="flex gap-5 text-center justify-center mt-20">
               <li><a href={`https://api.mozzi.lol/files/mozziroll/${mozzi}`} target="_blanck">다운받기</a></li>
-              <li><button onClick={handleDownload}>mp4다운받기</button></li>
-              <li>카톡공유</li>
-              <li>인스타공유</li>
               <li>
                 <button onClick={goHome}>홈으로</button>
               </li>
