@@ -12,12 +12,12 @@ const PrivateMozziRollApi = axios.create({
     baseURL: "https://api.mozzi.lol/mozzirolls",
     headers: {
         "Content-Type": "application/json",
-        Authorization: window.localStorage.getItem("accessToken"),
+        Authorization: window.sessionStorage.getItem("accessToken"),
     },
 });
 
 PrivateMozziRollApi.interceptors.request.use((config) => {
-    const token = window.localStorage.getItem("accessToken");
+    const token = window.sessionStorage.getItem("accessToken");
     config.headers.Authorization = token;
     return config;
 });
@@ -34,11 +34,11 @@ PrivateMozziRollApi.interceptors.response.use(
             const tokenResponse = await userApi.reIssue();
             if (tokenResponse.status === 200) {
                 const newAccessToken = tokenResponse.data.data.accessToken;
-                localStorage.setItem(
+                sessionStorage.setItem(
                     "accessToken",
                     tokenResponse.data.data.accessToken
                 );
-                localStorage.setItem(
+                sessionStorage.setItem(
                     "refreshToken",
                     tokenResponse.data.data.refreshToken
                 );
@@ -49,14 +49,14 @@ PrivateMozziRollApi.interceptors.response.use(
                 let res = await axios(originRequest);
                 return res;
             } else {
-                window.localStorage.removeItem("accessToken");
-                window.localStorage.removeItem("refreshToken");
+                window.sessionStorage.removeItem("accessToken");
+                window.sessionStorage.removeItem("refreshToken");
                 window.location.replace("/");
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                window.localStorage.removeItem("accessToken");
-                window.localStorage.removeItem("refreshToken");
+                window.sessionStorage.removeItem("accessToken");
+                window.sessionStorage.removeItem("refreshToken");
                 window.location.replace("/");
             }
         }
@@ -81,7 +81,7 @@ const mozziRollApi = {
 
     getCommunityMozziRolls:async(state, pageNum, size)=>{
         let res;
-        if(window.localStorage.getItem('accessToken')){
+        if(window.sessionStorage.getItem('accessToken')){
             res = await PrivateMozziRollApi.get("popular",{
                 params:{
                     sorted:state,
@@ -104,7 +104,7 @@ const mozziRollApi = {
     getDetail:async(id)=>{
         let res;
         try{
-            if(window.localStorage.getItem('accessToken')){
+            if(window.sessionStorage.getItem('accessToken')){
                 res = await PrivateMozziRollApi.get(`${id}`);
             }else{
                 res = await PublicMozziRollApi.get(`${id}`);

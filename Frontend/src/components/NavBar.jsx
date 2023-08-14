@@ -23,8 +23,8 @@ function NavBar({ user }) {
     let res = await userApi.logOut();
     console.log(res);
     if(res.status ===200){
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+      sessionStorage.removeItem("accessToken");
+      sessionStorage.removeItem("refreshToken");
       alert("로그아웃되었습니다!");
       location.href = "/";
     }
