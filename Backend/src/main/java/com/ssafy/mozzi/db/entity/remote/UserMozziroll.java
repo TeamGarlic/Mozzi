@@ -1,8 +1,8 @@
 package com.ssafy.mozzi.db.entity.remote;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
@@ -63,7 +63,7 @@ public class UserMozziroll extends BaseEntity {
     private Mozziroll mozziroll;
 
     @OneToMany(mappedBy = "likedUserMozziroll", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<MozzirollLike> likedUsers = new HashSet<>();
+    private List<MozzirollLike> likedUsers = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

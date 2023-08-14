@@ -1,9 +1,9 @@
 package com.ssafy.mozzi.db.entity.remote;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
@@ -69,7 +69,7 @@ public class User extends BaseEntity {
     private Boolean deleted = false;
 
     @OneToMany(mappedBy = "likedUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<MozzirollLike> likedMozzirolls = new HashSet<>();
+    private List<MozzirollLike> likedMozzirolls = new ArrayList<>();
 
     @Size(max = 150)
     @Column(name = "refresh_token")

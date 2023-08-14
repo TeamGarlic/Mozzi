@@ -2,7 +2,6 @@ package com.ssafy.mozzi.common.util.mapper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import com.ssafy.mozzi.api.response.BackgroundFavoritePostRes;
 import com.ssafy.mozzi.api.response.FrameListGetRes;
@@ -81,7 +80,7 @@ public class ItemMapper {
      * @param frames List<Frame>
      * @return FrameListGetRes
      */
-    public static FrameListGetRes toFrameListGetRes(Set<Frame> frames) {
+    public static FrameListGetRes toFrameListGetRes(List<Frame> frames) {
         List<FrameItem> frameList = new ArrayList<>();
         for (Frame frame : frames) {
             frameList.add(FrameItem.builder()
@@ -100,10 +99,10 @@ public class ItemMapper {
     /**
      *  FrameClip 엔티티의 집합을 FrameClipItem 엔티티의 집합으로 변환
      *
-     * @param clips Set<FrameClip>
+     * @param clips List<FrameClip>
      * @return FrameListGetRes
      */
-    public static List<FrameClipItem> toFrameClipItem(Set<FrameClip> clips) {
+    public static List<FrameClipItem> toFrameClipItem(List<FrameClip> clips) {
         List<FrameClipItem> clipList = new ArrayList<>();
 
         for (FrameClip clip : clips) {
