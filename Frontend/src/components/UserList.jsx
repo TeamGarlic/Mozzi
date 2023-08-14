@@ -17,20 +17,23 @@ function UserList({user, position, sendPosition, setPosition, subscribers, publi
   useEffect(() => {
     setUserList(position.map((user) => {
       let name = ""
+      let isHost = 0;
       const subscriber = subscribers && subscribers.find((el)=>{
         return el.stream.connection.connectionId === user.id
       })
       if (subscriber) {
         name = JSON.parse(subscriber.stream.connection.data).clientData;
+        isHost = JSON.parse(subscriber.stream.connection.data).isHost;
       } else {
         name = JSON.parse(publisher.stream.connection.data).clientData;
+        isHost = JSON.parse(publisher.stream.connection.data).isHost;
       }
       return {
         id: user.id,
         name: name,
         onMic: 1,
         onCam: 1,
-        isHost: user.isHost,
+        isHost: isHost,
       }
     }))
   }, [position]);

@@ -14,7 +14,6 @@ function MyPage() {
     async function getMyMozziRolls(pageNum, size) {
         let res = await mozziRollApi.getMozziRolls(pageNum,size);
         setMyMozziRollData(res.data.data);
-        setPage(res.data.data.pages);
     }
 
     useEffect(() => {

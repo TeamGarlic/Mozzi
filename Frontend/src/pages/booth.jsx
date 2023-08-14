@@ -16,8 +16,11 @@ import { checkHost } from "@/utils/DecoratorUtil.js";
 import itemApi from "@/api/itemApi.js";
 import userApi from "@/api/userApi.js";
 import { AppStore } from "@/store/AppStore.js";
-import Spinner from "@/components/Spinner.jsx"
+import Spinner from "@/components/Spinner.jsx";
+import HostAlertModal from "@/components/HostAlertModal.jsx";
+import RecordingModal from "@/components/RecordingModal.jsx";
 import { usePreventGoBack } from "@/hooks/usePreventGoBack.js";
+
 
 function Booth() {
   // hooks
@@ -70,7 +73,6 @@ function Booth() {
   const [delay, setDelay] = useState(true);
   const [frameList, setFrameList] = useState([]);
   const [alertModal, setAlertModal] = useState(false);
-  const [recordingModal, setRecordingModal] = useState(false);
 
   // useSelector
   const mainCanvas = useSelector((state) => state.canvasReducer.mainCanvas);
@@ -143,6 +145,7 @@ function Booth() {
       if (res.status === 200) {
         setBgList(res.data.data.backgrounds);
       }
+      return res.data.data.backgrounds[0].objectName;
     } catch (e) {
       console.log(e);
     }
@@ -172,7 +175,7 @@ function Booth() {
     if(res.status ===200){
       const userData = res.data.data
       setUser((prev)=>{
-        joinSession(userData.userNickname, ref);
+        joinSession(userData.userNickname, ref, user.isHost);
         return {...prev, userData}
       });
     }else{
@@ -182,7 +185,7 @@ function Booth() {
         window.location.href="/";
       }
       setUser((prev)=>{
-        joinSession(guest, ref);
+        joinSession(guest, ref, 0);
         return {...prev, userNickname:guest}
       });
     }
@@ -192,21 +195,18 @@ function Booth() {
     setAlertModal(false)
   }
 
-  function closeRecordingModal(){
-    setRecordingModal(false)
-  }
-
   // useEffect : []
   useEffect(() => {
     AppStore.setRunningSpinner();
-
+    getBgList(1, 100).then((res)=>{
+      const bgImg = new Image();
+      bgImg.src = `https://api.mozzi.lol/files/object/${res}`;
+      bgImg.crossOrigin = "anonymous";
+      dispatch(changeBgAction({ img: bgImg }));
+    });
     getFrameList();
-    const bgImg = new Image();
     // TODO : 배경이미지 API로 받아오기
-    getBgList(1, 100);
-    bgImg.src = "https://api.mozzi.lol/files/object/1691022079984_bg2.jpg";
-    bgImg.crossOrigin = "anonymous";
-    dispatch(changeBgAction({ img: bgImg }));
+
     bgRemovedContextRef.current = bgRemovedRef.current.getContext("2d");
     const constraints = {
       video: { width: { max: 1280 }, height: { max: 720 } },
@@ -263,6 +263,7 @@ function Booth() {
             subCanvasRefs.current[
               sub.stream.connection.connectionId
               ].getContext("2d", { willReadFrequently: true }),
+          nickName: JSON.parse(sub.stream.connection.data).clientData
         };
         sub.addVideoElement(
           subVideoRefs.current[sub.stream.connection.connectionId]
@@ -291,7 +292,6 @@ function Booth() {
       }));
     }
     initPosition();
-
   }, [publisher]);
 
 
@@ -301,13 +301,11 @@ function Booth() {
   }, [position]);
 
   return (
-    <>
-      <video autoPlay ref={webcamRef} className="collapse absolute" />
-      {/*<canvas ref={bgRemovedRef}  width={1280} height={720} className="collapse absolute" />*/}
+    <div className="w-full h-full">
+      <video autoPlay ref={webcamRef} className="collapse fixed" />
       <canvas ref={bgRemovedRef}  width={1280} height={720} className="collapse fixed" />
 
-      <video ref={pubVideoRef} className="collapse absolute" ></video>
-      {/*<canvas ref={pubCanvasRef}  width={1280} height={720} className="collapse absolute" />*/}
+      <video ref={pubVideoRef} className="collapse fixed" ></video>
       <canvas ref={pubCanvasRef}  width={1280} height={720} className="collapse fixed" />
 
       {subscribers &&
@@ -334,22 +332,9 @@ function Booth() {
       ): (
         <>
           {alertModal && (
-            <div className="w-64 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded fixed left-1/4 top-8" role="alert">
-              <strong className="font-bold">방장만 가능한 기능입니다.</strong>
-              {/* <span class="block sm:inline">Something seriously bad happened.</span> */}
-              <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
-                <svg onClick={closeAlertModal} className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
-              </span>
-            </div>
+            <HostAlertModal closeAlertModal={closeAlertModal}/>
           )}
-          {recordingModal && (
-            <div className="w-64 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded fixed left-1/4 top-16" role="alert">
-              <strong className="font-bold">촬영중입니다.</strong>
-              <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
-                <svg onClick={closeRecordingModal} className="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
-              </span>
-            </div>
-          )}
+
           {now === "MAKING" && (
             <MakeBooth
               startTake={startTake}
@@ -386,7 +371,6 @@ function Booth() {
               publisher={publisher}
               subscribers={subscribers}
               setAlertModal={setAlertModal}
-              setRecordingModal={setRecordingModal}
             />
           )}
           {now === "MODIFING" && (
@@ -408,7 +392,7 @@ function Booth() {
           />)}
         </>
       )}
-    </>
+    </div>
   );
 }
 

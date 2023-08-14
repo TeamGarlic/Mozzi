@@ -11,8 +11,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import boothApi from "@/api/boothApi.js";
 import CamSetting from '@/components/CamSetting.jsx';
+import RecordingModal from "@/components/RecordingModal.jsx";
+import WaitingRecordModal from "@/components/WaitingRecordModal.jsx";
 
-function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition, sendFileName, shareSecret, publisher, subscribers, setAlertModal, setRecordingModal }) {
+function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition, sendFileName, shareSecret, publisher, subscribers, setAlertModal }) {
   const timers = [3, 5, 10];
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
@@ -23,7 +25,19 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
   const arrClipData = [];
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [recordingModal, setRecordingModal] = useState(false);
+  const [waitingModal, setWaitingModal] = useState(false);
+
+
   // const clipList = useSelector(state => state.clipReducer.clipList);
+
+  function closeRecordingModal(){
+    setRecordingModal(false)
+  }
+
+  function closeWaitingModal(){
+    setWaitingModal(false)
+  }
 
   function recordClip(idx) {
     const mediaStream = mainCanvas.canvas.current.captureStream();
@@ -90,6 +104,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
     let localTaking = 0;
     setIsTaking(false);
     setTimerVisible(true);
+    setWaitingModal(true);
     // console.log(timer + "초 후 촬영");
     interval = setInterval(() => {
       // console.log(interval);
@@ -101,6 +116,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
           setIsTaking(true);
           localTaking = 1;
           recordClip(taken);
+          setWaitingModal(false);
           setRecordingModal(true);
         } else if (localTaking === 1 && next === 0) {
           clearInterval(interval);
@@ -127,6 +143,12 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
   return (
     <Layout>
       <>
+        {recordingModal && (
+          <RecordingModal closeRecordingModal={closeRecordingModal}/>
+        )}
+        {waitingModal && (
+          <WaitingRecordModal closeWaitingModal={closeWaitingModal}/>
+        )}
         <CamSetting />
         <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} publisher={publisher} />
         <div className="w-full pt-4 ps-4">
@@ -207,5 +229,4 @@ TakePic.propTypes = {
   shareSecret: PropTypes.string,
   subscribers: PropTypes.array,
   setAlertModal: PropTypes.func,
-  setRecordingModal: PropTypes.func,
 };

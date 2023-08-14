@@ -86,7 +86,7 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
                 )}
               </div>
             </div>
-            <div className="w-full pt-20">
+            <div className="w-full pt-20 my-4">
               <button
                 onClick={startTake}
                 className=" block relative mx-auto w-fit bg-yellow-400 p-3 rounded-3xl text-slate-600"

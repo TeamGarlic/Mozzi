@@ -31,7 +31,7 @@ function useSession(shareCode) {
     window.location.href = "/";
   };
 
-  const joinSession = async (userName, source) => {
+  const joinSession = async (userName, source, isHost) => {
 
     try {
       const OV = new OpenVidu();
@@ -167,6 +167,7 @@ function useSession(shareCode) {
       // console.log(userName);
       await session.connect(token, {
         clientData: userName,
+        isHost: isHost,
       });
 
       const publisher = await OV.initPublisherAsync(undefined, {

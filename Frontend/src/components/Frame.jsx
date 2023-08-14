@@ -39,7 +39,7 @@ function Frame({user, updateMozzi, setPlayTogether, setAlertModal}) {
   function UpdateMozzi(){
     updateMozzi(frame)
   }
-  UpdateMozzi = checkHost(UpdateMozzi, user.isHost, setAlertModal)
+  UpdateMozzi = checkHost(UpdateMozzi, user.isHost, ()=>{})
 
   function clickVideo(event) {
     dispatch(
