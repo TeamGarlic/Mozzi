@@ -245,7 +245,6 @@ function Booth() {
     };
   }, [leaveSession]);
 
-
   // useEffect : [subscribers]
   useEffect(() => {
     for (let key in localVideoMap) {

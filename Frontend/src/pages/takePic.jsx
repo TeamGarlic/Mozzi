@@ -147,7 +147,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
           <RecordingModal closeRecordingModal={closeRecordingModal}/>
         )}
         {waitingModal && (
-          <WaitingRecordModal closeWaitingModal={closeWaitingModal}/>
+          <WaitingRecordModal count={count} closeWaitingModal={closeWaitingModal}/>
         )}
         <CamSetting />
         <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} publisher={publisher} />
