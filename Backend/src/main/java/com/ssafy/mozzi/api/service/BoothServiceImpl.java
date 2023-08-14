@@ -88,7 +88,7 @@ public class BoothServiceImpl implements BoothService {
         Optional<Booth> booth = null;
         if (shareCode == null) {
             do {
-                shareCode = mozziUtil.generateString(20, false);
+                shareCode = mozziUtil.generateKoreanToken();
                 booth = boothRepository.findByShareCode(shareCode);
             } while (booth.isPresent());
         } else {
