@@ -172,7 +172,7 @@ function Booth() {
     if(res.status ===200){
       const userData = res.data.data
       setUser((prev)=>{
-        joinSession(userData.userNickname, ref);
+        joinSession(userData.userNickname, ref, user.isHost);
         return {...prev, userData}
       });
     }else{
@@ -182,7 +182,7 @@ function Booth() {
         window.location.href="/";
       }
       setUser((prev)=>{
-        joinSession(guest, ref);
+        joinSession(guest, ref, 0);
         return {...prev, userNickname:guest}
       });
     }
@@ -263,6 +263,7 @@ function Booth() {
             subCanvasRefs.current[
               sub.stream.connection.connectionId
               ].getContext("2d", { willReadFrequently: true }),
+          nickName: JSON.parse(sub.stream.connection.data).clientData
         };
         sub.addVideoElement(
           subVideoRefs.current[sub.stream.connection.connectionId]
@@ -291,7 +292,6 @@ function Booth() {
       }));
     }
     initPosition();
-
   }, [publisher]);
 
 
