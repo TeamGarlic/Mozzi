@@ -27,8 +27,7 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
             menu === 0 ? "hidden" : ""
           }`}
         >
-          {menu === 1 && (
-            <div className="h-full">
+            <div className={`h-full ${menu === 1?"":"collapse fixed"}`}>
               <UserList
                 user={user}
                 position={position}
@@ -39,9 +38,7 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
                 setAlertModal={setAlertModal}
               />
             </div>
-          )}
-          {menu === 2 && (
-            <div className="h-full">
+            <div className={`h-full ${menu === 2?"":"collapse fixed"}`}>
               배경 변경하기
               {bgList.map((bg) => (
                 <BgCard 
@@ -54,7 +51,6 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
                 />
               ))}
             </div>
-          )}
           {menu === 3 && <div>대충 스티커</div>}
         </Card>
     </div>
