@@ -105,7 +105,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
 
   function setPlayTogether(func){
     playTogetherRef.current.onclick = func;
-    console.log(playTogetherRef)
+    // console.log(playTogetherRef)
   }
 
   useEffect(() => {
@@ -120,7 +120,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
     drawVid();
   });
 
-  console.log(playTogetherRef);
+  // console.log(playTogetherRef);
 
   return (
     <Layout>
