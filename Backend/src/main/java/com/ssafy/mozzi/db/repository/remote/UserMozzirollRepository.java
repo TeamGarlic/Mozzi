@@ -35,7 +35,8 @@ public interface UserMozzirollRepository extends JpaRepository<UserMozziroll, Lo
             END AS isLiked 
             from UserMozziroll userMozziroll left join MozzirollLike as like on userMozziroll.id = like.likedUserMozziroll.id 
             where userMozziroll.deleted = false and userMozziroll.user.id=:userId 
-            group by userMozziroll.id 
+            group by userMozziroll.id
+            order by userMozziroll.id desc
         """)
     Page<UserMozzirollItemDto> findByUserId(@Param("userId") Long userId, Pageable pageable);
 
