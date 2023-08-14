@@ -68,6 +68,8 @@ public interface UserMozzirollRepository extends JpaRepository<UserMozziroll, Lo
 
     boolean existsByIdAndUser(Long id, User user);
 
+    boolean existsByMozzirollId(Long mozzirollId);
+
     @Query("""
             select userMozziroll.id as id, 
             userMozziroll.title as title, 

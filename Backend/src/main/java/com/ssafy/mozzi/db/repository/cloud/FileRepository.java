@@ -9,8 +9,10 @@ import org.springframework.stereotype.Repository;
 
 import com.oracle.bmc.objectstorage.ObjectStorage;
 import com.oracle.bmc.objectstorage.model.StorageTier;
+import com.oracle.bmc.objectstorage.requests.DeleteObjectRequest;
 import com.oracle.bmc.objectstorage.requests.GetObjectRequest;
 import com.oracle.bmc.objectstorage.requests.PutObjectRequest;
+import com.oracle.bmc.objectstorage.responses.DeleteObjectResponse;
 import com.oracle.bmc.objectstorage.responses.GetObjectResponse;
 import com.oracle.bmc.objectstorage.responses.PutObjectResponse;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
@@ -76,4 +78,24 @@ public class FileRepository {
         return client.getObject(getObjectRequest);
     }
 
+    /**
+     * Cloud Storage ObjectStorage에 Object 삭제하기
+     * @param client ObjectStorage
+     * @param objectName String
+     * @return DeleteObjectResponse
+     * @see DeleteObjectResponse
+     * @see CloudStorageSaveFailException
+     */
+    public DeleteObjectResponse deleteObject(ObjectStorage client, String objectName) {
+        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+            .bucketName(ORACLE_BUCKET)
+            .namespaceName(ORACLE_NAMESPACE)
+            .objectName(objectName)
+            .build();
+
+        if (deleteObjectRequest == null)
+            throw new CloudStorageSaveFailException("파일 Delete 실패");
+
+        return client.deleteObject(deleteObjectRequest);
+    }
 }

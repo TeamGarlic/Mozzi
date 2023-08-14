@@ -16,6 +16,7 @@ import com.ssafy.mozzi.api.response.PostUserMozzirollPostRes;
 import com.ssafy.mozzi.api.response.UserMozzirollDeleteRes;
 import com.ssafy.mozzi.api.response.UserMozzirollDetailGetRes;
 import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
+import com.ssafy.mozzi.common.auth.ObjectStorageClient;
 import com.ssafy.mozzi.common.dto.UserMozzirollItemDto;
 import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
 import com.ssafy.mozzi.common.exception.handler.BadRequestException;
@@ -30,6 +31,7 @@ import com.ssafy.mozzi.db.entity.remote.Mozziroll;
 import com.ssafy.mozzi.db.entity.remote.MozzirollLike;
 import com.ssafy.mozzi.db.entity.remote.User;
 import com.ssafy.mozzi.db.entity.remote.UserMozziroll;
+import com.ssafy.mozzi.db.repository.cloud.FileRepository;
 import com.ssafy.mozzi.db.repository.local.BoothRepository;
 import com.ssafy.mozzi.db.repository.local.BoothUserRepository;
 import com.ssafy.mozzi.db.repository.remote.MozzirollLikeRepository;
@@ -55,6 +57,8 @@ public class MozzirollServiceImpl implements MozzirollService {
     private final BoothUserRepository boothUserRepository;
     private final MozzirollLikeRepository mozzirollLikeRepository;
     private final UserRepository userRepository;
+    private final FileRepository fileRepository;
+    private final ObjectStorageClient client;
 
     /**
      * 사용자 계정에 Mozziroll 연결 요청을 유효성 확인 후 연결합니다.
@@ -219,16 +223,15 @@ public class MozzirollServiceImpl implements MozzirollService {
         UserMozzirollDeleteRes userMozzirollDeleteRes = MozzirollMapper.toUserMozzirollDeleteRes(userMozziroll.get());
 
         if (userMozzirollRepository.existsByIdAndUser(userMozzirollId, user)) {
-            mozziroll.getUserMozzirolls().remove(userMozziroll.get());
             userMozzirollRepository.delete(userMozziroll.get());
         } else {
             throw new UnAuthorizedException(MozziAPIErrorCode.UnAuthorized, "User is not userMozziroll's owner");
         }
 
         // 만약 mozziroll 이 더이상 어떤 userMozziroll 과 연결 되어있지 않으면 삭제
-        // TODO: 파일 삭제도 필요!
-        if (mozziroll.getUserMozzirolls().isEmpty()) {
+        if (!userMozzirollRepository.existsByMozzirollId(mozziroll.getId())) {
             mozzirollRepository.delete(mozziroll);
+            fileRepository.deleteObject(client.getClient(), mozziroll.getObjectName());
         }
 
         return userMozzirollDeleteRes;
