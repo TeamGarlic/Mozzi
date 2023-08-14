@@ -264,19 +264,32 @@ public class MozzirollServiceImpl implements MozzirollService {
     @Override
     public UserMozzirollDetailGetRes getDetailUserMozziroll(String accessToken, long userMozzirollId) {
         Long userId = null;
-        // Exception 추가해서 사용자 없어도 에러 안나도록 해야하나?
+
         if (accessToken != null && !accessToken.equals("")) {
-            userId = userService.findUserByToken(accessToken).getId();
+            try {
+                userId = userService.findUserByToken(accessToken).getId();
+            } catch (Exception e) {
+                throw new BadRequestException(MozziAPIErrorCode.InvalidAccessToken, "Invalid User Token");
+            }
         }
 
-        Optional<UserMozzirollItemDto> userMozziroll = userMozzirollRepository.findUserMozzirollByIdAndUserId(
+        Optional<UserMozzirollItemDto> userMozzirollItemCandidate = userMozzirollRepository.findUserMozzirollByIdAndUserId(
             userMozzirollId, userId);
-
-        if (!userMozziroll.isPresent()) {
+        if (userMozzirollItemCandidate.isEmpty()) {
             throw new NotFoundException(MozziAPIErrorCode.MozzirollNotExists,
                 "This is no userMozziroll for post/unpost user's mozziroll");
         }
 
-        return UserMozzirollMapper.toUserMozzirollGetRes(userMozziroll.get());
+        UserMozzirollItemDto usermozziroll = userMozzirollItemCandidate.get();
+        if (!usermozziroll.getPosted()) {
+            userId = userService.findUserByToken(accessToken).getId();
+
+            if (!usermozziroll.getUser().getId().equals(userId)) {
+                throw new UnAuthorizedException(MozziAPIErrorCode.UnAuthorized,
+                    "You don't have permission to use user mozziroll");
+            }
+        }
+
+        return UserMozzirollMapper.toUserMozzirollGetRes(usermozziroll);
     }
 }
