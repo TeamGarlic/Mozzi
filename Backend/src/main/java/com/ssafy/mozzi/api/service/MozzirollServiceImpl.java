@@ -149,33 +149,18 @@ public class MozzirollServiceImpl implements MozzirollService {
         Optional<MozzirollLike> like = mozzirollLikeRepository.findByLikedUserAndLikedUserMozziroll(user,
             userMozziroll);
         if (like.isPresent()) {
-
-            user.getLikedMozzirolls().remove(like.get());
-            userRepository.save(user);
-
-            userMozziroll.getLikedUsers().remove(like.get());
-            userMozzirollRepository.save(userMozziroll);
-
             mozzirollLikeRepository.delete(like.get());
             isLiked = false;
-
+        } else {
+            // 좋아요가 없을 경우 좋아요를 만들어줌
+            mozzirollLikeRepository.save(MozzirollLike.builder()
+                .likedUserMozziroll(userMozziroll)
+                .likedUser(user)
+                .build());
         }
 
-        // 좋아요가 없을 경우 좋아요를 만들어줌
-        if (isLiked) {
-            MozzirollLike newLike = new MozzirollLike();
-            newLike.setLikedUser(user);
-            newLike.setLikedUserMozziroll(userMozziroll);
-            mozzirollLikeRepository.save(newLike);
-
-            userMozziroll.getLikedUsers().add(newLike);
-            userMozzirollRepository.save(userMozziroll);
-
-            user.getLikedMozzirolls().add(newLike);
-            userRepository.save(user);
-        }
-
-        return MozzirollMapper.toMozzirollLikeRes(userMozziroll.getLikedUsers().size(), isLiked);
+        return MozzirollMapper.toMozzirollLikeRes(mozzirollLikeRepository.countByLikedUserMozziroll(userMozziroll),
+            isLiked);
     }
 
     /**

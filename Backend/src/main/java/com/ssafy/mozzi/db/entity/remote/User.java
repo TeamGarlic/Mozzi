@@ -1,8 +1,6 @@
 package com.ssafy.mozzi.db.entity.remote;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import org.hibernate.annotations.ColumnDefault;
@@ -14,10 +12,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ssafy.mozzi.db.entity.BaseEntity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -67,9 +63,6 @@ public class User extends BaseEntity {
     @ColumnDefault("false")
     @Column(nullable = false)
     private Boolean deleted = false;
-
-    @OneToMany(mappedBy = "likedUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MozzirollLike> likedMozzirolls = new ArrayList<>();
 
     @Size(max = 150)
     @Column(name = "refresh_token")
