@@ -29,13 +29,12 @@ export default function UserSideBar({ leaveSession ,user }) {
           <hr />
         </div>
         }
-
         {subCanvases &&
           Object.keys(subCanvases).map(key=>(
             <div key={key} className="stream-container col-md-6 col-xs-6">
-              <UserVideoComponent canvas={subCanvases[key]} />
+              <UserVideoComponent canvas={subCanvases[key].ref} />
               {/*추가 코드*/}
-              {key}
+              {subCanvases[key].nickName}
               {/*추가 코드*/}
               <hr />
             </div>

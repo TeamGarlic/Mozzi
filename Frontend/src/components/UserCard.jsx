@@ -9,7 +9,7 @@ function UserCard({ userName, setTool, onCam, onMic, idx, isHost }) {
   }
 
   return (
-    <div className="w-full border-2 rounded-md px-1 py-2 mx-auto grid grid-cols-5">
+    <div className="w-full border-2 rounded-md px-1 py-2 mx-auto grid grid-cols-6">
       <div className="col-span-1">
         {
           isHost > 0 &&
