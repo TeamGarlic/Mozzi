@@ -11,7 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.ssafy.mozzi.common.auth.JwtAuthenticationFilter;
-import com.ssafy.mozzi.common.auth.JwtTokenProvider;
+import com.ssafy.mozzi.common.exception.handler.ExceptionHandlerFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,10 +19,8 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    private final JwtTokenProvider jwtTokenProvider;
-
-    // TODO: Need to add path after adding anonymous mapping.
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
 
     @Bean
     protected SecurityFilterChain config(HttpSecurity http) throws Exception {
@@ -84,7 +82,8 @@ public class SecurityConfig {
             .headers(headers ->
                 headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
             )
-            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class)
             .getOrBuild();
     }
 }

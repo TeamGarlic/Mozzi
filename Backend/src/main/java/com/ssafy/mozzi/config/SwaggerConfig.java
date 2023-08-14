@@ -94,6 +94,11 @@ public class SwaggerConfig {
             .addProperty("code", new IntegerSchema().example(MozziAPIErrorCode.FileNotExists.getCode()))
             .addProperty("message", new StringSchema().example("Requested File does not exist"));
 
+        Schema<Map<String, Object>> InvalidAccessToken = new Schema<Map<String, Object>>()
+            .addProperty("code", new IntegerSchema().example(MozziAPIErrorCode.InvalidAccessToken.getCode()))
+            .addProperty("message", new StringSchema().example("Invalid Access Token"));
+
+
         Components components = new Components()
             .addSecuritySchemes("Authorization", getJwtSecurityScheme())
             .addSchemas("InternalError", InternalSchema)
@@ -112,7 +117,8 @@ public class SwaggerConfig {
             .addSchemas("NoData", NoData)
             .addSchemas("UserEmailNotExists", UserEmailNotExists)
             .addSchemas("FileAlreadyExists", FileAlreadyExists)
-            .addSchemas("FileNotExists", FileNotExists);
+            .addSchemas("FileNotExists", FileNotExists)
+            .addSchemas("InvalidAccessToken", InvalidAccessToken);
 
         SecurityRequirement securityRequirement = new SecurityRequirement()
             .addList("Authorization");
