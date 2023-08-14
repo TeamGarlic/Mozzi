@@ -129,8 +129,7 @@ const boothApi = {
   },
 
   destroyBooth:async(sessionId)=>{
-    let res = await PublicBoothApi.delete(`${sessionId}`);
-    console.log(res);
+    let res = await PublicBoothApi.delete(`${sessionId}`,{});
     return res;
   }
 };
