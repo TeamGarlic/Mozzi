@@ -10,6 +10,8 @@ import fileApi from "@/api/fileApi.js";
 import Spinner from "@/components/Spinner.jsx";
 import { AppStore } from "@/store/AppStore.js";
 import useInterval from '@/hooks/useInterval.js';
+import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+const ffmpeg = createFFmpeg({log : true})
 
 function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, recordingMozzi, sendRecordingSignal }) {
   const [recording, setRecording] = useState(false);
@@ -26,7 +28,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
 
   let mediaRecorder = null;
   const arrClipData = [];
-
+  
   function recordClip() {
     sendRecordingSignal(true);
     const mediaStream = completeClipRef.current.captureStream();
@@ -34,14 +36,20 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
     mediaRecorder.ondataavailable = (event) => {
       arrClipData.push(event.data);
     };
-    mediaRecorder.onstop = () => {
+    mediaRecorder.onstop = async () => {
       const blob = new Blob(arrClipData);
 
       // blob 데이터를 활용해 webm 파일로 변환
-      const ClipFile = new File([blob], "clip.webm", { type: "video/webm" });
+      const webmFile = new File([blob], "temp.webm", { type: "video/webm" });
+      await ffmpeg.load();
+      ffmpeg.FS("writeFile","temp.webm",await fetchFile(webmFile));
+      await ffmpeg.run("-i","temp.webm","download.mp4");
+      const mp4Unit8 = ffmpeg.FS("readFile","download.mp4");
+      const mp4Blob = new Blob([mp4Unit8.buffer], {type:"video/mp4"});
+      const mp4File = new File([mp4Blob], "download.mp4", { type: "video/mp4" });
       // Todo: webm file url => 백엔드와 통신해서 url 주소를 재설정 해야함
       arrClipData.splice(0);
-      saveClip(ClipFile, "test");
+      saveClip(mp4File, "제목을 입력하세요");
       sendRecordingSignal(false);
       goNext();
     };
