@@ -25,7 +25,7 @@ function useSession(shareCode) {
     if (session) {
       // console.log(session);
       let isHost = await JSON.parse(session.connection.data).isHost;
-      console.log(isHost);
+      // console.log(isHost);
       if(isHost === 1){
         await session.signal({
           data: isHost,
