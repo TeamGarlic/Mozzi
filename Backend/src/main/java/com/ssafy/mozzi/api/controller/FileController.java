@@ -123,7 +123,7 @@ public class FileController {
         Resource resource = fileService.getObject(objectName);
 
         return ResponseEntity.ok()
-            .cacheControl(APICacheControl.usePrivateCache)
+            .cacheControl(APICacheControl.usePublicCache)
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment() // (6)
                 .filename(resource.getFilename(), StandardCharsets.UTF_8)
