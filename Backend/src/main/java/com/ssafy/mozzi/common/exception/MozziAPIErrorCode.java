@@ -20,7 +20,8 @@ public enum MozziAPIErrorCode {
     UserEmailNotExists(14),
     FileAlreadyExists(15),
     FileNotExists(16),
-    InvalidAccessToken(17);
+    InvalidAccessToken(17),
+    ClosedBooth(18);
 
     @JsonValue
     private final int code;

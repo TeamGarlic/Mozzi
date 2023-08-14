@@ -155,7 +155,7 @@ public class BoothServiceImpl implements BoothService {
         }
         Booth booth = boothCandidate.get();
         if (booth.getClosed()) {
-            throw new BadRequestException(MozziAPIErrorCode.ShareCodeNotExists,
+            throw new BadRequestException(MozziAPIErrorCode.ClosedBooth,
                 String.format("Requested booth(%s) is closed", shareCode));
         }
         return BoothMapper.toSessionRes(booth.getSessionId(), shareCode, null);
