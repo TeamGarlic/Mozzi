@@ -66,7 +66,7 @@ function useSession(shareCode) {
       session.on("signal:hostOut",async (event)=>{
         if(JSON.parse(event.data) === JSON.parse(session.connection.data).isHost){
           await boothApi.destroyBooth(session.sessionId);
-          alert("부스 삭제 완");
+          alert("연결을 끊고 메인 화면으로 돌아갑니다.");
         }else{
           alert("호스트의 연결이 끊어졌습니다. 메인 화면으로 돌아갑니다.");
           leaveSession();

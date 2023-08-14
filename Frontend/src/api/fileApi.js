@@ -15,6 +15,12 @@ const PrivateFileApi = axios.create({
   },
 });
 
+PrivateFileApi.interceptors.request.use((config) => {
+  const token = window.sessionStorage.getItem("accessToken");
+  config.headers.Authorization = token;
+  return config;
+});
+
 const fileApi = {
   saveClip: async (file, title, width, height) => {
     const res = await PrivateFileApi.post(
