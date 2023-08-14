@@ -38,7 +38,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
       const blob = new Blob(arrClipData);
 
       // blob 데이터를 활용해 webm 파일로 변환
-      const ClipFile = new File([blob], "clip.mp4", { type: "video/mp4" });
+      const ClipFile = new File([blob], "clip.webm", { type: "video/webm" });
       // Todo: webm file url => 백엔드와 통신해서 url 주소를 재설정 해야함
       arrClipData.splice(0);
       saveClip(ClipFile, "test");

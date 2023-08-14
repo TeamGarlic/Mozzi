@@ -58,7 +58,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
     setTimeout(() => {
       // 녹화 종료
       mediaRecorder.stop();
-      if (taken == 4) {
+      if (taken == 1) {
         goNext();
       } else {
         finishTaking();
