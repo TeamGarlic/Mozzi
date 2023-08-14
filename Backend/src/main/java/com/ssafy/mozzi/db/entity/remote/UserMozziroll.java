@@ -48,9 +48,9 @@ public class UserMozziroll extends BaseEntity {
     private String title;
 
     @Builder.Default
-    @ColumnDefault("true")
+    @ColumnDefault("false")
     @Column(nullable = false)
-    private Boolean posted = true; // 일단 모든 게시물을 보여주기 위해 default 값을 true로 해놓음
+    private Boolean posted = false;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
