@@ -388,6 +388,8 @@ function Booth() {
               mozzi={mozzi}
               subscribers ={subscribers}
               publisher={publisher}
+              shareCode={shareCode}
+              isHost={user.isHost}
           />)}
         </>
       )}
