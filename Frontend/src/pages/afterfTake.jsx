@@ -2,6 +2,7 @@ import Layout from "@/components/Layout";
 import ClipLog from "@/components/ClipLog";
 import Frame from "@/components/Frame";
 import PropTypes from "prop-types";
+import useInput from "@/hooks/useInput.js";
 import { useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -11,10 +12,12 @@ import Spinner from "@/components/Spinner.jsx";
 import { AppStore } from "@/store/AppStore.js";
 import useInterval from '@/hooks/useInterval.js';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
-const ffmpeg = createFFmpeg({log : true})
+const ffmpeg = createFFmpeg({log : true});
+import TextInput from "@/components/TextInput.jsx";
 
 function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, recordingMozzi, sendRecordingSignal }) {
   const [recording, setRecording] = useState(false);
+  const mozziTitle = useInput()
   const { code: shareCode } = useParams();
   const frame = useSelector((state) => state.clipReducer.frame);
   const frameNum = Array.from({ length: frame["n"] }, (v, i) => i + 1);
@@ -49,7 +52,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
       const mp4File = new File([mp4Blob], "download.mp4", { type: "video/mp4" });
       // Todo: webm file url => 백엔드와 통신해서 url 주소를 재설정 해야함
       arrClipData.splice(0);
-      saveClip(mp4File, "제목을 입력하세요");
+      saveClip(mp4File, mozziTitle.value);
       sendRecordingSignal(false);
       goNext();
     };
@@ -85,7 +88,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
     if (
       frameNum.every((el) => {
         return frame[el].src !== "";
-      })
+      }) && mozziTitle.value !== ""
     ) {
       frameNum.forEach((i) => {
         if (videoRef.current[i]) {
@@ -93,6 +96,10 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
         }
       });
       recordClip();
+    } else if (mozziTitle.value === "") {
+      alert("제목을 입력해주세요");
+    } else {
+      alert("프레임을 전부 채워주세요");
     }
   }
   makeClip = checkHost(makeClip, user.isHost, setAlertModal);
@@ -157,6 +164,9 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
               </button>
             </div>
             <Frame user={user} updateMozzi={updateMozzi} setPlayTogether={setPlayTogether} setAlertModal={setAlertModal}/>
+            <div className="px-4">
+              <TextInput type="text" placeholder="제목을 입력해주세요" className="" {...mozziTitle}/>
+            </div>
           </div>
         </div>
         <canvas
