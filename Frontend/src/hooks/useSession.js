@@ -21,14 +21,34 @@ function useSession(shareCode) {
   const [shareSecret, setShareSecret] = useState("");
   const [recordingMozzi, setRecordingMozzi] = useState(false);
 
-  const leaveSession = () => {
+  const leaveSession = async() => {
     if (session) {
-      session.disconnect();
+      console.log(session);
+      let isHost = await JSON.parse(session.connection.data).isHost;
+      console.log(isHost);
+      if(isHost === 1){
+        await session.signal({
+          data: isHost,
+          to: [],
+          type: "hostOut",
+        });
+        setSession(undefined);
+        setPublisher(undefined);
+        setSubscribers([]);
+        window.location.href = "/";
+      }else{
+        session.disconnect();
+        setSession(undefined);
+        setPublisher(undefined);
+        setSubscribers([]);
+        window.location.href = "/";
+      }
+    }else{
+      setSession(undefined);
+      setPublisher(undefined);
+      setSubscribers([]);
+      window.location.href = "/";
     }
-    setSession(undefined);
-    setPublisher(undefined);
-    setSubscribers([]);
-    window.location.href = "/";
   };
 
   const joinSession = async (userName, source, isHost) => {
@@ -41,6 +61,16 @@ function useSession(shareCode) {
       session.on("streamCreated", (event) => {
         const subscriber = session.subscribe(event.stream, undefined);
         setSubscribers((prev) => [...prev, subscriber]);
+      });
+
+      session.on("signal:hostOut",async (event)=>{
+        if(JSON.parse(event.data) === JSON.parse(session.connection.data).isHost){
+          await boothApi.destroyBooth(session.sessionId);
+          alert("부스 삭제 완");
+        }else{
+          alert("호스트의 연결이 끊어졌습니다. 메인 화면으로 돌아갑니다.");
+          leaveSession();
+        }
       });
 
       session.on("signal:chat", async (event) => {
