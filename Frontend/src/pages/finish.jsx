@@ -45,7 +45,6 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
     try {
       let res = await mozziRollApi.link(mozzi, mozziTitle.value, shareCode);
       if (res.status === 200) {
-        console.log("Gd")
       }
     } catch (e) {
       console.log(e)
