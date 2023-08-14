@@ -67,7 +67,7 @@ function MyPage() {
                                 {myMozziRollData.userMozzirollItems &&
                                     <div className="flex items-center justify-center text-center gap-4 my-5 rounded-2xl w-fit mx-auto bg-blue-200 p-3">
                                         {page>1 && <span onClick={goPrev}>이전</span>}
-                                        {page}/{myMozziRollData.pages}페이지
+                                        {page}/{Math.max(myMozziRollData.pages,1)}페이지
                                         {page < myMozziRollData.pages &&<span onClick={goNext}>다음</span>}
                                     </div>
                                 }
