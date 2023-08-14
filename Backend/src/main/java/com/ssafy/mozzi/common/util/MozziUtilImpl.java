@@ -5,9 +5,13 @@ import java.util.random.RandomGeneratorFactory;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import com.ssafy.mozzi.common.auth.JwtTokenProvider;
+import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
+import com.ssafy.mozzi.common.exception.handler.NotFoundException;
+import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -42,11 +46,26 @@ public class MozziUtilImpl implements MozziUtil {
         }
     };
 
+    /**
+     * User의 Access Token을 받아 id(index)를 반환합니다.
+     * @param accessToken JWT Token
+     * @return user index of access token
+     * @throws UnAuthorizedException (Invalid Access Token, 17)
+     * @throws com.ssafy.mozzi.common.exception.handler.NotFoundException (UserIdNotExists, 2)
+     */
     @Override
     public long findUserIdByToken(String accessToken) {
-        Authentication auth = jwtTokenProvider.getAuthentication(accessToken);
-        UserDetails userDetails = (UserDetails)auth.getPrincipal();
-        return Long.parseLong(userDetails.getUsername());
+        try {
+            if (!jwtTokenProvider.validateTokenExceptExpiration(accessToken)) {
+                throw new UnAuthorizedException(MozziAPIErrorCode.InvalidAccessToken, "Access token is invalid");
+            }
+
+            Authentication auth = jwtTokenProvider.getAuthentication(accessToken);
+            UserDetails userDetails = (UserDetails)auth.getPrincipal();
+            return Long.parseLong(userDetails.getUsername());
+        } catch (UsernameNotFoundException exception) {
+            throw new NotFoundException(MozziAPIErrorCode.UserIdNotExists, "There is no user with access token");
+        }
     }
 
     /**

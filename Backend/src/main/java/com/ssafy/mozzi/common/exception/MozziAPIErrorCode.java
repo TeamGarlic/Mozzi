@@ -21,7 +21,8 @@ public enum MozziAPIErrorCode {
     FileAlreadyExists(15),
     FileNotExists(16),
     InvalidAccessToken(17),
-    ClosedBooth(18);
+    ClosedBooth(18),
+    FrameNotExists(19);
 
     @JsonValue
     private final int code;

@@ -51,6 +51,7 @@ public class FileController {
     @Operation(summary = "모찌롤 업로드", description = "방장에게 파일을 받아 Oracle Cloud에 모찌롤을 업로드 합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "업로드 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "401", description = "유효하지 않은 Access Token", content = @Content(schema = @Schema(ref = "#/components/schemas/InvalidAccessToken"))),
         @ApiResponse(responseCode = "404", description = "User Id 존재 X",
             content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
         @ApiResponse(responseCode = "500", description = "서버 에러",

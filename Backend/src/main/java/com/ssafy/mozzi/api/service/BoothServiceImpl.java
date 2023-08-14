@@ -74,7 +74,8 @@ public class BoothServiceImpl implements BoothService {
      * @see SessionPostReq
      * @see BoothMapper
      * @throws BadRequestException (DuplicateShareCode, 5)
-     * @throws UnAuthorizedException (AccessTokenNotExists, 7)
+     * @throws UnAuthorizedException (AccessTokenNotExists, 7), (InvalidAccessToken, 17)
+     * @throws NotFoundException (UserIdNotExists, 2)
      * @throws RuntimeException (Mozzi code : 0, Http Status 500)
      */
     @Override
@@ -98,41 +99,45 @@ public class BoothServiceImpl implements BoothService {
                     String.format("Duplicated booth share code(%s)", shareCode));
             }
         }
-        sessionCreation:
+
+        long userId = mozziUtil.findUserIdByToken(accessToken);
+
         while (true) {
             String sessionId = mozziUtil.generateString(20, false);
             booth = boothRepository.findBySessionId(sessionId);
-            long userId = mozziUtil.findUserIdByToken(accessToken);
-            if (booth.isEmpty()) {
-                String shareSecret = mozziUtil.generateString(20, true);
-                Booth newBooth = Booth.builder()
-                    .sessionId(sessionId)
-                    .shareCode(shareCode)
-                    .shareSecret(shareSecret)
-                    .closed(false)
-                    .creator(userId)
-                    .build();
-                boothRepository.save(newBooth);
 
-                SessionProperties properties = new SessionProperties.Builder()
-                    .customSessionId(sessionId)
-                    .build();
-                Session session = null;
-                try {
-                    session = openVidu.createSession(properties);
-                } catch (OpenViduHttpException exception) {
-                    switch (exception.getStatus()) {
-                        case 409:
-                            continue sessionCreation;
-                        default:
-                            throw new RuntimeException("Fail to create openvidu session");
-                    }
-                } catch (Exception exception) {
-                    throw new RuntimeException("Fail to create openvidu session");
-                }
-
-                return BoothMapper.toSessionRes(session.getSessionId(), shareCode, shareSecret);
+            if (booth.isPresent()) {
+                continue;
             }
+
+            String shareSecret = mozziUtil.generateString(20, true);
+            Booth newBooth = Booth.builder()
+                .sessionId(sessionId)
+                .shareCode(shareCode)
+                .shareSecret(shareSecret)
+                .closed(false)
+                .creator(userId)
+                .build();
+            boothRepository.save(newBooth);
+
+            SessionProperties properties = new SessionProperties.Builder()
+                .customSessionId(sessionId)
+                .build();
+            Session session = null;
+            try {
+                session = openVidu.createSession(properties);
+            } catch (OpenViduHttpException exception) {
+                switch (exception.getStatus()) {
+                    case 409:
+                        continue;
+                    default:
+                        throw new RuntimeException("Fail to create openvidu session");
+                }
+            } catch (Exception exception) {
+                throw new RuntimeException("Fail to create openvidu session");
+            }
+
+            return BoothMapper.toSessionRes(session.getSessionId(), shareCode, shareSecret);
         }
     }
 
@@ -143,7 +148,7 @@ public class BoothServiceImpl implements BoothService {
      * @return openvidu session id
      * @see Session
      * @see BoothMapper
-     * @throws BadRequestException (ShareCodeNotExists, 6)
+     * @throws BadRequestException (ShareCodeNotExists, 6), (ClosedBooth, 18)
      */
     @Override
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
@@ -169,7 +174,7 @@ public class BoothServiceImpl implements BoothService {
      * @see Session
      * @see Connection
      * @see BoothMapper
-     * @throws BadRequestException (InvalidSessionId, 12)
+     * @throws BadRequestException (InvalidSessionId, 12), (ClosedBooth, 18)
      * @throws Exception (Mozzi code : 0, Http Status 500)
      */
     @Override
@@ -187,7 +192,7 @@ public class BoothServiceImpl implements BoothService {
         Booth booth = boothCandidate.get();
 
         if (booth.getClosed()) {
-            throw new BadRequestException(MozziAPIErrorCode.InvalidSessionId,
+            throw new BadRequestException(MozziAPIErrorCode.ClosedBooth,
                 String.format("Your requested Booth(%s) is closed.", request.getSessionId()));
         }
 
@@ -262,14 +267,15 @@ public class BoothServiceImpl implements BoothService {
 
     /**
      * 부스에서 사용되는 임시 파일을 access token을 이용하여 부스 내의 인원이 맞는 지 확인 후 저장합니다.
-     * @throws NotFoundException (UserIdNotExists, 1), (BoothNotExists, 10), (FileAlreadyExists, 15)
+     * @throws BadRequestException (FileAlreadyExists, 15)
      * @throws UnAuthorizedException (UnAuthorized, 11)
+     * @throws NotFoundException (UserIdNotExists, 1), (BoothNotExists, 10)
      */
     @Override
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     public TemporalFileSavePostRes temporalFileSave(String accessToken, String shareCode, String fileName,
         String file) {
-        User user = userService.findUserByToken(accessToken);
+        User user = userService.findUserByToken(accessToken, true);
         Optional<Booth> boothCandidate = boothRepository.findByShareCode(shareCode);
         if (boothCandidate.isEmpty()) {
             throw new NotFoundException(MozziAPIErrorCode.BoothNotExists, "Requested Booth not exists");
@@ -289,7 +295,7 @@ public class BoothServiceImpl implements BoothService {
         }
 
         if (fileMap.containsKey(fileName)) {
-            throw new NotFoundException(MozziAPIErrorCode.FileAlreadyExists,
+            throw new BadRequestException(MozziAPIErrorCode.FileAlreadyExists,
                 String.format("%s already exists", fileName));
         }
         try {
@@ -303,7 +309,6 @@ public class BoothServiceImpl implements BoothService {
 
     /**
      * 존재하는 부스의 임시 파일을 가져와서 반환합니다.
-     * @throws BadRequestException (FileNotExists, 16)
      * @throws NotFoundException (BoothNotExists, 10), (FileNotExists, 16)
      * @throws UnAuthorizedException (UnAuthorized, 11)
      */
@@ -324,7 +329,7 @@ public class BoothServiceImpl implements BoothService {
 
         HashMap<String, String> fileMap = map.get(shareCode);
         if (!fileMap.containsKey(fileName)) {
-            throw new BadRequestException(MozziAPIErrorCode.FileNotExists,
+            throw new NotFoundException(MozziAPIErrorCode.FileNotExists,
                 String.format("Request file %s not exists.", fileName));
         }
 
@@ -333,13 +338,13 @@ public class BoothServiceImpl implements BoothService {
 
     /**
      * 방장으로부터 참여 제한을 하고 싶은 부스 정보를 받아, 열려 있다면 닫고, 닫혀있다면 그대로 둡니다.
+     * @throws UnAuthorizedException (UnAuthorized, 11), (InvalidAccessToken, 17)
      * @throws NotFoundException (UserIdNotExists, 1), (BoothNotExists, 10)
-     * @throws UnAuthorizedException (UnAuthorized, 11)
      */
     @Override
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     public boolean close(String accessToken, String shareCode) {
-        User user = userService.findUserByToken(accessToken);
+        User user = userService.findUserByToken(accessToken, true);
         Optional<Booth> boothCandidate = boothRepository.findByShareCode(shareCode);
         if (boothCandidate.isEmpty()) {
             throw new NotFoundException(MozziAPIErrorCode.BoothNotExists, "Requested Booth not exists");

@@ -37,6 +37,7 @@ public class FileRepository {
      * @return PutObjectResponse
      * @see PutObjectRequest
      * @see CloudStorageSaveFailException
+     * @throws CloudStorageSaveFailException
      */
     public PutObjectResponse putObject(ObjectStorage client, InputStream file, String objectName, String contentType) {
         PutObjectRequest putObjectRequest = null;
@@ -65,6 +66,7 @@ public class FileRepository {
      * @return GetObjectResponse
      * @see GetObjectResponse
      * @see CloudStorageSaveFailException
+     * @throws CloudStorageSaveFailException 500 Error
      */
     public GetObjectResponse getObject(ObjectStorage client, String objectName) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
