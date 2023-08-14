@@ -11,7 +11,7 @@ const PrivateFileApi = axios.create({
   baseURL: "https://api.mozzi.lol/files",
   headers: {
     "Content-Type": "multipart/form-data; boundary=<calculated when request is sent>",
-    Authorization : window.localStorage.getItem("accessToken")
+    Authorization : window.sessionStorage.getItem("accessToken")
   },
 });
 

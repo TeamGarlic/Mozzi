@@ -13,7 +13,7 @@ const PrivateBoothApi = axios.create({
   config: {
     headers: {
       "Content-Type": "application/json",
-      Authorization: window.localStorage.getItem("accessToken"),
+      Authorization: window.sessionStorage.getItem("accessToken"),
     },
   },
 });
@@ -23,7 +23,7 @@ const ClipApi = axios.create({
 });
 
 PrivateBoothApi.interceptors.request.use((config) => {
-  const token = window.localStorage.getItem("accessToken");
+  const token = window.sessionStorage.getItem("accessToken");
   config.headers.Authorization = token;
   return config;
 });
@@ -40,11 +40,11 @@ PrivateBoothApi.interceptors.response.use(
       const tokenResponse = await userApi.reIssue();
       if (tokenResponse.status === 200) {
         const newAccessToken = tokenResponse.data.data.accessToken;
-        localStorage.setItem(
+        sessionStorage.setItem(
           "accessToken",
           tokenResponse.data.data.accessToken
         );
-        localStorage.setItem(
+        sessionStorage.setItem(
           "refreshToken",
           tokenResponse.data.data.refreshToken
         );
@@ -55,14 +55,14 @@ PrivateBoothApi.interceptors.response.use(
         let res = await axios(originRequest);
         return res;
       } else {
-        window.localStorage.removeItem("accessToken");
-        window.localStorage.removeItem("refreshToken");
+        window.sessionStorage.removeItem("accessToken");
+        window.sessionStorage.removeItem("refreshToken");
         window.location.replace("/");
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        window.localStorage.removeItem("accessToken");
-        window.localStorage.removeItem("refreshToken");
+        window.sessionStorage.removeItem("accessToken");
+        window.sessionStorage.removeItem("refreshToken");
         window.location.replace("/");
       }
     }
@@ -103,7 +103,7 @@ const boothApi = {
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: window.localStorage.getItem("accessToken"),
+          Authorization: window.sessionStorage.getItem("accessToken"),
         },
       }
     )
