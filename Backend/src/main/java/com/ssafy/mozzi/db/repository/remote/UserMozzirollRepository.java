@@ -79,7 +79,7 @@ public interface UserMozzirollRepository extends JpaRepository<UserMozziroll, Lo
             ELSE false 
             END AS isLiked 
             from UserMozziroll userMozziroll
-            where userMozziroll.id=:id and userMozziroll.deleted=false and userMozziroll.posted=true
+            where userMozziroll.id=:id and userMozziroll.deleted=false
         """)
     Optional<UserMozzirollItemDto> findUserMozzirollByIdAndUserId(@Param("id") Long id, @Param("userId") Long userId);
 }
