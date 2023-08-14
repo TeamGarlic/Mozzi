@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MozzirollLikeRes {
-    private int likeCount;
+    private long likeCount;
     private boolean isLiked;
 }

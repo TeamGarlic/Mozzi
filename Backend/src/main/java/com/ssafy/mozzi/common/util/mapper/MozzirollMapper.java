@@ -32,7 +32,7 @@ public class MozzirollMapper {
      * @param isLiked 좋아요 여부
      * @return MozzirollLikeRes
      */
-    public static MozzirollLikeRes toMozzirollLikeRes(int likeCount, boolean isLiked) {
+    public static MozzirollLikeRes toMozzirollLikeRes(long likeCount, boolean isLiked) {
         return MozzirollLikeRes.builder()
             .likeCount(likeCount)
             .isLiked(isLiked)

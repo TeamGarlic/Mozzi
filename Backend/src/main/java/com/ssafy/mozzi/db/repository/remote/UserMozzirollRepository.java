@@ -30,7 +30,7 @@ public interface UserMozzirollRepository extends JpaRepository<UserMozziroll, Lo
             userMozziroll.user as user, 
             userMozziroll.mozziroll as mozziroll, 
             count(like.likedUserMozziroll.id) as likeCount, 
-            CASE WHEN EXISTS (SELECT likedUser.id FROM userMozziroll.likedUsers likedUser WHERE likedUser.likedUser.id = :userId) THEN true 
+            CASE WHEN EXISTS (SELECT likedUser.id FROM MozzirollLike likedUser WHERE likedUser.likedUser.id = :userId AND likedUser.likedUserMozziroll.id=userMozziroll.id) THEN true 
             ELSE false 
             END AS isLiked 
             from UserMozziroll userMozziroll left join MozzirollLike as like on userMozziroll.id = like.likedUserMozziroll.id 
@@ -43,7 +43,6 @@ public interface UserMozzirollRepository extends JpaRepository<UserMozziroll, Lo
     Optional<UserMozziroll> findByIdAndUserId(long id, long userId);
 
     // 좋아요/id(time) 순으로 정렬하고 삭제 되지 않고 post 하기로 설정한 게시물만 가져옵니다.
-    // TODO: posted 를 어떻게 설정할지 프론트랑 논의 해봐야됨, default를 true로 할지...
     @Query("""
             select userMozziroll.id as id, 
             userMozziroll.title as title, 
@@ -53,7 +52,7 @@ public interface UserMozzirollRepository extends JpaRepository<UserMozziroll, Lo
             count(like.likedUserMozziroll.id) as likeCount,
             CASE 
             WHEN :userId=null THEN false 
-            WHEN EXISTS (SELECT likedUser.id FROM userMozziroll.likedUsers likedUser WHERE likedUser.likedUser.id = :userId) THEN true 
+            WHEN EXISTS (SELECT likedUser.id FROM MozzirollLike likedUser WHERE likedUser.likedUser.id = :userId AND likedUser.likedUserMozziroll.id=userMozziroll.id) THEN true 
             ELSE false END AS isLiked 
             from UserMozziroll userMozziroll left join MozzirollLike as like on userMozziroll.id = like.likedUserMozziroll.id 
             where userMozziroll.deleted = false and userMozziroll.posted 
@@ -78,7 +77,8 @@ public interface UserMozzirollRepository extends JpaRepository<UserMozziroll, Lo
             userMozziroll.user as user, 
             userMozziroll.mozziroll as mozziroll, 
             (SELECT COUNT(id) FROM MozzirollLike ml WHERE userMozziroll.id=ml.likedUserMozziroll.id) as likeCount, 
-            CASE WHEN :userId is not null and EXISTS (SELECT likedUser.id FROM userMozziroll.likedUsers likedUser WHERE likedUser.likedUser.id = :userId) THEN true 
+            CASE 
+            WHEN :userId is not null and EXISTS (SELECT likedUser.id FROM MozzirollLike likedUser WHERE likedUser.likedUser.id = :userId AND likedUser.likedUserMozziroll.id=userMozziroll.id) THEN true 
             ELSE false 
             END AS isLiked 
             from UserMozziroll userMozziroll

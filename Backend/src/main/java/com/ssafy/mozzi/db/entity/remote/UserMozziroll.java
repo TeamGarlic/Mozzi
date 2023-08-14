@@ -1,7 +1,5 @@
 package com.ssafy.mozzi.db.entity.remote;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import org.hibernate.annotations.ColumnDefault;
@@ -12,12 +10,10 @@ import org.hibernate.annotations.Where;
 
 import com.ssafy.mozzi.db.entity.BaseEntity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Size;
@@ -59,9 +55,8 @@ public class UserMozziroll extends BaseEntity {
     @JoinColumn(name = "mozziroll_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Mozziroll mozziroll;
-
-    @OneToMany(mappedBy = "likedUserMozziroll", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MozzirollLike> likedUsers = new ArrayList<>();
+    // @OneToMany(mappedBy = "likedUserMozziroll", cascade = CascadeType.ALL, orphanRemoval = true)
+    // private List<MozzirollLike> likedUsers = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {
