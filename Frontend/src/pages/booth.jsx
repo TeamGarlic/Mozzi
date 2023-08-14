@@ -301,13 +301,11 @@ function Booth() {
   }, [position]);
 
   return (
-    <>
-      <video autoPlay ref={webcamRef} className="collapse absolute" />
-      {/*<canvas ref={bgRemovedRef}  width={1280} height={720} className="collapse absolute" />*/}
+    <div className="w-full h-full">
+      <video autoPlay ref={webcamRef} className="collapse fixed" />
       <canvas ref={bgRemovedRef}  width={1280} height={720} className="collapse fixed" />
 
-      <video ref={pubVideoRef} className="collapse absolute" ></video>
-      {/*<canvas ref={pubCanvasRef}  width={1280} height={720} className="collapse absolute" />*/}
+      <video ref={pubVideoRef} className="collapse fixed" ></video>
       <canvas ref={pubCanvasRef}  width={1280} height={720} className="collapse fixed" />
 
       {subscribers &&
@@ -408,7 +406,7 @@ function Booth() {
           />)}
         </>
       )}
-    </>
+    </div>
   );
 }
 
