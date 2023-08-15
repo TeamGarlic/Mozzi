@@ -140,31 +140,37 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
         <Spinner></Spinner>
       </div>
       <div className={`flex ${recordingMozzi ? "invisible":"" }`}>
-        <div className="w-full h-screen p-4 flex-col">
+        <div className="w-full h-screen p-4 flex-col flex content-center justify-center items-center text-center">
         <ClipLog user={user} setAlertModal={setAlertModal}/>
         </div>
         <div className="float-right min-w-[calc(32rem)] w-[calc(32rem)] h-screen bg-white flex-col rounded-s-xl p-4 justify-center items-center text-center overflow-y-scroll scrollbar-hide">
           <div className="mx-auto bottom-5 justify-center items-center text-center">
             <div className="flex">
               <button
-                  className="w-1/2 h-10 rounded-3xl bg-yellow-100 shadow-[5px_5px_5px_0px_rgba(0,0,0,0.5)] m-2"
+                  className="w-1/2 h-10 rounded-3xl bg-green-100 border border-green-500 m-2"
                   ref={playTogetherRef}
               >
                 동시재생
               </button>
               <button
-                  className="w-1/2 h-10 rounded-3xl bg-yellow-100 shadow-[5px_5px_5px_0px_rgba(0,0,0,0.5)] m-2"
+                  className="w-1/2 h-10 rounded-3xl bg-blue-100 border border-blue-500 m-2"
                   onClick={makeClip}
               >
                 공유하기
               </button>
             </div>
-            <Frame user={user} updateMozzi={updateMozzi} setPlayTogether={setPlayTogether} setAlertModal={setAlertModal}/>
-            <div className="px-4">
+            <div className="m-2 px-4 border border-blue-900">
               <TextInput type="text" placeholder="제목을 입력해주세요" className="" {...mozziTitle}/>
+            </div>
+
+            <Frame user={user} updateMozzi={updateMozzi} setPlayTogether={setPlayTogether} setAlertModal={setAlertModal}/>
+
+            <div className="text-sm text-slate-500">
+              드래그해서 클립 순서를 바꿀 수 있습니다
             </div>
           </div>
         </div>
+
         <canvas
           ref={completeClipRef}
           width={bg.width}

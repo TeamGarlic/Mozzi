@@ -101,7 +101,7 @@ function Frame({user, updateMozzi, setPlayTogether, setAlertModal}) {
         {frameNum.map((i) => {
           if (frame[i]["src"]) {
             return (
-              <div key={`frame${i}`} className="absolute z-50" ref={(el) => frameRef.current[i] = el}>
+              <div key={`frame${i}`} className="absolute z-10" ref={(el) => frameRef.current[i] = el}>
                 <video
                   autoPlay
                   ref={(el) => videoRef.current[i] = el}
@@ -121,7 +121,7 @@ function Frame({user, updateMozzi, setPlayTogether, setAlertModal}) {
           return (
             <div
               key={`frame${i}`}
-              className="absolute z-50"
+              className="absolute z-10"
               onDragOver={onDragOver}
               onDragEnter={onDragEnter}
               onDrop={onDrop}
