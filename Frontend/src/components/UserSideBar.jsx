@@ -1,10 +1,9 @@
 import { Card } from "@material-tailwind/react";
 import UserVideoComponent from "./UserVideoComponents";
-import PropTypes from "prop-types";
 import { useSelector } from 'react-redux';
 import {useEffect} from "react";
 
-export default function UserSideBar({ leaveSession ,user }) {
+export default function UserSideBar() {
   const pubCanvas = useSelector((state) => state.canvasReducer.pubCanvas);
   const subCanvases = useSelector((state) => state.canvasReducer.subCanvases);
   useEffect(()=>{
@@ -42,22 +41,7 @@ export default function UserSideBar({ leaveSession ,user }) {
                     </div>
                 ))}
           </ul>
-
-          <button className=" block relative mx-auto w-20 bg-red-300 p-3 rounded-3xl text-slate-900" onClick={leaveSession}>
-            나가기
-          </button>
         </div>
       </Card>
   );
 }
-
-UserSideBar.propTypes = {
-  leaveSession: PropTypes.func,
-  user: PropTypes.shape({
-    id: PropTypes.number,
-    userId: PropTypes.string,
-    userNickname: PropTypes.string,
-    email: PropTypes.string,
-    isHost: PropTypes.number,
-  }),
-};

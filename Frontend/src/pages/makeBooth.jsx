@@ -43,6 +43,9 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
     setFrame(res);
   }
   clickFrame = checkHost(clickFrame, user.isHost, setAlertModal);
+  function leave(){
+    confirm("정말로 나가시겠습니까?")?leaveSession():"";
+  }
 
   return (
     <>
@@ -86,18 +89,23 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
                 )}
               </div>
             </div>
-            <div className="flex justify-center items-center gap-20 fixed bottom-10 ms-[calc(25%)] w-1/2">
+            <div className="flex justify-center items-center gap-5 fixed bottom-10 ms-[calc(25%)] w-1/2">
               <button
-                onClick={startTake}
-                className=" block relative mx-auto w-28 bg-yellow-400 p-3 rounded-3xl text-slate-800 z-40"
+                  onClick={startTake}
+                  className="flex justify-center items-center px-5 rounded-3xl bg-blue-300 leading-10 border border-blue-500"
               >
                 촬영 시작
+              </button>
+              <button
+                  onClick={leave}
+                  className="flex justify-center items-center px-5 rounded-3xl bg-red-300 leading-10 border border-red-500"
+              >
+                나가기
               </button>
             </div>
           </div>
           <UserSideBar
             user={user}
-            leaveSession={leaveSession}
           />
         </div>
       </Layout>
