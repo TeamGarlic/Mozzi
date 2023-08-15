@@ -23,9 +23,11 @@ import com.ssafy.mozzi.api.response.UserMozzirollGetRes;
 import com.ssafy.mozzi.api.service.MozzirollService;
 import com.ssafy.mozzi.common.model.APICacheControl;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
+import com.ssafy.mozzi.config.SwaggerConfig;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -52,12 +54,11 @@ public class MozzirollController {
             content = @Content(schema = @Schema(ref = "#/components/schemas/AlreadyLinkedMozzi"))),
         @ApiResponse(responseCode = "401", description = "요청한 모찌롤의 주인(방장)과 같은 방에 없어 권한이 부족합니다",
             content = @Content(schema = @Schema(ref = "#/components/schemas/UnAuthorized"))),
-        @ApiResponse(responseCode = "404", description = "요청한 모찌롤이 존재하지 않습니다.",
-            content = @Content(schema = @Schema(ref = "#/components/schemas/MozzirollNotExists"))),
-        @ApiResponse(responseCode = "404", description = "요청한 부스가 존재하지 않습니다.",
-            content = @Content(schema = @Schema(ref = "#/components/schemas/BoothNotExists"))),
-        @ApiResponse(responseCode = "404", description = "User Id가 존재하지 않습니다.",
-            content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(examples = {
+            @ExampleObject(name = "UserIdNotExists", description = "User Id가 존재하지 않습니다.", value = SwaggerConfig.RES_UserIdNotExists),
+            @ExampleObject(name = "BoothNotExists", description = "요청한 부스가 존재하지 않습니다.", value = SwaggerConfig.RES_BoothNotExists),
+            @ExampleObject(name = "MozzirollNotExists", description = "요청한 모찌롤이 존재하지 않습니다.", value = SwaggerConfig.RES_MozzirollNotExists)
+        })),
         @ApiResponse(responseCode = "500", description = "서버 에러",
             content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
@@ -83,6 +84,7 @@ public class MozzirollController {
     @Operation(summary = "사용자 Mozziroll 조회", description = "사용자의 모찌롤 정보를 페이징 처리하여 반환합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "사용자 Mozziroll 페이징 조회 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "401", description = "유효하지 않은 Access Token", content = @Content(schema = @Schema(ref = "#/components/schemas/InvalidAccessToken"))),
         @ApiResponse(responseCode = "404", description = "User Id가 존재하지 않습니다.",
             content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
         @ApiResponse(responseCode = "500", description = "서버 에러",
@@ -113,8 +115,11 @@ public class MozzirollController {
     @Operation(summary = "모찌롤 좋아요 Toggle", description = "모찌롤을 좋아요 합니다. 이미 좋아요 한 경우 좋아요가 해제됩니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "사용자 Mozziroll 페이징 조회 성공", useReturnTypeSchema = true),
-        @ApiResponse(responseCode = "400", description = "잘못된 요청 정보",
-            content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
+        @ApiResponse(responseCode = "401", description = "유효하지 않는 Access Token", content = @Content(schema = @Schema(ref = "#/components/schemas/InvalidAccessToken"))),
+        @ApiResponse(responseCode = "404", description = "Bad Request", content = @Content(examples = {
+            @ExampleObject(name = "UserIdNotExists", description = "존재하지 않는 User Id", value = SwaggerConfig.RES_UserIdNotExists),
+            @ExampleObject(name = "MozzirollNotExists", description = "존재하지 않는 Mozziroll", value = SwaggerConfig.RES_MozzirollNotExists)
+        })),
         @ApiResponse(responseCode = "500", description = "서버 에러",
             content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
@@ -142,6 +147,8 @@ public class MozzirollController {
     @Operation(summary = "커뮤니티의 유저 모찌롤을 좋아요 순 목록으로 조회", description = "커뮤니티의 유저 모찌롤을 좋아요 순 목록으로 조회")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "좋아요 순 userMozziroll 페이징 조회 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "401", description = "유효하지 않는 Access Token", content = @Content(schema = @Schema(ref = "#/components/schemas/InvalidAccessToken"))),
+        @ApiResponse(responseCode = "404", description = "존재 하지 않는 User Id", content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
         @ApiResponse(responseCode = "500", description = "서버 에러",
             content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
@@ -171,10 +178,14 @@ public class MozzirollController {
     @Operation(summary = "유저의 모찌롤을 커뮤니티에 등록/해제하는 Toggle", description = "유저의 모찌롤을 커뮤니티에 등록->해제 or 해제->등록합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "유저의 모찌롤 커뮤니티에 등록/해제 성공", useReturnTypeSchema = true),
-        @ApiResponse(responseCode = "400", description = "잘못된 요청 정보",
-            content = @Content(schema = @Schema(ref = "#/components/schemas/MozzirollNotExists"))),
-        @ApiResponse(responseCode = "404", description = "User Id가 존재하지 않습니다.",
-            content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
+        @ApiResponse(responseCode = "401", description = "UnAuthorized", content = @Content(examples = {
+            @ExampleObject(name = "UnAuthorized", description = "User Mozziroll의 주인이 아니여서 권한이 없음", value = SwaggerConfig.RES_UnAuthorized),
+            @ExampleObject(name = "InvalidAccessToken", description = "유효하지 않는 Access Token", value = SwaggerConfig.RES_InvalidAccessToken)
+        })),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(examples = {
+            @ExampleObject(name = "UserIdNotExistsException", description = "존재하지 않는 User Id", value = SwaggerConfig.RES_UserIdNotExists),
+            @ExampleObject(name = "MozzirollNotExists", description = "Mozziroll Not Exists", value = SwaggerConfig.RES_MozzirollNotExists)
+        })),
         @ApiResponse(responseCode = "500", description = "서버 에러",
             content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
@@ -201,6 +212,14 @@ public class MozzirollController {
     @Operation(summary = "유저 모찌롤 삭제", description = "userMozzirollId 에 해당하는 userMozziroll 을 삭제합니다. (soft delete) 만든 사람 외에는 삭제가 불가능 합니다. 만약 삭제될 때 관계된 mozziroll 의 부모가 더이상 없을경우 mozziroll 또한 같이 삭제합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "유저 모찌롤 삭제 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "401", description = "UnAuthorized", content = @Content(examples = {
+            @ExampleObject(name = "UnAuthorized", description = "User Mozziroll의 주인이 아니여서 권한이 없음", value = SwaggerConfig.RES_UnAuthorized),
+            @ExampleObject(name = "InvalidAccessToken", description = "유효하지 않는 Access Token", value = SwaggerConfig.RES_InvalidAccessToken)
+        })),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(examples = {
+            @ExampleObject(name = "UserIdNotExistsException", description = "존재하지 않는 User Id", value = SwaggerConfig.RES_UserIdNotExists),
+            @ExampleObject(name = "MozzirollNotExists", description = "Mozziroll Not Exists", value = SwaggerConfig.RES_MozzirollNotExists)
+        })),
         @ApiResponse(responseCode = "500", description = "서버 에러",
             content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
@@ -226,8 +245,14 @@ public class MozzirollController {
     @Operation(summary = "UserMozziroll 상세 조회", description = "유저모찌롤의 상세 정보를 반환합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "UserMozziroll 상세 정보 조회 성공", useReturnTypeSchema = true),
-        @ApiResponse(responseCode = "404", description = "요청한 모찌롤이 존재하지 않습니다.",
-            content = @Content(schema = @Schema(ref = "#/components/schemas/MozzirollNotExists"))),
+        @ApiResponse(responseCode = "401", description = "UnAuthorized", content = @Content(examples = {
+            @ExampleObject(name = "UnAuthorized", description = "User Mozziroll의 주인이 아니여서 권한이 없음", value = SwaggerConfig.RES_UnAuthorized),
+            @ExampleObject(name = "InvalidAccessToken", description = "유효하지 않는 Access Token", value = SwaggerConfig.RES_InvalidAccessToken)
+        })),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(examples = {
+            @ExampleObject(name = "UserIdNotExistsException", description = "존재하지 않는 User Id", value = SwaggerConfig.RES_UserIdNotExists),
+            @ExampleObject(name = "MozzirollNotExists", description = "Mozziroll Not Exists", value = SwaggerConfig.RES_MozzirollNotExists)
+        })),
         @ApiResponse(responseCode = "500", description = "서버 에러",
             content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })

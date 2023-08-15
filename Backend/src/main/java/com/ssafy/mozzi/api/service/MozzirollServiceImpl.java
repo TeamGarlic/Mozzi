@@ -98,7 +98,7 @@ public class MozzirollServiceImpl implements MozzirollService {
 
         UserMozziroll userMozziroll = userMozzirollRepository.save(
             UserMozziroll.builder()
-                .user(userService.findUserByToken(accessToken))
+                .user(userService.findUserByToken(accessToken, true))
                 .mozziroll(mozziroll.get())
                 .title(request.getTitle())
                 .build());
@@ -112,11 +112,12 @@ public class MozzirollServiceImpl implements MozzirollService {
      * @param pageNum int
      * @param pageSize int
      * @return UserMozzirollGetRes
+     * @throws UnAuthorizedException (InvalidAccessToken, 17)
      * @throws NotFoundException (UserIdNotExists, 1)
      */
     @Override
     public UserMozzirollGetRes getMozzirollsByUser(String accessToken, int pageNum, int pageSize) {
-        User user = userService.findUserByToken(accessToken);
+        User user = userService.findUserByToken(accessToken, true);
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);
         Page<UserMozzirollItemDto> page = userMozzirollRepository.findByUserId(user.getId(), pageRequest);
         List<UserMozzirollItemDto> userMozzirolls = page.getContent();
@@ -128,12 +129,13 @@ public class MozzirollServiceImpl implements MozzirollService {
      * @param accessToken JWT Access Token
      * @param userMozzirollId long
      * @return MozzirollLikeRes
+     * @throws UnAuthorizedException (InvalidAccessToken, 17)
      * @throws NotFoundException (UserIdNotExists, 1), (MozzirollNotExists, 9)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     public MozzirollLikeRes likeMozziroll(String accessToken, long userMozzirollId) {
-        User user = userService.findUserByToken(accessToken);
+        User user = userService.findUserByToken(accessToken, true);
         UserMozziroll userMozziroll;
 
         if (userMozzirollRepository.findById(userMozzirollId).isPresent()) {
@@ -169,14 +171,16 @@ public class MozzirollServiceImpl implements MozzirollService {
      * @param pageNum int
      * @param pageSize int
      * @return PopularUserMozzirolGetlRes
+     * @throws UnAuthorizedException (InvalidAccessToken, 17)
+     * @throws NotFoundException (UserIdNotExistsException, 1)
      */
     @Override
     public PopularUserMozzirollGetlRes getPopularUserMozzirolls(String accessToken, int pageNum, int pageSize,
         String sorted) {
         Long userId = null;
 
-        if (accessToken != null && !accessToken.equals("")) {
-            userId = userService.findUserByToken(accessToken).getId();
+        if (accessToken != null && !accessToken.isEmpty()) {
+            userId = userService.findUserByToken(accessToken, true).getId();
         }
 
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);
@@ -192,13 +196,13 @@ public class MozzirollServiceImpl implements MozzirollService {
      * @param accessToken JWT Access Token
      * @param userMozzirollId long
      * @return UserMozzirollDeleteRes
-     * @throws NotFoundException
-     * @throws UnAuthorizedException
+     * @throws UnAuthorizedException (UnAuthorized, 11), (InvalidAccessToken, 17)
+     * @throws NotFoundException (UserIdNotExists, 1), (MozzirollNotExists, 9)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     public UserMozzirollDeleteRes deleteUserMozziroll(String accessToken, long userMozzirollId) {
-        User user = userService.findUserByToken(accessToken);
+        User user = userService.findUserByToken(accessToken, true);
         Optional<UserMozziroll> userMozziroll = userMozzirollRepository.findById(userMozzirollId);
         if (userMozziroll.isEmpty()) {
             throw new NotFoundException(MozziAPIErrorCode.MozzirollNotExists, "User Mozziroll not exists");
@@ -227,14 +231,14 @@ public class MozzirollServiceImpl implements MozzirollService {
      * @param accessToken JWT Access Token
      * @param postUserMozzirollPostReq PostUserMozzirollPostReq
      * @return PostUserMozzirollPostRes
-     * @throws UnAuthorizedException
-     * @throws NotFoundException
+     * @throws UnAuthorizedException (UnAuthorized, 11) (InvalidAccessToken, 17)
+     * @throws NotFoundException (UserIdNotExistsException, 1), (MozzirollNotExists, 9)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     public PostUserMozzirollPostRes postUserMozziroll(String accessToken,
         PostUserMozzirollPostReq postUserMozzirollPostReq) {
-        User user = userService.findUserByToken(accessToken);
+        User user = userService.findUserByToken(accessToken, true);
         if (user == null) {
             throw new UnAuthorizedException(MozziAPIErrorCode.UnAuthorized,
                 "You are not authorized to post/unpost user's mozziroll");
@@ -258,18 +262,18 @@ public class MozzirollServiceImpl implements MozzirollService {
      * @param accessToken JWT Access Token
      * @param userMozzirollId long
      * @return UserMozzirollDetailGetRes
-     * @throws UnAuthorizedException
-     * @throws NotFoundException
+     * @throws UnAuthorizedException (UnAuthorized, 11), (InvalidAccessToken, 17)
+     * @throws NotFoundException (UserIdNotExists, 1), (MozzirollNotExists, 9)
      */
     @Override
     public UserMozzirollDetailGetRes getDetailUserMozziroll(String accessToken, long userMozzirollId) {
         Long userId = null;
 
-        if (accessToken != null && !accessToken.equals("")) {
+        if (accessToken != null && !accessToken.isEmpty()) {
             try {
-                userId = userService.findUserByToken(accessToken).getId();
+                userId = userService.findUserByToken(accessToken, true).getId();
             } catch (Exception e) {
-                throw new BadRequestException(MozziAPIErrorCode.InvalidAccessToken, "Invalid User Token");
+                throw new UnAuthorizedException(MozziAPIErrorCode.InvalidAccessToken, "Invalid User Token");
             }
         }
 
@@ -282,8 +286,6 @@ public class MozzirollServiceImpl implements MozzirollService {
 
         UserMozzirollItemDto usermozziroll = userMozzirollItemCandidate.get();
         if (!usermozziroll.getPosted()) {
-            userId = userService.findUserByToken(accessToken).getId();
-
             if (!usermozziroll.getUser().getId().equals(userId)) {
                 throw new UnAuthorizedException(MozziAPIErrorCode.UnAuthorized,
                     "You don't have permission to use user mozziroll");

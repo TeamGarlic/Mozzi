@@ -22,6 +22,7 @@ import com.ssafy.mozzi.common.dto.FrameClipItem;
 import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
 import com.ssafy.mozzi.common.exception.handler.BadRequestException;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
+import com.ssafy.mozzi.common.exception.handler.NotFoundException;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.util.FileUtil;
 import com.ssafy.mozzi.common.util.MozziUtil;
@@ -68,12 +69,14 @@ public class ItemServiceImpl implements ItemService {
      * @return ItemBackgroundGetRes
      * @see ItemBackgroundGetRes
      * @see BackgroundEntityDto
+     * @throws UnAuthorizedException (Invalid Access Token, 17)
+     * @throws com.ssafy.mozzi.common.exception.handler.NotFoundException (UserIdNotExists, 2)
      */
     @Override
     public ItemBackgroundGetRes getBackgroundRes(String authorization, int pageNum, int pageSize, boolean isFavorite) {
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);  // Page 객체를 갖고오기 위한 PageRequest 객체 생성
         Page<BackgroundEntityDto> page = null;
-        if (authorization.equals("")) {
+        if (authorization.isEmpty()) {
             page = backgroundRepository.findAllWithFavorite(pageRequest);
         } else if (isFavorite) {
             Long userId = mozziUtil.findUserIdByToken(authorization);
@@ -154,6 +157,7 @@ public class ItemServiceImpl implements ItemService {
      * @param file MultipartFile
      * @param title String
      * @see ItemService
+     * @throws CloudStorageSaveFailException (mozzi code : 0, Http status : 500)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
@@ -178,12 +182,17 @@ public class ItemServiceImpl implements ItemService {
      * @param frameClipItems FrameClipItem[]
      * @see Frame
      * @see FrameClip
+     * @throws NotFoundException (FrameNotExists, 19)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     public String saveFrameClips(long frameId, FrameClipItem[] frameClipItems) {
+        Optional<Frame> frameCandidate = frameRepository.findById(frameId);
+        if (frameCandidate.isEmpty()) {
+            throw new NotFoundException(MozziAPIErrorCode.FrameNotExists, "Requested Frame Not Exists");
+        }
 
-        Frame frame = frameRepository.findById(frameId).get();
+        Frame frame = frameCandidate.get();
 
         List<FrameClip> frameClips = frame.getFrameClips();
 
@@ -214,8 +223,9 @@ public class ItemServiceImpl implements ItemService {
      * @see BackgroundRepository
      * @see BackgroundFavoriteRepository
      * @see ItemMapper
-     * @throws UnAuthorizedException (UnAuthorized, 11)
      * @throws BadRequestException (NoData, 13)
+     * @throws UnAuthorizedException (UnAuthorized, 11) (Invalid Access Token, 17)
+     * @throws com.ssafy.mozzi.common.exception.handler.NotFoundException (UserIdNotExists, 2)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)

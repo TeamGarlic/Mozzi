@@ -19,6 +19,46 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 @Configuration
 public class SwaggerConfig {
 
+    public static final String RES_InternalServerError = "{\n\t\"code\":0,\n\t\"message\":\"General Internal Server Error\"\n}";
+
+    public static final String RES_UserIdNotExists = "{\n\t\"code\":1,\n\t\"message\":\"User Id Not exists\"\n}";
+
+    public static final String RES_InvalidRefreshToken = "{\n\t\"code\":2,\n\t\"message\":\"Refresh Token is not valid\"\n}";
+
+    public static final String RES_UserRegisterFail = "{\n\t\"code\":3,\n\t\"message\":\"User Register Fail\"\n}";
+
+    public static final String RES_UserLoginFail = "{\n\t\"code\":4,\n\t\"message\":\"User Login Fail\"\n}";
+
+    public static final String RES_DuplicateShareCode = "{\n\t\"code\":5,\n\t\"message\":\"Duplicate Share Code\"\n}";
+
+    public static final String RES_ShareCodeNotExists = "{\n\t\"code\":6,\n\t\"message\":\"Share Code not exists\"\n}";
+
+    public static final String RES_AccessTokenNotExists = "{\n\t\"code\":7,\n\t\"message\":\"Access Token not exists\"\n}";
+
+    public static final String RES_AlreadyLinkedMozzi = "{\n\t\"code\":8,\n\t\"message\":\"Requested Mozzi is already linked\"\n}";
+
+    public static final String RES_MozzirollNotExists = "{\n\t\"code\":9,\n\t\"message\":\"Requested Mozziroll not exists\"\n}";
+
+    public static final String RES_BoothNotExists = "{\n\t\"code\":10,\n\t\"message\":\"Requested Booth not exists\"\n}";
+
+    public static final String RES_UnAuthorized = "{\n\t\"code\":11,\n\t\"message\":\"You are not authorized\"\n}";
+
+    public static final String RES_InvalidSessionId = "{\n\t\"code\":12,\n\t\"message\":\"Invalid Session Id\"\n}";
+
+    public static final String RES_NoData = "{\n\t\"code\":13,\n\t\"message\":\"You requested without any data\"\n}";
+
+    public static final String RES_UserEmailNotExists = "{\n\t\"code\":14,\n\t\"message\":\"User don't have email information\"\n}";
+
+    public static final String RES_FileAlreadyExists = "{\n\t\"code\":15,\n\t\"message\":\"Requested File already exists\"\n}";
+
+    public static final String RES_FileNotExists = "{\n\t\"code\":16,\n\t\"message\":\"Requested File does not exist\"\n}";
+
+    public static final String RES_InvalidAccessToken = "{\n\t\"code\":17,\n\t\"message\":\"Invalid Access Token\"\n}";
+
+    public static final String RES_ClosedBooth = "{\n\t\"code\":18,\n\t\"message\":\"Requested booth is closed\"\n}";
+
+    public static final String RES_FrameNotExists = "{\n\t\"code\":19,\n\t\"message\":\"Requested Frame is closed\"\n}";
+
     @Bean
     public OpenAPI openApi(@Value("$springdoc.version") String springdocVersion) {
         io.swagger.v3.oas.models.info.Info info = new io.swagger.v3.oas.models.info.Info()
@@ -98,6 +138,9 @@ public class SwaggerConfig {
             .addProperty("code", new IntegerSchema().example(MozziAPIErrorCode.InvalidAccessToken.getCode()))
             .addProperty("message", new StringSchema().example("Invalid Access Token"));
 
+        Schema<Map<String, Object>> FrameNotExists = new Schema<Map<String, Object>>()
+            .addProperty("code", new IntegerSchema().example(MozziAPIErrorCode.FrameNotExists.getCode()))
+            .addProperty("message", new StringSchema().example("Frame not Exists"));
 
         Components components = new Components()
             .addSecuritySchemes("Authorization", getJwtSecurityScheme())
@@ -118,7 +161,8 @@ public class SwaggerConfig {
             .addSchemas("UserEmailNotExists", UserEmailNotExists)
             .addSchemas("FileAlreadyExists", FileAlreadyExists)
             .addSchemas("FileNotExists", FileNotExists)
-            .addSchemas("InvalidAccessToken", InvalidAccessToken);
+            .addSchemas("InvalidAccessToken", InvalidAccessToken)
+            .addSchemas("FrameNotExists", FrameNotExists);
 
         SecurityRequirement securityRequirement = new SecurityRequirement()
             .addList("Authorization");

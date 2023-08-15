@@ -28,9 +28,11 @@ import com.ssafy.mozzi.api.response.UserUpdateRes;
 import com.ssafy.mozzi.api.service.UserService;
 import com.ssafy.mozzi.common.model.APICacheControl;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
+import com.ssafy.mozzi.config.SwaggerConfig;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -146,6 +148,7 @@ public class UserController {
      */
     @Operation(summary = "유저 정보", description = "유저 정보를 반환합니다.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "유저 정보 조회 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "401", description = "유효하지 않은 Access Token", content = @Content(schema = @Schema(ref = "#/components/schemas/InvalidAccessToken"))),
         @ApiResponse(responseCode = "404", description = "존재하지 않는 User Id", content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
         @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))})
     @GetMapping()
@@ -166,6 +169,7 @@ public class UserController {
      */
     @Operation(summary = "로그아웃", description = "유저의 Refresh Token을 Revoke 시킵니다.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "로그아웃 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "401", description = "유효하지 않은 Access Token", content = @Content(schema = @Schema(ref = "#/components/schemas/InvalidAccessToken"))),
         @ApiResponse(responseCode = "404", description = "존재하지 않는 User Id", content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
         @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))})
     @GetMapping("/logout")
@@ -185,8 +189,9 @@ public class UserController {
      */
     @Operation(summary = "유저 정보 갱신", description = "유저의 정보를 갱신 시킵니다.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "유저 정보 갱신 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "400", description = "갱신할 정보가 존재하지 않습니다.", content = @Content(schema = @Schema(ref = "#/components/schemas/NoData"))),
+        @ApiResponse(responseCode = "401", description = "유효하지 않은 Access Token", content = @Content(schema = @Schema(ref = "#/components/schemas/InvalidAccessToken"))),
         @ApiResponse(responseCode = "404", description = "존재하지 않는 User Id", content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
-        @ApiResponse(responseCode = "404", description = "갱신할 정보가 존재하지 않습니다.", content = @Content(schema = @Schema(ref = "#/components/schemas/NoData"))),
         @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))})
     @PatchMapping
     public ResponseEntity<? extends BaseResponseBody<UserUpdateRes>> update(@RequestBody UserUpdatePutReq request) {
@@ -202,8 +207,10 @@ public class UserController {
 
     @Operation(summary = "유저 패스워드 초기화", description = "유저의 패스워드를 초기화하여 메일로 전송합니다.")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "패스워드 초기화 성공", useReturnTypeSchema = true),
-        @ApiResponse(responseCode = "404", description = "존재하지 않는 User Id", content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
-        @ApiResponse(responseCode = "404", description = "사용자에게 Email 정보가 없는 경우", content = @Content(schema = @Schema(ref = "#/components/schemas/UserEmailNotExists"))),
+        @ApiResponse(responseCode = "404", description = "Not Found", content = @Content(examples = {
+            @ExampleObject(name = "UserIdNotExists", description = "존재하지 않는 유저", value = SwaggerConfig.RES_UserIdNotExists),
+            @ExampleObject(name = "UserEmailNotExists", description = "존재하지 않는 Email", value = SwaggerConfig.RES_UserEmailNotExists)
+        })),
         @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))})
     @PostMapping("/reset")
     public ResponseEntity<? extends BaseResponseBody<UserPasswordResetPostRes>> reset(
@@ -218,6 +225,7 @@ public class UserController {
 
     @Operation(summary = "회원 탈퇴", description = "유저의 accessToken을 입력받아 해당 유저를 탈퇴시킵니다. (soft delete)")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "회원 탈퇴 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "401", description = "유효하지 않은 Access Token", content = @Content(schema = @Schema(ref = "#/components/schemas/InvalidAccessToken"))),
         @ApiResponse(responseCode = "404", description = "존재하지 않는 User Id", content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
         @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))})
     @DeleteMapping

@@ -16,6 +16,7 @@ import com.ssafy.mozzi.common.dto.ObjectFileItem;
 import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
 import com.ssafy.mozzi.common.exception.handler.NotFoundException;
+import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.util.FileUtil;
 import com.ssafy.mozzi.common.util.mapper.FileMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
@@ -47,8 +48,9 @@ public class FileServiceImpl implements FileService {
      * @see UserMozzirollRepository
      * @see FileRepository
      * @see FileMozzirollPostRes
-     * @see CloudStorageSaveFailException (Mozzi code : 0, Http Status 500)
+     * @throws UnAuthorizedException (InvalidAccessToken, 17)
      * @throws NotFoundException (UserIdNotExists, 1)
+     * @see CloudStorageSaveFailException (Mozzi code : 0, Http Status 500)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
@@ -58,7 +60,7 @@ public class FileServiceImpl implements FileService {
         String contentType = "multipart/form-data";
 
         // User 찾기
-        User user = userService.findUserByToken(accessToken);
+        User user = userService.findUserByToken(accessToken, true);
         if (user == null)
             throw new NotFoundException(MozziAPIErrorCode.UserIdNotExists, "Requested User not exists");
         // Mozziroll 테이블에 정보 추가.
@@ -94,6 +96,7 @@ public class FileServiceImpl implements FileService {
      * @see FileRepository
      * @see ObjectFileItem
      * @see FileMapper
+     * @throws CloudStorageSaveFailException
      */
     @Override
     public ObjectFileItem downloadMozziroll(

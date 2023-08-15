@@ -56,6 +56,8 @@ public class ItemController {
     @Operation(summary = "배경 화면 가져오기", description = "배경 화면을 페이징 처리 하여 기져오기.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "배경 화면 fetch 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "401", description = "Invalid Access Token", content = @Content(schema = @Schema(ref = "#/components/schemas/InvalidAccessToken"))),
+        @ApiResponse(responseCode = "404", description = "존재하지 않는 User Id", content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
         @ApiResponse(responseCode = "500", description = "서버 에러",
             content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
@@ -197,6 +199,7 @@ public class ItemController {
     @Operation(summary = "프레임 클립 업로드", description = "프레임에 속한 클립 정보를 업로드 합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "프레임 클립 업로드 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "404", description = "프레임 존재 X", content = @Content(schema = @Schema(ref = "#/components/schemas/FrameNotExists"))),
         @ApiResponse(responseCode = "500", description = "서버 에러",
             content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
@@ -226,6 +229,7 @@ public class ItemController {
     @Operation(summary = "배경 즐겨찾기 추가", description = "선택한 배경을 즐겨찾기 추가합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "배경 즐겨찾기 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "400", description = "즐겨찾기할 정보 없음", content = @Content(schema = @Schema(ref = "#/components/schemas/NoData"))),
         @ApiResponse(responseCode = "500", description = "서버 에러",
             content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
