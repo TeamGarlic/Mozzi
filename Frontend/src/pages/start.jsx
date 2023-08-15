@@ -23,7 +23,8 @@ function Start() {
 
   async function makeBooth() {
     if (!user) {
-      alert("로그인해주세요!");
+      alert("부스를 생성하려면 로그인이 필요합니다");
+      navigate("/login");
       return;
     }
     let res = await boothApi.createBooth();

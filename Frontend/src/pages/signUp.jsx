@@ -14,7 +14,7 @@ function SignUp() {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const pw = useInput();
   const pwRegex =
-    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()-=_+])[A-Za-z\d!@#$%^&*()-=_+]{8,16}$/;
+    /^[A-Za-z\d!@#$%^&*()-=_+]{8,16}$/;
   const pw2 = useInput();
   const nickname = useInput();
   const nickRegex = /^(?!\s)(?!.*\s{2})\S{2,16}$/;
@@ -85,7 +85,7 @@ function SignUp() {
   function checkNick() {
     if (!nickRegex.test(nickname.value)) {
       setNickValid(false);
-      setNickComment("띄어쓰기 없이 2~16자의 닉네임을 입력하세요");
+      setNickComment("띄어쓰기 없이 2~16자의 닉네임을 입력하세요.");
       return;
     }
     setNickValid(true);

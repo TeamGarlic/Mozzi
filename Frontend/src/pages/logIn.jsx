@@ -16,7 +16,6 @@ function LogIn() {
     try {
       let res = await userApi.logIn(id.value, pw.value);
       if (res.status === 200) {
-        alert('로그인 성공');
         sessionStorage.setItem("accessToken", res.data.data.accessToken);
         sessionStorage.setItem("refreshToken", res.data.data.refreshToken);
         navigate("/");
