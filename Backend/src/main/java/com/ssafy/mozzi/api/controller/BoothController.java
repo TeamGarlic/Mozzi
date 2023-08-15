@@ -57,7 +57,7 @@ public class BoothController {
             @ExampleObject(name = "AccessTokenNotExists", description = "JWT TOKEN 없음", value = SwaggerConfig.RES_AccessTokenNotExists),
             @ExampleObject(name = "InvalidAccessToken", description = "유효하지 않은 Access token", value = SwaggerConfig.RES_InvalidAccessToken)
         })),
-        @ApiResponse(responseCode = "404", description = "존재하지 않는 User Id", content = @Content(schema = @Schema(ref = "#/components/schema/UserIdNotExists"))),
+        @ApiResponse(responseCode = "404", description = "존재하지 않는 User Id", content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
         @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))})
     @PostMapping
     public ResponseEntity<? extends BaseResponseBody<SessionRes>> createBooth(@RequestHeader String Authorization,
