@@ -44,7 +44,7 @@ function Chat({ sendMessage, chatLists, user, publisher }) {
   return (
     <div className="fixed bottom-5 right-5 z-20">
       {visible && (
-        <div className="flex-col w-80 h-fit rounded-xl bg-white my-3">
+        <div className="flex-col w-80 h-fit rounded-xl bg-white my-3 border border-blue-300">
           <div className=" text-lg p-3">채팅</div>
           <hr />
           <div className="h-full" ref={chattingCase}>
@@ -88,7 +88,7 @@ function Chat({ sendMessage, chatLists, user, publisher }) {
           </div>
         </div>
       )}
-      <div className=" w-12 h-12 float-right p-1 rounded-full bg-[#ffffff] border-2 border-blue-500">
+      <div className=" w-14 h-14 float-right p-1 rounded-full bg-[#ffffff] border-2 border-blue-500">
         {visible ? (
           <HideChat
             onClick={() => {

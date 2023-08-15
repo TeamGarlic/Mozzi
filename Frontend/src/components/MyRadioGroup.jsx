@@ -4,7 +4,7 @@ import MyRadioButton from "./MyRadioButton";
 function MyRadioGroup({ arr, name, onChange, nowState, text }) {
   return (
     <div className="flex rounded-3xl bg-slate-300 leading-10">
-      <div className=" px-5">{text}</div>
+      <div className="px-5">{text}</div>
       {arr.map((item) => {
         return (
           <label

@@ -14,8 +14,9 @@ import CamSetting from '@/components/CamSetting.jsx';
 import RecordingModal from "@/components/RecordingModal.jsx";
 import WaitingRecordModal from "@/components/WaitingRecordModal.jsx";
 
-function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition, sendFileName, shareSecret, publisher, subscribers, setAlertModal }) {
+function TakePic({ shareCode, user, bgList, goNext, timer, taken, timeChange, startTaking, finishTaking, nowTaking, myId, updatePosition, changeBg, position, sendPosition, setPosition, sendFileName, shareSecret, publisher, subscribers, setAlertModal }) {
   const timers = [3, 5, 10];
+  const MAX_CLIPS = 10;
   const [count, setCount] = useState(3);
   const [timerVisible, setTimerVisible] = useState(false);
   const [isTaking, setIsTaking] = useState(false);
@@ -72,7 +73,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
     setTimeout(() => {
       // 녹화 종료
       mediaRecorder.stop();
-      if (taken == 4) {
+      if (taken == MAX_CLIPS) {
         goNext();
       } else {
         finishTaking();
@@ -149,10 +150,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
         {waitingModal && (
           <WaitingRecordModal count={count} closeWaitingModal={closeWaitingModal}/>
         )}
-        <CamSetting />
-        <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} publisher={publisher} />
         <div className="w-full pt-4 ps-4">
-          <div className="text-2xl">촬영 부스</div>
           <PicSideBar
             bgList={bgList}
             user={user}
@@ -181,7 +179,7 @@ function TakePic({ shareCode, sendMessage, chatLists, user, bgList, goNext, time
             />
           )}
           <div className="flex rounded-2xl bg-yellow-200 leading-10">
-            <span className=" px-5 ">{taken}/4</span>
+            <span className=" px-5 ">{taken}/{MAX_CLIPS}</span>
             <button
               className={`w-full leading-10  px-5  bg-red-300 rounded-r-2xl`}
               onClick={take}
@@ -201,8 +199,6 @@ export default TakePic;
 TakePic.propTypes = {
   startTake: PropTypes.func,
   shareCode: PropTypes.string,
-  sendMessage: PropTypes.func,
-  chatLists: PropTypes.array,
   bgList: PropTypes.array,
   goNext: PropTypes.func,
   publisher: PropTypes.any,
