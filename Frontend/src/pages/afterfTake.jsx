@@ -14,7 +14,6 @@ import useInterval from '@/hooks/useInterval.js';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 const ffmpeg = createFFmpeg({log : true});
 import TextInput from "@/components/TextInput.jsx";
-
 function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, recordingMozzi, sendRecordingSignal }) {
   const [recording, setRecording] = useState(false);
   const mozziTitle = useInput()
@@ -41,12 +40,9 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
     };
     mediaRecorder.onstop = async () => {
       const blob = new Blob(arrClipData);
-
-      // blob 데이터를 활용해 webm 파일로 변환
-      const webmFile = new File([blob], "temp.webm", { type: "video/webm" });
       await ffmpeg.load();
-      ffmpeg.FS("writeFile","temp.webm",await fetchFile(webmFile));
-      await ffmpeg.run("-i","temp.webm","download.mp4");
+      ffmpeg.FS("writeFile","temp.webm",new Uint8Array(await blob.arrayBuffer()));
+      await ffmpeg.run("-i","temp.webm","-filter:v", "fps=30","download.mp4");
       const mp4Unit8 = ffmpeg.FS("readFile","download.mp4");
       const mp4Blob = new Blob([mp4Unit8.buffer], {type:"video/mp4"});
       const mp4File = new File([mp4Blob], "download.mp4", { type: "video/mp4" });
@@ -133,7 +129,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
       completeClipRef.current.width,
       completeClipRef.current.height
     );
-  });
+  },[]);
 
   // console.log(playTogetherRef);
 
