@@ -41,7 +41,7 @@ function Start() {
 
   async function gotoBooth() {
     try {
-      let res = await boothApi.getSessionID(code.value);
+      let res = await boothApi.getSessionID(code.value.split(' ').join(''));
       // console.log(res);
       const shareCode = res.data.data.shareCode;
       const shareSecret = res.data.data.shareSecret
