@@ -22,3 +22,9 @@
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+/*body {*/
+/*    -ms-overflow-style: none;*/
+/*}*/
+/*::-webkit-scrollbar {*/
+/*    display: none;*/
+/*}*/
