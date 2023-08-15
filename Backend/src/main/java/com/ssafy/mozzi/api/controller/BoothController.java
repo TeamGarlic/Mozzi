@@ -85,7 +85,6 @@ public class BoothController {
             @ExampleObject(name = "ShareCodeNotExists", description = "존재하지 않는 공유 코드", value = SwaggerConfig.RES_ShareCodeNotExists),
             @ExampleObject(name = "ClosedBooth", description = "이미 닫힌 부스", value = SwaggerConfig.RES_ClosedBooth)
         })),
-        @ApiResponse(responseCode = "400", description = "존재하지 않는 공유 코드", content = @Content(schema = @Schema(ref = "#/components/schemas/ShareCodeNotExists"))),
         @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))})
     @GetMapping("/{shareCode}")
     public ResponseEntity<? extends BaseResponseBody<SessionRes>> joinBooth(@PathVariable String shareCode) {
