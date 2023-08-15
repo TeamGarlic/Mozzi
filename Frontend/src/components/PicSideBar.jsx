@@ -39,10 +39,16 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
               />
             </div>
             <div className={`h-full ${menu === 2?"":"collapse fixed"}`}>
-              배경 변경하기
+                <div className="row-auto text-center">
+                    <div className="text-2xl">
+                        배경화면 바꾸기
+                    </div>
+                    <div className="text-sm text-slate-600">
+                        방장이 배경화면을 바꿀 수 있습니다
+                    </div>
               {bgList.map((bg) => (
                 <BgCard 
-                  bgName="bg_image"
+                  bgName={bg.title}
                   key={bg.id} 
                   bgSrc={bg.objectName} 
                   user={user} 
@@ -50,6 +56,7 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
                   setAlertModal={setAlertModal}
                 />
               ))}
+                </div>
             </div>
           {menu === 3 && <div>스티커</div>}
         </Card>
