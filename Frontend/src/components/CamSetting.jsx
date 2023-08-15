@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  AdjustmentsHorizontalIcon,
+  AdjustmentsHorizontalIcon, Cog8ToothIcon,
   MicrophoneIcon,
   VideoCameraIcon,
   VideoCameraSlashIcon
@@ -50,7 +50,7 @@ function CamSetting() {
 
 
   return (
-    <div className="fixed bottom-5 left-5 z-30">
+    <div className="fixed bottom-5 left-5 z-50">
       <div className={`flex-col w-80 h-fit rounded-xl bg-white my-3 border border-blue-300 ${visible?"":"hidden"}`}>
         <div className="columns-2 relative content-center">
           <div className=" text-lg p-3">카메라 설정</div>
@@ -108,7 +108,7 @@ function CamSetting() {
         </div>
       </div>
       <div className=" w-14 h-14 float-left p-1 rounded-full bg-[#ffffff] border-2 border-blue-500">
-        <AdjustmentsHorizontalIcon
+        <Cog8ToothIcon
           onClick={() => {
             setVisible(!visible);
           }}

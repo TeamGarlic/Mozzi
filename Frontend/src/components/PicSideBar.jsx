@@ -10,15 +10,21 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
   const [menu, setMenu] = useState(0);
   return (
       <>
-        <div className={`fixed z-10 flex-col gap-3 p-4 h-fit top-5 ${menu === 0 ? "right-0" : "right-64"}`}>
-          <div className=" w-10 h-10">
-            <UsersIcon onClick={() => (menu === 1 ? setMenu(0) : setMenu(1))} />
-          </div>
-          <div className=" w-10 h-10">
-            <ComputerDesktopIcon
-              onClick={() => (menu === 2 ? setMenu(0) : setMenu(2))}
-            />
-          </div>
+        <div className={`fixed z-30 flex-col gap-3 h-fit top-5 ${menu === 0 ? "right-0" : "right-[calc(16rem)]"}`}>
+            <div
+                className={`w-14 bg-white pl-1 py-2 mb-0.5 border-l border-y border-blue-300 rounded-l-2xl ${menu === 1?"":"border-r"}`}
+                onClick={() =>  setMenu(menu===1?0:1)} >
+                <UsersIcon />
+                <div className="whitespace-nowrap text text-center">사용자</div>
+                <div className="whitespace-nowrap text text-center">목록</div>
+            </div>
+            <div
+                className={`w-14 bg-white pl-1 py-2 mb-0.5 border-l border-y border-blue-300 rounded-l-2xl ${menu === 2?"":"border-r"}`}
+                onClick={() =>  setMenu(menu===2?0:2)} >
+                <ComputerDesktopIcon />
+                <div className="whitespace-nowrap text text-center">배경</div>
+                <div className="whitespace-nowrap text text-center">바꾸기</div>
+            </div>
         </div>
     <div className="fixed z-10 top-0 right-0 flex">
         <Card
