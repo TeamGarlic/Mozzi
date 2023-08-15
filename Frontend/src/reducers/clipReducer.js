@@ -4,7 +4,7 @@ const clipState = {
   frame: {
     id: 0,
     title: "",
-    n: 4,
+    n: 0,
     src: "",
     },
   clipList: {
@@ -21,8 +21,8 @@ const clipState = {
 const clipReducer = (state = clipState, action) => {
   switch(action.type) {
     case updateFrame: {
-      const frameNum = Array.from({length: state.frame['n']}, (v, i) => i+1);
-      const frame = action.payload
+      const frame = action.payload;
+      const frameNum = Array.from({length: frame['n']}, (v, i) => i+1);
       const newFrame = {...state.frame}
       frameNum.forEach((n) => {
         newFrame[n] = {
