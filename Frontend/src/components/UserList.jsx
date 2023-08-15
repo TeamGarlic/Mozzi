@@ -147,9 +147,16 @@ function UserList({user, position, sendPosition, setPosition, subscribers, publi
   return (
     <>
       <div className="row-auto text-center">
-      <span className="text-sm text-slate-600">
-              드래그해 앞뒤 순서를 바꿀 수 있습니다
-      </span>
+      <div className="text-2xl">
+              사용자 목록
+      </div>
+        <div className="text-sm text-slate-600">
+          위에 있는 유저일수록 앞쪽에 그려집니다
+        </div>
+
+        <div className="text-sm text-slate-600">
+          (방장이 드래그해 순서를 조절합니다)
+        </div>
       {userList.map((item, idx) => (
         <div
              key={idx}

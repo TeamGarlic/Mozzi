@@ -101,10 +101,6 @@ function SignUp() {
       return;
     }
 
-    alert(
-      `id : ${id.value}, email : ${email.value}, pw : ${pw.value}, nick : ${nickname.value}`
-    );
-
     let res = await userApi.signUp(
       id.value,
       pw.value,
