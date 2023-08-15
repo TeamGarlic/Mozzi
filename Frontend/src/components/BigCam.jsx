@@ -45,7 +45,7 @@ export default function BigCam({myId, updatePosition, setPosition, isTaking}) {
 
   return (
     <div
-      className={`bg-blue-200 m-auto my-10 border-4 ${isTaking?"border-red-500":"border-yellow-200"}`}
+      className={`bg-blue-200 m-auto border-4 ${isTaking?"border-red-500":"border-yellow-200"}`}
       style={{"width" : `${W*ratio+8}px`, "height" : `${H*ratio+8}px`}}
     >
       <canvas ref={canvasRef} width={W} height={H} style={{"width" : `${W*ratio}px`, "height" : `${H*ratio}px`}}></canvas>

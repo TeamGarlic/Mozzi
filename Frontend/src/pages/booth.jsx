@@ -20,6 +20,8 @@ import Spinner from "@/components/Spinner.jsx";
 import HostAlertModal from "@/components/HostAlertModal.jsx";
 import RecordingModal from "@/components/RecordingModal.jsx";
 import { usePreventGoBack } from "@/hooks/usePreventGoBack.js";
+import CamSetting from "@/components/CamSetting.jsx";
+import Chat from "@/components/Chat.jsx";
 
 
 function Booth() {
@@ -341,6 +343,9 @@ function Booth() {
         <Spinner/>
       ): (
         <>
+
+          <CamSetting />
+          <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} publisher={publisher} />
           {alertModal && (
             <HostAlertModal closeAlertModal={closeAlertModal}/>
           )}

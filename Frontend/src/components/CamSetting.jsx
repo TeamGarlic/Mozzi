@@ -40,7 +40,7 @@ function CamSetting() {
 
   return (
     <div className="fixed bottom-5 left-5 z-30">
-      <div className={`flex-col w-80 h-fit rounded-xl bg-white my-3 ${visible?"":"hidden"}`}>
+      <div className={`flex-col w-80 h-fit rounded-xl bg-white my-3 border border-blue-300 ${visible?"":"hidden"}`}>
         <div className="columns-2 relative">
           <div className=" text-lg p-3">카메라 설정</div>
           <div className="w-10 h-10 float-right self-center m-2">
@@ -88,7 +88,7 @@ function CamSetting() {
                  className="w-full h-2 mb-10 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
         </div>
       </div>
-      <div className=" w-12 h-12 float-left p-1 rounded-full bg-[#ffffff] border-2 border-blue-500">
+      <div className=" w-14 h-14 float-left p-1 rounded-full bg-[#ffffff] border-2 border-blue-500">
         <AdjustmentsHorizontalIcon
           onClick={() => {
             setVisible(!visible);
