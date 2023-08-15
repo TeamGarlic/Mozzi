@@ -94,7 +94,10 @@ function Booth() {
 
 
   let startTake = () => {
-    if (pickedFrame.id === 0) return;
+    if (pickedFrame.id === 0){
+      alert("먼저 프레임을 선택해주세요")
+      return;
+    }
     sendPosition(position);
     setFrame(pickedFrame);
     gotoTakePic();

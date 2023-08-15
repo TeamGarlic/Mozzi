@@ -87,10 +87,9 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
               </div>
             </div>
             <div className="flex justify-center items-center gap-20 fixed bottom-10 ms-[calc(25%)] w-1/2">
-            {/*<div className="w-full pt-20 my-4">*/}
               <button
                 onClick={startTake}
-                className=" block relative mx-auto w-fit bg-yellow-400 p-3 rounded-3xl text-slate-600"
+                className=" block relative mx-auto w-28 bg-yellow-400 p-3 rounded-3xl text-slate-800 z-40"
               >
                 촬영 시작
               </button>
