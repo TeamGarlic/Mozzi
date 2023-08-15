@@ -1,5 +1,10 @@
-import { useEffect, useState } from 'react';
-import { AdjustmentsHorizontalIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/20/solid/index.js';
+import { useState } from 'react';
+import {
+  AdjustmentsHorizontalIcon, Cog8ToothIcon,
+  MicrophoneIcon,
+  VideoCameraIcon,
+  VideoCameraSlashIcon
+} from '@heroicons/react/20/solid/index.js';
 import { useDispatch } from 'react-redux';
 import { setDegreeAction, setScaleAction, setVisibilityAction } from '@/modules/canvasAction.js';
 import useInterval from '@/hooks/useInterval.js';
@@ -7,6 +12,7 @@ import useInterval from '@/hooks/useInterval.js';
 function CamSetting() {
   const [visible, setVisible] = useState(false);
   const [camVisibility, setCamVisibility] = useState(true);
+  const [muted, setMuted] = useState(false);
   const [count, setCount] = useState(0);
   const [degreeValue, setDegreeValue] = useState(360);
   const [scaleValue, setScaleValue] = useState(100);
@@ -14,10 +20,15 @@ function CamSetting() {
   const [scaleChecked, setScaleChecked] = useState(false);
   const dispatch = useDispatch();
 
-
   const setCamVisible = (state) =>{
     dispatch(setVisibilityAction(state));
     setCamVisibility(state);
+  }
+
+  const setMute = (state) =>{
+    // TODO : 뮤트 로직 작성
+
+    setMuted(state);
   }
 
   const setDegree = (val)=>{
@@ -39,24 +50,32 @@ function CamSetting() {
 
 
   return (
-    <div className="fixed bottom-5 left-5 z-30">
+    <div className="fixed bottom-5 left-5 z-50">
       <div className={`flex-col w-80 h-fit rounded-xl bg-white my-3 border border-blue-300 ${visible?"":"hidden"}`}>
-        <div className="columns-2 relative">
+        <div className="columns-2 relative content-center">
           <div className=" text-lg p-3">카메라 설정</div>
-          <div className="w-10 h-10 float-right self-center m-2">
+          <div className="w-10 h-10 float-right my-1.5 mr-2">
             {camVisibility ? (
-              <EyeIcon
-                onClick={() => {
-                  setCamVisible(!camVisibility);
-                }}
-              />
+                <VideoCameraIcon
+                    onClick={() => {
+                      setCamVisible(!camVisibility);
+                    }}
+                />
             ) : (
-              <EyeSlashIcon
-                onClick={() => {
-                  setCamVisible(!camVisibility);
-                }}
-              />
+                <VideoCameraSlashIcon
+                    onClick={() => {
+                      setCamVisible(!camVisibility);
+                    }}
+                />
             )}
+          </div>
+          <div className="w-10 h-10 float-right my-1.5 mr-2">
+            <MicrophoneIcon
+                onClick={() => {
+                  setMute(!muted);
+                }}
+                color={`${muted?"red":"black"}`}
+            />
           </div>
         </div>
         <hr />
@@ -89,7 +108,7 @@ function CamSetting() {
         </div>
       </div>
       <div className=" w-14 h-14 float-left p-1 rounded-full bg-[#ffffff] border-2 border-blue-500">
-        <AdjustmentsHorizontalIcon
+        <Cog8ToothIcon
           onClick={() => {
             setVisible(!visible);
           }}

@@ -72,7 +72,7 @@ function ClipLog({user, setAlertModal}) {
   return (
     <>
       <span className="text-3xl">
-        원하는 클립을 클릭하세요
+        클립을 클릭해 프레임에 추가하세요
       </span>
       <div
         className=" overflow-y-scroll scrollbar-hide h-[calc(100%-2.5rem)]"
@@ -87,7 +87,7 @@ function ClipLog({user, setAlertModal}) {
               return (
                 <div
                   key={`clip${i}`}
-                  className=" w-96 h-[calc(16rem)] bg-slate-300 mx-auto"
+                  className=" w-96 h-[calc(16rem)] bg-slate-300 mx-auto border border-blue-900 rounded-2xl"
                 >
                   <video
                     draggable
@@ -96,6 +96,7 @@ function ClipLog({user, setAlertModal}) {
                     onClick={clickVideo}
                     onDragStart={onDragStart}
                     onDragEnd={onDragEnd}
+                    className="rounded-2xl"
                   ></video>
                 </div>
               );

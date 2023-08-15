@@ -42,7 +42,7 @@ function Chat({ sendMessage, chatLists, user, publisher }) {
   }, [chatLists]);
 
   return (
-    <div className="fixed bottom-5 right-5 z-20">
+    <div className="fixed bottom-5 right-5 z-50">
       {visible && (
         <div className="flex-col w-80 h-fit rounded-xl bg-white my-3 border border-blue-300">
           <div className=" text-lg p-3">채팅</div>

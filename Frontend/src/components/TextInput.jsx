@@ -18,7 +18,7 @@ function TextInput({
       onChange={onChange}
       onBlur={onBlur}
       onKeyDown={onKeyDown}
-      className={`w-full h-10 rounded-lg my-2 ${className}`}
+      className={`w-full h-10 rounded-lg my-2 px-2 ${className}`}
       readOnly={readOnly}
     />
   );
