@@ -33,8 +33,8 @@ function MozziRollMenu({item, idx, deleteFunc, myRef}){
 
     return(
         <div key={item.createdAt}
-             className={`justify-center items-center text-center flex-col p-3 rounded-2xl bg-[#fce7f3] bg-opacity-30 hover:shadow-innerpink hover:cursor-pointer`}
-             onClick={()=>navigate(`/detail/${item.id}`)}
+            className={`justify-center items-center text-center flex-col p-3 rounded-2xl bg-[#fce7f3] bg-opacity-30 hover:shadow-innerpink hover:cursor-pointer`}
+            onClick={()=>navigate(`/detail/${item.id}`)}
         >
             <div className=" overflow-hidden flex my-1">
                 <img src="/src/assets/img/mozzi-icon.png" alt="" className="rounded-full w-8 h-8 p-0.5 object-cover bg-[#fce7f3]" />

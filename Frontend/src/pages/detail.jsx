@@ -73,8 +73,14 @@ function Detail() {
                <div className="flex-col mt-28 px-20 py-5">
                    <div className="text-3xl text-gray-600">클립 보기</div>
                    {mozzi && <div className=" overflow-scroll scrollbar-hide my-4">
-                   <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "flex-col max-w-[calc(75rem)] mx-auto":"flex min-w-[calc(75rem)]"}`}>
-                       <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "w-full":"w-1/2 h-full"} p-5`}>
+                    <div className="flex-col max-w-[calc(50rem)] mx-auto">
+                        <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "w-full" : "h-full w-1/3 my-auto"} overflow-hidden flex my-1`}>
+                            <img src="/src/assets/img/mozzi-icon.png" alt="" className="rounded-full w-8 h-8 p-0.5 object-cover bg-[#fce7f3]" />
+                            <span className="mx-2 my-auto">{mozzi.user.nickname}</span>
+                            <div className="my-auto ml-auto">{mozzi.mozzirollInfo.createdAt.slice(0,10)}</div>
+                        </div>
+                            
+                        <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "w-full" : "w-1/2 h-full"} py-2`}>
                            <video
                                className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "w-full h-full":"w-3/4 h-3/4"} mx-auto`}
                                width={`${mozzi.mozzirollInfo.width}`}
@@ -84,46 +90,53 @@ function Detail() {
                                autoPlay
                                crossOrigin="anonymous"
                            />
-                       </div>
-                       <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "w-full":"h-full w-1/2 my-auto"} p-5 flex-col`}>
-                           <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "h-fit":"min-h-[calc(30rem)]"} rounded-2xl bg-white p-5 border-4 border-red-200 overflow-hidden`}>
-                                    <div className="text-2xl">
-                                       {mozzi.title}
+                        </div>
+                        <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "w-full" : "h-full w-1/3 my-auto"} flex mt-2`}>
+                            <div className="my-auto font-bold">{mozzi.title}</div>
+                            <div className={`${mozzi.posted ? "text-blue-500" : "text-red-500"} flex-col ml-auto my-auto`}>
+                                <img src={`/src/assets/img/${mozzi.posted?"post":"unpost"}.png`} alt="" className="w-auto h-auto mx-auto" />
+                                <div className="whitespace-nowrap text-xs">{`${mozzi.posted ? "공유됨":"공유되지 않음"}`}</div>
+                            </div>
+                            <div className="flex overflow-hidden px-1 py-2 ml-2 my-auto">
+                                <img src={`/src/assets/img/heart-${liked?"full":"empty"}.png`} alt="" className="w-5 h-5 ml-auto my-auto" />
+                                <span className="ml-1 text-red-500 text-lg">{likes}</span>
+                            </div>
+                            { user && mozzi.user.id ===user.id &&
+                            <button
+                                className="float-right bg-red-500 p-1 rounded-e-xl text-white"
+                                value={mozzi.id}
+                                onClick={deleteMozzi}>
+                                삭제하기
+                            </button>
+                            }
+
+                            {/* <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "h-fit" : "min-h-[calc(30rem)]"} rounded-2xl bg-white p-5 border-4 border-red-200 overflow-hidden flex`}>
+                                <div className={`${mozzi.posted ? "text-blue-500" : "text-red-500"} flex-col`}>
+                                    <img src={`/src/assets/img/${mozzi.posted?"post":"unpost"}.png`} alt="" className="w-auto h-auto mx-auto" />
+                                    <div className="whitespace-nowrap text-sm">{`${mozzi.posted ? "공유됨":"공유되지 않음"}`}</div>
+                                </div>
+                                <div className={"w-full bottom-0"}>
+                                    <div
+                                        className={"text-red-500 float-left rounded-xl border-purple-200 p-1 hover:shadow-innerpink hover:cursor-pointer"}
+                                        onClick={()=>giveLike(mozzi.id)}>
+                                        {liked ? "♥︎":"♡"}{likes}
                                     </div>
-                                    <div className="overflow-hidden">
-                                       <span className="text-gray-600 float-left">
-                                           {mozzi.user.nickname}
-                                       </span>
-                                       <span className="text-gray-600 float-right">
-                                           {mozzi.mozzirollInfo.createdAt.slice(0,10)}
-                                       </span>
-                                    </div>
-                               <hr className={"my-5"}/>
-                                    <div className={`${mozzi.posted ? "text-blue-500":"text-red-500"} text-sm`}>
-                                       {`${mozzi.posted ? "공유됨":"공유되지 않음"}`}
-                                    </div>
-                                    <div className={"w-full bottom-0"}>
-                                        <div
-                                            className={"text-red-500 float-left rounded-xl border-purple-200 p-1 hover:shadow-innerpink hover:cursor-pointer"}
-                                            onClick={()=>giveLike(mozzi.id)}>
-                                            {liked ? "♥︎":"♡"}{likes}
-                                        </div>
-                                        { user && mozzi.user.id ===user.id &&
-                                        <button
-                                            className="float-right bg-red-500 p-1 rounded-e-xl text-white"
-                                            value={mozzi.id}
-                                            onClick={deleteMozzi}>
-                                            삭제하기
-                                        </button>
-                                        }
-                                        <button
-                                            value={`https://api.mozzi.lol/files/object/${mozzi.mozzirollInfo.objectName}`}
-                                            className={`float-right bg-blue-500 p-1 text-white rounded-s-xl ${user && mozzi.user.id ===user.id ? "":"rounded-e-xl"}`}
-                                            onClick={download}>
-                                            다운로드
-                                        </button>
-                                    </div>
-                           </div>
+                                    { user && mozzi.user.id ===user.id &&
+                                    <button
+                                        className="float-right bg-red-500 p-1 rounded-e-xl text-white"
+                                        value={mozzi.id}
+                                        onClick={deleteMozzi}>
+                                        삭제하기
+                                    </button>
+                                    }
+                                    <button
+                                        value={`https://api.mozzi.lol/files/object/${mozzi.mozzirollInfo.objectName}`}
+                                        className={`float-right bg-blue-500 p-1 text-white rounded-s-xl ${user && mozzi.user.id ===user.id ? "":"rounded-e-xl"}`}
+                                        onClick={download}>
+                                        다운로드
+                                    </button>
+                                </div>
+                           </div> */}
                        </div>
                    </div>
                    </div>
