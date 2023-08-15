@@ -159,14 +159,16 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
                 공유하기
               </button>
             </div>
-            <div className="m-2 px-4 border border-blue-900">
-              <TextInput type="text" placeholder="제목을 입력해주세요" className="" {...mozziTitle}/>
+            <div className="bg-amber-50 border border-amber-500 my-3 py-1 rounded-2xl">
+            <div className="m-2 px-4 ">
+              <TextInput type="text" placeholder="제목을 입력해주세요" className="border border-amber-500" {...mozziTitle}/>
             </div>
 
             <Frame user={user} updateMozzi={updateMozzi} setPlayTogether={setPlayTogether} setAlertModal={setAlertModal}/>
 
-            <div className="text-sm text-slate-500">
+            <div className="text-sm text-slate-500 mb-1">
               드래그해서 클립 순서를 바꿀 수 있습니다
+            </div>
             </div>
           </div>
         </div>

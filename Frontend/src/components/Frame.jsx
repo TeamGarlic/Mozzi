@@ -96,8 +96,8 @@ function Frame({user, updateMozzi, setPlayTogether, setAlertModal}) {
 
   return (
     <div>
-      <div className="relative m-2">
-        <img src={frame.src} alt="frame" ref={imgRef} crossOrigin="anonymous"></img>
+      <div className="relative m-2 rounded">
+        <img src={frame.src} alt="frame" ref={imgRef} crossOrigin="anonymous" className="rounded"></img>
         {frameNum.map((i) => {
           if (frame[i]["src"]) {
             return (
