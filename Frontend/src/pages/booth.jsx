@@ -105,9 +105,17 @@ function Booth() {
   const onResults = (results) => {
     drawMask(bgRemovedRef.current, bgRemovedContextRef.current, results, canvasConfig.visibility, canvasConfig.degree*Math.PI/180, canvasConfig.scale/100);
     chromaKey(pubVideoMap.canvasRef, pubVideoMap.canvasContextRef, pubVideoMap.vidRef);
+    let toDraw = [];
     for (let key in subVideoMap) {
-      chromaKey(subVideoMap[key].canvasRef, subVideoMap[key].canvasContextRef, subVideoMap[key].vidRef);
+      toDraw.unshift({
+        canvas:subVideoMap[key].canvasRef,
+        context:subVideoMap[key].canvasContextRef,
+        video:subVideoMap[key].vidRef
+      });
     }
+    toDraw.forEach((item)=>{
+      chromaKey(item.canvas,item.context,item.video);
+    });
 
     if (mainCanvas.canvas){
       drawCanvas(mainCanvas.canvas.current, mainCanvas.context.current, bgNow.img, localPosition);

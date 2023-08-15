@@ -56,16 +56,16 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
         <div className="flex">
           <div className="w-full h-screen p-4 flex-col">
             <div>
-              <div className=" text-sm text-gray-500 flex">
-                <span>초대 코드 : {shareCode}</span>
+              <div className="text-2xl flex text-center" onClick={copyCode}>
+                <span className="text mx-1">초대 코드 : </span>
+                <span className="text text-blue-500"> {shareCode}</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                  onClick={copyCode}
+                  stroke="#3b82f6"
+                  className="w-6 h-6 my-1"
                 >
                   <path
                     strokeLinecap="round"
@@ -74,7 +74,7 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
                   />
                 </svg>
               </div>
-              <div className="text-2xl">프레임 선택</div>
+              <div className="m-1 text-sm text-slate-600">프레임을 선택하고 촬영 시작 버튼을 눌러주세요</div>
             </div>
             <div className="p-4 mr-[calc(17rem)] overflow-scroll scrollbar-hide">
                 <div className="flex flex-wrap w-full items-center gap-4 p-4">
@@ -86,7 +86,8 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
                 )}
               </div>
             </div>
-            <div className="w-full pt-20 my-4">
+            <div className="flex justify-center items-center gap-20 fixed bottom-10 ms-[calc(25%)] w-1/2">
+            {/*<div className="w-full pt-20 my-4">*/}
               <button
                 onClick={startTake}
                 className=" block relative mx-auto w-fit bg-yellow-400 p-3 rounded-3xl text-slate-600"
