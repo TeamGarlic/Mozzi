@@ -42,7 +42,7 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
               배경 변경하기
               {bgList.map((bg) => (
                 <BgCard 
-                  bgName="gdgd" 
+                  bgName="bg_image"
                   key={bg.id} 
                   bgSrc={bg.objectName} 
                   user={user} 
@@ -51,7 +51,7 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
                 />
               ))}
             </div>
-          {menu === 3 && <div>대충 스티커</div>}
+          {menu === 3 && <div>스티커</div>}
         </Card>
     </div>
         </>

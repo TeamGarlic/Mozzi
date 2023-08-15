@@ -14,7 +14,7 @@ function ModifyUser() {
 
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const pwRegex =
-      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()-=_+])[A-Za-z\d!@#$%^&*()-=_+]{8,16}$/;
+      /^[A-Za-z\d!@#$%^&*()-=_+]{8,16}$/;
   const nickRegex = /^(?!\s)(?!.*\s{2})\S{2,16}$/;
 
   const newID = useInput();
@@ -26,7 +26,7 @@ function ModifyUser() {
 
   async function modify(){
     if(newPW.value !== newPW2.value){
-      setMsg("비밀번호가 틀립니다.");
+      setMsg("비밀번호가 일치하지 않습니다.");
       return;
     }
 
@@ -36,17 +36,17 @@ function ModifyUser() {
     }
 
     if(newPW.value.length >0 && !pwRegex.test(newPW.value)){
-      setMsg("비밀번호 형식이 틀립니다.");
+      setMsg("숫자, 알파벳 또는 특수문자로 이루어진 8~16자의 비밀번호를 입력하세요.");
       return;
     }
 
     if(newNick.value.length >0 && !nickRegex.test(newNick.value)){
-      setMsg("닉네임 형식이 틀립니다.");
+      setMsg("띄어쓰기 없이 2~16자의 닉네임을 입력하세요.");
       return;
     }
 
     if(newEmail.value.length >0 && !emailRegex.test(newEmail.value)){
-      setMsg("이메일 형식이 틀립니다.");
+      setMsg("올바른 형식의 이메일을 입력하세요.");
       return;
     }
 
@@ -54,10 +54,10 @@ function ModifyUser() {
     console.log(res);
 
     if(res.status === 200){
-      alert("수정 성공했습니다!");
+      alert("회원 정보 수정을 성공했습니다!");
       navigate(("/"));
     }else{
-      alert("다시 입력해 주세요");
+      alert("오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
       newPW.reset();
       newPW2.reset();
       newNick.reset();
@@ -75,7 +75,7 @@ function ModifyUser() {
          alert("탈퇴 처리되었습니다.");
          window.location.href="/";
         }else{
-          alert("요청이 실패했습니다.");
+          alert("오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
       }
     }
   }

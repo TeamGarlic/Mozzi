@@ -39,14 +39,14 @@ function NavBar({ user }) {
         />
         {user ? (
             <div className=" float-right flex-col z-10 relative">
-              <button
+              <div
                   onClick={showMenu}
-                  className=" float-right leading-[calc(1.875rem)]"
+                  className="flex float-right leading-[calc(2rem)] break-keep"
               >
-                {user.userNickname}
-              </button>
+                {user.userNickname} 님
+              </div>
               {menu && (
-                  <ul className="mt-10 w-fit absolute right-0 px-4 border-4 rounded-lg z-10 bg-purple-200 items-center justify-center text-center">
+                  <ul className="mt-10 w-[calc(8rem)] absolute right-0 px-4 border-4 rounded-lg z-10 bg-purple-200 items-center justify-center text-center">
                     <li className=" my-2 z-10">
                       <Link to={`/mypage`}>마이페이지</Link>
                     </li>
