@@ -2,11 +2,20 @@ import Layout from "@/components/Layout";
 import PropTypes from "prop-types";
 import mozzilogo from "@/assets/img/mozzi.png";
 import {createFFmpeg, fetchFile} from '@ffmpeg/ffmpeg';
+import mozziRollApi from "@/api/mozziRollApi.js";
+import useUser from "@/hooks/useUser.js";
+import TextInput from "@/components/TextInput.jsx";
+import useInput from "@/hooks/useInput.js";
 
-function Finish({ mozzi, subscribers, publisher }) {
+function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
+  const user = useUser();
+  const mozziTitle = useInput()
+
   const goHome = () => {
     window.location.href = "/";
   }
+
+  // console.log(isHost);
 
   const names = [];
 
@@ -30,6 +39,29 @@ function Finish({ mozzi, subscribers, publisher }) {
     document.body.appendChild(a);
     a.download = "download.gif";
     a.click();
+  }
+
+  const linkMozzi = async () => {
+    try {
+      let res = await mozziRollApi.link(mozzi, mozziTitle.value, shareCode);
+      if (res.status === 200) {
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const linkComponent = () => {
+    if (user.user && isHost === 0) {
+      return (
+        <>
+          <li className="w-32">
+            <TextInput type="text" placeholder="제목 입력" {...mozziTitle} />
+            <button onClick={linkMozzi}>내 모찌롤에 등록하기</button>
+          </li>
+        </>
+      )
+    }
   }
 
   return (
@@ -62,6 +94,7 @@ function Finish({ mozzi, subscribers, publisher }) {
             <ul className="flex gap-5 text-center justify-center mt-20">
               <li><a href={`https://api.mozzi.lol/files/mozziroll/${mozzi}`} target="_blanck">mp4 다운받기</a></li>
               <li><button onClick={handleDownload}>gif 다운받기</button></li>
+              {linkComponent()}
               <li>
                 <button onClick={goHome}>홈으로</button>
               </li>
@@ -78,5 +111,7 @@ export default Finish;
 Finish.propTypes = {
   mozzi: PropTypes.string,
   subscribers: PropTypes.array,
-  publisher: PropTypes.any
+  publisher: PropTypes.any,
+  shareCode: PropTypes.string,
+  isHost: PropTypes.number,
 }

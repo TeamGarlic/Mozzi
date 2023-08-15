@@ -119,6 +119,16 @@ const mozziRollApi = {
     like:async (id)=>{
         let res = await PrivateMozziRollApi.post(`like/${id}`);
         return res;
+    },
+
+    link: async (id, title, shareCode) => {
+        let res = await PrivateMozziRollApi.post("link",
+          {
+              mozzirollId: id,
+              title: title,
+              shareCode: shareCode,
+            })
+        return res;
     }
 };
 
