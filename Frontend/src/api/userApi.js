@@ -1,14 +1,15 @@
 import axios from "axios";
+import baseURL from "@/api/BaseURL.js";
 
 const PublicUserApi = axios.create({
-  baseURL: "https://api.mozzi.lol/users",
+  baseURL: `${baseURL}/users`,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 const PrivateUserApi = axios.create({
-  baseURL: "https://api.mozzi.lol/users",
+  baseURL: `${baseURL}/users`,
   headers: {
     "Content-Type": "application/json",
     Authorization: window.sessionStorage.getItem("accessToken"),

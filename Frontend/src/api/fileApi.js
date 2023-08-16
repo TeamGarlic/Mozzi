@@ -1,14 +1,15 @@
 import axios from "axios";
+import baseURL from "@/api/BaseURL.js";
 
 const PublicFileApi = axios.create({
-  baseURL: "https://api.mozzi.lol/files",
+  baseURL: `${baseURL}/files`,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 const PrivateFileApi = axios.create({
-  baseURL: "https://api.mozzi.lol/files",
+  baseURL: `${baseURL}/files`,
   headers: {
     "Content-Type": "multipart/form-data; boundary=<calculated when request is sent>",
     Authorization : window.sessionStorage.getItem("accessToken")

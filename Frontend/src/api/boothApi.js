@@ -1,15 +1,16 @@
 import axios from "axios";
 import userApi from "@/api/userApi.js";
+import baseURL from "@/api/BaseURL.js";
 
 const PublicBoothApi = axios.create({
-  baseURL: "https://api.mozzi.lol/sessions",
+  baseURL: `${baseURL}/sessions`,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 const PrivateBoothApi = axios.create({
-  baseURL: "https://api.mozzi.lol/sessions",
+  baseURL: `${baseURL}/sessions`,
   config: {
     headers: {
       "Content-Type": "application/json",
@@ -19,7 +20,7 @@ const PrivateBoothApi = axios.create({
 });
 
 const ClipApi = axios.create({
-  baseURL: "https://api.mozzi.lol/sessions",
+  baseURL: `${baseURL}/sessions`,
 });
 
 PrivateBoothApi.interceptors.request.use((config) => {

@@ -10,6 +10,7 @@ import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import DownloadDropDown from '@/components/DownloadDropDown.jsx';
 import ScriptModal from "@/components/ScriptModal.jsx";
+import baseURL from "@/api/BaseURL.js";
 
 function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
   const user = useUser();
@@ -161,7 +162,7 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
 
             <div className="w-full justify-center text-center items-center">
               <div className="w-4/5 mx-auto">
-                <DownloadDropDown src={`https://api.mozzi.lol/files/mozziroll/${mozzi}`} download={handleDownload} types={frameTypes}></DownloadDropDown>
+                <DownloadDropDown src={`${baseURL}/files/mozziroll/${mozzi}`} download={handleDownload} types={frameTypes}></DownloadDropDown>
               </div>
             </div>
           </div>

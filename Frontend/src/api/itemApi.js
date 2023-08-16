@@ -1,7 +1,8 @@
 import axios from "axios";
+import baseURL from "@/api/BaseURL.js";
 
 const ItemApi = axios.create({
-  baseURL: "https://api.mozzi.lol/items",
+  baseURL: `${baseURL}/items`,
   headers: {
     "Content-Type": "application/json",
   },

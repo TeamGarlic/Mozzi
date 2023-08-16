@@ -1,15 +1,16 @@
 import axios from "axios";
 import userApi from "@/api/userApi.js";
+import baseURL from "@/api/BaseURL.js";
 
 const PublicMozziRollApi = axios.create({
-    baseURL: "https://api.mozzi.lol/mozzirolls",
+    baseURL: `${baseURL}/mozzirolls`,
     headers: {
         "Content-Type": "application/json",
     },
 });
 
 const PrivateMozziRollApi = axios.create({
-    baseURL: "https://api.mozzi.lol/mozzirolls",
+    baseURL: `${baseURL}/mozzirolls`,
     headers: {
         "Content-Type": "application/json",
         Authorization: window.sessionStorage.getItem("accessToken"),
