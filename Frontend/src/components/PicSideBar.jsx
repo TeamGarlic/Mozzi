@@ -6,7 +6,7 @@ import { UsersIcon } from "@heroicons/react/24/outline";
 import { ComputerDesktopIcon } from "@heroicons/react/24/outline";
 import PropTypes from "prop-types";
 
-export default function PicSideBar({user, bgList, changeBg, position, sendPosition, setPosition, subscribers, publisher, setAlertModal, toggleMic}) {
+export default function PicSideBar({user, bgList, changeBg, position, sendPosition, setPosition, subscribers, publisher, setAlertModal, toggleMic, subVideoRefs}) {
   const [menu, setMenu] = useState(0);
   return (
       <>
@@ -43,6 +43,7 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
                 publisher={publisher}
                 setAlertModal={setAlertModal}
                 toggleMic={toggleMic}
+                subVideoRefs={subVideoRefs}
               />
             </div>
             <div className={`h-full ${menu === 2?"":"collapse fixed"}`}>
@@ -89,4 +90,5 @@ PicSideBar.propTypes = {
   publisher: PropTypes.any,
   setAlertModal: PropTypes.func,
   toggleMic: PropTypes.func,
+  subVideoRefs: PropTypes.any,
 };

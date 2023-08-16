@@ -389,6 +389,7 @@ function Booth() {
               subscribers={subscribers}
               setAlertModal={setAlertModal}
               toggleMic={toggleMic}
+              subVideoRefs={subVideoRefs.current}
             />
           )}
           {now === "MODIFING" && (
