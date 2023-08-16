@@ -3,7 +3,7 @@ import {useNavigate} from "react-router-dom";
 
 function MozziRollMenu({item, idx, deleteFunc, myRef}){
     const navigate = useNavigate();
-    const bgs = ["bg-yellow-200","bg-green-200","bg-purple-200","bg-red-200"];
+    // const bgs = ["bg-yellow-200","bg-green-200","bg-purple-200","bg-red-200"];
 
     const play=()=>{
         const type = myRef.src.slice(-3, myRef.src.length);
@@ -15,27 +15,32 @@ function MozziRollMenu({item, idx, deleteFunc, myRef}){
         myRef.pause();
     }
 
-    const download=(e)=>{
-        e.stopPropagation();
-        let encode = encodeURI(e.target.value);
-        let link = document.createElement("a");
-        link.setAttribute("href", encode);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
+    // const download=(e)=>{
+    //     e.stopPropagation();
+    //     let encode = encodeURI(e.target.value);
+    //     let link = document.createElement("a");
+    //     link.setAttribute("href", encode);
+    //     document.body.appendChild(link);
+    //     link.click();
+    //     document.body.removeChild(link);
+    // }
 
-    const deleteMozzi = (e)=>{
-        e.stopPropagation();
-        const id = e.target.value;
-        deleteFunc(id);
-    }
+    // const deleteMozzi = (e)=>{
+    //     e.stopPropagation();
+    //     const id = e.target.value;
+    //     deleteFunc(id);
+    // }
 
     return(
         <div key={item.createdAt}
-             className={`justify-center items-center text-center flex-col p-3 rounded-2xl ${bgs[idx%4]} hover:shadow-innerpink hover:cursor-pointer`}
+             className={`justify-center items-center text-center flex-col p-3 rounded-2xl bg-[#fce7f3] bg-opacity-30 hover:shadow-innerpink hover:cursor-pointer`}
              onClick={()=>navigate(`/detail/${item.id}`)}
         >
+            <div className=" overflow-hidden flex my-1">
+                <img src="/src/assets/img/mozzi-icon.png" alt="" className="rounded-full w-8 h-8 p-0.5 object-cover bg-[#fce7f3]" />
+                <span className="mx-2 my-auto">{item.user.nickname}</span>
+                <div className="my-auto ml-auto">{item.mozzirollInfo.createdAt.slice(0,10)}</div>
+            </div>
             <video
                 className="h-80 mx-auto"
                 src={`https://api.mozzi.lol/files/object/${item.mozzirollInfo.objectName}`}
@@ -45,11 +50,12 @@ function MozziRollMenu({item, idx, deleteFunc, myRef}){
                 onMouseOut={pause}
                 crossOrigin="anonymous"
             />
-            <div className=" overflow-hidden p-1">
-                <div className="float-left">{item.title}</div>
-                <div className="float-right">{item.mozzirollInfo.createdAt.slice(0,10)}</div>
+            <div className="flex overflow-hidden px-1 py-2">
+                <div>{item.title}</div>
+                <img src={`/src/assets/img/heart-${item.liked?"full":"empty"}.png`} alt="" className="w-5 h-5 ml-auto my-auto" />
+                <span className="ml-1">{item.likeCount}</span>
             </div>
-            <div  className=" overflow-hidden p-1">
+            {/* <div  className=" overflow-hidden p-1">
                 <span className="float-left">❤️ {item.likeCount}</span>
                 {deleteFunc &&
                     <button
@@ -64,7 +70,7 @@ function MozziRollMenu({item, idx, deleteFunc, myRef}){
                     onClick={download}>
                     다운로드
                 </button>
-            </div>
+            </div> */}
         </div>
     )
 

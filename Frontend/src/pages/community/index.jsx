@@ -68,15 +68,15 @@ function Community() {
                             <div className="text-3xl text-gray-600">커뮤니티</div>
                             <div className="flex gap-5 py-4">
                                 <span
-                                    className={`p-3 hover:cursor-pointer ${status === "like" ? "bg-blue-500 rounded-2xl text-white":""}`}
+                                    className={`p-3 hover:cursor-pointer ${status === "like" ? "bg-[#ed5555] rounded-2xl text-white":""}`}
                                     onClick={()=>{switchPage("like")}}
                                 >
-                                    좋아요순
+                                    좋아요 순
                                 </span>
-                                <span className={`p-3 hover:cursor-pointer ${status === "time" ? "bg-blue-500 rounded-2xl text-white":""}`}
+                                <span className={`p-3 hover:cursor-pointer ${status === "time" ? "bg-[#ed5555] rounded-2xl text-white":""}`}
                                     onClick={()=>{switchPage("time")}}
                                 >
-                                    최신순
+                                    최신 순
                                 </span>
                             </div>
                             <div className="flex flex-wrap gap-5 justify-center items-center text-center">
@@ -87,7 +87,7 @@ function Community() {
                                     }
                                 )}
                             </div>
-                            <div className="flex items-center justify-center text-center gap-4 my-5 rounded-2xl w-fit mx-auto bg-blue-200 p-3">
+                            <div className="flex items-center justify-center text-center gap-4 my-5 rounded-2xl w-fit mx-auto bg-[#fca5a5] px-3 py-1">
                                 {page>1 && <span onClick={goPrev}>이전</span>}
                                 {page}/{Math.max(mozziRollsData.pages,1) }페이지
                                 { page<mozziRollsData.pages &&<span onClick={goNext}>다음</span>}
