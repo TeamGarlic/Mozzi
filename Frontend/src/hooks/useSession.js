@@ -58,9 +58,29 @@ function useSession(shareCode) {
       const session = OV.initSession();
       setSession(session);
 
-      session.on("streamCreated", (event) => {
+      session.on("streamCreated", async(event) => {
         const subscriber = session.subscribe(event.stream, undefined);
         setSubscribers((prev) => [...prev, subscriber]);
+        await session.signal({
+          data: JSON.stringify({
+            from: publisher.stream.connection.connectionId,
+            message:  JSON.parse(subscriber.stream.connection.data).clientData+"님이 입장했습니다.",
+            connectionId : publisher.stream.connection.connectionId
+          }),
+          to: [],
+          type: "userInSignal",
+        })
+
+        // let data = JSON.stringify({
+        //   from: "System",
+        //   message:  JSON.parse(subscriber.stream.connection.data).clientData+"님이 입장했습니다.",
+        //   connectionId : subscriber.stream.connection.connectionId
+        // });
+        // setChatLists((prev) => {
+        //   console.log("입장");
+        //   return [...prev, data];
+        // });
+
       });
 
       session.on("signal:hostOut",async (event)=>{
@@ -76,6 +96,27 @@ function useSession(shareCode) {
       session.on("signal:chat", async (event) => {
         // console.log(event);
         let data = await JSON.parse(event.data);
+        console.log(data);
+        setChatLists((prev) => {
+          return [...prev, data];
+        });
+      });
+
+      session.on("signal:userInSignal", async (event) => {
+        // console.log(event);
+        let data = await JSON.parse(event.data);
+        console.log(data);
+        if(data.connectionId !== publisher.stream.connection.connectionId) return;
+        setChatLists((prev) => {
+          return [...prev, data];
+        });
+      });
+
+      session.on("signal:userOutSignal", async (event) => {
+        // console.log(event);
+        let data = await JSON.parse(event.data);
+        console.log(data);
+        if(data.connectionId !== publisher.stream.connection.connectionId) return;
         setChatLists((prev) => {
           return [...prev, data];
         });
@@ -177,13 +218,34 @@ function useSession(shareCode) {
         }
       })
 
-      session.on("streamDestroyed", (event) => {
-        setSubscribers((prev) => {
+      session.on("streamDestroyed", async(event) => {
+        setSubscribers( (prev) => {
           const newSubscribers = [...prev];
           const idx = newSubscribers.indexOf(event.stream.streamManager);
-          // console.log(newSubscribers);
           if (idx < 0) return;
+          let outMan = {};
+          Object.assign(outMan, newSubscribers[idx]);
           newSubscribers.splice(idx, 1);
+          // let data = JSON.stringify({
+          //   from: "System",
+          //   message: JSON.parse(outMan.stream.connection.data).clientData+"님이 퇴장했습니다.",
+          //   connectionId : outMan.stream.connection.connectionId
+          // });
+
+          // setChatLists((prev) => {
+          //   console.log("퇴장");
+          //   return [...prev, data];
+          // });
+
+          session.signal({
+            data: JSON.stringify({
+              from: publisher.stream.connection.connectionId,
+              message: JSON.parse(outMan.stream.connection.data).clientData+"님이 퇴장했습니다.",
+              connectionId : publisher.stream.connection.connectionId
+            }),
+            to: [],
+            type: "userOutSignal",
+          });
           return [...newSubscribers];
         });
       });
