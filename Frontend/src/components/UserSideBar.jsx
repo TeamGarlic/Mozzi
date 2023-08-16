@@ -1,14 +1,10 @@
 import { Card } from "@material-tailwind/react";
 import UserVideoComponent from "./UserVideoComponents";
 import { useSelector } from 'react-redux';
-import {useEffect} from "react";
 
 export default function UserSideBar() {
   const pubCanvas = useSelector((state) => state.canvasReducer.pubCanvas);
   const subCanvases = useSelector((state) => state.canvasReducer.subCanvases);
-  useEffect(()=>{
-    console.log(subCanvases)
-  },[subCanvases])
   return (
       <Card
           id="sideMenu"

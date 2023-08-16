@@ -21,7 +21,7 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
   const frameTypes = [{format:'webm',type:'', srcFormat:"mp4"},{format:'mp4',type:'video/mp4', srcFormat:"mp4"},{format:'gif',type:'image/gif', srcFormat:"mp4"}]
   const [onScript, setOnScript] = useState(true);
   const [scriptArray] = useState([
-    "다운받기 버튼을 눌러 원하는 형식으로 다운로드할 수 있습니다",
+    "다운로드 버튼을 눌러 원하는 형식으로 다운로드할 수 있습니다",
     "방장을 제외한 로그인한 유저는 입력창에 이름을 설정하여 내 클립에 등록할 수 있습니다"
   ])
   const [linked, setLinked] = useState(isHost>0)

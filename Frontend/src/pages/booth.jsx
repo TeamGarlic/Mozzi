@@ -18,7 +18,6 @@ import userApi from "@/api/userApi.js";
 import { AppStore } from "@/store/AppStore.js";
 import Spinner from "@/components/Spinner.jsx";
 import HostAlertModal from "@/components/HostAlertModal.jsx";
-import RecordingModal from "@/components/RecordingModal.jsx";
 import { usePreventGoBack } from "@/hooks/usePreventGoBack.js";
 import CamSetting from "@/components/CamSetting.jsx";
 import Chat from "@/components/Chat.jsx";
@@ -180,7 +179,7 @@ function Booth() {
   }
 
   const userJoin = async (initialState, ref)=> {
-    console.log(userConfig);
+    // console.log(userConfig);
     if(userConfig === undefined) {
       alert("잘못된 접근입니다.");
       window.location.href="/";

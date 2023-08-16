@@ -36,13 +36,13 @@ function SignUp() {
       return;
     }
     let res = await userApi.checkId(id.value);
-    console.log(res);
+    // console.log(res);
     const {
       data: {
         data: { result },
       },
     } = res;
-    console.log(result);
+    // console.log(result);
     if (!result) {
       setIdValid(false);
       setIdComment("이미 사용 중인 ID입니다.");
@@ -108,7 +108,7 @@ function SignUp() {
       email.value
     );
 
-    console.log(res);
+    // console.log(res);
 
     if (res.status === 201) {
       alert("회원가입 완료!");

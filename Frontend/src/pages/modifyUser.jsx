@@ -51,7 +51,7 @@ function ModifyUser() {
     }
 
     let res = await userApi.modify(newPW.value, newNick.value, newEmail.value);
-    console.log(res);
+    // console.log(res);
 
     if(res.status === 200){
       alert("회원 정보 수정을 성공했습니다!");
@@ -66,11 +66,11 @@ function ModifyUser() {
   }
 
   async function signOut(){
-    console.log("탈퇴")
+    // console.log("탈퇴")
     let confirm = window.confirm("정말 탈퇴하시겠습니까?");
     if(confirm){
         let res = await userApi.signOut();
-        console.log(res);
+        // console.log(res);
         if(res.status === 200){
          alert("탈퇴 처리되었습니다.");
          window.location.href="/";

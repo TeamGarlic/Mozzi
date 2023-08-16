@@ -99,7 +99,7 @@ function TakePic({
 
         // 녹화 시작
         mediaRecorder.start();
-        console.log("촬영시작");
+        // console.log("촬영시작");
         // Todo: 현재는 시간에 dependent => 프레임 단위로 전환 필요함
         setTimeout(() => {
             // 녹화 종료
