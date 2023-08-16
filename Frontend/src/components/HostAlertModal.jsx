@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 
 function HostAlertModal({closeAlertModal}) {
   return (
-    <div className="w-64 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded fixed left-1/4 top-16" role="alert">
+    <div className="w-64 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded fixed left-1/4 top-16 z-50" role="alert">
       <strong className="font-bold">방장만 가능한 기능입니다.</strong>
       {/* <span class="block sm:inline">Something seriously bad happened.</span> */}
       <span className="absolute top-0 bottom-0 right-0 px-4 py-3">

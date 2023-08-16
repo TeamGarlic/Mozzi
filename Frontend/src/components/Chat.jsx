@@ -7,6 +7,7 @@ import TextInput from "@/components/TextInput.jsx";
 
 function Chat({ sendMessage, chatLists, user, publisher }) {
   const [visible, setVisible] = useState(false);
+  const [isNew, setIsNew] = useState(false);
   const chattingLog = useRef();
   const chattingCase = useRef();
   const msg = useInput();
@@ -32,8 +33,13 @@ function Chat({ sendMessage, chatLists, user, publisher }) {
 
   useEffect(() => {
     // console.log(chattingLog.current.scrollTop, chattingLog.current.scrollHeight );
+    if(!visible && chatLists.length>0) setIsNew(true);
     const lastMsg = chatLists[chatLists.length-1];
+    if(!chattingLog) return;
     if(lastMsg){
+      if(!chattingLog.current) return;
+      // if(!chattingLog.current.scrollHeight) return;
+
       lastMsg.connectionId === publisher.stream.connection.connectionId ?
           chattingLog.current.scrollTop = chattingLog.current.scrollHeight
           :
@@ -55,12 +61,25 @@ function Chat({ sendMessage, chatLists, user, publisher }) {
             {chatLists &&
               chatLists.map((item, idx) => {
                 return item.connectionId === publisher.stream.connection.connectionId ? (
+                  (item.connectionId === item.from ?
                   <div key={`chat : ${idx}`} id={`chat : ${idx}`}>
-                    <div className="text-right flex-col pb-2">
-                      <div className="text-sm text-gray-500">{item.from}</div>
-                      <div className="w-full break-all" >{item.message}</div>
+                    <div className=" text-center pb-2">
+                      <div className="w-full break-all text-xs text-blue-500" >{item.message}</div>
                     </div>
-                  </div>
+                 </div>
+                  :
+                  <div key={`chat : ${idx}`} id={`chat : ${idx}`}>
+                     <div className="text-right flex-col pb-2">
+                       <div className="text-sm text-gray-500">{item.from}</div>
+                       <div className="w-full break-all" >{item.message}</div>
+                     </div>
+                  </div>)
+                  // <div key={`chat : ${idx}`} id={`chat : ${idx}`}>
+                  //   <div className="text-right flex-col pb-2">
+                  //     <div className="text-sm text-gray-500">{item.from}</div>
+                  //     <div className="w-full break-all" >{item.message}</div>
+                  //   </div>
+                  // </div>
                 ) : (
                     <div key={`chat : ${idx}`} id={`chat : ${idx}`}>
                     <div className="text-left flex-col pb-2">
@@ -88,7 +107,8 @@ function Chat({ sendMessage, chatLists, user, publisher }) {
           </div>
         </div>
       )}
-      <div className=" w-14 h-14 float-right p-1 rounded-full bg-[#ffffff] border-2 border-blue-500">
+      <div className=" w-14 h-14 float-right p-1 rounded-full bg-[#ffffff] border-2 border-blue-500 relative">
+        {isNew && <span className="absolute top-1 right-1 text-red-500 text-md">●</span>}
         {visible ? (
           <HideChat
             onClick={() => {
@@ -99,6 +119,7 @@ function Chat({ sendMessage, chatLists, user, publisher }) {
           <ShowChat
             onClick={() => {
               setVisible(!visible);
+              setIsNew(false);
             }}
           />
         )}

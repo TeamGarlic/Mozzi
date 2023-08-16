@@ -60,6 +60,8 @@ function Booth() {
     sendFileName,
     sendRecordingSignal,
     recordingMozzi,
+    toggleMic,
+    onMic,
   } = useSession(shareCode);
 
 
@@ -344,7 +346,7 @@ function Booth() {
       ): (
         <>
 
-          <CamSetting />
+          <CamSetting toggleMic={toggleMic} onMic={onMic}/>
           <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} publisher={publisher} />
           {alertModal && (
             <HostAlertModal closeAlertModal={closeAlertModal}/>
@@ -386,6 +388,8 @@ function Booth() {
               publisher={publisher}
               subscribers={subscribers}
               setAlertModal={setAlertModal}
+              toggleMic={toggleMic}
+              subVideoRefs={subVideoRefs.current}
             />
           )}
           {now === "MODIFING" && (

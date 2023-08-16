@@ -7,8 +7,9 @@ import useUser from "@/hooks/useUser.js";
 import TextInput from "@/components/TextInput.jsx";
 import useInput from "@/hooks/useInput.js";
 import { useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import DownloadDropDown from '@/components/DownloadDropDown.jsx';
+import ScriptModal from "@/components/ScriptModal.jsx";
 
 function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
   const user = useUser();
@@ -16,6 +17,17 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
   const clipList = useSelector((state) => state.clipReducer.clipList);
   const clipNum = Array.from({length: clipList['n']}, (v, i) => i+1);
   const clipTypes = [{format:'webm',type:'', srcFormat:"webm"},{format:'mp4',type:'video/mp4', srcFormat:"webm"},{format:'gif',type:'image/gif', srcFormat:"webm"}]
+  const [onScript, setOnScript] = useState(true);
+  const [scriptArray] = useState([
+    "mp4 다운받기, gif 다운받기를 통해 원하는 형식으로 다운로드할 수 있습니다",
+    "방장을 제외한 로그인한 유저는 입력창에 이름을 설정하여 내 모찌롤에 등록할 수 있습니다"
+  ])
+
+  function closeScriptModal() {
+    setOnScript(false);
+  }
+
+
   const goHome = () => {
     window.location.href = "/";
   }
@@ -70,6 +82,7 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
   return (
     <Layout>
       <div className="w-full h-screen p-4 flex-row text-center">
+        {onScript && ( <ScriptModal scriptArray={scriptArray} closeScriptModal={closeScriptModal}/> )}
         <div className="text-3xl my-3">촬영이 완료되었습니다</div>
         <div className="grid grid-cols-5 gap-4 h-[calc(100%-5rem)] mx-3">
           <div className="w-full row-auto h-[calc(100%-2rem)] bg-amber-50 border border-amber-500 rounded-2xl my-auto p-3 overflow-y-scroll scrollbar-hide col-span-2">
