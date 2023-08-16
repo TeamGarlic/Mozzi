@@ -9,6 +9,7 @@ import boothApi from "@/api/boothApi.js";
 import RecordingModal from "@/components/RecordingModal.jsx";
 import WaitingRecordModal from "@/components/WaitingRecordModal.jsx";
 import {CameraIcon, ClockIcon} from "@heroicons/react/20/solid/index.js";
+import ScriptModal from "@/components/ScriptModal.jsx";
 
 function TakePic({
         shareCode,
@@ -45,9 +46,19 @@ function TakePic({
     const arrClipData = [];
     const [recordingModal, setRecordingModal] = useState(false);
     const [waitingModal, setWaitingModal] = useState(false);
+    const [onScript, setOnScript] = useState(true);
+    const [scriptArray] = useState([
+      "방장은 우측 상단의 배경바꾸기를 클릭하여 배경을 변경할 수 있습니다. 버튼을 다시 클릭하여 닫을 수 있습니다",
+      "방장은 우측 상단의 유저 목록을 클릭하여 화면에 표시되는 사용자의 순서를 변경할 수 있습니다",
+      "점선으로 표시 된 자신의 영상을 통해 크기와 위치를 조절할 수 있습니다",
+      "방장은 하단의 시간을 선택하여 촬영 대기 시간을 설정 할 수 있습니다",
+      "방장이 촬영버튼을 누르면 촬영 대기 시간 이후 5초간 영상을 촬영핣니다",
+      "10개의 클립을 촬영하거나 촬영종료버튼을 통해 편집 페이지로 이동이 가능합니다",
+    ])
 
-
-    // const clipList = useSelector(state => state.clipReducer.clipList);
+    function closeScriptModal() {
+        setOnScript(false);
+    }
 
     function closeRecordingModal() {
         setRecordingModal(false)
@@ -171,6 +182,9 @@ function TakePic({
     return (
         <Layout>
             <>
+                {onScript && (
+                  <ScriptModal closeScriptModal={closeScriptModal} scriptArray={scriptArray}/>
+                )}
                 {recordingModal && (
                     <RecordingModal closeRecordingModal={closeRecordingModal}/>
                 )}
