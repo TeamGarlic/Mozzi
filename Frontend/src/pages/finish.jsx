@@ -1,10 +1,8 @@
 import Layout from "@/components/Layout";
 import PropTypes from "prop-types";
-import mozzilogo from "@/assets/img/mozzi.png";
 import {createFFmpeg, fetchFile} from '@ffmpeg/ffmpeg';
 import mozziRollApi from "@/api/mozziRollApi.js";
 import useUser from "@/hooks/useUser.js";
-import TextInput from "@/components/TextInput.jsx";
 import useInput from "@/hooks/useInput.js";
 import {useDispatch, useSelector} from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -45,7 +43,7 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
     names.push(name);
   }
 
-  const ffmpeg = createFFmpeg({log : true})
+  const ffmpeg = createFFmpeg({log : false});
   const handleDownload = async (src, format, type, srcFormat) => {
     if(!FFMpegStatus){
       alert("이미 다른 파일을 다운로드 중입니다. 잠시 후에 다시 시도해주세요");

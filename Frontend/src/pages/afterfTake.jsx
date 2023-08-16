@@ -12,7 +12,7 @@ import Spinner from "@/components/Spinner.jsx";
 import { AppStore } from "@/store/AppStore.js";
 import useInterval from '@/hooks/useInterval.js';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
-const ffmpeg = createFFmpeg({log : true});
+const ffmpeg = createFFmpeg({log : false});
 import TextInput from "@/components/TextInput.jsx";
 import ScriptModal from "@/components/ScriptModal.jsx";
 function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, recordingMozzi, sendRecordingSignal }) {
