@@ -70,13 +70,13 @@ function Detail() {
         <Layout>
            <>
                <NavBar user={user} />
-               <div className="flex-col mt-28 px-20 py-5">
-                   <div className="text-3xl text-gray-600 mb-20">클립 보기</div>
-                   {mozzi && <div className=" overflow-scroll scrollbar-hide my-4 mt-5">
-                    <div className="flex max-w-[calc(75rem)] mx-auto">
-                        <div className={`${mozzi.mozzirollInfo.width+100 > mozzi.mozzirollInfo.height ? "max-h-96 max-w-screen-sm" : "max-h-96 max-w-screen-sm"} py-2 mr-3 ml-auto`}>
+               <div className="flex-col mt-28 px-20 py-3">
+                   <div className="text-3xl text-gray-600 mb-10">클립 보기</div>
+                   {mozzi && <div className=" overflow-scroll scrollbar-hide my-4">
+                    <div className="flex-col max-w-[calc(75rem)] mx-auto">
+                        <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "max-w-screen-sm" : "max-h-96 max-w-screen-md"} mx-auto`}>
                            <video
-                               className={`${mozzi.mozzirollInfo.width+100 > mozzi.mozzirollInfo.height ? "w-full h-full":"w-full h-full"} mx-auto`}
+                               className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "":"max-h-96 max-w-screen-md"} mx-auto bg-[#fce7f3] bg-opacity-30`}
                                width={`${mozzi.mozzirollInfo.width}`}
                                height={`${mozzi.mozzirollInfo.height}`}
                                src={`https://api.mozzi.lol/files/object/${mozzi.mozzirollInfo.objectName}`}
@@ -85,33 +85,43 @@ function Detail() {
                                crossOrigin="anonymous"
                            />
                         </div>
-                        <div className="ml-3 mr-auto my-auto flex-col">
-                            <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "w-full" : "w-full my-auto"} overflow-hidden my-1`}>
-                                <div className="my-auto text-center font-bold">{mozzi.title}</div>
+                        <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "max-w-screen-sm" : "max-h-96 max-w-screen-md"} flex-col mx-auto`}>
+                            <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "max-w-screen-sm" : "max-h-96 max-w-screen-md"} flex`}>
+                                <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "w-full" : "w-full"} overflow-hidden my-1`}>
+                                    <div className="my-auto font-bold text-xl">{mozzi.title}</div>
+                                </div>
+                                <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "w-full" : "w-full"} overflow-hidden my-1 float-right`}>
+                                    <div className="my-auto text-right">{mozzi.mozzirollInfo.createdAt.slice(0,10)}</div>
+                                </div>
                             </div>
-                            <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "w-full" : "w-full my-auto"} overflow-hidden flex my-1`}>
-                                <img src="/src/assets/img/mozzi-icon.png" alt="" className="rounded-full w-8 h-8 p-0.5 object-cover bg-[#fce7f3]" />
-                                <span className="ml-2 mr-5 my-auto">{mozzi.user.nickname}</span>
-                                <div className="my-auto ml-5">{mozzi.mozzirollInfo.createdAt.slice(0,10)}</div>
-                            </div>
-                            <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "w-full" : "w-full my-auto"} flex mt-2`}>
-                                <div className={`${mozzi.posted ? "text-blue-500" : "text-red-500"} flex-col ml-auto my-auto`}>
+                            <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "w-full" : "w-full"} flex`}>
+                                <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "w-full" : "w-full"} overflow-hidden flex my-1`}>
+                                    <img src="/src/assets/img/mozzi-icon.png" alt="" className="rounded-full w-8 h-8 p-0.5 object-cover bg-[#fce7f3]" />
+                                    <span className="ml-2 my-auto">{mozzi.user.nickname}</span>
+                                </div>
+                                <div className={`${mozzi.posted ? "text-blue-500" : "text-red-500"} flex-col mb-auto mx-1`}>
                                     <img src={`/src/assets/img/${mozzi.posted?"post":"unpost"}.png`} alt="" className="w-auto h-auto mx-auto" />
                                     <div className="whitespace-nowrap text-xs">{`${mozzi.posted ? "공유O":"공유"}`}</div>
                                 </div>
-                                <button className="flex overflow-hidden px-1 py-2 ml-2 my-auto" onClick={()=>giveLike(mozzi.id)}>
-                                    <img src={`/src/assets/img/heart-${liked?"full":"empty"}.png`} alt="" className="w-5 h-5 ml-auto my-auto" />
-                                    <span className="ml-1 text-red-500 text-lg">{likes}</span>
-                                </button>
                                 { user && mozzi.user.id ===user.id &&
                                 <button
-                                    className="float-right p-1 rounded-e-xl text-white"
+                                    className="float-right ml-1 mr-2 mb-auto mt-1 rounded-e-xl text-white"
                                     value={mozzi.id}
                                     onClick={deleteMozzi}>
-                                    <img src="/src/assets/img/delete.png" alt="" className="w-5 h-5 ml-auto my-auto" />
+                                    <img src="/src/assets/img/delete.png" alt="" className="w-5 h-5" />
                                 </button>
+                                // &&
+                                // <button
+                                //     value={`https://api.mozzi.lol/files/object/${mozzi.mozzirollInfo.objectName}`}
+                                //     className={`float-right bg-blue-500 p-1 text-white rounded-s-xl ${user && mozzi.user.id ===user.id ? "":"rounded-e-xl"}`}
+                                //     onClick={download}>
+                                //     다운로드
+                                // </button>
                                 }
-
+                                <button className="flex overflow-hidden mx-1" onClick={()=>giveLike(mozzi.id)}>
+                                    <img src={`/src/assets/img/heart-${liked?"full":"empty"}.png`} alt="" className="w-5 h-5 mt-1" />
+                                    <div className="ml-1 mr-2 text-red-500 text-lg">{likes}</div>
+                                </button>
                                 {/* <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "h-fit" : "min-h-[calc(30rem)]"} rounded-2xl bg-white p-5 border-4 border-red-200 overflow-hidden flex`}>
                                     <div className={`${mozzi.posted ? "text-blue-500" : "text-red-500"} flex-col`}>
                                         <img src={`/src/assets/img/${mozzi.posted?"post":"unpost"}.png`} alt="" className="w-auto h-auto mx-auto" />
