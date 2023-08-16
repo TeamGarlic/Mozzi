@@ -64,25 +64,16 @@ function MyPage() {
                                     }
                                 )}
                             </div>
+
+
                                 {myMozziRollData.userMozzirollItems &&
-                                    <div className="flex items-center justify-center text-center gap-4 my-5 rounded-2xl w-fit mx-auto bg-blue-200 p-3">
+                                    <div className=" bottom-3 flex items-center justify-center text-center gap-4 my-5 rounded-2xl w-fit mx-auto bg-blue-200 p-3">
                                         {page>1 && <span onClick={goPrev}>이전</span>}
                                         {page}/{Math.max(myMozziRollData.pages,1)}페이지
                                         {page < myMozziRollData.pages &&<span onClick={goNext}>다음</span>}
                                     </div>
                                 }
                         </div>
-                        <hr />
-                        {/* <div className="py-5">
-                            <h1>내 즐겨찾기 목록</h1>
-                        </div>
-                        <hr /> */}
-                        <button
-                            onClick={goModify}
-                            className="p-4 float-right leading-3 rounded-2xl mt-10 bg-yellow-300"
-                        >
-                            내정보수정
-                        </button>
                     </div>
                 </> : <>Loading...</>}
         </Layout>

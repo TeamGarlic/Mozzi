@@ -21,8 +21,8 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
   const frameTypes = [{format:'webm',type:'', srcFormat:"mp4"},{format:'mp4',type:'video/mp4', srcFormat:"mp4"},{format:'gif',type:'image/gif', srcFormat:"mp4"}]
   const [onScript, setOnScript] = useState(true);
   const [scriptArray] = useState([
-    "다운로드 버튼을 눌러 원하는 형식으로 다운로드할 수 있습니다",
-    "방장을 제외한 로그인한 유저는 입력창에 이름을 설정하여 내 클립에 등록할 수 있습니다"
+    "다운로드 버튼을 눌러 원하는 파일 형식으로 다운로드할 수 있습니다",
+    "완성된 클립의 제목을 입력하고 버튼을 눌러 내 클립에 등록할 수 있습니다"
   ])
   const [linked, setLinked] = useState(isHost>0)
 
@@ -111,6 +111,7 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
 
   return (
     <Layout>
+      <div className={`absolute p-2 px-4 rounded-3xl bg-red-100 border border-red-500 m-2 float-right right-5 top-5 ${FFMpegStatus?"hidden":""}`}>영상을 변환하는 중입니다. 잠시만 기다려주세요...</div>
       <div className="w-full h-screen p-4 flex-row text-center">
         {onScript && ( <ScriptModal scriptArray={scriptArray} closeScriptModal={closeScriptModal}/> )}
         <div className="text-3xl my-3">촬영이 완료되었습니다</div>
