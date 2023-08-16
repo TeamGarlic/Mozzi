@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  AdjustmentsHorizontalIcon, Cog8ToothIcon,
+  Cog8ToothIcon,
   MicrophoneIcon,
   VideoCameraIcon,
   VideoCameraSlashIcon
