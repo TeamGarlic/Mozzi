@@ -6,22 +6,25 @@ import mozziRollApi from "@/api/mozziRollApi.js";
 import useUser from "@/hooks/useUser.js";
 import TextInput from "@/components/TextInput.jsx";
 import useInput from "@/hooks/useInput.js";
-import { useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import { useEffect, useState } from 'react';
-import DownloadDropDown from '@/components/DownloadDropDown.jsx';
+import DownloadableVideo from '@/components/DownloadableVideo.jsx';
 import ScriptModal from "@/components/ScriptModal.jsx";
+import {setFFMpegStatusAction} from "@/modules/clipAction.js";
 
 function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
   const user = useUser();
+  const dispatch = useDispatch();
   const mozziTitle = useInput("우리들의 추억")
   const clipList = useSelector((state) => state.clipReducer.clipList);
+  const FFMpegStatus = useSelector((state) => state.clipReducer.FFMpegStatus);
   const clipNum = Array.from({length: clipList['n']}, (v, i) => i+1);
   const clipTypes = [{format:'webm',type:'', srcFormat:"webm"},{format:'mp4',type:'video/mp4', srcFormat:"webm"},{format:'gif',type:'image/gif', srcFormat:"webm"}]
   const frameTypes = [{format:'webm',type:'', srcFormat:"mp4"},{format:'mp4',type:'video/mp4', srcFormat:"mp4"},{format:'gif',type:'image/gif', srcFormat:"mp4"}]
   const [onScript, setOnScript] = useState(true);
   const [scriptArray] = useState([
-    "mp4 다운받기, gif 다운받기를 통해 원하는 형식으로 다운로드할 수 있습니다",
-    "방장을 제외한 로그인한 유저는 입력창에 이름을 설정하여 내 모찌롤에 등록할 수 있습니다"
+    "다운받기 버튼을 눌러 원하는 형식으로 다운로드할 수 있습니다",
+    "방장을 제외한 로그인한 유저는 입력창에 이름을 설정하여 내 클립에 등록할 수 있습니다"
   ])
   const [linked, setLinked] = useState(isHost>0)
 
@@ -43,8 +46,12 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
   }
 
   const ffmpeg = createFFmpeg({log : true})
-
   const handleDownload = async (src, format, type, srcFormat) => {
+    if(!FFMpegStatus){
+      alert("이미 다른 파일을 다운로드 중입니다. 잠시 후에 다시 시도해주세요");
+      return;
+    }
+    dispatch(setFFMpegStatusAction(false));
     let recUrl = src;
     if(srcFormat!=format){
       if(!ffmpeg.isLoaded()) await ffmpeg.load();
@@ -61,7 +68,28 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
     a.download = "download."+format;
     a.target="_blank";
     a.click();
+    dispatch(setFFMpegStatusAction(true));
   }
+
+  // function handleDownload(src, format, type, srcFormat){
+  //   if(FFMpegStatus) ffmpegDownload(src, format, type, srcFormat);
+  //   else{
+  //     alert("이미 다른 파일을 다운로드 중입니다. 잠시 후에 다시 시도해주세요");
+  //     return;
+  //   }
+  // }
+  // useEffect(() => {
+  //   handleDownload = (src, format, type, srcFormat)=>{
+  //     if(FFMpegStatus) ffmpegDownload(src, format, type, srcFormat);
+  //     else{
+  //       alert("이미 다른 파일을 다운로드 중입니다. 잠시 후에 다시 시도해주세요");
+  //       return;
+  //     }
+  //   };
+  // }, [FFMpegStatus]);
+
+
+
 
   const linkMozzi = async () => {
     if(!user.user){
@@ -95,7 +123,7 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
               {clipNum.map((i) => {
                 if (clipList[i]) {
                   return (
-                    <DownloadDropDown key={`clip${i}`} src={clipList[i]} types={clipTypes} download={handleDownload}/>
+                    <DownloadableVideo key={`clip${i}`} src={clipList[i]} types={clipTypes} download={handleDownload}/>
                   );
                 }
               })}
@@ -161,7 +189,7 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
 
             <div className="w-full justify-center text-center items-center">
               <div className="w-4/5 mx-auto">
-                <DownloadDropDown src={`https://api.mozzi.lol/files/mozziroll/${mozzi}`} download={handleDownload} types={frameTypes}></DownloadDropDown>
+                <DownloadableVideo src={`${mozzi?('https://api.mozzi.lol/files/mozziroll/'+mozzi):""}`} download={handleDownload} types={frameTypes}></DownloadableVideo>
               </div>
             </div>
           </div>
