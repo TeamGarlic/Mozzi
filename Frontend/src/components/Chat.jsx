@@ -33,7 +33,7 @@ function Chat({ sendMessage, chatLists, user, publisher }) {
 
   useEffect(() => {
     // console.log(chattingLog.current.scrollTop, chattingLog.current.scrollHeight );
-    if(!visible) setIsNew(true);
+    if(!visible && chatLists.length>0) setIsNew(true);
     const lastMsg = chatLists[chatLists.length-1];
     if(!chattingLog) return;
     if(lastMsg){
