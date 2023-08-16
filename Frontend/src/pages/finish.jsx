@@ -13,7 +13,7 @@ import ScriptModal from "@/components/ScriptModal.jsx";
 
 function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
   const user = useUser();
-  const mozziTitle = useInput("초기문구 추천좀")
+  const mozziTitle = useInput("우리들의 추억")
   const clipList = useSelector((state) => state.clipReducer.clipList);
   const clipNum = Array.from({length: clipList['n']}, (v, i) => i+1);
   const clipTypes = [{format:'webm',type:'', srcFormat:"webm"},{format:'mp4',type:'video/mp4', srcFormat:"webm"},{format:'gif',type:'image/gif', srcFormat:"webm"}]
