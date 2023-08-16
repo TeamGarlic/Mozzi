@@ -7,6 +7,7 @@ import TextInput from "@/components/TextInput";
 import boothApi from "@/api/boothApi";
 import { Link, useNavigate } from "react-router-dom";
 import mozzilogo from "@/assets/img/mozzi.png";
+import mozziBigLogo from "@/assets/img/mozzi-big.png";
 import gotobooth from "@/assets/img/gotobooth.png";
 import makebooth from "@/assets/img/makebooth.png";
 import gotocommu from "@/assets/img/gotocommu.png";
@@ -61,7 +62,7 @@ function Start() {
         <NavBar user={user} />
         <div className="w-[calc(60rem)] flex-col justify-center items-center text-center mx-auto pt-40">
           <div className=" text-2xl items-center">
-            <img src={mozzilogo} className=" mx-auto w-72 h-72" />
+            <img src={mozziBigLogo} className=" mx-auto w-72 h-72" />
           </div>
           <div className=" flex justify-center text-center gap-15 pt-20">
             <div className="w-96 h-fit flex-col p-1">
