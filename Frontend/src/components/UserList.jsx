@@ -3,7 +3,7 @@ import {useEffect, useState} from "react"
 import {checkHost} from "@/utils/DecoratorUtil.js"
 import PropTypes from "prop-types";
 
-function UserList({user, position, sendPosition, setPosition, subscribers, publisher, setAlertModal}){
+function UserList({user, position, sendPosition, setPosition, subscribers, publisher, setAlertModal, toggleMic}){
   const [userList, setUserList] = useState([])
 
   const [drag, setDrag] = useState(null);
@@ -18,22 +18,27 @@ function UserList({user, position, sendPosition, setPosition, subscribers, publi
     setUserList(position.map((user) => {
       let name = ""
       let isHost = 0;
+      let onMic = true;
+      let isPublisher = false;
       const subscriber = subscribers && subscribers.find((el)=>{
         return el.stream.connection.connectionId === user.id
       })
       if (subscriber) {
         name = JSON.parse(subscriber.stream.connection.data).clientData;
         isHost = JSON.parse(subscriber.stream.connection.data).isHost;
+        onMic = subscriber.stream.audioActive;
       } else {
         name = JSON.parse(publisher.stream.connection.data).clientData;
         isHost = JSON.parse(publisher.stream.connection.data).isHost;
+        onMic = publisher.stream.audioActive;
+        isPublisher = true;
       }
       return {
         id: user.id,
         name: name,
-        onMic: 1,
-        onCam: 1,
+        onMic: onMic,
         isHost: isHost,
+        isPublisher: isPublisher
       }
     }))
   }, [position]);
@@ -172,10 +177,13 @@ function UserList({user, position, sendPosition, setPosition, subscribers, publi
           <UserCard
             setTool={setTool}
             onMic={item.onMic}
-            onCam={item.onCam}
-            idx={idx}
             userName={item.name}
             isHost={item.isHost}
+            isPublisher={item.isPublisher}
+            toggleMic={toggleMic}
+            setPosition={setPosition}
+            sendPosition={sendPosition}
+            position={position}
           />
         </div>
       ))}
@@ -200,4 +208,5 @@ UserList.propTypes = {
   subscribers: PropTypes.array,
   publisher: PropTypes.any,
   setAlertModal: PropTypes.func,
+  toggleMic: PropTypes.func,
 };

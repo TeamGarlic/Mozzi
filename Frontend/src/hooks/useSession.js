@@ -20,6 +20,7 @@ function useSession(shareCode) {
   const [mozzi, setMozzi] = useState("");
   const [shareSecret, setShareSecret] = useState("");
   const [recordingMozzi, setRecordingMozzi] = useState(false);
+  const [onMic, setOnMic] = useState(true);
 
   const leaveSession = async() => {
     if (session) {
@@ -57,6 +58,8 @@ function useSession(shareCode) {
       const OV = new OpenVidu();
       const session = OV.initSession();
       setSession(session);
+      // Todo: 마지막에 콘솔로그 없애는 모드 주석지우기
+      // OV.enableProdMode();
 
       session.on("streamCreated", (event) => {
         const subscriber = session.subscribe(event.stream, undefined);
@@ -212,6 +215,11 @@ function useSession(shareCode) {
 
       await session.publish(publisher);
       await setPublisher(publisher);
+
+      if (!publisher.stream.isLocalStreamPublished){
+        alert("카메라를 확인해주세요");
+        window.location.href="/";
+      }
     } catch (error) {
       console.log(
         "There was an error connecting to the session:",
@@ -222,6 +230,11 @@ function useSession(shareCode) {
       window.location.href="/";
     }
   };
+
+  const toggleMic = () => {
+    publisher.publishAudio(!onMic);
+    setOnMic(!onMic);
+  }
 
   const sendRecordingSignal = async (signal=false) => {
     await session.signal({
@@ -411,6 +424,8 @@ function useSession(shareCode) {
     sendFileName,
     sendRecordingSignal,
     recordingMozzi,
+    toggleMic,
+    onMic,
   };
 }
 
