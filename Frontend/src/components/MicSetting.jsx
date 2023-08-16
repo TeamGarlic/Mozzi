@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import PropTypes from "prop-types";
 
 function MicSetting({target, subVideoRefs}) {
-  const [volume, setVolume] = useState(target.id?subVideoRefs[target.id].volume*100:100);
+  const [volume, setVolume] = useState(target.volume);
   useEffect(() => {
     if (!target.id) return
-    subVideoRefs[target.id].volume = volume / 100;
-  }, [volume])
+    setVolume(target.volume)
+  }, [target])
 
   return (
     <div className="z-50">
@@ -16,7 +16,10 @@ function MicSetting({target, subVideoRefs}) {
             <label className="block text-sm font-medium text-gray-900">{target.userName}님의 볼륨 : {`${volume}`}</label>
           </div>
           <hr />
-          <input type="range" min="0" max="100" value={volume} onChange={(e)=>{setVolume(e.target.value)}}
+          <input type="range" min="0" max="100" value={volume} onChange={(e)=>{
+            setVolume(e.target.value);
+            subVideoRefs[target.id].volume = e.target.value / 100;
+          }}
                  className="w-full h-2 mb-1 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
         </div>
       </div>

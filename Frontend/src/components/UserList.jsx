@@ -17,6 +17,7 @@ function UserList({user, position, sendPosition, setPosition, subscribers, publi
     visible: false,
     userName: "",
     id: "",
+    volume: 100,
   });
 
   function setMicSetting(t){
@@ -188,6 +189,7 @@ function UserList({user, position, sendPosition, setPosition, subscribers, publi
               position={position}
               id={item.id}
               setMicSetting={setMicSetting}
+              subVideoRefs={subVideoRefs}
             />
           </div>
         ))}
