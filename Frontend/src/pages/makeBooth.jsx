@@ -1,6 +1,5 @@
 import Layout from "@/components/Layout";
 import UserSideBar from "@/components/UserSideBar";
-import EnterDialog from "@/components/EnterDialog";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,24 +9,16 @@ import ScriptModal from "@/components/ScriptModal.jsx";
 import baseURL from "@/api/BaseURL.js";
 
 function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, user, setAlertModal }) {
-  const [visibility, setVisibility] = useState(true);
-  const [toggleVoice, setToggleVoice] = useState(true);
   const pickedFrame = useSelector((state) => state.clipReducer.frame);
   const [onScript, setOnScript] = useState(true);
   const [scriptArray] = useState([
-    "왼쪽 상단의 초대코드로 다른 사람을 초대할 수 있습니다",
-    "왼쪽 하단의 세팅아이콘으로 마이크와 개인 카메라 설정이 가능합니다",
-    "오른쪽 하단의 채팅아이콘으로 참여자들과 소통이 가능합니다",
+    "왼쪽 상단의 초대코드를 복사해 친구들에게 공유하세요",
+    "왼쪽 하단의 설정창에서 마이크와 카메라를 설정할 수 있어요",
+    "오른쪽 하단의 채팅창에서 채팅이 가능해요",
     "방장은 프레임을 선택하고 촬영 시작 버튼을 눌러주세요"
   ]);
 
   const dispatch = useDispatch();
-  const closeDialog = () => {
-    setVisibility(false);
-  };
-  function setVoice() {
-    setToggleVoice(!toggleVoice);
-  }
 
   function closeScriptModal() {
     setOnScript(false);
@@ -64,12 +55,6 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
 
   return (
     <>
-      {/*<EnterDialog*/}
-      {/*  visibility={visibility}*/}
-      {/*  onClick={closeDialog}*/}
-      {/*  toggleVoice={toggleVoice}*/}
-      {/*  setVoice={setVoice}*/}
-      {/*/>*/}
       <Layout>
         <div className="flex">
           <div className="w-full h-screen p-4 flex-col">

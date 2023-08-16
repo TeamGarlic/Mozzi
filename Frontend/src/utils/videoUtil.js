@@ -74,6 +74,7 @@ export const chromaKey = function(canvas, context, video) {
 
 // 합성 캔버스에 그리는 함수
 export const drawCanvas = function(canvas, context, bgImg, layers) {
+  if(!canvas || !('width' in canvas)) return;
   context.save();
   context.drawImage(
     bgImg,

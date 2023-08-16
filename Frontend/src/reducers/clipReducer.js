@@ -1,4 +1,16 @@
-import { updateFrame, Clip2Frame, AddClip, Frame2Clip, DragStart, DragEnd, DragClear, Frame2Frame, setFrame, setClipList } from "@/modules/clipAction"
+import {
+  updateFrame,
+  Clip2Frame,
+  AddClip,
+  Frame2Clip,
+  DragStart,
+  DragEnd,
+  DragClear,
+  Frame2Frame,
+  setFrame,
+  setClipList,
+  setFFMpegStatus
+} from "@/modules/clipAction"
 
 const clipState = {
   frame: {
@@ -15,7 +27,8 @@ const clipState = {
     end: "",
     startIdx: 0,
     endIdx: 0,
-  }
+  },
+  FFMpegStatus : true,
 }
 
 const clipReducer = (state = clipState, action) => {
@@ -174,6 +187,12 @@ const clipReducer = (state = clipState, action) => {
           startIdx: 0,
           endIdx: 0
         }
+      }
+    }
+    case setFFMpegStatus:{
+      state.FFMpegStatus = action.payload;
+      return {
+        ...state
       }
     }
     default:

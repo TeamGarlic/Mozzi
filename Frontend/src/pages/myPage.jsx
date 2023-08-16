@@ -49,12 +49,12 @@ function MyPage() {
             {user ?
                 <>
                     <NavBar user={user} />
-                    <div className="flex-col mt-28 px-20">
+                    <div className="flex-col mt-28 px-20 ">
                         <div className="w-full flex-col">
                             <div className="text-2 text-gray-600">마이페이지</div>
                             <div className="text-4xl">{user.userNickname}</div>
                         </div>
-                        <div className="py-5">
+                        <div className="pb-20">
                             <div className=" text-2xl py-5">내 클립</div>
                             <div className="flex flex-wrap gap-5 justify-center items-center text-center">
                                 {myMozziRollData.userMozzirollItems && myMozziRollData.userMozzirollItems.map((item, idx) => {
@@ -65,24 +65,13 @@ function MyPage() {
                                 )}
                             </div>
                                 {myMozziRollData.userMozzirollItems &&
-                                    <div className="flex items-center justify-center text-center gap-4 my-5 rounded-2xl w-fit mx-auto bg-blue-200 p-3">
-                                        {page>1 && <span onClick={goPrev}>이전</span>}
-                                        {page}/{Math.max(myMozziRollData.pages,1)}페이지
-                                        {page < myMozziRollData.pages &&<span onClick={goNext}>다음</span>}
+                                    <div className="fixed bottom-4 left-[calc(42%)] flex items-center justify-center text-center my-5 rounded-2xl w-1/6 mx-auto bg-blue-100 border border-blue-500 h-10 px-3">
+                                        {page>1 && <span className="w-[calc(25%)] whitespace-nowrap border-r border-blue-300" onClick={goPrev}>이전</span>}
+                                        <span className="w-[calc(50%)]">{page}/{Math.max(myMozziRollData.pages,1)}페이지</span>
+                                        {page < myMozziRollData.pages &&<span className="w-[calc(25%)] whitespace-nowrap border-l border-blue-300" onClick={goNext}>다음</span>}
                                     </div>
                                 }
                         </div>
-                        <hr />
-                        {/* <div className="py-5">
-                            <h1>내 즐겨찾기 목록</h1>
-                        </div>
-                        <hr /> */}
-                        <button
-                            onClick={goModify}
-                            className="p-4 float-right leading-3 rounded-2xl mt-10 bg-yellow-300"
-                        >
-                            내정보수정
-                        </button>
                     </div>
                 </> : <>Loading...</>}
         </Layout>

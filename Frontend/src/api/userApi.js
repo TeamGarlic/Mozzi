@@ -123,7 +123,7 @@ const userApi = {
       template = { ...template, email: email, }
     }
 
-    console.log(template);
+    // console.log(template);
 
     let res = await PublicUserApi.patch("", template);
     return res;
@@ -138,7 +138,7 @@ const userApi = {
 
   signOut: async () => {
     let res = await PrivateUserApi.delete("");
-    console.log(res);
+    // console.log(res);
     return res;
   }
 };
