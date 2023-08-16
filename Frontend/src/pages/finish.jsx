@@ -17,6 +17,7 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
   const clipList = useSelector((state) => state.clipReducer.clipList);
   const clipNum = Array.from({length: clipList['n']}, (v, i) => i+1);
   const clipTypes = [{format:'webm',type:'', srcFormat:"webm"},{format:'mp4',type:'video/mp4', srcFormat:"webm"},{format:'gif',type:'image/gif', srcFormat:"webm"}]
+  const frameTypes = [{format:'webm',type:'', srcFormat:"mp4"},{format:'mp4',type:'video/mp4', srcFormat:"mp4"},{format:'gif',type:'image/gif', srcFormat:"mp4"}]
   const [onScript, setOnScript] = useState(true);
   const [scriptArray] = useState([
     "mp4 다운받기, gif 다운받기를 통해 원하는 형식으로 다운로드할 수 있습니다",
@@ -58,6 +59,7 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
     a.href = recUrl;
     document.body.appendChild(a);
     a.download = "download."+format;
+    a.target="_blank";
     a.click();
   }
 
@@ -130,22 +132,22 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
                       <input
                         type="text"
                         placeholder="제목을 입력하세요"
-                        className={`w-[calc(100%-0.5rem)] h-8 rounded-l-2xl my-1 ml-1 px-1`}
+                        className={`w-[calc(100%-0.5rem)] h-8 rounded-l-2xl my-1 ml-1 px-1  whitespace-nowrap`}
                         {...mozziTitle}
                       />
                     </div>
                     <button
-                      className="w-1/4 h-10 rounded-r-2xl bg-blue-100 border border-blue-500 mr-2"
+                      className="w-1/4 h-10 rounded-r-2xl bg-blue-100 border border-blue-500 mr-2  whitespace-nowrap"
                       onClick={linkMozzi}
                     >
-                      마이페이지에 저장
+                      마이페이지에 등록
                     </button>
                   </>
                 ):(
                   <button
                     className="w-1/4 h-10 rounded-3xl bg-green-100 border border-green-500 m-2"
                   >
-                    저장됨
+                    마이페이지에 저장됨
                   </button>
                 )}
               <button
@@ -159,16 +161,8 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
 
             <div className="w-full justify-center text-center items-center">
               <div className="w-4/5 mx-auto">
-              <button
-                className="text-sm items-center align-middle w-full h-8 rounded-t-2xl bg-orange-100 border-x border-t border-orange-500"
-                onClick={()=>{handleDownload(`https://api.mozzi.lol/files/mozziroll/${mozzi}`,"mp4","video/mp4","mp4")}}
-              >
-                다운로드
-              </button>
-                {/*<li><a href={`https://api.mozzi.lol/files/mozziroll/${mozzi}`} target="_blanck">mp4 다운받기</a></li>*/}
-                {/*<li><button onClick={()=>{handleDownload(`https://api.mozzi.lol/files/mozziroll/${mozzi}`,"gif","image/gif","mp4")}}>gif 다운받기</button></li>*/}
+                <DownloadDropDown src={`https://api.mozzi.lol/files/mozziroll/${mozzi}`} download={handleDownload} types={frameTypes}></DownloadDropDown>
               </div>
-              <video className="w-4/5 mx-auto border border-orange-500 rounded-b-2xl" autoPlay src={mozzi && `https://api.mozzi.lol/files/mozziroll/${mozzi}`} poster={mozzilogo} loop controls crossOrigin="anonymous"></video>
             </div>
           </div>
         </div>
