@@ -31,7 +31,8 @@ function TakePic({
         shareSecret,
         publisher,
         subscribers,
-        setAlertModal
+        setAlertModal,
+        toggleMic,
     }) {
     const timers = [3, 5, 10];
     const MAX_CLIPS = 10;
@@ -187,6 +188,7 @@ function TakePic({
                         subscribers={subscribers}
                         publisher={publisher}
                         setAlertModal={setAlertModal}
+                        toggleMic={toggleMic}
                     />
                     {/* <div className="float-right mr-10 text-2xl">taken : {taken}/10</div> */}
                 </div>
@@ -275,4 +277,5 @@ TakePic.propTypes = {
     shareSecret: PropTypes.string,
     subscribers: PropTypes.array,
     setAlertModal: PropTypes.func,
+    toggleMic: PropTypes.func,
 };
