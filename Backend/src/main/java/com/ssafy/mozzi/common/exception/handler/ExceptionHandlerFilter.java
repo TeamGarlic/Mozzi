@@ -7,6 +7,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.mozzi.common.auth.JwtAuthenticationFilter;
+import com.ssafy.mozzi.common.exception.ErrorResponse;
+import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,22 +27,25 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             // jwtAuthenticationFilter.doFilter(request, response, filterChain);
             filterChain.doFilter(request, response);
         } catch (BadRequestException exception) {
-            doErrorWrite(response, 400, exception);
+            doErrorWrite(response, 400, exception.toResponse());
         } catch (NotFoundException exception) {
-            doErrorWrite(response, 404, exception);
+            doErrorWrite(response, 404, exception.toResponse());
         } catch (UnAuthorizedException exception) {
-            doErrorWrite(response, 401, exception);
+            doErrorWrite(response, 401, exception.toResponse());
         } catch (Exception exception) {
-            doErrorWrite(response, 500, exception);
+            doErrorWrite(response, 500, ErrorResponse.builder()
+                .code(MozziAPIErrorCode.InternalServerError)
+                .message("General Internal Server Error")
+                .build());
         }
     }
 
-    private void doErrorWrite(HttpServletResponse response, int code, Exception exception) {
+    private void doErrorWrite(HttpServletResponse response, int code, ErrorResponse errorResponse) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             response.setStatus(code);
             response.setContentType(MediaType.APPLICATION_JSON);
-            response.getWriter().write(objectMapper.writeValueAsString(exception));
+            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         } catch (Exception e) {
             response.setStatus(500);
         }
