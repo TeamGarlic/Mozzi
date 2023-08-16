@@ -63,7 +63,7 @@ function Community() {
             {/*{user ?*/}
                 <>
                     <NavBar user={user} />
-                    <div className="flex-col mt-36 px-20">
+                    <div className="flex-col mt-28 px-20">
                         <div className="py-5">
                             <div className="text-3xl text-gray-600">커뮤니티</div>
                             <div className="flex gap-5 py-4">

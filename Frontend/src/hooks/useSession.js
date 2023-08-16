@@ -21,6 +21,7 @@ function useSession(shareCode) {
   const [shareSecret, setShareSecret] = useState("");
   const [recordingMozzi, setRecordingMozzi] = useState(false);
   const [onMic, setOnMic] = useState(true);
+  const [tempBg, setTempBg] = useState(new Image());
 
   const leaveSession = async() => {
     if (session) {
@@ -181,10 +182,16 @@ function useSession(shareCode) {
       })
 
       session.on("signal:changeBg", async (event) => {
-        const newBg = new Image();
-        newBg.src = event.data;
-        newBg.crossOrigin = "anonymous";
-        dispatch(changeBgAction({img: newBg}));
+
+        if (event.data === "") {
+          dispatch(changeBgAction({img: tempBg}));
+        } else {
+          const newBg = new Image();
+          newBg.src = event.data;
+          newBg.crossOrigin = "anonymous";
+          dispatch(changeBgAction({img: newBg}));
+        }
+
       })
 
       session.on("signal:sendMozzi", async (event) => {
@@ -218,6 +225,19 @@ function useSession(shareCode) {
           AppStore.setRunningSpinner();
         } else {
           AppStore.setStopSpinner();
+        }
+      })
+
+      session.on("signal:sendBg", async (event) => {
+        const data = JSON.parse(event.data);
+        try {
+          let res = await boothApi.downloadClip(data.fileName, data.shareSecret, shareCode);
+          if (res.status === 200) {
+            tempBg.src = res.data;
+            tempBg.crossOrigin = "anonymous";
+          }
+        } catch (e) {
+          console.log(e);
         }
       })
 
@@ -424,6 +444,17 @@ function useSession(shareCode) {
     });
   };
 
+  const sendBg = async (fileName, shareSecret) => {
+    await session.signal({
+      data: JSON.stringify({
+        fileName: fileName,
+        shareSecret: shareSecret,
+      }),
+      to: [],
+      type: "sendBg",
+    })
+  }
+
 
   const sendFileName = async (idx, fileName, shareSecret) => {
     await session.signal({
@@ -488,6 +519,8 @@ function useSession(shareCode) {
     recordingMozzi,
     toggleMic,
     onMic,
+    sendBg,
+    tempBg,
   };
 }
 
