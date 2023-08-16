@@ -8,6 +8,10 @@ import full from '@/assets/img/heart-full.png'
 import empty from '@/assets/img/heart-empty.png'
 import img_post from '@/assets/img/post.png'
 import img_unpost from '@/assets/img/unpost.png'
+import user_icon from '@/assets/img/mozzi-icon.png'
+import delete_icon from '@/assets/img/delete.png'
+import download_icon from '@/assets/img/download.png'
+
 
 function Detail() {
     const {user} = useUser();
@@ -114,7 +118,7 @@ function Detail() {
                             </div>
                             <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "w-full" : "w-full"} flex`}>
                                 <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "w-full" : "w-full"} overflow-hidden flex my-1`}>
-                                    <img src="/src/assets/img/mozzi-icon.png" alt="" className="rounded-full w-8 h-8 p-0.5 object-cover bg-[#fce7f3]" />
+                                    <img src={`${user_icon}`} alt="" className="rounded-full w-8 h-8 p-0.5 object-cover bg-[#fce7f3]" />
                                     <span className="ml-2 my-auto">{mozzi.user.nickname}</span>
                                 </div>
                                 { user && mozzi.user.userId === user.userId && 
@@ -128,7 +132,7 @@ function Detail() {
                                     className="float-right mr-2 mb-auto mt-1 rounded-e-xl text-white"
                                     value={mozzi.id}
                                     onClick={deleteMozzi}>
-                                    <img src="/src/assets/img/delete.png" alt="" className="w-5 h-5" />
+                                    <img src={`${delete_icon}`} alt="" className="w-5 h-5" />
                                 </button>
                                 }
                                 { user && mozzi.user.id ===user.id &&
@@ -136,7 +140,7 @@ function Detail() {
                                     value={`https://api.mozzi.lol/files/object/${mozzi.mozzirollInfo.objectName}`}
                                     className="my-auto mt-1 mx-2"
                                     onClick={download}>
-                                    <img src="/src/assets/img/download.png" alt="" className="w-6 h-5" data-value={`https://api.mozzi.lol/files/object/${mozzi.mozzirollInfo.objectName}`}/>
+                                    <img src={`${download_icon}`} alt="" className="w-6 h-5" data-value={`https://api.mozzi.lol/files/object/${mozzi.mozzirollInfo.objectName}`}/>
                                 </button>
                                 }
                                 <button className="flex overflow-hidden mx-1" onClick={()=>giveLike(mozzi.id)}>
