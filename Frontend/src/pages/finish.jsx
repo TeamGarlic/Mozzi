@@ -8,6 +8,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import { useEffect, useState } from 'react';
 import DownloadableVideo from '@/components/DownloadableVideo.jsx';
 import ScriptModal from "@/components/ScriptModal.jsx";
+import baseURL from "@/api/BaseURL.js";
 import {setFFMpegStatusAction} from "@/modules/clipAction.js";
 
 function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
@@ -188,7 +189,8 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
 
             <div className="w-full justify-center text-center items-center">
               <div className="w-4/5 mx-auto">
-                <DownloadableVideo src={`${mozzi?('https://api.mozzi.lol/files/mozziroll/'+mozzi):""}`} download={handleDownload} types={frameTypes}></DownloadableVideo>
+                <DownloadDropDown src={`${baseURL}/files/mozziroll/${mozzi}`} download={handleDownload} types={frameTypes}></DownloadDropDown>
+                <DownloadableVideo src={`${mozzi?(baseURL+'/files/mozziroll/'+mozzi):""}`} download={handleDownload} types={frameTypes}></DownloadableVideo>
               </div>
             </div>
           </div>

@@ -5,6 +5,7 @@ import empty from '@/assets/img/heart-empty.png'
 import img_post from '@/assets/img/post.png'
 import img_unpost from '@/assets/img/unpost.png'
 import user_icon from '@/assets/img/mozzi-icon.png'
+import baseURL from "@/api/BaseURL.js";
 
 function MozziRollMenu({item, idx, deleteFunc, myRef, user}){
     const navigate = useNavigate();
@@ -32,7 +33,7 @@ function MozziRollMenu({item, idx, deleteFunc, myRef, user}){
             </div>
             <video
                 className="h-80 mx-auto"
-                src={`https://api.mozzi.lol/files/object/${item.mozzirollInfo.objectName}`}
+                src={`${baseURL}/files/object/${item.mozzirollInfo.objectName}`}
                 ref={ref=>(myRef = ref)}
                 onMouseOver={play}
                 onMouseOut={pause}

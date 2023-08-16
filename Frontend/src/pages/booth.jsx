@@ -21,6 +21,7 @@ import HostAlertModal from "@/components/HostAlertModal.jsx";
 import { usePreventGoBack } from "@/hooks/usePreventGoBack.js";
 import CamSetting from "@/components/CamSetting.jsx";
 import Chat from "@/components/Chat.jsx";
+import baseURL from "@/api/BaseURL.js";
 
 
 function Booth() {
@@ -216,7 +217,7 @@ function Booth() {
     AppStore.setRunningSpinner();
     getBgList(1, 100).then((res)=>{
       const bgImg = new Image();
-      bgImg.src = `https://api.mozzi.lol/files/object/${res}`;
+      bgImg.src = `${baseURL}/files/object/${res}`;
       bgImg.crossOrigin = "anonymous";
       dispatch(changeBgAction({ img: bgImg }));
     });

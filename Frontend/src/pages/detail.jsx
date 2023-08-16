@@ -11,6 +11,7 @@ import img_unpost from '@/assets/img/unpost.png'
 import user_icon from '@/assets/img/mozzi-icon.png'
 import delete_icon from '@/assets/img/delete.png'
 import download_icon from '@/assets/img/download.png'
+import baseURL from "@/api/BaseURL.js";
 
 
 function Detail() {
@@ -101,7 +102,7 @@ function Detail() {
                                className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "max-w-screen-sm":"max-h-96 max-w-screen-md"} mx-auto bg-[#fce7f3] bg-opacity-30`}
                                width={`${mozzi.mozzirollInfo.width}`}
                                height={`${mozzi.mozzirollInfo.height}`}
-                               src={`https://api.mozzi.lol/files/object/${mozzi.mozzirollInfo.objectName}`}
+                               src={`${baseURL}/files/object/${mozzi.mozzirollInfo.objectName}`}
                                controls
                                autoPlay
                                crossOrigin="anonymous"
@@ -137,10 +138,10 @@ function Detail() {
                                 }
                                 { user && mozzi.user.id ===user.id &&
                                 <button
-                                    value={`https://api.mozzi.lol/files/object/${mozzi.mozzirollInfo.objectName}`}
+                                    value={`${baseURL}/files/object/${mozzi.mozzirollInfo.objectName}`}
                                     className="my-auto mt-1 mx-2"
                                     onClick={download}>
-                                    <img src={`${download_icon}`} alt="" className="w-6 h-5" data-value={`https://api.mozzi.lol/files/object/${mozzi.mozzirollInfo.objectName}`}/>
+                                    <img src={`${download_icon}`} alt="" className="w-6 h-5" data-value={`${baseURL}/files/object/${mozzi.mozzirollInfo.objectName}`}/>
                                 </button>
                                 }
                                 <button className="flex mx-1" onClick={()=>giveLike(mozzi.id)}>
