@@ -4,6 +4,7 @@ import full from '@/assets/img/heart-full.png'
 import empty from '@/assets/img/heart-empty.png'
 import img_post from '@/assets/img/post.png'
 import img_unpost from '@/assets/img/unpost.png'
+import user_icon from '@/assets/img/mozzi-icon.png'
 
 function MozziRollMenu({item, idx, deleteFunc, myRef, user}){
     const navigate = useNavigate();
@@ -25,7 +26,7 @@ function MozziRollMenu({item, idx, deleteFunc, myRef, user}){
             onClick={()=>navigate(`/detail/${item.id}`)}
         >
             <div className=" overflow-hidden flex my-1">
-                <img src="/src/assets/img/mozzi-icon.png" alt="" className="rounded-full w-8 h-8 p-0.5 object-cover bg-[#fce7f3]" />
+                <img src={`${user_icon}`} alt="" className="rounded-full w-8 h-8 p-0.5 object-cover bg-[#fce7f3]" />
                 <span className="mx-2 my-auto">{item.user.nickname}</span>
                 <div className="my-auto ml-auto">{item.mozzirollInfo.createdAt.slice(0,10)}</div>
             </div>
