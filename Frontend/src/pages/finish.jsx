@@ -78,7 +78,7 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
   return (
     <Layout>
       <div className="w-full h-screen p-4 flex-col">
-        <ScriptModal closeScriptModal={closeScriptModal} scriptArray={scriptArray}/>
+        {onScript && ( <ScriptModal scriptArray={scriptArray} closeScriptModal={closeScriptModal}/> )}
         <div className="text-3xl">사진 공유</div>
         <div className="flex h-[calc(100%-5rem)]">
           <div className="w-1/2 flex my-auto max-h-[calc(100%-5rem)] overflow-scroll scrollbar-hide">

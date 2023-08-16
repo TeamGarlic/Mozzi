@@ -153,7 +153,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
       </div>
       <div className={`flex ${recordingMozzi ? "invisible":"" }`}>
         <div className="w-full h-screen p-4 flex-col flex content-center justify-center items-center text-center">
-          <ScriptModal scriptArray={scriptArray} closeScriptModal={closeScriptModal}/>
+          {onScript && ( <ScriptModal scriptArray={scriptArray} closeScriptModal={closeScriptModal}/> )}
           <ClipLog user={user} setAlertModal={setAlertModal}/>
         </div>
         <div className="float-right min-w-[calc(32rem)] w-[calc(32rem)] h-screen bg-white flex-col rounded-s-xl p-4 justify-center items-center text-center overflow-y-scroll scrollbar-hide">
