@@ -15,7 +15,7 @@ function DownloadDropDown({src, types, download}) {
         </div>
         {dropdown?(<ChevronUpIcon className="h-full"/>):(<ChevronDownIcon className="h-full"/>)}
       </div>
-      <div className="relative w-full">
+      <div className="relative w-full z-40">
         <div className="absolute flex-col border-t border-orange-500 rounded-2xl w-full">
         {dropdown&&types.map(item=>(
           <button key={`${item.format}`} className="w-full top-0 h-10  bg-orange-50 border-x border-b border-b-orange-300 border-x-orange-500"
