@@ -48,7 +48,7 @@ function Detail() {
     }
 
     const deleteMozzi = async(e)=>{
-        const id = e.target.value;
+        const id = e.target.dataset.value;
         let res = await deleteClip(id);
         if(res.status ===200){
             alert("삭제 완료했습니다.");
@@ -132,7 +132,7 @@ function Detail() {
                                     className="float-right mr-2 mb-auto mt-1 rounded-e-xl text-white"
                                     value={mozzi.id}
                                     onClick={deleteMozzi}>
-                                    <img src={`${delete_icon}`} alt="" className="w-5 h-5" />
+                                    <img src={`${delete_icon}`} alt="" className="w-5 h-5" data-value={mozzi.id}/>
                                 </button>
                                 }
                                 { user && mozzi.user.id ===user.id &&
@@ -143,7 +143,7 @@ function Detail() {
                                     <img src={`${download_icon}`} alt="" className="w-6 h-5" data-value={`https://api.mozzi.lol/files/object/${mozzi.mozzirollInfo.objectName}`}/>
                                 </button>
                                 }
-                                <button className="flex overflow-hidden mx-1" onClick={()=>giveLike(mozzi.id)}>
+                                <button className="flex mx-1" onClick={()=>giveLike(mozzi.id)}>
                                     <img src={`${liked?full:empty}`} alt="" className="w-5 h-5 mt-1" />
                                     <div className="ml-1 mr-2 text-red-500 text-lg">{likes}</div>
                                 </button>
