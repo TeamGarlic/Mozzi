@@ -150,11 +150,11 @@ function UserList({user, position, sendPosition, setPosition, subscribers, publi
       <div className="text-2xl">
               사용자 목록
       </div>
-        <div className="text-sm text-slate-600">
+        <div className="text-sm text-slate-600 whitespace-nowrap">
           위에 있는 유저일수록 앞쪽에 그려집니다
         </div>
 
-        <div className="text-sm text-slate-600">
+        <div className="text-sm text-slate-600 whitespace-nowrap">
           (방장이 드래그해 순서를 조절합니다)
         </div>
       {userList.map((item, idx) => (

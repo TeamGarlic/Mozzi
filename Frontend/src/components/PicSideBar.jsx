@@ -10,7 +10,7 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
   const [menu, setMenu] = useState(0);
   return (
       <>
-        <div className={`fixed z-30 flex-col gap-3 h-fit top-5 ${menu === 0 ? "right-0" : "right-[calc(16rem)]"}`}>
+        <div className={`fixed z-30 flex-col gap-3 h-fit top-5 ${menu === 0 ? "right-0" : "right-[calc(18rem)]"}`}>
             <div
                 className={`w-14 bg-white pl-1 py-2 mb-0.5 border-l border-y border-blue-300 rounded-l-2xl ${menu === 1?"":"border-r"}`}
                 onClick={() =>  setMenu(menu===1?0:1)} >
@@ -29,7 +29,7 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
     <div className="fixed z-10 top-0 right-0 flex">
         <Card
           id="sideMenu"
-          className={`h-screen w-[calc(16rem)] shadow-xl shadow-blue-gray-900/5 p-4 overflow-y-scroll bg-white scrollbar-hide rounded-e-none ${
+          className={`h-screen w-[calc(18rem)] shadow-xl shadow-blue-gray-900/5 p-4 overflow-y-scroll bg-white scrollbar-hide rounded-e-none ${
             menu === 0 ? "hidden" : ""
           }`}
         >
@@ -49,7 +49,7 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
                     <div className="text-2xl">
                         배경화면 바꾸기
                     </div>
-                    <div className="text-sm text-slate-600">
+                    <div className="text-sm text-slate-600 whitespace-nowrap">
                         방장이 배경화면을 바꿀 수 있습니다
                     </div>
               {bgList.map((bg) => (
