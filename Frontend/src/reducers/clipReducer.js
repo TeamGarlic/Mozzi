@@ -8,7 +8,7 @@ const clipState = {
     src: "",
     },
   clipList: {
-    n: 10,
+    n: 0,
   },
   drag: {
     start: "",
@@ -99,7 +99,7 @@ const clipReducer = (state = clipState, action) => {
     case AddClip: {
       return {
         ...state,
-        clipList: {...state.clipList, [action.payload.idx]: action.payload.src}
+        clipList: {...state.clipList, [action.payload.idx]: action.payload.src, n:state.clipList.n+1}
       }
     }
     case Frame2Clip: {

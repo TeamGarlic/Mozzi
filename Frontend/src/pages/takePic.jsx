@@ -240,7 +240,7 @@ function TakePic({
                             })}
                         </div>
                     )}
-                    <div className="flex justify-center items-center px-5 rounded-3xl bg-red-300 leading-10 border border-red-500" onClick={take}>
+                    <div className="flex justify-center items-center px-5 rounded-3xl bg-red-300 leading-10 border border-red-500 whitespace-nowrap " onClick={take}>
                         <CameraIcon className="w-8 h-8 pr-2"/>
                         {timerVisible ? <span>{isTaking?'촬영중':(count+'초 후 촬영 시작')}</span> : <span>촬영</span>}
                     </div>
