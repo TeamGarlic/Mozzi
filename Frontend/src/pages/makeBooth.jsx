@@ -6,11 +6,19 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setFrameAction } from "@/modules/clipAction.js";
 import { checkHost } from "@/utils/DecoratorUtil.js";
+import ScriptModal from "@/components/ScriptModal.jsx";
 
 function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, user, setAlertModal }) {
   const [visibility, setVisibility] = useState(true);
   const [toggleVoice, setToggleVoice] = useState(true);
   const pickedFrame = useSelector((state) => state.clipReducer.frame);
+  const [onScript, setOnScript] = useState(true);
+  const [scriptArray] = useState([
+    "왼쪽 상단의 초대코드로 다른 사람을 초대할 수 있습니다",
+    "왼쪽 하단의 세팅아이콘으로 마이크와 개인 카메라 설정이 가능합니다",
+    "오른쪽 하단의 채팅아이콘으로 참여자들과 소통이 가능합니다",
+    "방장은 프레임을 선택하고 촬영 시작 버튼을 눌러주세요"
+  ]);
 
   const dispatch = useDispatch();
   const closeDialog = () => {
@@ -19,6 +27,12 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
   function setVoice() {
     setToggleVoice(!toggleVoice);
   }
+
+  function closeScriptModal() {
+    setOnScript(false);
+  }
+
+
   function copyCode() {
     navigator.clipboard.writeText(shareCode).then(() => {
       alert("복사되었습니다.");
@@ -58,6 +72,11 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
       <Layout>
         <div className="flex">
           <div className="w-full h-screen p-4 flex-col">
+            { onScript && (
+              <div className="justify-center">
+                <ScriptModal scriptArray={scriptArray} closeScriptModal={closeScriptModal}/>
+              </div>
+            )}
             <div>
               <div className="text-2xl flex text-center" onClick={copyCode}>
                 <span className="text mx-1">초대 코드 : </span>

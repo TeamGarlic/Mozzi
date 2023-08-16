@@ -55,11 +55,11 @@ function MyPage() {
                             <div className="text-4xl">{user.userNickname}</div>
                         </div>
                         <div className="py-5">
-                            <h1>내 클립</h1>
+                            <div className=" text-2xl py-5">내 클립</div>
                             <div className="flex flex-wrap gap-5 justify-center items-center text-center">
                                 {myMozziRollData.userMozzirollItems && myMozziRollData.userMozzirollItems.map((item, idx) => {
                                     return (
-                                        <MozziRollMenu key={item.createdAt} item={item} idx={idx} deleteFunc={deleteMozziRolls} myRef={itemRefs[item.mozzirollInfo.id]}/>
+                                        <MozziRollMenu key={item.createdAt+idx.toString()} item={item} idx={idx} deleteFunc={deleteMozziRolls} myRef={itemRefs[item.mozzirollInfo.id]} user={user}/>
                                         )
                                     }
                                 )}
@@ -73,10 +73,10 @@ function MyPage() {
                                 }
                         </div>
                         <hr />
-                        <div className="py-5">
+                        {/* <div className="py-5">
                             <h1>내 즐겨찾기 목록</h1>
                         </div>
-                        <hr />
+                        <hr /> */}
                         <button
                             onClick={goModify}
                             className="p-4 float-right leading-3 rounded-2xl mt-10 bg-yellow-300"

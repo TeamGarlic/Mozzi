@@ -6,10 +6,21 @@ import mozziRollApi from "@/api/mozziRollApi.js";
 import useUser from "@/hooks/useUser.js";
 import TextInput from "@/components/TextInput.jsx";
 import useInput from "@/hooks/useInput.js";
+import {useState} from "react";
+import ScriptModal from "@/components/ScriptModal.jsx";
 
 function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
   const user = useUser();
-  const mozziTitle = useInput()
+  const mozziTitle = useInput();
+  const [onScript, setOnScript] = useState(true);
+  const [scriptArray] = useState([
+    "mp4 다운받기, gif 다운받기를 통해 원하는 형식으로 다운로드할 수 있습니다",
+    "방장을 제외한 로그인한 유저는 입력창에 이름을 설정하여 내 모찌롤에 등록할 수 있습니다"
+  ])
+
+  function closeScriptModal() {
+    setOnScript(false);
+  }
 
   const goHome = () => {
     window.location.href = "/";
@@ -67,6 +78,7 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
   return (
     <Layout>
       <div className="w-full h-screen p-4 flex-col">
+        <ScriptModal closeScriptModal={closeScriptModal} scriptArray={scriptArray}/>
         <div className="text-3xl">사진 공유</div>
         <div className="flex h-[calc(100%-5rem)]">
           <div className="w-1/2 flex my-auto max-h-[calc(100%-5rem)] overflow-scroll scrollbar-hide">

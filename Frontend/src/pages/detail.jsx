@@ -12,6 +12,7 @@ function Detail() {
     const [mozzi, setMozzi] = useState();
     const [liked, setLiked] = useState(false);
     const [likes, setLikes] = useState();
+    const [shared, setShared] = useState(false);
     const navigate = useNavigate();
 
     useEffect(()=>{
@@ -25,6 +26,7 @@ function Detail() {
         setMozzi(res.data.data);
         setLiked(res.data.data.liked);
         setLikes(res.data.data.likeCount);
+        setShared(res.data.data.posted);
     }
 
     const download=(e)=>{
@@ -66,12 +68,24 @@ function Detail() {
         }
     }
 
+    const share =async(id)=>{
+        console.log(mozzi);
+        if(!user) return;
+        console.log(user);
+        if(mozzi.user.userId !== user.userId) return;
+        let res = await mozziRollApi.share(id);
+        console.log(res);
+        if(res.status ===200){
+            setShared(res.data.data.post)
+        }
+    }
+
     return (
         <Layout>
            <>
                <NavBar user={user} />
-               <div className="flex-col mt-28 px-20 py-3">
-                   <div className="text-3xl text-gray-600 mb-10">클립 보기</div>
+               <div className="flex-col mt-28 px-20 py-5 gap-3">
+                   <div className="text-3xl text-gray-600">클립 보기</div>
                    {mozzi && <div className=" overflow-scroll scrollbar-hide my-4">
                     <div className="flex-col max-w-[calc(75rem)] mx-auto">
                         <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "max-w-screen-sm" : "max-h-96 max-w-screen-md"} mx-auto`}>
@@ -99,10 +113,12 @@ function Detail() {
                                     <img src="/src/assets/img/mozzi-icon.png" alt="" className="rounded-full w-8 h-8 p-0.5 object-cover bg-[#fce7f3]" />
                                     <span className="ml-2 my-auto">{mozzi.user.nickname}</span>
                                 </div>
-                                <div className={`${mozzi.posted ? "text-blue-500" : "text-red-500"} flex-col mb-auto mx-1`}>
-                                    <img src={`/src/assets/img/${mozzi.posted?"post":"unpost"}.png`} alt="" className="w-auto h-auto mx-auto" />
-                                    <div className="whitespace-nowrap text-xs">{`${mozzi.posted ? "공유O":"공유"}`}</div>
-                                </div>
+                                {user && mozzi.user.userId === user.userId && 
+                                    <button className={`${shared ? "text-blue-500" : "text-red-500"} flex-col mb-auto mx-1`} onClick={()=>{share(mozzi.id)}}>
+                                        <img src={`/src/assets/img/${shared?"post":"unpost"}.png`} alt="" className="w-auto h-auto mx-auto" />
+                                        <div className="whitespace-nowrap text-xs">{`${shared ? "공유중":"공유X"}`}</div>
+                                    </button>
+                                }
                                 { user && mozzi.user.id ===user.id &&
                                 <button
                                     className="float-right ml-1 mr-2 mb-auto mt-1 rounded-e-xl text-white"

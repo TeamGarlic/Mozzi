@@ -33,7 +33,11 @@ function Chat({ sendMessage, chatLists, user, publisher }) {
   useEffect(() => {
     // console.log(chattingLog.current.scrollTop, chattingLog.current.scrollHeight );
     const lastMsg = chatLists[chatLists.length-1];
+    if(!chattingLog) return;
     if(lastMsg){
+      if(!chattingLog.current) return;
+      // if(!chattingLog.current.scrollHeight) return;
+
       lastMsg.connectionId === publisher.stream.connection.connectionId ?
           chattingLog.current.scrollTop = chattingLog.current.scrollHeight
           :
@@ -55,12 +59,25 @@ function Chat({ sendMessage, chatLists, user, publisher }) {
             {chatLists &&
               chatLists.map((item, idx) => {
                 return item.connectionId === publisher.stream.connection.connectionId ? (
+                  (item.connectionId === item.from ?
                   <div key={`chat : ${idx}`} id={`chat : ${idx}`}>
-                    <div className="text-right flex-col pb-2">
-                      <div className="text-sm text-gray-500">{item.from}</div>
-                      <div className="w-full break-all" >{item.message}</div>
+                    <div className=" text-center pb-2">
+                      <div className="w-full break-all text-xs text-blue-500" >{item.message}</div>
                     </div>
-                  </div>
+                 </div>
+                  :
+                  <div key={`chat : ${idx}`} id={`chat : ${idx}`}>
+                     <div className="text-right flex-col pb-2">
+                       <div className="text-sm text-gray-500">{item.from}</div>
+                       <div className="w-full break-all" >{item.message}</div>
+                     </div>
+                  </div>)
+                  // <div key={`chat : ${idx}`} id={`chat : ${idx}`}>
+                  //   <div className="text-right flex-col pb-2">
+                  //     <div className="text-sm text-gray-500">{item.from}</div>
+                  //     <div className="w-full break-all" >{item.message}</div>
+                  //   </div>
+                  // </div>
                 ) : (
                     <div key={`chat : ${idx}`} id={`chat : ${idx}`}>
                     <div className="text-left flex-col pb-2">

@@ -121,6 +121,13 @@ const mozziRollApi = {
         return res;
     },
 
+    share:async (id)=>{
+        let res = await PrivateMozziRollApi.post(`post`,{
+            "userMozzirollId": id
+        });
+        return res;
+    },
+
     link: async (id, title, shareCode) => {
         let res = await PrivateMozziRollApi.post("link",
           {
