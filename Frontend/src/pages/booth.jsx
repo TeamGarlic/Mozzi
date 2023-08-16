@@ -62,6 +62,8 @@ function Booth() {
     recordingMozzi,
     toggleMic,
     onMic,
+    sendBg,
+    tempBg,
   } = useSession(shareCode);
 
 
@@ -390,6 +392,8 @@ function Booth() {
               setAlertModal={setAlertModal}
               toggleMic={toggleMic}
               subVideoRefs={subVideoRefs.current}
+              sendBg={sendBg}
+              tempBg={tempBg}
             />
           )}
           {now === "MODIFING" && (
