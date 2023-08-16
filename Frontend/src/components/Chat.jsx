@@ -38,12 +38,7 @@ function Chat({ sendMessage, chatLists, user, publisher }) {
     if(!chattingLog) return;
     if(lastMsg){
       if(!chattingLog.current) return;
-      // if(!chattingLog.current.scrollHeight) return;
-
-      lastMsg.connectionId === publisher.stream.connection.connectionId ?
-          chattingLog.current.scrollTop = chattingLog.current.scrollHeight
-          :
-          console.log(lastMsg);
+      chattingLog.current.scrollTop = chattingLog.current.scrollHeight
     }
   }, [chatLists]);
 
