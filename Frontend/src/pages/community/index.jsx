@@ -20,7 +20,7 @@ function Community() {
             let res = await mozziRollApi.getCommunityMozziRolls(status,page, size);
             if(res.status === 200){
                 setMozziRollsData(res.data.data);
-                console.log(res.data.data)
+                // console.log(res.data.data)
             }
         }
 

@@ -19,7 +19,7 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
   const dispatch = useDispatch();
 
   function getImageFileObject(imageFile){
-    console.log(imageFile)
+    // console.log(imageFile)
     const fileToBase64 = file => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -39,7 +39,7 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
   async function uploadBg(file, fileName) {
     try {
       let res = await boothApi.uploadClip(fileName, shareCode, file);
-      console.log(res)
+      // console.log(res)
       if (res.status === 200) {
         sendBg(fileName, shareSecret)
       }
