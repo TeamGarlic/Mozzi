@@ -27,24 +27,30 @@ public class ExceptionHandlerFilter extends OncePerRequestFilter {
             // jwtAuthenticationFilter.doFilter(request, response, filterChain);
             filterChain.doFilter(request, response);
         } catch (BadRequestException exception) {
-            doErrorWrite(response, 400, exception.toResponse());
+            doErrorWrite(request, response, 400, exception.toResponse());
         } catch (NotFoundException exception) {
-            doErrorWrite(response, 404, exception.toResponse());
+            doErrorWrite(request, response, 404, exception.toResponse());
         } catch (UnAuthorizedException exception) {
-            doErrorWrite(response, 401, exception.toResponse());
+            doErrorWrite(request, response, 401, exception.toResponse());
         } catch (Exception exception) {
-            doErrorWrite(response, 500, ErrorResponse.builder()
+            doErrorWrite(request, response, 500, ErrorResponse.builder()
                 .code(MozziAPIErrorCode.InternalServerError)
                 .message("General Internal Server Error")
                 .build());
         }
     }
 
-    private void doErrorWrite(HttpServletResponse response, int code, ErrorResponse errorResponse) {
+    private void doErrorWrite(HttpServletRequest request, HttpServletResponse response, int code, ErrorResponse errorResponse) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             response.setStatus(code);
             response.setContentType(MediaType.APPLICATION_JSON);
+            response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+            response.setHeader("Access-Control-Allow-Credentials", "true");
+            response.setHeader("Access-Control-Allow-Methods","*");
+            response.setHeader("Access-Control-Max-Age", "3600");
+            response.setHeader("Access-Control-Allow-Headers",
+                "Origin, X-Requested-With, Content-Type, Accept, Key, Authorization");
             response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         } catch (Exception e) {
             response.setStatus(500);
