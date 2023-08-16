@@ -22,7 +22,7 @@ const clipReducer = (state = clipState, action) => {
   switch(action.type) {
     case updateFrame: {
       const frame = action.payload;
-      const frameNum = Array.from({length: frame['n']}, (v, i) => i+1);
+      const frameNum = Array.from({length: state.frame['n']}, (v, i) => i+1);
       const newFrame = {...state.frame}
       frameNum.forEach((n) => {
         newFrame[n] = {
