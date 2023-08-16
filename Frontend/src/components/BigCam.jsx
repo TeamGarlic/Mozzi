@@ -16,7 +16,7 @@ export default function BigCam({myId, updatePosition, setPosition, isTaking}) {
   const canvasContextRef = useRef();
 
   const updateSize = () =>{
-    console.log(myId);
+    // console.log(myId);
     const npos= {
       id : myId,
       x : (rndRef.current.draggable.state.x - canvasRef.current.offsetLeft)/(ratio*W),
@@ -62,7 +62,7 @@ export default function BigCam({myId, updatePosition, setPosition, isTaking}) {
           minHeight={H*ratio/15}
           ref={rndRef}
           bounds="window"
-          className={"w-full h-full border-dashed border-2 border-green-400"}
+          className={"w-full h-full border-dashed border-2 border-green-400 z-10"}
       >
       </Rnd>
     </div>

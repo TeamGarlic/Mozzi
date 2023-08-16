@@ -12,7 +12,7 @@ import Spinner from "@/components/Spinner.jsx";
 import { AppStore } from "@/store/AppStore.js";
 import useInterval from '@/hooks/useInterval.js';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
-const ffmpeg = createFFmpeg({log : true});
+const ffmpeg = createFFmpeg({log : false});
 import TextInput from "@/components/TextInput.jsx";
 import ScriptModal from "@/components/ScriptModal.jsx";
 function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, recordingMozzi, sendRecordingSignal }) {
@@ -26,11 +26,12 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
   const videoRef = useRef({});
   const playTogetherRef = useRef();
   const [onScript, setOnScript] = useState(true);
+  const [warnMsg, setWarnMsg] = useState("");
   const [scriptArray] = useState([
-    "방장은 좌측에 표시되는 촬영된 클립을 클릭하거나 드래그하여 프레임에 넣을 영상을 선택할 수 있습니다",
-    "동시 재생 버튼을 누르면 편집된 영상을 미리 확인할 수 있습니다",
-    "방장은 프레임에 사용될 클립을 모두 선택하고 제목을 입력하여야합니다",
-    "방장은 공유하기 버튼을 이용하여 촬영 결과 페이지로 이동할 수 있습니다"
+    "방장이 좌측의 클립 중 원하는 클립을 클릭하거나 드래그해서 프레임에 추가하세요",
+    "동시재생 버튼을 누르면 편집될 영상을 미리 확인할 수 있습니다",
+    "프레임에 사용될 클립을 모두 선택하면 방장이 제목을 입력하세요",
+    "방장이 공유하기 버튼을 누르면 편집이 시작되고, 10~30초 정도 이후 결과를 확인할 수 있어요"
   ])
   const bg = new Image();
   bg.src = frame.src;
@@ -106,9 +107,11 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
       drawVid();
       recordClip();
     } else if (mozziTitle.value === "") {
-      alert("제목을 입력해주세요");
+      setWarnMsg("클립 제목을 입력해주세요");
+      // alert("제목을 입력해주세요");
     } else {
-      alert("프레임을 전부 채워주세요");
+      setWarnMsg("프레임을 전부 채워주세요");
+      // alert("프레임을 전부 채워주세요");
     }
   }
   makeClip = checkHost(makeClip, user.isHost, setAlertModal);
@@ -172,6 +175,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
                 공유하기
               </button>
             </div>
+            <div className="text-rose-600">{warnMsg}</div>
             <div className="bg-amber-50 border border-amber-500 my-3 py-1 rounded-2xl">
             <div className="m-2 px-4 ">
               <TextInput type="text" placeholder="제목을 입력해주세요" className="border border-amber-500" {...mozziTitle}/>

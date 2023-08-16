@@ -57,6 +57,7 @@ function useSession(shareCode) {
 
     try {
       const OV = new OpenVidu();
+      OV.enableProdMode();
       const session = OV.initSession();
       setSession(session);
       // Todo: 마지막에 콘솔로그 없애는 모드 주석지우기
@@ -100,7 +101,7 @@ function useSession(shareCode) {
       session.on("signal:chat", async (event) => {
         // console.log(event);
         let data = await JSON.parse(event.data);
-        console.log(data);
+        // console.log(data);
         setChatLists((prev) => {
           return [...prev, data];
         });
@@ -109,7 +110,7 @@ function useSession(shareCode) {
       session.on("signal:userInSignal", async (event) => {
         // console.log(event);
         let data = await JSON.parse(event.data);
-        console.log(data);
+        // console.log(data);
         if(data.connectionId !== publisher.stream.connection.connectionId) return;
         setChatLists((prev) => {
           return [...prev, data];
@@ -119,7 +120,7 @@ function useSession(shareCode) {
       session.on("signal:userOutSignal", async (event) => {
         // console.log(event);
         let data = await JSON.parse(event.data);
-        console.log(data);
+        // console.log(data);
         if(data.connectionId !== publisher.stream.connection.connectionId) return;
         setChatLists((prev) => {
           return [...prev, data];
@@ -214,7 +215,7 @@ function useSession(shareCode) {
             dispatch(AddClipAction({idx: data.idx, src: res.data}))
           }
         } catch (e) {
-          console.log(e);
+          // console.log(e);
         }
       })
 

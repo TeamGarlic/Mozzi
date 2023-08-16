@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid/index.js';
 
-function DownloadDropDown({src, types, download}) {
+function DownloadableVideo({src, types, download}) {
   const [dropdown, setDropdown] = useState(false);
   return (
     <div>
@@ -43,9 +43,9 @@ function DownloadDropDown({src, types, download}) {
   )
 }
 
-export default DownloadDropDown;
+export default DownloadableVideo;
 
-DownloadDropDown.propTypes = {
+DownloadableVideo.propTypes = {
   src : PropTypes.string,
   types : PropTypes.array,
   download : PropTypes.func,
