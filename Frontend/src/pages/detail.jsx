@@ -4,6 +4,10 @@ import {useNavigate, useParams} from "react-router-dom";
 import NavBar from "@/components/NavBar.jsx";
 import {useEffect, useState} from "react";
 import mozziRollApi from "@/api/mozziRollApi.js";
+import full from '@/assets/img/heart-full.png'
+import empty from '@/assets/img/heart-empty.png'
+import img_post from '@/assets/img/post.png'
+import img_unpost from '@/assets/img/unpost.png'
 
 function Detail() {
     const {user} = useUser();
@@ -115,7 +119,7 @@ function Detail() {
                                 </div>
                                 { user && mozzi.user.userId === user.userId && 
                                     <button className={`${shared ? "text-blue-500" : "text-red-500"} flex-col mb-auto mx-2`} onClick={()=>{share(mozzi.id)}}>
-                                        <img src={`/src/assets/img/${shared?"post":"unpost"}.png`} alt="" className="w-auto h-auto mx-auto" />
+                                        <img  src={`${shared?img_post:img_unpost}`} alt="" className="w-auto h-auto mx-auto" />
                                         <div className="whitespace-nowrap text-xs">{`${shared ? "공유중":"공유X"}`}</div>
                                     </button>
                                 }
@@ -136,7 +140,7 @@ function Detail() {
                                 </button>
                                 }
                                 <button className="flex overflow-hidden mx-1" onClick={()=>giveLike(mozzi.id)}>
-                                    <img src={`/src/assets/img/heart-${liked?"full":"empty"}.png`} alt="" className="w-5 h-5 mt-1" />
+                                    <img src={`${liked?full:empty}`} alt="" className="w-5 h-5 mt-1" />
                                     <div className="ml-1 mr-2 text-red-500 text-lg">{likes}</div>
                                 </button>
                             </div>

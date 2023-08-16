@@ -2,6 +2,8 @@ import PropTypes from "prop-types";
 import {useNavigate} from "react-router-dom";
 import full from '@/assets/img/heart-full.png'
 import empty from '@/assets/img/heart-empty.png'
+import img_post from '@/assets/img/post.png'
+import img_unpost from '@/assets/img/unpost.png'
 
 function MozziRollMenu({item, idx, deleteFunc, myRef, user}){
     const navigate = useNavigate();
@@ -38,9 +40,13 @@ function MozziRollMenu({item, idx, deleteFunc, myRef, user}){
             <div className="overflow-hidden px-1 py-2">
                 <div className="float-left">{item.title}</div>
                 <div className={`float-right flex`}>
-                {user && (user.userId === item.user.userId) && <span className="text-sm text-blue-600 my-auto mx-3">{item.posted ? "공유됨":""}</span>}
+                {user && (user.userId === item.user.userId) && 
+                    <button className={`${item.posted ? "text-blue-500" : "text-red-500"} flex-col my-auto mx-2`} onClick={()=>{share(mozzi.id)}}>
+                        <img src={`${item.posted?img_post:img_unpost}`} alt="" className="w-auto h-auto mx-auto" />
+                    </button>
+                }
                 <img src={`${item.liked? full: empty}`} alt="" className="w-5 h-5 my-auto" />
-                <span className="ml-1">{item.likeCount}</span>
+                <span className="ml-1 my-auto">{item.likeCount}</span>
                 </div>
             </div>
         </div>
