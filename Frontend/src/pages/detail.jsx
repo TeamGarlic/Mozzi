@@ -12,6 +12,7 @@ function Detail() {
     const [mozzi, setMozzi] = useState();
     const [liked, setLiked] = useState(false);
     const [likes, setLikes] = useState();
+    const [shared, setShared] = useState(false);
     const navigate = useNavigate();
 
     useEffect(()=>{
@@ -25,6 +26,7 @@ function Detail() {
         setMozzi(res.data.data);
         setLiked(res.data.data.liked);
         setLikes(res.data.data.likeCount);
+        setShared(res.data.data.posted);
     }
 
     const download=(e)=>{
@@ -66,11 +68,23 @@ function Detail() {
         }
     }
 
+    const share =async(id)=>{
+        console.log(mozzi);
+        if(!user) return;
+        console.log(user);
+        if(mozzi.user.userId !== user.userId) return;
+        let res = await mozziRollApi.share(id);
+        console.log(res);
+        if(res.status ===200){
+            setShared(res.data.data.post)
+        }
+    }
+
     return (
         <Layout>
            <>
                <NavBar user={user} />
-               <div className="flex-col mt-28 px-20 py-5">
+               <div className="flex-col mt-28 px-20 py-5 gap-3">
                    <div className="text-3xl text-gray-600">클립 보기</div>
                    {mozzi && <div className=" overflow-scroll scrollbar-hide my-4">
                    <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "flex-col max-w-[calc(75rem)] mx-auto":"flex min-w-[calc(75rem)]"}`}>
@@ -94,15 +108,21 @@ function Detail() {
                                        <span className="text-gray-600 float-left">
                                            {mozzi.user.nickname}
                                        </span>
+                                       {/* {user && mozzi.user.userId === user.userId && 
+                                       <span className="mx-3 p-1 text-xs text-slate-600 bg-blue-400 rounded-3xl float-left">
+                                            내 글
+                                        </span>} */}
                                        <span className="text-gray-600 float-right">
                                            {mozzi.mozzirollInfo.createdAt.slice(0,10)}
                                        </span>
                                     </div>
                                <hr className={"my-5"}/>
-                                    <div className={`${mozzi.posted ? "text-blue-500":"text-red-500"} text-sm`}>
-                                       {`${mozzi.posted ? "공유됨":"공유되지 않음"}`}
-                                    </div>
-                                    <div className={"w-full bottom-0"}>
+                                    <span className={`${shared ? "text-blue-500":"text-red-500"} float-left`}>{`${shared ? "공유됨":"공유되지 않음"}`}</span>
+                                    {user && mozzi.user.userId === user.userId && <button className={` text-slate-500 p-1 rounded-xl text-sm hover:cursor-pointer hover:shadow-innerpink`} onClick={()=>{share(mozzi.id)}}>
+                                       {`${shared ? "해제":"공유"}`}
+                                    </button>
+                                    }
+                                    <div className={"w-full bottom-0 overflow-hidden"}>
                                         <div
                                             className={"text-red-500 float-left rounded-xl border-purple-200 p-1 hover:shadow-innerpink hover:cursor-pointer"}
                                             onClick={()=>giveLike(mozzi.id)}>

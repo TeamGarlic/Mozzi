@@ -82,7 +82,7 @@ function Community() {
                             <div className="flex flex-wrap gap-5 justify-center items-center text-center">
                                 {mozziRollsData.userMozzirollItems && mozziRollsData.userMozzirollItems.map((item, idx) => {
                                         return (
-                                            <MozziRollMenu key={item.createdAt} item={item} idx={idx} myRef={itemRefs[item.mozzirollInfo.id]}/>
+                                            <MozziRollMenu key={item.createdAt} item={item} idx={idx} myRef={itemRefs[item.mozzirollInfo.id]} user={user}/>
                                         )
                                     }
                                 )}
