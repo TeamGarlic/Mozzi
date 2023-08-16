@@ -22,6 +22,7 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
     "mp4 다운받기, gif 다운받기를 통해 원하는 형식으로 다운로드할 수 있습니다",
     "방장을 제외한 로그인한 유저는 입력창에 이름을 설정하여 내 모찌롤에 등록할 수 있습니다"
   ])
+  const [linked, setLinked] = useState(isHost>0)
 
   function closeScriptModal() {
     setOnScript(false);
@@ -68,6 +69,7 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
     try {
       let res = await mozziRollApi.link(mozzi, mozziTitle.value, shareCode);
       if (res.status === 200) {
+        setLinked(true)
       }
     } catch (e) {
       console.log(e)
@@ -121,21 +123,31 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
               </div>
             </div>
             <div className="flex justify-center text-center items-center">
-              <div
-                className="w-1/4 h-10 rounded-l-2xl bg-blue-100 border border-blue-500 ml-2 justify-center text-center items-center">
-                <input
-                  type="text"
-                  placeholder="제목을 입력하세요"
-                  className={`w-[calc(100%-0.5rem)] h-8 rounded-l-2xl my-1 ml-1 px-1`}
-                  {...mozziTitle}
-                />
-              </div>
-              <button
-                className="w-1/4 h-10 rounded-r-2xl bg-blue-100 border border-blue-500 mr-2"
-                onClick={linkMozzi}
-              >
-                마이페이지에 저장
-              </button>
+              {!linked ? (
+                  <>
+                    <div
+                      className="w-1/4 h-10 rounded-l-2xl bg-blue-100 border border-blue-500 ml-2 justify-center text-center items-center">
+                      <input
+                        type="text"
+                        placeholder="제목을 입력하세요"
+                        className={`w-[calc(100%-0.5rem)] h-8 rounded-l-2xl my-1 ml-1 px-1`}
+                        {...mozziTitle}
+                      />
+                    </div>
+                    <button
+                      className="w-1/4 h-10 rounded-r-2xl bg-blue-100 border border-blue-500 mr-2"
+                      onClick={linkMozzi}
+                    >
+                      마이페이지에 저장
+                    </button>
+                  </>
+                ):(
+                  <button
+                    className="w-1/4 h-10 rounded-3xl bg-green-100 border border-green-500 m-2"
+                  >
+                    저장됨
+                  </button>
+                )}
               <button
                 className="w-1/4 h-10 rounded-3xl bg-red-100 border border-red-500 m-2"
                 onClick={goHome}
