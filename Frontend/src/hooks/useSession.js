@@ -57,6 +57,7 @@ function useSession(shareCode) {
 
     try {
       const OV = new OpenVidu();
+      OV.enableProdMode();
       const session = OV.initSession();
       setSession(session);
       // Todo: 마지막에 콘솔로그 없애는 모드 주석지우기
