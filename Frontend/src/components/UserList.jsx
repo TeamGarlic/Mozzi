@@ -132,16 +132,6 @@ function UserList({user, position, sendPosition, setPosition, subscribers, publi
     sendPosition(_position);
   }
 
-  function setTool(idx, tool){
-    const _userList = [...userList];
-    if (tool === "onMic"){
-      _userList[idx].onMic = 1-userList[idx].onMic;
-    } else if (tool === "onCam"){
-      _userList[idx].onCam = 1-userList[idx].onCam;
-    }
-    setUserList(_userList);
-  }
-
   onDragOver = checkHost(onDragOver, user.isHost, setAlertModal)
   onDragEnter = checkHost(onDragEnter, user.isHost, setAlertModal)
   onDragStart = checkHost(onDragStart, user.isHost, setAlertModal)
@@ -175,7 +165,6 @@ function UserList({user, position, sendPosition, setPosition, subscribers, publi
              className="mt-1 mb-1 h-fit w-full px-2"
              draggable>
           <UserCard
-            setTool={setTool}
             onMic={item.onMic}
             userName={item.name}
             isHost={item.isHost}

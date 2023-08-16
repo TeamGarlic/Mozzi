@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-function UserCard({ userName, setTool, onMic, isHost, isPublisher, toggleMic, setPosition, sendPosition, position }) {
+function UserCard({ userName, onMic, isHost, isPublisher, toggleMic, setPosition, sendPosition, position }) {
   function setMic(){
     if (isPublisher){
       const _position = position;
@@ -60,7 +60,6 @@ UserCard.defaultProps = {
 
 UserCard.propTypes = {
   userName: PropTypes.string,
-  setTool: PropTypes.func,
   onMic: PropTypes.bool,
   isHost: PropTypes.number,
   isPublisher: PropTypes.bool,
