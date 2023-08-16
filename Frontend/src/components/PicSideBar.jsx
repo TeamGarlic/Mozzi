@@ -30,14 +30,10 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
       });
     };
     fileToBase64(imageFile.file).then(res => {
-      uploadBg(res, `${shareCode}${idx}`)
+      const date = new Date().toLocaleTimeString();
+      uploadBg(res, `${shareCode}${idx}${date}`)
       setIdx((prev) => prev+1)
-      // const newImg = new Image();
-      // newImg.src = res;
-      // newImg.crossOrigin = "anonymous";
-      // setFile(newImg)
     });
-    // setFile(imageFile)
   }
 
   async function uploadBg(file, fileName) {
@@ -52,16 +48,12 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
     }
   }
 
-  function imageDelete(imageFile) {
-    console.log(imageFile)
-    setFile(null);
+  function imageDelete() {
   }
 
   function setBg(){
     if (!tempBg) return;
     changeBg("")
-    // dispatch(changeBgAction({img: tempBg}));
-    console.log(tempBg)
   }
   setBg = checkHost(setBg, user.isHost, setAlertModal)
   return (

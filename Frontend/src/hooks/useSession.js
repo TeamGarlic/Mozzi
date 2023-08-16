@@ -233,10 +233,8 @@ function useSession(shareCode) {
         try {
           let res = await boothApi.downloadClip(data.fileName, data.shareSecret, shareCode);
           if (res.status === 200) {
-            const newbg = new Image();
-            newbg.src = res.data;
-            newbg.crossOrigin = "anonymous";
-            setTempBg(newbg);
+            tempBg.src = res.data;
+            tempBg.crossOrigin = "anonymous";
           }
         } catch (e) {
           console.log(e);
