@@ -14,6 +14,7 @@ import useInterval from '@/hooks/useInterval.js';
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
 const ffmpeg = createFFmpeg({log : true});
 import TextInput from "@/components/TextInput.jsx";
+import ScriptModal from "@/components/ScriptModal.jsx";
 function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, recordingMozzi, sendRecordingSignal }) {
   const [recording, setRecording] = useState(false);
   const mozziTitle = useInput()
@@ -24,12 +25,23 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
   const completeClipContextRef = useRef();
   const videoRef = useRef({});
   const playTogetherRef = useRef();
+  const [onScript, setOnScript] = useState(true);
+  const [scriptArray] = useState([
+    "방장은 좌측에 표시되는 촬영된 클립을 클릭하거나 드래그하여 프레임에 넣을 영상을 선택할 수 있습니다",
+    "동시 재생 버튼을 누르면 편집된 영상을 미리 확인할 수 있습니다",
+    "방장은 프레임에 사용될 클립을 모두 선택하고 제목을 입력하여야합니다",
+    "방장은 공유하기 버튼을 이용하여 촬영 결과 페이지로 이동할 수 있습니다"
+  ])
   const bg = new Image();
   bg.src = frame.src;
   bg.crossOrigin = "anonymous";
 
   let mediaRecorder = null;
   const arrClipData = [];
+
+  function closeScriptModal() {
+    setOnScript(false);
+  }
   
   function recordClip() {
     sendRecordingSignal(true);
@@ -141,7 +153,8 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
       </div>
       <div className={`flex ${recordingMozzi ? "invisible":"" }`}>
         <div className="w-full h-screen p-4 flex-col flex content-center justify-center items-center text-center">
-        <ClipLog user={user} setAlertModal={setAlertModal}/>
+          <ScriptModal scriptArray={scriptArray} closeScriptModal={closeScriptModal}/>
+          <ClipLog user={user} setAlertModal={setAlertModal}/>
         </div>
         <div className="float-right min-w-[calc(32rem)] w-[calc(32rem)] h-screen bg-white flex-col rounded-s-xl p-4 justify-center items-center text-center overflow-y-scroll scrollbar-hide">
           <div className="mx-auto bottom-5 justify-center items-center text-center">
