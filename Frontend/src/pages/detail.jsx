@@ -31,7 +31,7 @@ function Detail() {
 
     const download=(e)=>{
         e.stopPropagation();
-        let encode = encodeURI(e.target.value);
+        let encode = encodeURI(e.target.dataset.value);
         let link = document.createElement("a");
         link.setAttribute("href", encode);
         document.body.appendChild(link);
@@ -90,7 +90,7 @@ function Detail() {
                     <div className="flex-col max-w-[calc(75rem)] mx-auto">
                         <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "max-w-screen-sm" : "max-h-96 max-w-screen-md"} mx-auto`}>
                            <video
-                               className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "":"max-h-96 max-w-screen-md"} mx-auto bg-[#fce7f3] bg-opacity-30`}
+                               className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "max-w-screen-sm":"max-h-96 max-w-screen-md"} mx-auto bg-[#fce7f3] bg-opacity-30`}
                                width={`${mozzi.mozzirollInfo.width}`}
                                height={`${mozzi.mozzirollInfo.height}`}
                                src={`https://api.mozzi.lol/files/object/${mozzi.mozzirollInfo.objectName}`}
@@ -113,59 +113,33 @@ function Detail() {
                                     <img src="/src/assets/img/mozzi-icon.png" alt="" className="rounded-full w-8 h-8 p-0.5 object-cover bg-[#fce7f3]" />
                                     <span className="ml-2 my-auto">{mozzi.user.nickname}</span>
                                 </div>
-                                {user && mozzi.user.userId === user.userId && 
-                                    <button className={`${shared ? "text-blue-500" : "text-red-500"} flex-col mb-auto mx-1`} onClick={()=>{share(mozzi.id)}}>
+                                { user && mozzi.user.userId === user.userId && 
+                                    <button className={`${shared ? "text-blue-500" : "text-red-500"} flex-col mb-auto mx-2`} onClick={()=>{share(mozzi.id)}}>
                                         <img src={`/src/assets/img/${shared?"post":"unpost"}.png`} alt="" className="w-auto h-auto mx-auto" />
                                         <div className="whitespace-nowrap text-xs">{`${shared ? "공유중":"공유X"}`}</div>
                                     </button>
                                 }
                                 { user && mozzi.user.id ===user.id &&
                                 <button
-                                    className="float-right ml-1 mr-2 mb-auto mt-1 rounded-e-xl text-white"
+                                    className="float-right mr-2 mb-auto mt-1 rounded-e-xl text-white"
                                     value={mozzi.id}
                                     onClick={deleteMozzi}>
                                     <img src="/src/assets/img/delete.png" alt="" className="w-5 h-5" />
                                 </button>
-                                // &&
-                                // <button
-                                //     value={`https://api.mozzi.lol/files/object/${mozzi.mozzirollInfo.objectName}`}
-                                //     className={`float-right bg-blue-500 p-1 text-white rounded-s-xl ${user && mozzi.user.id ===user.id ? "":"rounded-e-xl"}`}
-                                //     onClick={download}>
-                                //     다운로드
-                                // </button>
+                                }
+                                { user && mozzi.user.id ===user.id &&
+                                <button
+                                    value={`https://api.mozzi.lol/files/object/${mozzi.mozzirollInfo.objectName}`}
+                                    className="my-auto mt-1 mx-2"
+                                    onClick={download}>
+                                    <img src="/src/assets/img/download.png" alt="" className="w-6 h-5" data-value={`https://api.mozzi.lol/files/object/${mozzi.mozzirollInfo.objectName}`}/>
+                                </button>
                                 }
                                 <button className="flex overflow-hidden mx-1" onClick={()=>giveLike(mozzi.id)}>
                                     <img src={`/src/assets/img/heart-${liked?"full":"empty"}.png`} alt="" className="w-5 h-5 mt-1" />
                                     <div className="ml-1 mr-2 text-red-500 text-lg">{likes}</div>
                                 </button>
-                                {/* <div className={`${mozzi.mozzirollInfo.width > mozzi.mozzirollInfo.height ? "h-fit" : "min-h-[calc(30rem)]"} rounded-2xl bg-white p-5 border-4 border-red-200 overflow-hidden flex`}>
-                                    <div className={`${mozzi.posted ? "text-blue-500" : "text-red-500"} flex-col`}>
-                                        <img src={`/src/assets/img/${mozzi.posted?"post":"unpost"}.png`} alt="" className="w-auto h-auto mx-auto" />
-                                        <div className="whitespace-nowrap text-sm">{`${mozzi.posted ? "공유됨":"공유되지 않음"}`}</div>
-                                    </div>
-                                    <div className={"w-full bottom-0"}>
-                                        <div
-                                            className={"text-red-500 float-left rounded-xl border-purple-200 p-1 hover:shadow-innerpink hover:cursor-pointer"}
-                                            onClick={()=>giveLike(mozzi.id)}>
-                                            {liked ? "♥︎":"♡"}{likes}
-                                        </div>
-                                        { user && mozzi.user.id ===user.id &&
-                                        <button
-                                            className="float-right bg-red-500 p-1 rounded-e-xl text-white"
-                                            value={mozzi.id}
-                                            onClick={deleteMozzi}>
-                                            삭제하기
-                                        </button>
-                                        }
-                                        <button
-                                            value={`https://api.mozzi.lol/files/object/${mozzi.mozzirollInfo.objectName}`}
-                                            className={`float-right bg-blue-500 p-1 text-white rounded-s-xl ${user && mozzi.user.id ===user.id ? "":"rounded-e-xl"}`}
-                                            onClick={download}>
-                                            다운로드
-                                        </button>
-                                    </div>
-                            </div> */}
-                        </div>
+                            </div>
                         </div>
                    </div>
                    </div>
