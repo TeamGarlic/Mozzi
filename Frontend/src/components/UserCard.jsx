@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 
 
-function UserCard({ userName, onMic, isHost, isPublisher, toggleMic, setPosition, sendPosition, position, id, setMicSetting }) {
+function UserCard({ userName, onMic, isHost, isPublisher, toggleMic, setPosition, sendPosition, position, id, setMicSetting, subVideoRefs }) {
 
 
   function setMic(e){
@@ -15,6 +15,7 @@ function UserCard({ userName, onMic, isHost, isPublisher, toggleMic, setPosition
         visible: true,
         userName: userName,
         id: id,
+        volume: subVideoRefs[id].volume*100,
       }
       setMicSetting(target);
     }
@@ -83,4 +84,5 @@ UserCard.propTypes = {
   position: PropTypes.array,
   id: PropTypes.string,
   setMicSetting: PropTypes.func,
+  subVideoRefs: PropTypes.any,
 };
