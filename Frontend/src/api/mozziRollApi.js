@@ -71,7 +71,7 @@ const mozziRollApi = {
             {pageNum: page, pageSize: size}
         }
             );
-        console.log(res);
+        // console.log(res);
         return res;
     },
 
