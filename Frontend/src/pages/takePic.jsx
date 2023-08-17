@@ -37,6 +37,7 @@ function TakePic({
         subVideoRefs,
         sendBg,
         tempBg,
+        setVisibleCamSetting,
     }) {
     const timers = [3, 5, 10];
     const MAX_CLIPS = 10;
@@ -105,6 +106,7 @@ function TakePic({
             // 녹화 종료
             mediaRecorder.stop();
             if (taken == MAX_CLIPS) {
+                setVisibleCamSetting(false);
                 goNext();
             } else {
                 finishTaking();
@@ -168,7 +170,10 @@ function TakePic({
             return;
         }
         // TODO : 이게 진짜 필요할까...??
-        confirm("정말로 촬영을 종료하고 편집 페이지로 넘어가시겠습니까?")?goNext():"";
+        if(confirm("정말로 촬영을 종료하고 편집 페이지로 넘어가시겠습니까?")){
+            goNext();
+            setVisibleCamSetting(false);
+        }
     }
 
     take = checkHost(take, user.isHost, setAlertModal);
@@ -304,4 +309,5 @@ TakePic.propTypes = {
     subVideoRefs: PropTypes.any,
     sendBg: PropTypes.func,
     tempBg: PropTypes.any,
+    setVisibleCamSetting: PropTypes.bool,
 };
