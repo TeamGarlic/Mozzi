@@ -343,7 +343,7 @@ function Booth() {
       ): (
         <>
 
-          <CamSetting toggleMic={toggleMic} onMic={onMic}/>
+          <CamSetting toggleMic={toggleMic} onMic={onMic} position={position} setPosition={setPosition} sendPosition={sendPosition}/>
           <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} publisher={publisher} />
           {alertModal && (
             <HostAlertModal closeAlertModal={closeAlertModal}/>
