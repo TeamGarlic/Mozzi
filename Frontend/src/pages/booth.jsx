@@ -22,6 +22,7 @@ import { usePreventGoBack } from "@/hooks/usePreventGoBack.js";
 import CamSetting from "@/components/CamSetting.jsx";
 import Chat from "@/components/Chat.jsx";
 import baseURL from "@/api/BaseURL.js";
+import boothApi from '@/api/boothApi.js';
 
 
 function Booth() {
@@ -99,15 +100,18 @@ function Booth() {
   const subCanvasRefs = useRef({});
 
 
-  let startTake = () => {
+  let startTake = async () => {
     if (pickedFrame.id === 0){
       alert("먼저 프레임을 선택해주세요")
       return;
     }
     sendPosition(position);
     setFrame(pickedFrame);
-    gotoTakePic();
-    setShareSecret(location.state.shareSecret);
+    let res = await boothApi.closeBooth(shareCode);
+    if(res.status==200){
+      gotoTakePic();
+      setShareSecret(location.state.shareSecret);
+    }
   }
   startTake = checkHost(startTake, user ? user.isHost : undefined, setAlertModal);
 

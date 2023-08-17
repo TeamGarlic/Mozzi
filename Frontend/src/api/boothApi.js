@@ -93,6 +93,18 @@ const boothApi = {
     return res;
   },
 
+  closeBooth: async (shareCode) => {
+    const res = await PublicBoothApi.get(
+      `close?shareCode=${shareCode}`,
+      {
+        headers:{
+          Authorization:window.sessionStorage.getItem("accessToken"),
+        }
+      }
+    )
+    return res
+  },
+
   uploadClip: async (fileName, shareCode, file) => {
     const res = await ClipApi.post(
       "file",

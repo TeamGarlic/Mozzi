@@ -43,12 +43,20 @@ function Start() {
   async function gotoBooth() {
     try {
       let res = await boothApi.getSessionID(code.value.split(' ').join(''));
-      // console.log(res);
+      console.log(res);
       const shareCode = res.data.data.shareCode;
       const shareSecret = res.data.data.shareSecret
-      navigate(`/${shareCode}/booth`, { state: { isHost: 0, shareSecret: shareSecret } });
-    } catch {
-      alert("해당 코드로 생성된 부스가 없습니다.");
+      navigate(`/${shareCode}/booth`, { state: { isHost: 0, shareSecret: shareSecret , shareCode: shareCode} });
+    } catch(e) {
+      console.log(e);
+
+      if(e.response.data.code==18) {
+        alert("이미 촬영이 시작된 부스입니다.");
+      }else if(e.response.data.code==6) {
+        alert("해당 코드로 생성된 부스가 없습니다.");
+      }else{
+        alert("접속 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요");
+      }
     }
   }
 
