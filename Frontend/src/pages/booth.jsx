@@ -65,6 +65,7 @@ function Booth() {
     onMic,
     sendBg,
     tempBg,
+    visibleCamSetting,
   } = useSession(shareCode);
 
 
@@ -80,7 +81,6 @@ function Booth() {
   const [delay, setDelay] = useState(true);
   const [frameList, setFrameList] = useState([]);
   const [alertModal, setAlertModal] = useState(false);
-  const [visibleCamSetting, setVisibleCamSetting] = useState(true);
 
   // useSelector
   const mainCanvas = useSelector((state) => state.canvasReducer.mainCanvas);
@@ -390,7 +390,6 @@ function Booth() {
               subVideoRefs={subVideoRefs.current}
               sendBg={sendBg}
               tempBg={tempBg}
-              setVisibleCamSetting={setVisibleCamSetting}
             />
           )}
           {now === "MODIFING" && (

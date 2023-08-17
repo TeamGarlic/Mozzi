@@ -37,7 +37,6 @@ function TakePic({
         subVideoRefs,
         sendBg,
         tempBg,
-        setVisibleCamSetting,
     }) {
     const timers = [3, 5, 10];
     const MAX_CLIPS = 10;
@@ -172,7 +171,6 @@ function TakePic({
         // TODO : 이게 진짜 필요할까...??
         if(confirm("정말로 촬영을 종료하고 편집 페이지로 넘어가시겠습니까?")){
             goNext();
-            setVisibleCamSetting(false);
         }
     }
 

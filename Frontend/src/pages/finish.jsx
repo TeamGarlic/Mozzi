@@ -33,6 +33,12 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
 
 
   const goHome = () => {
+    if(!FFMpegStatus){
+      alert("아직 파일을 다운로드하는 중입니다");
+      return;
+    }
+    if(!confirm("연결을 종료하고 홈으로 돌아가시겠습니까?")) return;
+    if(isHost==1&&!confirm("방장이 연결을 종료하면 모든 플레이어의 연결이 끊어집니다. 정말 나가시겠습니까?")) return;
     window.location.href = "/";
   }
 
