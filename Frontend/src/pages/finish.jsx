@@ -46,7 +46,6 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
 
   const ffmpeg = createFFmpeg({log : false});
   const handleDownload = async (src, format, type, srcFormat) => {
-    dispatch(setFFMpegStatusAction(false));
     let recUrl = src;
     try {
       if (srcFormat != format) {
@@ -55,6 +54,7 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
           alert("이미 다른 파일을 다운로드 중입니다. 잠시 후에 다시 시도해주세요");
           return;
         }
+        dispatch(setFFMpegStatusAction(false));
         if (!ffmpeg.isLoaded()) await ffmpeg.load();
         // TODO : download 파일명 바꿔야됨
         ffmpeg.FS("writeFile", "download." + srcFormat, await fetchFile(src));
@@ -62,6 +62,7 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
         const recFile = ffmpeg.FS("readFile", "download." + format);
         const recBlob = new Blob([recFile.buffer], { type: type });
         recUrl = URL.createObjectURL(recBlob);
+        dispatch(setFFMpegStatusAction(true));
       }
       const a = document.createElement("a");
       a.href = recUrl;
@@ -72,7 +73,6 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
     }catch{
       alert("변환 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요")
     }
-    dispatch(setFFMpegStatusAction(true));
   }
 
 

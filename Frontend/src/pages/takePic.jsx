@@ -216,10 +216,10 @@ function TakePic({
                     {/* <div className="float-right mr-10 text-2xl">taken : {taken}/10</div> */}
                 </div>
                 <BigCam myId={myId} updatePosition={updatePosition} setPosition={setPosition} isTaking={isTaking}/>
-                <div className="flex justify-center items-center gap-20 fixed bottom-10 ms-[calc(25%)] w-1/2">
+                <div className="flex justify-center items-center gap-20 fixed bottom-10 ms-[calc(25%)] w-1/2 ">
                     {!timerVisible && (
                         <div className="flex rounded-3xl bg-yellow-100 leading-10 border border-yellow-500">
-                            <div className="mr-1 px-3 bg-yellow-300 flex flex-wrap content-center rounded-l-3xl">
+                            <div className="mr-1 px-3 bg-yellow-300 flex flex-wrap content-center rounded-l-3xl z-50">
                                 <ClockIcon className="w-8 h-8"/>
                             </div>
                             {timers.map((item) => {
@@ -247,12 +247,12 @@ function TakePic({
                             })}
                         </div>
                     )}
-                    <div className="flex justify-center items-center px-5 rounded-3xl bg-red-300 leading-10 border border-red-500 whitespace-nowrap " onClick={take}>
+                    <div className="flex justify-center items-center px-5 rounded-3xl bg-red-300 leading-10 border border-red-500 whitespace-nowrap z-50" onClick={take}>
                         <CameraIcon className="w-8 h-8 pr-2"/>
                         {timerVisible ? <span>{isTaking?'촬영중':(count+'초 후 촬영 시작')}</span> : <span>촬영</span>}
                     </div>
                     {!timerVisible&&
-                        <div className="flex rounded-3xl bg-orange-100 leading-10 border border-orange-500">
+                        <div className="flex rounded-3xl bg-orange-100 leading-10 border border-orange-500 z-50">
                         <span className="px-4 ">{taken}/{MAX_CLIPS}</span>
                         <button
                             className={`w-full leading-10  px-4  bg-orange-300 rounded-3xl whitespace-nowrap `}
