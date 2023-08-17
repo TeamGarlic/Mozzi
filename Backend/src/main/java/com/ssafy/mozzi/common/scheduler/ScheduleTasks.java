@@ -29,7 +29,6 @@ public class ScheduleTasks {
      * 매 10분마다 생성된지 1시간 된 booth 를 삭제해준다.
      * @see BoothService
      */
-    // TODO: 데이터 자체가 1시간 이후 자동으로 뽑힐 수 있도록 개발하는 것을 생각해보자
     @Scheduled(fixedRate = 1000 * 60 * 10) // 10분
     @Transactional(transactionManager = LocalDatasource.TRANSACTION_MANAGER)
     public void sessionGarbageCollector() throws Exception {

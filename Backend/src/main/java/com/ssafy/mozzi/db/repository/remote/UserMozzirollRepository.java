@@ -21,8 +21,7 @@ import com.ssafy.mozzi.db.entity.remote.UserMozziroll;
 @Repository
 public interface UserMozzirollRepository extends JpaRepository<UserMozziroll, Long> {
     Optional<UserMozziroll> findByMozzirollIdAndUserId(long mozzirollId, long userId);
-
-    // TODO: 쿼리 개선 생각
+    
     @Query("""
             select userMozziroll.id as id, 
             userMozziroll.title as title, 
