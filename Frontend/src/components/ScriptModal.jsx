@@ -37,7 +37,7 @@ function ScriptModal({scriptArray, closeScriptModal}) {
           className="w-[calc(50rem)] px-3 py-1 grid grid-cols-12 items-center align-middle content-center justify-center bg-orange-100 bg-opacity-90 border border-orange-500 text-orange-700 rounded-xl z-40"
       >
         <div className="pr-5 text font-bold whitespace-nowrap col-span-9">
-        tip : {nowScript}
+        ({`${idx+1}/${scriptArray.length}`})  tip : {nowScript}
       </div>
         <ChevronLeftIcon className={`w-8 h-8 z-50 col-span-1 `} onClick={beforeScript}/>
         <ChevronRightIcon className={`w-8 h-8 z-50 col-span-1 `} onClick={nextScript}/>

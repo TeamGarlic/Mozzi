@@ -189,7 +189,6 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
 
             <div className="w-full justify-center text-center items-center">
               <div className="w-4/5 mx-auto">
-                <DownloadDropDown src={`${baseURL}/files/mozziroll/${mozzi}`} download={handleDownload} types={frameTypes}></DownloadDropDown>
                 <DownloadableVideo src={`${mozzi?(baseURL+'/files/mozziroll/'+mozzi):""}`} download={handleDownload} types={frameTypes}></DownloadableVideo>
               </div>
             </div>
