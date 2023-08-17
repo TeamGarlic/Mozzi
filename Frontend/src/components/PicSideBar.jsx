@@ -103,11 +103,13 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
                     방장이 배경화면을 바꿀 수 있습니다
                 </div>
                 <div>
-                  <div onClick={setBg} className="flex-col shadow border select-none cursor-pointer bg-white dark:bg-gray-800 rounded-md flex flex-1 items-center p-2 my-2 w-full h-[9/16]">
+                  <div onClick={setBg} className="flex-col shadow border select-none cursor-pointer bg-white dark:bg-gray-800 rounded-md flex flex-1 items-center p-2 my-2 w-full max-h-52">
                     <ImageUploader
                       onFileAdded={(img) => getImageFileObject(img)}
                       onFileRemoved={(img) => imageDelete(img)}
+                      style={{height:"9.5rem", width:"15rem"}}
                     />
+                    <div className="text">사진 업로드</div>
                   </div>
 
                 </div>

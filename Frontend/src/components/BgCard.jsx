@@ -9,8 +9,8 @@ function BgCard({ bgName, bgSrc, user, changeBg, setAlertModal }) {
   setBg = checkHost(setBg, user.isHost, setAlertModal)
 
   return (
-    <div className="flex-col shadow border select-none cursor-pointer bg-white dark:bg-gray-800 rounded-md flex flex-1 items-center p-2 my-2 w-full h-[9/16]">
-      <img onClick={setBg} src={`${baseURL}/files/object/${bgSrc}`} alt={bgName} crossOrigin="anonymous"></img>
+    <div className="flex-col shadow border select-none cursor-pointer bg-white dark:bg-gray-800 rounded-md flex flex-1 items-center p-2 my-2 w-full max-h-52">
+      <img onClick={setBg} src={`${baseURL}/files/object/${bgSrc}`} alt={bgName} className="h-40" crossOrigin="anonymous"></img>
       <div className="text">{bgName}</div>
     </div>
   );

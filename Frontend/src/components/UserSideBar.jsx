@@ -22,7 +22,7 @@ export default function UserSideBar() {
                 <div className="stream-container col-md-6 col-xs-6 bg-slate-100 rounded-2xl border border-blue-200 my-1">
                   <UserVideoComponent canvas={pubCanvas.canvasRef} />
 
-                  <div className="text-xl">
+                  <div className="text-xl h-7">
                     {pubCanvas.nickname}
                   </div>
                 </div>
@@ -31,7 +31,7 @@ export default function UserSideBar() {
                 Object.keys(subCanvases).map(key=>(
                     <div key={key} className="stream-container col-md-6 col-xs-6 bg-slate-100 rounded-2xl border border-blue-200 my-1">
                       <UserVideoComponent canvas={subCanvases[key].ref} />
-                      <div className="text-xl">
+                      <div className="text-xl h-7">
                       {subCanvases[key].nickName}
                     </div>
                     </div>

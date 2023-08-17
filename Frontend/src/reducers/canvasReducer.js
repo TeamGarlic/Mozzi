@@ -96,7 +96,7 @@ const canvasReducer = (state = canvasState, action) => {
         while(state.position.length>0) state.position.pop();
         // console.log(action.payload);
         for (let pos of action.payload) {
-          state.position.push({
+          state.position.unshift({
             image:(pos.id in state.subCanvases)?state.subCanvases[pos.id].ref:state.pubCanvas.canvasRef,
             id:pos.id,
             x:pos.x,
