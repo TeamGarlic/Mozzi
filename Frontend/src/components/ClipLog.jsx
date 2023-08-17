@@ -10,22 +10,13 @@ import {
 import PropTypes from "prop-types";
 import {checkHost} from "@/utils/DecoratorUtil.js";
 
-function ClipLog({user}) {
+function ClipLog({user, setAlertModal}) {
   const clipList = useSelector((state) => state.clipReducer.clipList);
   const drag = useSelector((state) => state.clipReducer.drag);
   const dispatch = useDispatch();
   const clipNum = Array.from({length: clipList['n']}, (v, i) => i+1);
   const [idx, setIdx] = useState(0);
   const frame = useSelector((state) => state.clipReducer.frame);
-  function addVideo() {
-    dispatch(
-      AddClipAction({
-        idx: idx,
-        src: "https://www.kmdb.or.kr/trailer/play/MK041673_P02.mp4",
-      })
-    );
-    setIdx(idx + 1);
-  }
 
   function clickVideo(event) {
     dispatch(
@@ -71,17 +62,17 @@ function ClipLog({user}) {
     dispatch(DragEndAction({ end: event.target.id.slice(0, 4) }));
   }
 
-  clickVideo = checkHost(clickVideo, user.isHost);
-  onDragStart = checkHost(onDragStart, user.isHost);
-  onDragEnd = checkHost(onDragEnd, user.isHost);
-  onDragOver = checkHost(onDragOver, user.isHost);
-  onDragEnter = checkHost(onDragEnter, user.isHost);
-  onDrop = checkHost(onDrop, user.isHost);
+  clickVideo = checkHost(clickVideo, user.isHost, setAlertModal);
+  onDragStart = checkHost(onDragStart, user.isHost, setAlertModal);
+  onDragEnd = checkHost(onDragEnd, user.isHost, setAlertModal);
+  onDragOver = checkHost(onDragOver, user.isHost, setAlertModal);
+  onDragEnter = checkHost(onDragEnter, user.isHost, setAlertModal);
+  onDrop = checkHost(onDrop, user.isHost, setAlertModal);
 
   return (
     <>
-      <span onClick={addVideo} className="text-3xl">
-        Select
+      <span className="text-3xl">
+        클립을 클릭해 프레임에 추가하세요
       </span>
       <div
         className=" overflow-y-scroll scrollbar-hide h-[calc(100%-2.5rem)]"
@@ -96,7 +87,7 @@ function ClipLog({user}) {
               return (
                 <div
                   key={`clip${i}`}
-                  className=" w-96 h-[calc(13.5rem)] bg-slate-300 mx-auto"
+                  className=" w-96 h-[calc(16rem)] bg-slate-300 mx-auto border border-blue-900 rounded-2xl"
                 >
                   <video
                     draggable
@@ -105,6 +96,7 @@ function ClipLog({user}) {
                     onClick={clickVideo}
                     onDragStart={onDragStart}
                     onDragEnd={onDragEnd}
+                    className="rounded-2xl"
                   ></video>
                 </div>
               );
@@ -125,5 +117,6 @@ ClipLog.propTypes = {
     userNickname: PropTypes.string,
     email: PropTypes.string,
     isHost: PropTypes.number,
+    setAlertModal: PropTypes.func,
   }),
 };

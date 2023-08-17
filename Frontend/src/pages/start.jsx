@@ -2,13 +2,15 @@ import Layout from "@/components/Layout";
 import NavBar from "@/components/NavBar";
 import useUser from "@/hooks/useUser";
 import useInput from "@/hooks/useInput";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import TextInput from "@/components/TextInput";
 import boothApi from "@/api/boothApi";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import mozzilogo from "@/assets/img/mozzi.png";
+import mozziBigLogo from "@/assets/img/mozzi-big.png";
 import gotobooth from "@/assets/img/gotobooth.png";
 import makebooth from "@/assets/img/makebooth.png";
+import gotocommu from "@/assets/img/gotocommu.png";
 
 function Start() {
   const [showCode, setShowCode] = useState(false);
@@ -22,34 +24,43 @@ function Start() {
 
   async function makeBooth() {
     if (!user) {
-      alert("로그인해주세요!");
+      alert("부스를 생성하려면 로그인이 필요합니다");
+      navigate("/login");
       return;
     }
     let res = await boothApi.createBooth();
     const shareCode = res.data.data.shareCode
     const shareSecret = res.data.data.shareSecret
-    navigate(`/${shareCode}/booth`, {state: {isHost: 1, shareSecret: shareSecret}});
+    navigate(`/${shareCode}/booth`, { state: { isHost: 1, shareSecret: shareSecret } });
   }
 
   const activeEnter = (e) => {
-    if(e.key === "Enter") {
+    if (e.key === "Enter") {
       gotoBooth();
     }
   }
 
   async function gotoBooth() {
     try {
-      let res = await boothApi.getSessionID(code.value);
+      let res = await boothApi.getSessionID(code.value.split(' ').join(''));
       // console.log(res);
       const shareCode = res.data.data.shareCode;
       const shareSecret = res.data.data.shareSecret
-      navigate(`/${shareCode}/booth`, {state: {isHost: 0, shareSecret: shareSecret}});
-    } catch {
-      alert("해당 코드로 생성된 부스가 없습니다.");
+      navigate(`/${shareCode}/booth`, { state: { isHost: 0, shareSecret: shareSecret , shareCode: shareCode} });
+    } catch(e) {
+      console.log(e);
+
+      if(e.response.data.code==18) {
+        alert("이미 촬영이 시작된 부스입니다.");
+      }else if(e.response.data.code==6) {
+        alert("해당 코드로 생성된 부스가 없습니다.");
+      }else{
+        alert("접속 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요");
+      }
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
 
   });
 
@@ -57,12 +68,12 @@ function Start() {
     <Layout>
       <>
         <NavBar user={user} />
-        <div className="w-[calc(40rem)] flex-col justify-center items-center text-center mx-auto pt-40">
+        <div className="w-[calc(60rem)] flex-col justify-center items-center text-center mx-auto pt-40">
           <div className=" text-2xl items-center">
-            <img src={mozzilogo} className=" mx-auto w-72 h-72" />
+            <img src={mozziBigLogo} className=" mx-auto w-72 h-72" />
           </div>
-          <div className=" flex justify-center text-center gap-20">
-            <div className="w-48 h-fit flex-col p-4">
+          <div className=" flex justify-center text-center gap-15 pt-20">
+            <div className="w-96 h-fit flex-col p-1">
               <button onClick={makeBooth} className="text-center">
                 <img
                   src={makebooth}
@@ -71,7 +82,7 @@ function Start() {
               </button>
               <div className="mt-4 h-14 leading-10 text-lg">부스 만들기</div>
             </div>
-            <div className="w-48 h-fit flex-col p-4">
+            <div className="w-96 h-fit flex-col p-1">
               <button onClick={showCodeLine} className="text-center">
                 <img
                   src={gotobooth}
@@ -99,6 +110,16 @@ function Start() {
                   </span>
                 </div>
               )}
+            </div>
+            <div className="w-96 h-fit flex-col p-1">
+              <div className="text-center w-fit mx-auto">
+                <img
+                    onClick={()=>navigate("/community?status=like&page=1")}
+                  src={gotocommu}
+                  className="hover:cursor-pointer w-20 h-20 mx-auto hover:ring-2 rounded-xl ring-offset-2 ring-offset-transparent"
+                />
+              </div>
+              <div className="mt-4 h-14 leading-10 text-lg">커뮤니티</div>
             </div>
           </div>
         </div>

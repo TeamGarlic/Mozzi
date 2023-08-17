@@ -7,7 +7,7 @@ import {
 } from '@/modules/canvasAction.js';
 import PropTypes from 'prop-types';
 
-export default function BigCam({myId, updatePosition, setPosition}) {
+export default function BigCam({myId, updatePosition, setPosition, isTaking}) {
   const W = 1440, H = 960, ratio = 1080/1440;
   const rndRef = useRef();
   const dispatch = useDispatch();
@@ -16,7 +16,7 @@ export default function BigCam({myId, updatePosition, setPosition}) {
   const canvasContextRef = useRef();
 
   const updateSize = () =>{
-    console.log(myId);
+    // console.log(myId);
     const npos= {
       id : myId,
       x : (rndRef.current.draggable.state.x - canvasRef.current.offsetLeft)/(ratio*W),
@@ -45,8 +45,8 @@ export default function BigCam({myId, updatePosition, setPosition}) {
 
   return (
     <div
-      className="bg-slate-300 m-auto my-10"
-      style={{"width" : `${W*ratio}px`, "height" : `${H*ratio}px`}}
+      className={`bg-blue-200 m-auto border-4 ${isTaking?"border-red-500":"border-yellow-200"}`}
+      style={{"width" : `${W*ratio+8}px`, "height" : `${H*ratio+8}px`}}
     >
       <canvas ref={canvasRef} width={W} height={H} style={{"width" : `${W*ratio}px`, "height" : `${H*ratio}px`}}></canvas>
       <Rnd
@@ -62,7 +62,7 @@ export default function BigCam({myId, updatePosition, setPosition}) {
           minHeight={H*ratio/15}
           ref={rndRef}
           bounds="window"
-          className={"w-full h-full"} style={{'border':'dashed 1px white'}}
+          className={"w-full h-full border-dashed border-2 border-green-400 z-10"}
       >
       </Rnd>
     </div>
@@ -73,4 +73,5 @@ BigCam.propTypes = {
   myId: PropTypes.string,
   updatePosition: PropTypes.func,
   setPosition: PropTypes.func,
+  isTaking: PropTypes.bool
 };

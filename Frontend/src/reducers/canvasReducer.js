@@ -1,7 +1,7 @@
 import {
   setMainCanvas,
   resizeLayer,
-  updateSubVideoMap, updatePubVideoMap, updatePosition, setDegree, setScale,
+  updateSubVideoMap, updatePubVideoMap, updatePosition, setDegree, setScale, setVisibility,
 } from '@/modules/canvasAction';
 
 const canvasState = {
@@ -23,6 +23,7 @@ const canvasState = {
   },
   subCanvases : {},
   canvasConfig : {
+    visibility : true,
     degree : 0,
     scale : 100,
   },
@@ -49,7 +50,7 @@ const canvasReducer = (state = canvasState, action) => {
           pos.height = action.payload.height;
         }
       }
-      console.log(state.position);
+      // console.log(state.position);
       return  {
         ...state
       }
@@ -61,8 +62,11 @@ const canvasReducer = (state = canvasState, action) => {
       }
       for (let key in action.payload) {
         state.subVideoMap[key] = action.payload[key];
-        newSubCanvases[key] = action.payload[key].canvasRef;
-      }
+        newSubCanvases[key] = {
+          ref: action.payload[key].canvasRef,
+          nickName: action.payload[key].nickName,
+          }
+        }
       return {
         ...state,
         subCanvases : newSubCanvases,
@@ -92,8 +96,8 @@ const canvasReducer = (state = canvasState, action) => {
         while(state.position.length>0) state.position.pop();
         // console.log(action.payload);
         for (let pos of action.payload) {
-          state.position.push({
-            image:(pos.id in state.subCanvases)?state.subCanvases[pos.id]:state.pubCanvas.canvasRef,
+          state.position.unshift({
+            image:(pos.id in state.subCanvases)?state.subCanvases[pos.id].ref:state.pubCanvas.canvasRef,
             id:pos.id,
             x:pos.x,
             y:pos.y,
@@ -102,7 +106,7 @@ const canvasReducer = (state = canvasState, action) => {
           })
         }
       }
-      console.log(state.position)
+      // console.log(state.position);
       return {
         ...state
       }
@@ -115,6 +119,12 @@ const canvasReducer = (state = canvasState, action) => {
     }
     case setScale: {
       state.canvasConfig.scale = action.payload
+      return {
+        ...state
+      }
+    }
+    case setVisibility: {
+      state.canvasConfig.visibility = action.payload
       return {
         ...state
       }

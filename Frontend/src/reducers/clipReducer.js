@@ -1,28 +1,41 @@
-import { updateFrame, Clip2Frame, AddClip, Frame2Clip, DragStart, DragEnd, DragClear, Frame2Frame, setFrame, setClipList } from "@/modules/clipAction"
+import {
+  updateFrame,
+  Clip2Frame,
+  AddClip,
+  Frame2Clip,
+  DragStart,
+  DragEnd,
+  DragClear,
+  Frame2Frame,
+  setFrame,
+  setClipList,
+  setFFMpegStatus
+} from "@/modules/clipAction"
 
 const clipState = {
   frame: {
     id: 0,
     title: "",
-    n: 4,
+    n: 0,
     src: "",
     },
   clipList: {
-    n: 10,
+    n: 0,
   },
   drag: {
     start: "",
     end: "",
     startIdx: 0,
     endIdx: 0,
-  }
+  },
+  FFMpegStatus : true,
 }
 
 const clipReducer = (state = clipState, action) => {
   switch(action.type) {
     case updateFrame: {
+      const frame = action.payload;
       const frameNum = Array.from({length: state.frame['n']}, (v, i) => i+1);
-      const frame = action.payload
       const newFrame = {...state.frame}
       frameNum.forEach((n) => {
         newFrame[n] = {
@@ -99,7 +112,7 @@ const clipReducer = (state = clipState, action) => {
     case AddClip: {
       return {
         ...state,
-        clipList: {...state.clipList, [action.payload.idx]: action.payload.src}
+        clipList: {...state.clipList, [action.payload.idx]: action.payload.src, n:state.clipList.n+1}
       }
     }
     case Frame2Clip: {
@@ -174,6 +187,12 @@ const clipReducer = (state = clipState, action) => {
           startIdx: 0,
           endIdx: 0
         }
+      }
+    }
+    case setFFMpegStatus:{
+      state.FFMpegStatus = action.payload;
+      return {
+        ...state
       }
     }
     default:

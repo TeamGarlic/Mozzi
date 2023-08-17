@@ -16,9 +16,8 @@ function LogIn() {
     try {
       let res = await userApi.logIn(id.value, pw.value);
       if (res.status === 200) {
-        alert('로그인 성공');
-        localStorage.setItem("accessToken", res.data.data.accessToken);
-        localStorage.setItem("refreshToken", res.data.data.refreshToken);
+        sessionStorage.setItem("accessToken", res.data.data.accessToken);
+        sessionStorage.setItem("refreshToken", res.data.data.refreshToken);
         navigate("/");
       }
     } catch (e) {
@@ -40,14 +39,14 @@ function LogIn() {
     if(!flag) return;
     try{
       let res = await userApi.reset(userId);
-      console.log(res);
+      // console.log(res);
       if(res.status ===200){
         setError(`새 비밀번호를 전송했습니다. ${res.data.data.email}을 확인하신 후 비밀번호를 재설정해주세요.`);
       }
     }catch(e){
       const status = e.response.status;
       if (status === 404) {
-        setError("가입한 이메일이 없거나 존재하지 않는 아이디입니다.");
+        setError("존재하지 않는 아이디이거나 가입시 입력한 이메일이 올바르지 않습니다.");
       }else {
         setError("오류가 발생했습니다.");
       }
@@ -67,6 +66,12 @@ function LogIn() {
           <div className="relative w-[calc(30rem)] flex-col rounded-lg  justify-center items-center text-center mx-auto pt-60">
             <div className="w-full h-10">
               <span className=" float-left text-lg">로그인</span>
+              <span className=" float-right text-sm text-slate-600 hover:cursor-pointer hover:text-blue-500" onClick={()=>navigate("/signup")}>
+              회원가입하시겠어요?
+            </span>
+              <span className="mx-2 float-right text-sm text-slate-1000">
+              또는
+            </span>
               <span className=" float-right text-sm text-slate-600 hover:cursor-pointer hover:text-blue-500" onClick={()=>reset(id.value)}>
               비밀번호를 잊으셨나요?
             </span>

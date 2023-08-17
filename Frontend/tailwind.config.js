@@ -6,6 +6,10 @@ export const theme = {
     backgroundImage: {
       backimg: "url('/src/assets/img/background2.png')",
     },
+    boxShadow: {
+      innerblack: 'inset 0 0 0 2px #000000',
+      innerpink: 'inset 0 0 0 2px #fa8ee5'
+    }
   },
 };
 export const plugins = [require("tailwind-scrollbar-hide")];

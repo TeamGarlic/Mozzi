@@ -1,60 +1,43 @@
 import { Card } from "@material-tailwind/react";
-import TextInput from "./TextInput";
 import UserVideoComponent from "./UserVideoComponents";
-import PropTypes from "prop-types";
 import { useSelector } from 'react-redux';
 
-export default function UserSideBar({ leaveSession ,user }) {
-
+export default function UserSideBar() {
   const pubCanvas = useSelector((state) => state.canvasReducer.pubCanvas);
   const subCanvases = useSelector((state) => state.canvasReducer.subCanvases);
-// console.log(subCanvases);
   return (
-    <Card
-      id="sideMenu"
-      className="fixed top-0 right-0 w-64 h-screen p-4 shadow-xl shadow-blue-gray-900/5 bg-transparent"
-    >
-      <div className="p-4">
-        <span className=" text-xl">사용자</span>
-      </div>
-      <ul className="gap-4 overflow-y-scroll scrollbar-hide">
+      <Card
+          id="sideMenu"
+          className={"fixed h-screen top-0 right-0 w-64 shadow-xl shadow-blue-gray-900/5 p-4 overflow-y-scroll bg-white scrollbar-hide rounded-e-none"}
+      >
+        <div className="row-auto text-center">
+          <div className="text-2xl">
+            사용자 목록
+          </div>
+          <div className="text-sm text-slate-600">
+            왼쪽 하단에 설정창이 있습니다
+          </div>
+          <ul className="gap-4 overflow-y-scroll scrollbar-hide">
+            {pubCanvas &&
+                <div className="stream-container col-md-6 col-xs-6 bg-slate-100 rounded-2xl border border-blue-200 my-1">
+                  <UserVideoComponent canvas={pubCanvas.canvasRef} />
 
-        {pubCanvas &&
-        <div className="stream-container col-md-6 col-xs-6">
-          <UserVideoComponent canvas={pubCanvas.canvasRef} />
-          {pubCanvas.nickname}
-          <hr />
+                  <div className="text-xl h-7">
+                    {pubCanvas.nickname}
+                  </div>
+                </div>
+            }
+            {subCanvases &&
+                Object.keys(subCanvases).map(key=>(
+                    <div key={key} className="stream-container col-md-6 col-xs-6 bg-slate-100 rounded-2xl border border-blue-200 my-1">
+                      <UserVideoComponent canvas={subCanvases[key].ref} />
+                      <div className="text-xl h-7">
+                      {subCanvases[key].nickName}
+                    </div>
+                    </div>
+                ))}
+          </ul>
         </div>
-        }
-
-        {subCanvases &&
-          Object.keys(subCanvases).map(key=>(
-            <div key={key} className="stream-container col-md-6 col-xs-6">
-              <UserVideoComponent canvas={subCanvases[key]} />
-              <hr />
-            </div>
-          ))}
-      </ul>
-      <div className="px-4">
-        <TextInput type="text" placeholder="이름 변경..." className="" />
-      </div>
-      <button type="button" className="w-full h-10">
-        이름 변경
-      </button>
-      <button className="w-full h-10 text-center leading-10" onClick={leaveSession}>
-        나가기
-      </button>
-    </Card>
+      </Card>
   );
 }
-
-UserSideBar.propTypes = {
-  leaveSession: PropTypes.func,
-  user: PropTypes.shape({
-    id: PropTypes.number,
-    userId: PropTypes.string,
-    userNickname: PropTypes.string,
-    email: PropTypes.string,
-    isHost: PropTypes.number,
-  }),
-};

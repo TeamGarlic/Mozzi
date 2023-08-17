@@ -3,10 +3,10 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   updatePositionAction, updatePubVideoMapAction, updateSubVideoMapAction,
 } from '@/modules/canvasAction.js';
-import MakeBooth from "./makeBooth";
-import TakePic from "./takePic";
-import AfterTake from "./afterfTake";
-import Finish from "./finish";
+import MakeBooth from "@/pages/makeBooth";
+import TakePic from "@/pages/takePic";
+import AfterTake from "@/pages/afterfTake";
+import Finish from "@/pages/finish";
 import { useParams, useLocation } from "react-router-dom";
 import { SelfieSegmentation } from "@mediapipe/selfie_segmentation";
 import { drawCanvas, drawMask, chromaKey } from "@/utils/videoUtil.js";
@@ -15,12 +15,17 @@ import { changeBgAction } from "@/modules/bgAction.js";
 import { checkHost } from "@/utils/DecoratorUtil.js";
 import itemApi from "@/api/itemApi.js";
 import userApi from "@/api/userApi.js";
-import {AppStore} from "@/store/AppStore.js";
-import Spinner from "@/components/Spinner.jsx"
-import {usePreventGoBack} from "@/hooks/usePreventGoBack.js";
+import { AppStore } from "@/store/AppStore.js";
+import Spinner from "@/components/Spinner.jsx";
+import HostAlertModal from "@/components/HostAlertModal.jsx";
+import { usePreventGoBack } from "@/hooks/usePreventGoBack.js";
+import CamSetting from "@/components/CamSetting.jsx";
+import Chat from "@/components/Chat.jsx";
+import baseURL from "@/api/BaseURL.js";
+import boothApi from '@/api/boothApi.js';
+
 
 function Booth() {
-
   // hooks
   const { code: shareCode } = useParams();
   const dispatch = useDispatch();
@@ -54,20 +59,28 @@ function Booth() {
     shareSecret,
     setShareSecret,
     sendFileName,
+    sendRecordingSignal,
+    recordingMozzi,
+    toggleMic,
+    onMic,
+    sendBg,
+    tempBg,
+    visibleCamSetting,
   } = useSession(shareCode);
 
 
   // global variables
   let localVideoMap = {};
-  const userConfig =  location.state ? {isHost : location.state.isHost} : undefined;
+  const userConfig = location.state ? { isHost: location.state.isHost } : undefined;
 
   usePreventGoBack();
 
   // useState
-  const [user,setUser] = useState(userConfig);
+  const [user, setUser] = useState(userConfig);
   const [bgList, setBgList] = useState([]);
   const [delay, setDelay] = useState(true);
   const [frameList, setFrameList] = useState([]);
+  const [alertModal, setAlertModal] = useState(false);
 
   // useSelector
   const mainCanvas = useSelector((state) => state.canvasReducer.mainCanvas);
@@ -88,22 +101,27 @@ function Booth() {
   const subCanvasRefs = useRef({});
 
 
-  let startTake = () => {
-    if (pickedFrame.id === 0) return;
+  let startTake = async () => {
+    if (pickedFrame.id === 0){
+      alert("먼저 프레임을 선택해주세요")
+      return;
+    }
     sendPosition(position);
     setFrame(pickedFrame);
-    gotoTakePic();
-    setShareSecret(location.state.shareSecret);
+    let res = await boothApi.closeBooth(shareCode);
+    if(res.status==200){
+      gotoTakePic();
+      setShareSecret(location.state.shareSecret);
+    }
   }
-  startTake = checkHost(startTake, user ? user.isHost : undefined);
+  startTake = checkHost(startTake, user ? user.isHost : undefined, setAlertModal);
 
   const onResults = (results) => {
-    drawMask(bgRemovedRef.current, bgRemovedContextRef.current, results, canvasConfig.degree*Math.PI/180, canvasConfig.scale/100);
+    drawMask(bgRemovedRef.current, bgRemovedContextRef.current, results, canvasConfig.visibility, canvasConfig.degree*Math.PI/180, canvasConfig.scale/100);
     chromaKey(pubVideoMap.canvasRef, pubVideoMap.canvasContextRef, pubVideoMap.vidRef);
     for (let key in subVideoMap) {
-      chromaKey(subVideoMap[key].canvasRef, subVideoMap[key].canvasContextRef, subVideoMap[key].vidRef);
+      chromaKey(subVideoMap[key].canvasRef,subVideoMap[key].canvasContextRef,subVideoMap[key].vidRef);
     }
-
     if (mainCanvas.canvas){
       drawCanvas(mainCanvas.canvas.current, mainCanvas.context.current, bgNow.img, localPosition);
     }
@@ -140,6 +158,7 @@ function Booth() {
       if (res.status === 200) {
         setBgList(res.data.data.backgrounds);
       }
+      return res.data.data.backgrounds[0].objectName;
     } catch (e) {
       console.log(e);
     }
@@ -157,7 +176,7 @@ function Booth() {
   }
 
   const userJoin = async (initialState, ref)=> {
-    console.log(userConfig);
+    // console.log(userConfig);
     if(userConfig === undefined) {
       alert("잘못된 접근입니다.");
       window.location.href="/";
@@ -169,7 +188,7 @@ function Booth() {
     if(res.status ===200){
       const userData = res.data.data
       setUser((prev)=>{
-        joinSession(userData.userNickname, ref);
+        joinSession(userData.userNickname, ref, user.isHost);
         return {...prev, userData}
       });
     }else{
@@ -179,24 +198,28 @@ function Booth() {
         window.location.href="/";
       }
       setUser((prev)=>{
-        joinSession(guest, ref);
+        joinSession(guest, ref, 0);
         return {...prev, userNickname:guest}
       });
     }
   }
 
+  function closeAlertModal(){
+    setAlertModal(false)
+  }
 
   // useEffect : []
   useEffect(() => {
     AppStore.setRunningSpinner();
-
+    getBgList(1, 100).then((res)=>{
+      const bgImg = new Image();
+      bgImg.src = `${baseURL}/files/object/${res}`;
+      bgImg.crossOrigin = "anonymous";
+      dispatch(changeBgAction({ img: bgImg }));
+    });
     getFrameList();
-    const bgImg = new Image();
     // TODO : 배경이미지 API로 받아오기
-    getBgList(1, 100);
-    bgImg.src = "https://api.mozzi.lol/files/object/1691022079984_bg2.jpg";
-    bgImg.crossOrigin = "anonymous";
-    dispatch(changeBgAction({ img: bgImg }));
+
     bgRemovedContextRef.current = bgRemovedRef.current.getContext("2d");
     const constraints = {
       video: { width: { max: 1280 }, height: { max: 720 } },
@@ -235,7 +258,6 @@ function Booth() {
     };
   }, [leaveSession]);
 
-
   // useEffect : [subscribers]
   useEffect(() => {
     for (let key in localVideoMap) {
@@ -253,6 +275,7 @@ function Booth() {
             subCanvasRefs.current[
               sub.stream.connection.connectionId
               ].getContext("2d", { willReadFrequently: true }),
+          nickName: JSON.parse(sub.stream.connection.data).clientData
         };
         sub.addVideoElement(
           subVideoRefs.current[sub.stream.connection.connectionId]
@@ -281,7 +304,6 @@ function Booth() {
       }));
     }
     initPosition();
-
   }, [publisher]);
 
 
@@ -291,11 +313,13 @@ function Booth() {
   }, [position]);
 
   return (
-    <>
-      <video autoPlay ref={webcamRef} className="collapse absolute" />
-      <canvas ref={bgRemovedRef}  width={1280} height={720} className="collapse absolute" />
-      <video ref={pubVideoRef} className="collapse absolute" ></video>
-      <canvas ref={pubCanvasRef}  width={1280} height={720} className="collapse absolute" />
+    <div className="w-full h-full">
+      <video autoPlay ref={webcamRef} className="collapse fixed" />
+      <canvas ref={bgRemovedRef}  width={1280} height={720} className="collapse fixed" />
+
+      <video ref={pubVideoRef} className="collapse fixed" ></video>
+      <canvas ref={pubCanvasRef}  width={1280} height={720} className="collapse fixed" />
+
       {subscribers &&
         subscribers.map((sub) => {
           return (
@@ -319,6 +343,13 @@ function Booth() {
         <Spinner/>
       ): (
         <>
+
+          <CamSetting toggleMic={toggleMic} onMic={onMic} position={position} visibleCamSetting={visibleCamSetting} setPosition={setPosition} sendPosition={sendPosition}/>
+          <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} publisher={publisher} />
+          {alertModal && (
+            <HostAlertModal closeAlertModal={closeAlertModal}/>
+          )}
+
           {now === "MAKING" && (
             <MakeBooth
               startTake={startTake}
@@ -327,6 +358,7 @@ function Booth() {
               frameList={frameList}
               user={user}
               setFrame={setFrame}
+              setAlertModal={setAlertModal}
             />
           )}
           {now === "TAKING" && (
@@ -352,6 +384,12 @@ function Booth() {
               sendFileName={sendFileName}
               shareSecret={shareSecret}
               publisher={publisher}
+              subscribers={subscribers}
+              setAlertModal={setAlertModal}
+              toggleMic={toggleMic}
+              subVideoRefs={subVideoRefs.current}
+              sendBg={sendBg}
+              tempBg={tempBg}
             />
           )}
           {now === "MODIFING" && (
@@ -360,6 +398,9 @@ function Booth() {
               user={user}
               sendMozzi={sendMozzi}
               updateMozzi={updateMozzi}
+              setAlertModal={setAlertModal}
+              sendRecordingSignal={sendRecordingSignal}
+              recordingMozzi={recordingMozzi}
             />
           )}
           {now === "FINISH" && (
@@ -367,10 +408,12 @@ function Booth() {
               mozzi={mozzi}
               subscribers ={subscribers}
               publisher={publisher}
+              shareCode={shareCode}
+              isHost={user.isHost}
           />)}
         </>
       )}
-    </>
+    </div>
   );
 }
 

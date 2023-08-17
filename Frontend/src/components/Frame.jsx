@@ -9,7 +9,7 @@ import {
 import PropTypes from "prop-types";
 import {checkHost} from "@/utils/DecoratorUtil.js";
 
-function Frame({user, updateMozzi}) {
+function Frame({user, updateMozzi, setPlayTogether, setAlertModal}) {
   const frame = useSelector((state) => state.clipReducer.frame);
   const dispatch = useDispatch();
   const drag = useSelector((state) => state.clipReducer.drag);
@@ -27,12 +27,19 @@ function Frame({user, updateMozzi}) {
       frameRef.current[i].style.top = `${frame[i]['y']*imgRef.current.height}px`;
       frameRef.current[i].style.left = `${frame[i]['x']*imgRef.current.width}px`;
     })
+    setPlayTogether(()=>{
+      frameNum.forEach((i) => {
+        if (videoRef.current[i]){
+          videoRef.current[i].load();
+        }
+      })
+    });
   }, [frame])
 
   function UpdateMozzi(){
     updateMozzi(frame)
   }
-  UpdateMozzi = checkHost(UpdateMozzi, user.isHost)
+  UpdateMozzi = checkHost(UpdateMozzi, user.isHost, ()=>{})
 
   function clickVideo(event) {
     dispatch(
@@ -78,29 +85,23 @@ function Frame({user, updateMozzi}) {
     event.preventDefault();
   }
 
-  function playTogether(){
-    frameNum.forEach((i) => {
-      if (videoRef.current[i]){
-        videoRef.current[i].load();
-      }
-    })
-  }
 
-  clickVideo = checkHost(clickVideo, user.isHost);
-  onDragStart = checkHost(onDragStart, user.isHost);
-  onDragEnd = checkHost(onDragEnd, user.isHost);
-  onDrop = checkHost(onDrop, user.isHost);
-  onDragOver = checkHost(onDragOver, user.isHost);
-  onDragEnter = checkHost(onDragEnter, user.isHost);
+  clickVideo = checkHost(clickVideo, user.isHost, setAlertModal);
+  onDragStart = checkHost(onDragStart, user.isHost, setAlertModal);
+  onDragEnd = checkHost(onDragEnd, user.isHost, setAlertModal);
+  onDrop = checkHost(onDrop, user.isHost, setAlertModal);
+  onDragOver = checkHost(onDragOver, user.isHost, setAlertModal);
+  onDragEnter = checkHost(onDragEnter, user.isHost, setAlertModal);
+
 
   return (
     <div>
-      <div className="relative">
-        <img src={frame.src} alt="frame" ref={imgRef}></img>
+      <div className="relative m-2 rounded">
+        <img src={frame.src} alt="frame" ref={imgRef} crossOrigin="anonymous" className="rounded"></img>
         {frameNum.map((i) => {
           if (frame[i]["src"]) {
             return (
-              <div key={`frame${i}`} className="absolute z-50" ref={(el) => frameRef.current[i] = el}>
+              <div key={`frame${i}`} className="absolute z-10" ref={(el) => frameRef.current[i] = el}>
                 <video
                   autoPlay
                   ref={(el) => videoRef.current[i] = el}
@@ -120,7 +121,7 @@ function Frame({user, updateMozzi}) {
           return (
             <div
               key={`frame${i}`}
-              className="absolute z-50"
+              className="absolute z-10"
               onDragOver={onDragOver}
               onDragEnter={onDragEnter}
               onDrop={onDrop}
@@ -130,11 +131,6 @@ function Frame({user, updateMozzi}) {
           );
         })}
       </div>
-
-      <button className="w-1/2 h-10 rounded-3xl bg-yellow-100 shadow-[5px_5px_5px_0px_rgba(0,0,0,0.5)]"
-              onClick={playTogether}>
-        동시재생
-      </button>
     </div>
   );
 }
@@ -151,4 +147,6 @@ Frame.propTypes = {
     isHost: PropTypes.number,
   }),
   updateMozzi: PropTypes.func,
+  setPlayTogether: PropTypes.func,
+  setAlertModal: PropTypes.func,
 };

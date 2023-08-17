@@ -8,6 +8,7 @@ export const Frame2Frame = "Frame2Frame";
 export const setFrame = "setFrame";
 export const setClipList = "setClipList";
 export const updateFrame = "updateFrame";
+export const setFFMpegStatus = "setFFMpegStatus";
 
 export const setClipListAction = (res) => {
   return {
@@ -75,6 +76,13 @@ export const DragClearAction = (res) => {
 export const updateFrameAction = (res) => {
   return {
     type: updateFrame,
+    payload: res,
+  }
+}
+
+export const setFFMpegStatusAction = (res) => {
+  return {
+    type: setFFMpegStatus,
     payload: res,
   }
 }
