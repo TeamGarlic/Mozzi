@@ -28,16 +28,17 @@ function Detail() {
     const navigate = useNavigate();
     const [dropdown, setDropdown] = useState(false);
     const FFMpegStatus = useSelector((state) => state.clipReducer.FFMpegStatus);
-    const ffmpeg = createFFmpeg({log : true});
+    const ffmpeg = createFFmpeg({log : false});
     const types=[{format:'webm',type:'', srcFormat:"webm"},{format:'mp4',type:'video/mp4', srcFormat:"webm"},{format:'gif',type:'image/gif', srcFormat:"webm"}]
     const handleDownload = async (src, format, type, srcFormat) => {
-        if(!FFMpegStatus){
-            alert("이미 다른 파일을 다운로드 중입니다. 잠시 후에 다시 시도해주세요");
-            return;
-        }
         dispatch(setFFMpegStatusAction(false));
         let recUrl = src;
+        try{
         if(srcFormat!=format){
+            if(!FFMpegStatus){
+                alert("이미 다른 파일을 다운로드 중입니다. 잠시 후에 다시 시도해주세요");
+                return;
+            }
             if(!ffmpeg.isLoaded()) await ffmpeg.load();
             // TODO : download 파일명 바꿔야됨
             ffmpeg.FS("writeFile","download."+srcFormat,await fetchFile(src));
@@ -52,6 +53,9 @@ function Detail() {
         a.download = "download."+format;
         a.target="_blank";
         a.click();
+        }catch{
+            alert("변환 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요")
+        }
         dispatch(setFFMpegStatusAction(true));
     }
 
@@ -124,7 +128,7 @@ function Detail() {
     return (
         <Layout>
            <>
-               <div className={`absolute p-2 px-4 rounded-3xl bg-red-100 border border-red-500 m-2 float-right right-20 top-5 ${FFMpegStatus?"hidden":""}`}>영상을 변환하는 중입니다. 잠시만 기다려주세요...</div>s
+               <div className={`absolute p-2 px-4 rounded-3xl bg-red-100 border border-red-500 m-2 float-right right-20 top-5 ${FFMpegStatus?"hidden":""}`}>영상을 변환하는 중입니다. 잠시만 기다려주세요...</div>
 
                <NavBar user={user} />
                <div className="flex-col mt-28 px-20 py-5 gap-3">
