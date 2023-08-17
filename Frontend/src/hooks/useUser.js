@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function useUser(initialState = null) {
   const [user, setUser] = useState(initialState);
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = sessionStorage.getItem("accessToken");
   const navigate = useNavigate();
 
   async function getUser() {
@@ -44,7 +44,7 @@ async function checkUser() {
         });
       }
     });
-    console.log(user);
+    // console.log(user);
   }
 
   return { user, setUser, checkUser };

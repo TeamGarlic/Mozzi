@@ -2,17 +2,10 @@ import UserCard from "@/components/UserCard"
 import {useEffect, useState} from "react"
 import {checkHost} from "@/utils/DecoratorUtil.js"
 import PropTypes from "prop-types";
+import MicSetting from "@/components/MicSetting.jsx";
 
-function UserList({user, position, sendPosition, setPosition}){
-  const [userList, setUserList] = useState(position.map((user) => {
-    return {
-      id: user.id,
-      name: "dummy",
-      onMic: 1,
-      onCam: 1,
-      isHost: 0
-    }
-  }))
+function UserList({user, position, sendPosition, setPosition, subscribers, publisher, setAlertModal, toggleMic, subVideoRefs}){
+  const [userList, setUserList] = useState([])
   const [drag, setDrag] = useState(null);
   let height = 0;
   let moveY = 0;
@@ -20,10 +13,48 @@ function UserList({user, position, sendPosition, setPosition}){
   const borderTop = "border-t-2";
   const borderBottom = "border-b-2";
   const borderColor = "border-blue-500";
+  const [target, setTarget] = useState({
+    visible: false,
+    userName: "",
+    id: "",
+    volume: 100,
+  });
+
+  function setMicSetting(t){
+    setTarget(t);
+  }
 
   useEffect(() => {
-    console.log(position)
-  }, []);
+    setUserList(position.map((user) => {
+      let name = ""
+      let isHost = 0;
+      let onMic = true;
+      let isPublisher = false;
+      let id = "";
+      const subscriber = subscribers && subscribers.find((el)=>{
+        return el.stream.connection.connectionId === user.id
+      })
+      if (subscriber) {
+        id = subscriber.stream.connection.connectionId;
+        name = JSON.parse(subscriber.stream.connection.data).clientData;
+        isHost = JSON.parse(subscriber.stream.connection.data).isHost;
+        onMic = subscriber.stream.audioActive;
+      } else {
+        id = publisher.stream.connection.connectionId;
+        name = JSON.parse(publisher.stream.connection.data).clientData;
+        isHost = JSON.parse(publisher.stream.connection.data).isHost;
+        onMic = publisher.stream.audioActive;
+        isPublisher = true;
+      }
+      return {
+        id: id,
+        name: name,
+        onMic: onMic,
+        isHost: isHost,
+        isPublisher: isPublisher
+      }
+    }))
+  }, [position]);
 
   function onDragOver(event){
     event.preventDefault();
@@ -114,48 +145,56 @@ function UserList({user, position, sendPosition, setPosition}){
     sendPosition(_position);
   }
 
-  function setTool(idx, tool){
-    const _userList = [...userList];
-    if (tool === "onMic"){
-      _userList[idx].onMic = 1-userList[idx].onMic;
-    } else if (tool === "onCam"){
-      _userList[idx].onCam = 1-userList[idx].onCam;
-    }
-    setUserList(_userList);
-  }
+  onDragOver = checkHost(onDragOver, user.isHost, setAlertModal)
+  onDragEnter = checkHost(onDragEnter, user.isHost, setAlertModal)
+  onDragStart = checkHost(onDragStart, user.isHost, setAlertModal)
+  onDragEnd = checkHost(onDragEnd, user.isHost, setAlertModal)
+  onDragLeave = checkHost(onDragLeave, user.isHost, setAlertModal)
+  onDrop = checkHost(onDrop, user.isHost, setAlertModal)
 
-  onDragOver = checkHost(onDragOver, user.isHost)
-  onDragEnter = checkHost(onDragEnter, user.isHost)
-  onDragStart = checkHost(onDragStart, user.isHost)
-  onDragEnd = checkHost(onDragEnd, user.isHost)
-  onDragLeave = checkHost(onDragLeave, user.isHost)
-  onDrop = checkHost(onDrop, user.isHost)
-  
   return (
     <>
-      대충 사용자 목록
-      {userList.map((item, idx) => (
-        <div
-             key={idx}
-             data-index={idx}
-             onDragStart={onDragStart}
-             onDragEnd={onDragEnd}
-             onDragEnter={onDragEnter}
-             onDragLeave={onDragLeave}
-             onDragOver={onDragOver}
-             onDrop={onDrop}
-             className="mt-1 mb-1"
-             draggable>
-          <UserCard
-            setTool={setTool}
-            onMic={item.onMic}
-            onCam={item.onCam}
-            idx={idx}
-            userName={item.name}
-            isHost={item.isHost}
-          />
+
+      <div className="row-auto text-center">
+        <div className="text-2xl">
+                사용자 목록
         </div>
-      ))}
+        <div className="text-sm text-slate-600 whitespace-nowrap">
+          위에 있는 유저일수록 앞쪽에 그려집니다
+        </div>
+
+        <div className="text-sm text-slate-600 whitespace-nowrap">
+          (방장이 드래그해 순서를 조절합니다)
+        </div>
+        {userList.map((item, idx) => (
+          <div
+               key={idx}
+               data-index={idx}
+               onDragStart={onDragStart}
+               onDragEnd={onDragEnd}
+               onDragEnter={onDragEnter}
+               onDragLeave={onDragLeave}
+               onDragOver={onDragOver}
+               onDrop={onDrop}
+               className="mt-1 mb-1 h-fit w-full px-2"
+               draggable>
+            <UserCard
+              onMic={item.onMic}
+              userName={item.name}
+              isHost={item.isHost}
+              isPublisher={item.isPublisher}
+              toggleMic={toggleMic}
+              setPosition={setPosition}
+              sendPosition={sendPosition}
+              position={position}
+              id={item.id}
+              setMicSetting={setMicSetting}
+              subVideoRefs={subVideoRefs}
+            />
+          </div>
+        ))}
+        <MicSetting target={target} subVideoRefs={subVideoRefs}/>
+      </div>
     </>
   )
 }
@@ -173,4 +212,9 @@ UserList.propTypes = {
   position: PropTypes.array,
   sendPosition: PropTypes.func,
   setPosition: PropTypes.func,
+  subscribers: PropTypes.array,
+  publisher: PropTypes.any,
+  setAlertModal: PropTypes.func,
+  toggleMic: PropTypes.func,
+  subVideoRefs: PropTypes.any,
 };

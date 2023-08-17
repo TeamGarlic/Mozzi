@@ -1,36 +1,42 @@
-import Layout from "../components/Layout";
-import UserSideBar from "../components/UserSideBar";
-import EnterDialog from "@/components/EnterDialog";
+import Layout from "@/components/Layout";
+import UserSideBar from "@/components/UserSideBar";
 import PropTypes from "prop-types";
 import { useState } from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {setFrameAction} from "@/modules/clipAction.js";
-import {checkHost} from "@/utils/DecoratorUtil.js";
+import { useDispatch, useSelector } from "react-redux";
+import { setFrameAction } from "@/modules/clipAction.js";
+import { checkHost } from "@/utils/DecoratorUtil.js";
+import ScriptModal from "@/components/ScriptModal.jsx";
+import baseURL from "@/api/BaseURL.js";
 
-function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, user }) {
-  const [visibility, setVisibility] = useState(true);
-  const [toggleVoice, setToggleVoice] = useState(true);
+function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, user, setAlertModal }) {
   const pickedFrame = useSelector((state) => state.clipReducer.frame);
+  const [onScript, setOnScript] = useState(true);
+  const [scriptArray] = useState([
+    "왼쪽 상단의 초대코드를 복사해 친구들에게 공유하세요",
+    "왼쪽 하단의 설정창에서 마이크와 카메라를 설정할 수 있어요",
+    "오른쪽 하단의 채팅창에서 채팅이 가능해요",
+    "방장은 프레임을 선택하고 촬영 시작 버튼을 눌러주세요"
+  ]);
 
   const dispatch = useDispatch();
-  const closeDialog = () => {
-    setVisibility(false);
-  };
-  function setVoice() {
-    setToggleVoice(!toggleVoice);
+
+  function closeScriptModal() {
+    setOnScript(false);
   }
+
+
   function copyCode() {
     navigator.clipboard.writeText(shareCode).then(() => {
       alert("복사되었습니다.");
     });
   }
 
-  function clickFrame(event, frame){
+  function clickFrame(event, frame) {
     const res = {
       id: frame.id,
       title: frame.title,
       n: frame.rects.length,
-      src: `https://api.mozzi.lol/files/object/${frame.objectName}`,
+      src: `${baseURL}/files/object/${frame.objectName}`,
     }
     for (let i = 0; i < frame.rects.length; i++) {
       res[i + 1] = {
@@ -42,30 +48,32 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
     dispatch(setFrameAction(res));
     setFrame(res);
   }
-  clickFrame = checkHost(clickFrame, user.isHost);
+  clickFrame = checkHost(clickFrame, user.isHost, setAlertModal);
+  function leave(){
+    confirm("정말로 나가시겠습니까?")?leaveSession():"";
+  }
 
   return (
     <>
-      {/*<EnterDialog*/}
-      {/*  visibility={visibility}*/}
-      {/*  onClick={closeDialog}*/}
-      {/*  toggleVoice={toggleVoice}*/}
-      {/*  setVoice={setVoice}*/}
-      {/*/>*/}
       <Layout>
         <div className="flex">
           <div className="w-full h-screen p-4 flex-col">
+            { onScript && (
+              <div className="justify-center">
+                <ScriptModal scriptArray={scriptArray} closeScriptModal={closeScriptModal}/>
+              </div>
+            )}
             <div>
-              <div className=" text-sm text-gray-500 flex">
-                <span>초대 코드 : {shareCode}</span>
+              <div className="text-2xl flex text-center" onClick={copyCode}>
+                <span className="text mx-1">초대 코드 : </span>
+                <span className="text text-blue-500"> {shareCode}</span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                  onClick={copyCode}
+                  stroke="#3b82f6"
+                  className="w-6 h-6 my-1"
                 >
                   <path
                     strokeLinecap="round"
@@ -74,31 +82,35 @@ function MakeBooth({ startTake, shareCode, leaveSession, setFrame, frameList, us
                   />
                 </svg>
               </div>
-              <div className="text-2xl">MOZZI</div>
+              <div className="m-1 text-sm text-slate-600">프레임을 선택하고 촬영 시작 버튼을 눌러주세요</div>
             </div>
-            <div className=" text-2xl p-4">프레임 선택</div>
-            <div className="gap-6 p-4 mr-[calc(17rem)]  overflow-x-scroll scrollbar-thumb-gray-900 scrollbar-track-gray-100">
-              <div className=" inline-flex flex-nowrap h-[calc(25rem)]  items-center gap-4 p-4">
+            <div className="p-4 mr-[calc(17rem)] overflow-scroll scrollbar-hide">
+                <div className="flex flex-wrap w-full items-center gap-4 p-4">
                 {frameList.map((frame) => (
-                    <div onClick={(e)=>clickFrame(e, frame)} key={frame.id} className={`border-8 ${pickedFrame.id === frame.id ? "border-blue-500" : ""}`}>
-                      <img src={`https://api.mozzi.lol/files/object/${frame.objectName}`} alt={frame.objectName} className={"max-w-[calc(50rem)] max-h-[calc(22.75rem)]"}></img>
-                    </div>
-                  )
+                  <div onClick={(e) => clickFrame(e, frame)} key={frame.id} className={`border-8 ${pickedFrame.id === frame.id ? "border-blue-500" : ""}`}>
+                    <img src={`${baseURL}/files/object/${frame.objectName}`} alt={frame.objectName} className={`max-w-[calc(40rem)] max-h-[calc(20rem)]`} crossOrigin="anonymous"></img>
+                  </div>
+                )
                 )}
               </div>
             </div>
-            <div className="w-full pt-20">
+            <div className="flex justify-center items-center gap-5 fixed bottom-10 ms-[calc(25%)] w-1/2">
               <button
-                onClick={startTake}
-                className=" block relative mx-auto w-fit bg-yellow-400 p-3 rounded-3xl text-slate-600"
+                  onClick={startTake}
+                  className="flex justify-center items-center px-5 rounded-3xl bg-blue-300 leading-10 border border-blue-500"
               >
                 촬영 시작
+              </button>
+              <button
+                  onClick={leave}
+                  className="flex justify-center items-center px-5 rounded-3xl bg-red-300 leading-10 border border-red-500"
+              >
+                나가기
               </button>
             </div>
           </div>
           <UserSideBar
             user={user}
-            leaveSession={leaveSession}
           />
         </div>
       </Layout>
@@ -112,7 +124,7 @@ MakeBooth.propTypes = {
   startTake: PropTypes.func,
   shareCode: PropTypes.string,
   leaveSession: PropTypes.func,
-  gotoTakePic : PropTypes.func,
+  gotoTakePic: PropTypes.func,
   frameList: PropTypes.array,
   user: PropTypes.shape({
     id: PropTypes.number,
@@ -122,4 +134,5 @@ MakeBooth.propTypes = {
     isHost: PropTypes.number,
   }),
   setFrame: PropTypes.func,
+  setAlertModal: PropTypes.func,
 };

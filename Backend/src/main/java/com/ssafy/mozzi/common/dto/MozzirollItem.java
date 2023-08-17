@@ -16,7 +16,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MozzirollItem {
+    private long id;
     private String objectName;
+    private Integer width;
+    private Integer height;
     private LocalDateTime createdAt;
-    private UserItem creator;
 }

@@ -34,7 +34,7 @@ public class EmailServiceImpl implements EmailService {
     final String smtpPort;
     final String dkimSelector;
     final DkimSigner dkimSigner;
-    // final byte[] dkim;
+    final String dkimClassPath;
 
     @Autowired
     EmailServiceImpl(Environment env) throws Exception {
@@ -45,8 +45,9 @@ public class EmailServiceImpl implements EmailService {
         smtpHost = env.getProperty("SMTP_HOST");
         smtpPort = env.getProperty("SMTP_PORT");
         dkimSelector = env.getProperty("SMTP_DKIM_SELECTOR");
+        dkimClassPath = env.getProperty("SMTP_DKIM_CLASSPATH");
 
-        InputStream dkimStream = new ClassPathResource("config/dkim.der").getInputStream();
+        InputStream dkimStream = new ClassPathResource(dkimClassPath).getInputStream();
         dkimSigner = new DkimSigner(smtpDomain, dkimSelector,
             dkimStream
         );
@@ -60,22 +61,15 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void passwordReset(String email, String password) {
-        // System.setProperty("jdk.tls.client.protocols", "TLSv1.2");
         final String encoding = "utf-8";
 
         Properties prop = new Properties();
-        // prop.put("mail.debug", true);
-        // prop.put("mail.smtp.starttls.enable", "true");
         prop.put("mail.smtp.host", smtpHost);
         prop.put("mail.smtp.port", Integer.parseInt(smtpPort));
         prop.put("mail.smtp.auth", "false");
-        // prop.put("mail.smtp.ssl.enable", "true");
-        // prop.put("mail.smtp.ssl.trust", "mozzi.lol");
         prop.put("mail.smtp.quitwait", "false");
         prop.put("mail.smtp.socketFactory.port", smtpPort);
-        // prop.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         prop.put("mail.smtp.socketFactory.fallback", "false");
-        // prop.setProperty("mail.smtp.ssl.protocols", "TLSv1.2");
 
         Session session = Session.getDefaultInstance(prop, new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -98,6 +92,5 @@ public class EmailServiceImpl implements EmailService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return;
     }
 }

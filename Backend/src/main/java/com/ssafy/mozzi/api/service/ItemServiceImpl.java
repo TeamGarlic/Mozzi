@@ -2,7 +2,6 @@ package com.ssafy.mozzi.api.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,8 +19,10 @@ import com.ssafy.mozzi.api.response.ItemStickerGetRes;
 import com.ssafy.mozzi.common.auth.ObjectStorageClient;
 import com.ssafy.mozzi.common.dto.BackgroundEntityDto;
 import com.ssafy.mozzi.common.dto.FrameClipItem;
+import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
+import com.ssafy.mozzi.common.exception.handler.BadRequestException;
 import com.ssafy.mozzi.common.exception.handler.CloudStorageSaveFailException;
-import com.ssafy.mozzi.common.exception.handler.NoDataException;
+import com.ssafy.mozzi.common.exception.handler.NotFoundException;
 import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.util.FileUtil;
 import com.ssafy.mozzi.common.util.MozziUtil;
@@ -68,12 +69,14 @@ public class ItemServiceImpl implements ItemService {
      * @return ItemBackgroundGetRes
      * @see ItemBackgroundGetRes
      * @see BackgroundEntityDto
+     * @throws UnAuthorizedException (Invalid Access Token, 17)
+     * @throws com.ssafy.mozzi.common.exception.handler.NotFoundException (UserIdNotExists, 2)
      */
     @Override
     public ItemBackgroundGetRes getBackgroundRes(String authorization, int pageNum, int pageSize, boolean isFavorite) {
         PageRequest pageRequest = PageRequest.of(pageNum - 1, pageSize);  // Page 객체를 갖고오기 위한 PageRequest 객체 생성
         Page<BackgroundEntityDto> page = null;
-        if (authorization.equals("")) {
+        if (authorization.isEmpty()) {
             page = backgroundRepository.findAllWithFavorite(pageRequest);
         } else if (isFavorite) {
             Long userId = mozziUtil.findUserIdByToken(authorization);
@@ -96,7 +99,7 @@ public class ItemServiceImpl implements ItemService {
      */
     @Override
     public FrameListGetRes getFrameList() {
-        Set<Frame> frames = frameRepository.findAllJoinFetch();
+        List<Frame> frames = frameRepository.findAllJoinFetch();
 
         return ItemMapper.toFrameListGetRes(frames);
     }
@@ -154,6 +157,7 @@ public class ItemServiceImpl implements ItemService {
      * @param file MultipartFile
      * @param title String
      * @see ItemService
+     * @throws CloudStorageSaveFailException (mozzi code : 0, Http status : 500)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
@@ -178,14 +182,19 @@ public class ItemServiceImpl implements ItemService {
      * @param frameClipItems FrameClipItem[]
      * @see Frame
      * @see FrameClip
+     * @throws NotFoundException (FrameNotExists, 19)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     public String saveFrameClips(long frameId, FrameClipItem[] frameClipItems) {
+        Optional<Frame> frameCandidate = frameRepository.findById(frameId);
+        if (frameCandidate.isEmpty()) {
+            throw new NotFoundException(MozziAPIErrorCode.FrameNotExists, "Requested Frame Not Exists");
+        }
 
-        Frame frame = frameRepository.findById(frameId).get();
+        Frame frame = frameCandidate.get();
 
-        Set<FrameClip> frameClips = frame.getFrameClips();
+        List<FrameClip> frameClips = frame.getFrameClips();
 
         for (FrameClipItem frameClipItem : frameClipItems) {
             FrameClip frameClip = frameClipRepository.save(
@@ -214,6 +223,9 @@ public class ItemServiceImpl implements ItemService {
      * @see BackgroundRepository
      * @see BackgroundFavoriteRepository
      * @see ItemMapper
+     * @throws BadRequestException (NoData, 13)
+     * @throws UnAuthorizedException (UnAuthorized, 11) (Invalid Access Token, 17)
+     * @throws com.ssafy.mozzi.common.exception.handler.NotFoundException (UserIdNotExists, 2)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
@@ -221,11 +233,14 @@ public class ItemServiceImpl implements ItemService {
         String accessToken) {
         long userId = mozziUtil.findUserIdByToken(accessToken);
         Optional<User> user = userRepository.findById(userId);
-        if (!user.isPresent())
-            throw new UnAuthorizedException("You are not authorized to save favorite-background");
+        if (user.isEmpty()) {
+            throw new UnAuthorizedException(MozziAPIErrorCode.UnAuthorized,
+                "You are not authorized to save favorite-background");
+        }
         Optional<Backgroud> backgroud = backgroundRepository.findById(backgroundFavoritePostReq.getBackgroundId());
-        if (!backgroud.isPresent())
-            throw new NoDataException("This is no data for save favorite-background");
+        if (backgroud.isEmpty()) {
+            throw new BadRequestException(MozziAPIErrorCode.NoData, "This is no data for save favorite-background");
+        }
 
         Optional<BackgroundFavorite> backgroundFavorite = backgroundFavoriteRepository.findByUserAndBackground(
             user.get(),

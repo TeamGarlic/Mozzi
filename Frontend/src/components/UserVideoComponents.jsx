@@ -12,7 +12,9 @@ export default function UserVideoComponent(canvas) {
   }, [canvas]);
 
   return(
-      <video autoPlay={true} ref={vidRef} />
+      <div className={"p-1 h-32 w-full"}>
+      <video autoPlay={true} ref={vidRef} className={"h-full rounded-2xl bg-white border border-blue-200 object-fill"}/>
+      </div>
   );
 }
 

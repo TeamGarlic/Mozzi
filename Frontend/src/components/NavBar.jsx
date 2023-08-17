@@ -21,10 +21,10 @@ function NavBar({ user }) {
 
   async function logOut() {
     let res = await userApi.logOut();
-    console.log(res);
+    // console.log(res);
     if(res.status ===200){
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+      sessionStorage.removeItem("accessToken");
+      sessionStorage.removeItem("refreshToken");
       alert("로그아웃되었습니다!");
       location.href = "/";
     }
@@ -38,22 +38,22 @@ function NavBar({ user }) {
             onClick={goHome}
         />
         {user ? (
-            <div className=" float-right flex-col">
+            <div className=" float-right flex-col z-10 relative">
               <button
                   onClick={showMenu}
-                  className=" float-right leading-[calc(1.875rem)]"
+                  className="flex float-right leading-[calc(2rem)] break-keep"
               >
-                {user.userNickname}
+                {user.userNickname} 님
               </button>
               {menu && (
-                  <ul className="mt-10 border-4 rounded-lg p-4">
-                    <li className=" my-2">
+                  <ul className="mt-10 w-[calc(8rem)] absolute right-0 px-4 border-4 rounded-lg z-10 bg-purple-200 items-center justify-center text-center">
+                    <li className=" my-2 z-10">
                       <Link to={`/mypage`}>마이페이지</Link>
                     </li>
-                    <li className=" my-2">
+                    <li className=" my-2 z-10">
                       <Link to="/modify">내정보수정</Link>
                     </li>
-                    <li className=" my-2 hover:cursor-pointer" onClick={logOut}>
+                    <li className=" my-2 hover:cursor-pointer z-10" onClick={logOut}>
                       로그아웃
                     </li>
                   </ul>

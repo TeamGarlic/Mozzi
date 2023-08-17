@@ -11,7 +11,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.ssafy.mozzi.common.auth.JwtAuthenticationFilter;
-import com.ssafy.mozzi.common.auth.JwtTokenProvider;
+import com.ssafy.mozzi.common.exception.handler.ExceptionHandlerFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,20 +19,16 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    private final JwtTokenProvider jwtTokenProvider;
-
-    // TODO: Need to add path after adding anonymous mapping.
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
 
     @Bean
     protected SecurityFilterChain config(HttpSecurity http) throws Exception {
-        // TODO: Need to make authorization and authentication policy, when building community component
-        return http.csrf(AbstractHttpConfigurer::disable) // TODO: CSRF setting if need
-            .cors(AbstractHttpConfigurer::disable) // TODO: Should determine whether CORS needed or not
+        return http.csrf(AbstractHttpConfigurer::disable)
+            .cors(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.OPTIONS).permitAll()  // preflight 로 보내는 요청을 해결
-                .requestMatchers("/h2-console/**").permitAll()  // h2 요청 해결
-                .requestMatchers("/sessions/testpath/**").permitAll()
+                // .requestMatchers("/h2-console/**").permitAll()  // h2 요청 해결
 
                 // users 요청에 대한 보안 설정
                 .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
@@ -77,11 +73,15 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/mozzirolls/link").authenticated()
                 .requestMatchers(HttpMethod.POST, "/mozzirolls/like/{userMozzirollId}").authenticated()
                 .requestMatchers(HttpMethod.GET, "/mozzirolls/popular").permitAll()
+                .requestMatchers(HttpMethod.POST, "/mozzirolls/post").authenticated()
+                .requestMatchers(HttpMethod.DELETE, "/mozzirolls/{userMozzirollId}").authenticated()
+                .requestMatchers(HttpMethod.GET, "/mozzirolls/{userMozzirollId}").permitAll()
             )
             .headers(headers ->
                 headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
             )
-            .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(exceptionHandlerFilter, JwtAuthenticationFilter.class)
             .getOrBuild();
     }
 }

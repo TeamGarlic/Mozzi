@@ -1,26 +1,17 @@
 package com.ssafy.mozzi.common.exception.handler;
 
-import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
-
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
 
 /**
- * 요청 된 작업을 처리하기에 권한이 부족할 때 발생하는 예외입니다. (Mozzi code : 11, Http Status 401)
+ * Access Token이 필요하나 존재하지 않을 때 (AccessTokenNotExists, 7)
+ * 요청을 처리하는데 필요한 권한이 존재하지 않는 경우 (UnAuthorized, 11)
  */
-public class UnAuthorizedException extends RuntimeException {
-    public UnAuthorizedException(String message) {
-        super(message);
+public class UnAuthorizedException extends BaseException {
+    public UnAuthorizedException(MozziAPIErrorCode code, String message) {
+        super(code, message);
     }
 
-    private static final int MOZZI_CODE = 11;
-
-    public static class UnAuthorizedResponse extends BaseErrorResponse {
-        @Schema(defaultValue = "" + MOZZI_CODE)
-        private final int code = MOZZI_CODE;
-
-        public UnAuthorizedResponse(String message) {
-            this.setCode(MOZZI_CODE);
-            this.setMessage(message);
-        }
+    UnAuthorizedException(MozziAPIErrorCode code, String message, String log) {
+        super(code, message, log);
     }
 }

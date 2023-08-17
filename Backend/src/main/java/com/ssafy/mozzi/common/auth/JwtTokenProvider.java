@@ -77,6 +77,7 @@ public class JwtTokenProvider {
      * @return Authentication 객체
      * @see CustomUserDetails
      * @see JwtAuthenticationFilter
+     * @throws UsernameNotFoundException
      */
     public Authentication getAuthentication(String token) {
         Optional<User> user = userRepository.findById(Long.parseLong(getUserId(token)));

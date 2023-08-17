@@ -4,6 +4,7 @@ import boothApi from "@/api/boothApi.js";
 import {useDispatch} from "react-redux";
 import {setFrameAction, AddClipAction, updateFrameAction} from "@/modules/clipAction.js";
 import {changeBgAction} from "@/modules/bgAction.js";
+import { AppStore } from "@/store/AppStore";
 
 function useSession(shareCode) {
   const [session, setSession] = useState(undefined);
@@ -18,32 +19,110 @@ function useSession(shareCode) {
   const dispatch = useDispatch();
   const [mozzi, setMozzi] = useState("");
   const [shareSecret, setShareSecret] = useState("");
+  const [recordingMozzi, setRecordingMozzi] = useState(false);
+  const [onMic, setOnMic] = useState(true);
+  const [tempBg, setTempBg] = useState(new Image());
+  const [visibleCamSetting, setVisibleCamSetting] = useState(true);
 
-  const leaveSession = () => {
+  const leaveSession = async() => {
     if (session) {
-      session.disconnect();
+      // console.log(session);
+      let isHost = await JSON.parse(session.connection.data).isHost;
+      // console.log(isHost);
+      if(isHost === 1){
+        await session.signal({
+          data: isHost,
+          to: [],
+          type: "hostOut",
+        });
+        setSession(undefined);
+        setPublisher(undefined);
+        setSubscribers([]);
+        window.location.href = "/";
+      }else{
+        session.disconnect();
+        setSession(undefined);
+        setPublisher(undefined);
+        setSubscribers([]);
+        window.location.href = "/";
+      }
+    }else{
+      setSession(undefined);
+      setPublisher(undefined);
+      setSubscribers([]);
+      window.location.href = "/";
     }
-    setSession(undefined);
-    setPublisher(undefined);
-    setSubscribers([]);
-    window.location.href = "/";
   };
 
-  const joinSession = async (userName, source) => {
+  const joinSession = async (userName, source, isHost) => {
 
     try {
       const OV = new OpenVidu();
+      OV.enableProdMode();
       const session = OV.initSession();
       setSession(session);
+      // Todo: 마지막에 콘솔로그 없애는 모드 주석지우기
+      // OV.enableProdMode();
 
-      session.on("streamCreated", (event) => {
+      session.on("streamCreated", async(event) => {
         const subscriber = session.subscribe(event.stream, undefined);
         setSubscribers((prev) => [...prev, subscriber]);
+        await session.signal({
+          data: JSON.stringify({
+            from: publisher.stream.connection.connectionId,
+            message:  JSON.parse(subscriber.stream.connection.data).clientData+"님이 입장했습니다.",
+            connectionId : publisher.stream.connection.connectionId
+          }),
+          to: [],
+          type: "userInSignal",
+        })
+
+        // let data = JSON.stringify({
+        //   from: "System",
+        //   message:  JSON.parse(subscriber.stream.connection.data).clientData+"님이 입장했습니다.",
+        //   connectionId : subscriber.stream.connection.connectionId
+        // });
+        // setChatLists((prev) => {
+        //   console.log("입장");
+        //   return [...prev, data];
+        // });
+
+      });
+
+      session.on("signal:hostOut",async (event)=>{
+        if(JSON.parse(event.data) === JSON.parse(session.connection.data).isHost){
+          await boothApi.destroyBooth(session.sessionId);
+          alert("연결을 끊고 메인 화면으로 돌아갑니다.");
+        }else{
+          alert("호스트의 연결이 끊어졌습니다. 메인 화면으로 돌아갑니다.");
+          leaveSession();
+        }
       });
 
       session.on("signal:chat", async (event) => {
         // console.log(event);
         let data = await JSON.parse(event.data);
+        // console.log(data);
+        setChatLists((prev) => {
+          return [...prev, data];
+        });
+      });
+
+      session.on("signal:userInSignal", async (event) => {
+        // console.log(event);
+        let data = await JSON.parse(event.data);
+        // console.log(data);
+        if(data.connectionId !== publisher.stream.connection.connectionId) return;
+        setChatLists((prev) => {
+          return [...prev, data];
+        });
+      });
+
+      session.on("signal:userOutSignal", async (event) => {
+        // console.log(event);
+        let data = await JSON.parse(event.data);
+        // console.log(data);
+        if(data.connectionId !== publisher.stream.connection.connectionId) return;
         setChatLists((prev) => {
           return [...prev, data];
         });
@@ -58,7 +137,9 @@ function useSession(shareCode) {
       session.on("signal:gotoModifing", async (event) => {
         // console.log("방장이 편집하쟤!!");
         // setNowTaking(true);
+        setVisibleCamSetting(false);
         setNow("MODIFING");
+
       });
 
       session.on("signal:gotoFinish", async (event) => {
@@ -79,7 +160,6 @@ function useSession(shareCode) {
 
       session.on("signal:sendPosition", async (event) => {
         const data = await JSON.parse(event.data);
-        // console.log(data);
         setPosition(data);
       });
 
@@ -106,10 +186,16 @@ function useSession(shareCode) {
       })
 
       session.on("signal:changeBg", async (event) => {
-        const newBg = new Image();
-        newBg.src = event.data;
-        newBg.crossOrigin = "anonymous";
-        dispatch(changeBgAction({img: newBg}));
+
+        if (event.data === "") {
+          dispatch(changeBgAction({img: tempBg}));
+        } else {
+          const newBg = new Image();
+          newBg.src = event.data;
+          newBg.crossOrigin = "anonymous";
+          dispatch(changeBgAction({img: newBg}));
+        }
+
       })
 
       session.on("signal:sendMozzi", async (event) => {
@@ -132,17 +218,61 @@ function useSession(shareCode) {
             dispatch(AddClipAction({idx: data.idx, src: res.data}))
           }
         } catch (e) {
+          // console.log(e);
+        }
+      })
+
+      session.on("signal:sendRecordingSignal", async (event) => {
+        const data = JSON.parse(event.data)
+        setRecordingMozzi(Boolean(data.signal));
+        if (data.signal) {
+          AppStore.setRunningSpinner();
+        } else {
+          AppStore.setStopSpinner();
+        }
+      })
+
+      session.on("signal:sendBg", async (event) => {
+        const data = JSON.parse(event.data);
+        try {
+          let res = await boothApi.downloadClip(data.fileName, data.shareSecret, shareCode);
+          if (res.status === 200) {
+            tempBg.src = res.data;
+            tempBg.crossOrigin = "anonymous";
+          }
+        } catch (e) {
           console.log(e);
         }
       })
 
-      session.on("streamDestroyed", (event) => {
-        setSubscribers((prev) => {
+      session.on("streamDestroyed", async(event) => {
+        setSubscribers( (prev) => {
           const newSubscribers = [...prev];
           const idx = newSubscribers.indexOf(event.stream.streamManager);
-          // console.log(newSubscribers);
           if (idx < 0) return;
+          let outMan = {};
+          Object.assign(outMan, newSubscribers[idx]);
           newSubscribers.splice(idx, 1);
+          // let data = JSON.stringify({
+          //   from: "System",
+          //   message: JSON.parse(outMan.stream.connection.data).clientData+"님이 퇴장했습니다.",
+          //   connectionId : outMan.stream.connection.connectionId
+          // });
+
+          // setChatLists((prev) => {
+          //   console.log("퇴장");
+          //   return [...prev, data];
+          // });
+
+          session.signal({
+            data: JSON.stringify({
+              from: publisher.stream.connection.connectionId,
+              message: JSON.parse(outMan.stream.connection.data).clientData+"님이 퇴장했습니다.",
+              connectionId : publisher.stream.connection.connectionId
+            }),
+            to: [],
+            type: "userOutSignal",
+          });
           return [...newSubscribers];
         });
       });
@@ -156,6 +286,7 @@ function useSession(shareCode) {
       // console.log(userName);
       await session.connect(token, {
         clientData: userName,
+        isHost: isHost,
       });
 
       const publisher = await OV.initPublisherAsync(undefined, {
@@ -170,6 +301,11 @@ function useSession(shareCode) {
 
       await session.publish(publisher);
       await setPublisher(publisher);
+
+      if (!publisher.stream.isLocalStreamPublished){
+        alert("카메라를 확인해주세요");
+        window.location.href="/";
+      }
     } catch (error) {
       console.log(
         "There was an error connecting to the session:",
@@ -179,6 +315,19 @@ function useSession(shareCode) {
       alert("연결 중 오류가 발생했습니다.");
       window.location.href="/";
     }
+  };
+
+  const toggleMic = () => {
+    publisher.publishAudio(!onMic);
+    setOnMic(!onMic);
+  }
+
+  const sendRecordingSignal = async (signal=false) => {
+    await session.signal({
+      data: JSON.stringify({signal: signal}),
+      to: [],
+      type: "sendRecordingSignal",
+    })
   };
 
   const sendMessage = async (message, userName) => {
@@ -299,6 +448,17 @@ function useSession(shareCode) {
     });
   };
 
+  const sendBg = async (fileName, shareSecret) => {
+    await session.signal({
+      data: JSON.stringify({
+        fileName: fileName,
+        shareSecret: shareSecret,
+      }),
+      to: [],
+      type: "sendBg",
+    })
+  }
+
 
   const sendFileName = async (idx, fileName, shareSecret) => {
     await session.signal({
@@ -358,7 +518,14 @@ function useSession(shareCode) {
     updateMozzi,
     shareSecret,
     setShareSecret,
-    sendFileName
+    sendFileName,
+    sendRecordingSignal,
+    recordingMozzi,
+    toggleMic,
+    onMic,
+    sendBg,
+    tempBg,
+    visibleCamSetting,
   };
 }
 

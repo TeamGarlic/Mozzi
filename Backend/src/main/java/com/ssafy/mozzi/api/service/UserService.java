@@ -31,7 +31,7 @@ public interface UserService {
 
     void logout(String accessToken);
 
-    User findUserByToken(String accessToken);
+    User findUserByToken(String accessToken, boolean validate);
 
     UserUpdateRes update(UserUpdatePutReq request);
 
