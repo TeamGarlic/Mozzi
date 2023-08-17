@@ -216,7 +216,7 @@ function TakePic({
                     {/* <div className="float-right mr-10 text-2xl">taken : {taken}/10</div> */}
                 </div>
                 <BigCam myId={myId} updatePosition={updatePosition} setPosition={setPosition} isTaking={isTaking}/>
-                <div className="flex justify-center items-center gap-20 fixed bottom-10 ms-[calc(25%)] w-1/2 ">
+                <div className="flex justify-center items-center gap-20 fixed bottom-10 ms-[calc(25%)] w-1/2 z-50">
                     {!timerVisible && (
                         <div className="flex rounded-3xl bg-yellow-100 leading-10 border border-yellow-500">
                             <div className="mr-1 px-3 bg-yellow-300 flex flex-wrap content-center rounded-l-3xl z-50">
