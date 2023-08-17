@@ -10,7 +10,7 @@ import { setDegreeAction, setScaleAction, setVisibilityAction } from '@/modules/
 import useInterval from '@/hooks/useInterval.js';
 import PropTypes from "prop-types";
 
-function CamSetting({toggleMic, onMic, visibleCamSetting}) {
+function CamSetting({toggleMic, onMic, position, setPosition, visibleCamSetting, sendPosition}) {
   const [visible, setVisible] = useState(false);
   const [camVisibility, setCamVisibility] = useState(true);
   const [count, setCount] = useState(0);
@@ -26,7 +26,10 @@ function CamSetting({toggleMic, onMic, visibleCamSetting}) {
   }
 
   const setMute = () =>{
+    const _position = position;
     toggleMic();
+    setPosition(_position);
+    sendPosition(_position);
   }
 
   const setDegree = (val)=>{
@@ -133,5 +136,8 @@ export default CamSetting;
 CamSetting.propTypes = {
   toggleMic: PropTypes.func,
   onMic: PropTypes.bool,
+  position: PropTypes.array,
+  setPosition: PropTypes.func,
+  sendPosition: PropTypes.func,
   visibleCamSetting: PropTypes.bool,
 }
