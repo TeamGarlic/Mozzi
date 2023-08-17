@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.ssafy'
-version = '1.0.0'
+version = '1.0.01'
 
 java {
     sourceCompatibility = '17'

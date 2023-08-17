@@ -23,7 +23,8 @@ public class ObjectStorageClient {
         this.client = com.oracle.bmc.objectstorage.ObjectStorageClient.builder()
             .additionalClientConfigurator(new ResteasyClientConfigurator())
             .build((new AuthentificationProvider()).getAuthenticationDetailsProvider(
-                env.getProperty("ORACLE_CLOUD_PUBLIC_KEY")));
+                env.getProperty("ORACLE_CLOUD_PRIVATE_KEY"),
+                env.getProperty("OCI_API_CONFIG_PATH")));
         this.client.setRegion(Region.AP_CHUNCHEON_1);
     }
 }

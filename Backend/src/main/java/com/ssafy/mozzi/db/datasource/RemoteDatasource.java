@@ -42,6 +42,8 @@ public class RemoteDatasource {
     private final String formatSql;
     private final String useSQLComments;
     private final String maximumPoolSize;
+    private final String hbm2ddl;
+    private final String dialect;
 
     @Autowired
     RemoteDatasource(Environment environment) {
@@ -49,6 +51,8 @@ public class RemoteDatasource {
         formatSql = environment.getProperty("spring.remote-source.format_sql");
         useSQLComments = environment.getProperty("spring.remote-source.use_sql_comments");
         maximumPoolSize = environment.getProperty("spring.remote-source.maximum-pool-size");
+        hbm2ddl = environment.getProperty("spring.remote-source.hbm2ddl");
+        dialect = environment.getProperty("spring.remote-source.dialect");
     }
 
 
@@ -62,8 +66,8 @@ public class RemoteDatasource {
         em.setJpaVendorAdapter(adapter);
         em.setJpaPropertyMap(
             Map.of(
-                "hibernate.hbm2ddl", "update"
-                , "hibernate.dialect", "org.hibernate.dialect.MariaDB103Dialect"
+                "hibernate.hbm2ddl", hbm2ddl
+                , "hibernate.dialect", dialect
                 , "hibernate.show_sql", showSql
                 , "hibernate.format_sql", formatSql
                 , "hibernate.use_sql_comments", useSQLComments
