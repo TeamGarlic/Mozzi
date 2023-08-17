@@ -34,6 +34,7 @@ public class EmailServiceImpl implements EmailService {
     final String smtpPort;
     final String dkimSelector;
     final DkimSigner dkimSigner;
+    final String dkimClassPath;
 
     @Autowired
     EmailServiceImpl(Environment env) throws Exception {
@@ -44,8 +45,9 @@ public class EmailServiceImpl implements EmailService {
         smtpHost = env.getProperty("SMTP_HOST");
         smtpPort = env.getProperty("SMTP_PORT");
         dkimSelector = env.getProperty("SMTP_DKIM_SELECTOR");
+        dkimClassPath = env.getProperty("SMTP_DKIM_CLASSPATH");
 
-        InputStream dkimStream = new ClassPathResource("config/dkim.der").getInputStream();
+        InputStream dkimStream = new ClassPathResource(dkimClassPath).getInputStream();
         dkimSigner = new DkimSigner(smtpDomain, dkimSelector,
             dkimStream
         );
