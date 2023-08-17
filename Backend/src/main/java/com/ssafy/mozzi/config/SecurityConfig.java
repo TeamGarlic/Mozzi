@@ -24,13 +24,11 @@ public class SecurityConfig {
 
     @Bean
     protected SecurityFilterChain config(HttpSecurity http) throws Exception {
-        // TODO: Need to make authorization and authentication policy, when building community component
-        return http.csrf(AbstractHttpConfigurer::disable) // TODO: CSRF setting if need
-            .cors(AbstractHttpConfigurer::disable) // TODO: Should determine whether CORS needed or not
+        return http.csrf(AbstractHttpConfigurer::disable)
+            .cors(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.OPTIONS).permitAll()  // preflight 로 보내는 요청을 해결
-                .requestMatchers("/h2-console/**").permitAll()  // h2 요청 해결
-                .requestMatchers("/sessions/testpath/**").permitAll()
+                // .requestMatchers("/h2-console/**").permitAll()  // h2 요청 해결
 
                 // users 요청에 대한 보안 설정
                 .requestMatchers(HttpMethod.POST, "/users/register").permitAll()

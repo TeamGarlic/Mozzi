@@ -4,10 +4,14 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -22,6 +26,10 @@ import com.zaxxer.hikari.HikariDataSource;
     , entityManagerFactoryRef = RemoteDatasource.ENTITY_MANAGER_FACTORY
     , transactionManagerRef = RemoteDatasource.TRANSACTION_MANAGER
 )
+@PropertySources({
+    @PropertySource("classpath:application.properties"),
+    @PropertySource("classpath:application-keys.properties")
+})
 public class RemoteDatasource {
     public static final String DATA_SOURCE_NAME = "remote";
     public static final String DATA_SOURCE = DATA_SOURCE_NAME + "_DATA_SOURCE"; // memberDataSource
@@ -29,6 +37,20 @@ public class RemoteDatasource {
         DATA_SOURCE_NAME + "_TRANSACTION_MANAGER"; // memberTransactionManager
     public static final String ENTITY_MANAGER_FACTORY =
         DATA_SOURCE_NAME + "_ENTITY_MANAGER_FACTORY"; // memberEntityManagerFactory
+
+    private final String showSql;
+    private final String formatSql;
+    private final String useSQLComments;
+    private final String maximumPoolSize;
+
+    @Autowired
+    RemoteDatasource(Environment environment) {
+        showSql = environment.getProperty("spring.remote-source.show_sql");
+        formatSql = environment.getProperty("spring.remote-source.format_sql");
+        useSQLComments = environment.getProperty("spring.remote-source.use_sql_comments");
+        maximumPoolSize = environment.getProperty("spring.remote-source.maximum-pool-size");
+    }
+
 
     @Bean(name = ENTITY_MANAGER_FACTORY)
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
@@ -42,11 +64,11 @@ public class RemoteDatasource {
             Map.of(
                 "hibernate.hbm2ddl", "update"
                 , "hibernate.dialect", "org.hibernate.dialect.MariaDB103Dialect"
-                , "hibernate.show_sql", "true"
-                , "hibernate.format_sql", "true"
-                , "hibernate.use_sql_comments", "true"
+                , "hibernate.show_sql", showSql
+                , "hibernate.format_sql", formatSql
+                , "hibernate.use_sql_comments", useSQLComments
                 , "hibernate.use_query_cache", "false"
-                , "maximum-pool-size", "1"
+                , "maximum-pool-size", maximumPoolSize
             )
         );
         return em;
