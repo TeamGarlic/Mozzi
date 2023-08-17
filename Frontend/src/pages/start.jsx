@@ -43,7 +43,7 @@ function Start() {
   async function gotoBooth() {
     try {
       let res = await boothApi.getSessionID(code.value.split(' ').join(''));
-      console.log(res);
+      // console.log(res);
       const shareCode = res.data.data.shareCode;
       const shareSecret = res.data.data.shareSecret
       navigate(`/${shareCode}/booth`, { state: { isHost: 0, shareSecret: shareSecret , shareCode: shareCode} });

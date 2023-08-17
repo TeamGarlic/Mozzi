@@ -44,7 +44,7 @@ async function checkUser() {
         });
       }
     });
-    console.log(user);
+    // console.log(user);
   }
 
   return { user, setUser, checkUser };

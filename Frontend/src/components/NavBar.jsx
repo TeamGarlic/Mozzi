@@ -21,7 +21,7 @@ function NavBar({ user }) {
 
   async function logOut() {
     let res = await userApi.logOut();
-    console.log(res);
+    // console.log(res);
     if(res.status ===200){
       sessionStorage.removeItem("accessToken");
       sessionStorage.removeItem("refreshToken");

@@ -39,7 +39,7 @@ function LogIn() {
     if(!flag) return;
     try{
       let res = await userApi.reset(userId);
-      console.log(res);
+      // console.log(res);
       if(res.status ===200){
         setError(`새 비밀번호를 전송했습니다. ${res.data.data.email}을 확인하신 후 비밀번호를 재설정해주세요.`);
       }

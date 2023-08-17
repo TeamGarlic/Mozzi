@@ -75,9 +75,9 @@ function Detail() {
 
     const download=(src, format, type)=>{
         let encode = encodeURI(src);
-        console.log(encode);
+        // console.log(encode);
         let sp = encode.split('.')
-        console.log(sp)
+        // console.log(sp)
         handleDownload(src,format,type,getFormat(src));
     }
 
