@@ -26,9 +26,10 @@ function Detail() {
     const [likes, setLikes] = useState();
     const [shared, setShared] = useState(false);
     const navigate = useNavigate();
+    const [dropdown, setDropdown] = useState(false);
     const FFMpegStatus = useSelector((state) => state.clipReducer.FFMpegStatus);
-
-    const ffmpeg = createFFmpeg({log : false});
+    const ffmpeg = createFFmpeg({log : true});
+    const types=[{format:'webm',type:'', srcFormat:"webm"},{format:'mp4',type:'video/mp4', srcFormat:"webm"},{format:'gif',type:'image/gif', srcFormat:"webm"}]
     const handleDownload = async (src, format, type, srcFormat) => {
         if(!FFMpegStatus){
             alert("이미 다른 파일을 다운로드 중입니다. 잠시 후에 다시 시도해주세요");
@@ -68,14 +69,18 @@ function Detail() {
         setShared(res.data.data.posted);
     }
 
-    const download=(e)=>{
-        e.stopPropagation();
-        let encode = encodeURI(e.target.dataset.value);
-        let link = document.createElement("a");
-        link.setAttribute("href", encode);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    const download=(src, format, type)=>{
+        let encode = encodeURI(src);
+        console.log(encode);
+        let sp = encode.split('.')
+        console.log(sp)
+        handleDownload(src,format,type,getFormat(src));
+    }
+
+    const getFormat = (src)=>{
+        let encode = encodeURI(src);
+        let sp = encode.split('.')
+        return sp[sp.length-1];
     }
 
     const deleteMozzi = async(e)=>{
@@ -119,6 +124,8 @@ function Detail() {
     return (
         <Layout>
            <>
+               <div className={`absolute p-2 px-4 rounded-3xl bg-red-100 border border-red-500 m-2 float-right right-20 top-5 ${FFMpegStatus?"hidden":""}`}>영상을 변환하는 중입니다. 잠시만 기다려주세요...</div>s
+
                <NavBar user={user} />
                <div className="flex-col mt-28 px-20 py-5 gap-3">
                    <div className="text-3xl text-gray-600">클립 보기</div>
@@ -165,17 +172,28 @@ function Detail() {
                                 </button>
                                 }
                                 { user && mozzi.user.id ===user.id &&
-                                <button
-                                    value={`${baseURL}/files/object/${mozzi.mozzirollInfo.objectName}`}
-                                    className="my-auto mt-1 mx-2"
-                                    onClick={download}>
-                                    <img src={`${download_icon}`} alt="" className="w-6 h-5" data-value={`${baseURL}/files/object/${mozzi.mozzirollInfo.objectName}`}/>
-                                </button>
+                                    <button
+                                        value={`${baseURL}/files/object/${mozzi.mozzirollInfo.objectName}`}
+                                        className="my-auto mt-1 mx-2"
+                                        onClick={()=>{setDropdown(prev=>!prev)}} >
+                                        <img src={`${download_icon}`} alt="" className="w-6 h-5" data-value={`${baseURL}/files/object/${mozzi.mozzirollInfo.objectName}`}/>
+                                    </button>
                                 }
                                 <button className="flex mx-1" onClick={()=>giveLike(mozzi.id)}>
                                     <img src={`${liked?full:empty}`} alt="" className="w-5 h-5 mt-1" />
                                     <div className="ml-1 mr-2 text-red-500 text-lg">{likes}</div>
                                 </button>
+                            </div>
+
+                            <div className="float-right flex-col rounded-2xl w-1/3 min-w-[calc(13rem)]">
+                                {dropdown&&(<div className='rounded-t-2xl h-2 bg-orange-100 border border-orange-500 '></div>)}
+                                {dropdown&&types.map(item=>(
+                                  <button key={`${item.format}`} className="w-full top-0 h-10  bg-orange-50 border-x border-b border-orange-500"
+                                          onClick={()=>{download(baseURL+'/files/object/'+mozzi.mozzirollInfo.objectName,item.format,item.type,item.srcFormat)}}>
+                                      {`.${item.format} 파일로 다운로드${item.format===getFormat(baseURL+'/files/object/'+mozzi.mozzirollInfo.objectName)?" (원본)":""}`}
+                                  </button>
+                                ))}
+                                {dropdown&&(<div className='rounded-b-2xl h-2 bg-orange-100 border-b border-x border-orange-500'></div>)}
                             </div>
                         </div>
                    </div>

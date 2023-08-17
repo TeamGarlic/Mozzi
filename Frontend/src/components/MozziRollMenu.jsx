@@ -12,8 +12,7 @@ function MozziRollMenu({item, idx, deleteFunc, myRef, user}){
     // const bgs = ["bg-yellow-200","bg-green-200","bg-purple-200","bg-red-200"];
 
     const play=()=>{
-        const type = myRef.src.slice(-3, myRef.src.length);
-        if(type !== "mp4") return;
+        if(!myRef.src) return;
         myRef.play();
     }
 
