@@ -12,17 +12,48 @@ import user_icon from '@/assets/img/mozzi-icon.png'
 import delete_icon from '@/assets/img/delete.png'
 import download_icon from '@/assets/img/download.png'
 import baseURL from "@/api/BaseURL.js";
+import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg';
+import { setFFMpegStatusAction } from '@/modules/clipAction.js';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 function Detail() {
     const {user} = useUser();
-    console.log(user)
+    const dispatch = useDispatch();
     const {id} = useParams();
     const [mozzi, setMozzi] = useState();
     const [liked, setLiked] = useState(false);
     const [likes, setLikes] = useState();
     const [shared, setShared] = useState(false);
     const navigate = useNavigate();
+    const FFMpegStatus = useSelector((state) => state.clipReducer.FFMpegStatus);
+
+    const ffmpeg = createFFmpeg({log : false});
+    const handleDownload = async (src, format, type, srcFormat) => {
+        if(!FFMpegStatus){
+            alert("이미 다른 파일을 다운로드 중입니다. 잠시 후에 다시 시도해주세요");
+            return;
+        }
+        dispatch(setFFMpegStatusAction(false));
+        let recUrl = src;
+        if(srcFormat!=format){
+            if(!ffmpeg.isLoaded()) await ffmpeg.load();
+            // TODO : download 파일명 바꿔야됨
+            ffmpeg.FS("writeFile","download."+srcFormat,await fetchFile(src));
+            await ffmpeg.run("-i","download."+srcFormat,"-filter:v", "fps=30","download."+format);
+            const recFile = ffmpeg.FS("readFile","download."+format);
+            const recBlob = new Blob([recFile.buffer], {type:type});
+            recUrl = URL.createObjectURL(recBlob);
+        }
+        const a = document.createElement("a");
+        a.href = recUrl;
+        document.body.appendChild(a);
+        a.download = "download."+format;
+        a.target="_blank";
+        a.click();
+        dispatch(setFFMpegStatusAction(true));
+    }
+
 
     useEffect(()=>{
         if(!id) return;
@@ -31,7 +62,6 @@ function Detail() {
 
     async function getDetail(id){
         let res = await mozziRollApi.getDetail(id);
-        console.log(res.data.data)
         setMozzi(res.data.data);
         setLiked(res.data.data.liked);
         setLikes(res.data.data.likeCount);
@@ -78,12 +108,9 @@ function Detail() {
     }
 
     const share =async(id)=>{
-        console.log(mozzi);
         if(!user) return;
-        console.log(user);
         if(mozzi.user.userId !== user.userId) return;
         let res = await mozziRollApi.share(id);
-        console.log(res);
         if(res.status ===200){
             setShared(res.data.data.post)
         }
@@ -105,6 +132,7 @@ function Detail() {
                                src={`${baseURL}/files/object/${mozzi.mozzirollInfo.objectName}`}
                                controls
                                autoPlay
+                               loop
                                crossOrigin="anonymous"
                            />
                         </div>

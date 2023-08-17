@@ -190,7 +190,7 @@ function TakePic({
                   <ScriptModal closeScriptModal={closeScriptModal} scriptArray={scriptArray}/>
                 )}
                 {recordingModal && (
-                    <RecordingModal closeRecordingModal={closeRecordingModal}/>
+                    <RecordingModal count={count} closeRecordingModal={closeRecordingModal}/>
                 )}
                 {waitingModal && (
                     <WaitingRecordModal count={count} closeWaitingModal={closeWaitingModal}/>
