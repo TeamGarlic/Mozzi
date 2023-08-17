@@ -22,6 +22,7 @@ function useSession(shareCode) {
   const [recordingMozzi, setRecordingMozzi] = useState(false);
   const [onMic, setOnMic] = useState(true);
   const [tempBg, setTempBg] = useState(new Image());
+  const [visibleCamSetting, setVisibleCamSetting] = useState(true);
 
   const leaveSession = async() => {
     if (session) {
@@ -136,7 +137,9 @@ function useSession(shareCode) {
       session.on("signal:gotoModifing", async (event) => {
         // console.log("방장이 편집하쟤!!");
         // setNowTaking(true);
+        setVisibleCamSetting(false);
         setNow("MODIFING");
+
       });
 
       session.on("signal:gotoFinish", async (event) => {
@@ -522,6 +525,7 @@ function useSession(shareCode) {
     onMic,
     sendBg,
     tempBg,
+    visibleCamSetting,
   };
 }
 

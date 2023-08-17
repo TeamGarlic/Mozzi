@@ -37,7 +37,7 @@ function MyPage() {
         const confirm = window.confirm("삭제하시겠습니까?");
         if(!confirm) return;
         let res = await mozziRollApi.deleteMozziRolls(id);
-        console.log(res);
+        // console.log(res);
         if(res.status ===200){
             await getMyMozziRolls(page, 10);
         }
