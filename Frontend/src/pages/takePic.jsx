@@ -174,6 +174,7 @@ function TakePic({
     take = checkHost(take, user.isHost, setAlertModal);
     recordClip = checkHost(recordClip, user.isHost, setRecordingModal);
     setTime = checkHost(setTime, user.isHost, setAlertModal);
+    exit = checkHost(exit, user.isHost, setAlertModal);
 
     useEffect(() => {
         if (nowTaking) startCount();
