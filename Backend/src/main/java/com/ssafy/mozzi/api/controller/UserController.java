@@ -41,7 +41,6 @@ import lombok.RequiredArgsConstructor;
 /**
  * 유저 관련 API 요청을 위한 Controller
  */
-@Tag(name = "User", description = "유저 관련 api 입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
