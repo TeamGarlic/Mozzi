@@ -55,7 +55,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
       const blob = new Blob(arrClipData);
       const ClipFile = new File([blob], "clip.webm", { type: "video/webm" });
       arrClipData.splice(0);
-      saveClip(ClipFile, "mozziTitle.value");
+      saveClip(ClipFile, mozziTitle.value);
       sendRecordingSignal(false);
       goNext();
     };
