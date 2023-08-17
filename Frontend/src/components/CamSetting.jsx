@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Cog8ToothIcon,
   MicrophoneIcon,
@@ -10,7 +10,7 @@ import { setDegreeAction, setScaleAction, setVisibilityAction } from '@/modules/
 import useInterval from '@/hooks/useInterval.js';
 import PropTypes from "prop-types";
 
-function CamSetting({toggleMic, onMic, position, setPosition, sendPosition}) {
+function CamSetting({toggleMic, onMic, position, setPosition, visibleCamSetting, sendPosition}) {
   const [visible, setVisible] = useState(false);
   const [camVisibility, setCamVisibility] = useState(true);
   const [count, setCount] = useState(0);
@@ -49,9 +49,16 @@ function CamSetting({toggleMic, onMic, position, setPosition, sendPosition}) {
     setScale(115+parseInt(85*Math.sin(count/4)));
   },scaleChecked?1:null);
 
+  useEffect(() => {
+    if(!visibleCamSetting){
+      setDegreeChecked(false);
+      setScaleChecked(false);
+    }
+  }, [visibleCamSetting]);
+
 
   return (
-    <div className="fixed bottom-5 left-5 z-50">
+    <div className={`fixed bottom-5 left-5 z-50 ${visibleCamSetting?"":"invisible"}`}>
       <div className={`flex-col w-80 h-fit rounded-xl bg-white my-3 border border-blue-300 ${visible?"":"hidden"}`}>
         <div className="columns-2 relative content-center">
           <div className="text-lg p-3">카메라 설정</div>
@@ -132,4 +139,5 @@ CamSetting.propTypes = {
   position: PropTypes.array,
   setPosition: PropTypes.func,
   sendPosition: PropTypes.func,
+  visibleCamSetting: PropTypes.bool,
 }

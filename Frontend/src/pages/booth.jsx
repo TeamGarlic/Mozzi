@@ -80,6 +80,7 @@ function Booth() {
   const [delay, setDelay] = useState(true);
   const [frameList, setFrameList] = useState([]);
   const [alertModal, setAlertModal] = useState(false);
+  const [visibleCamSetting, setVisibleCamSetting] = useState(true);
 
   // useSelector
   const mainCanvas = useSelector((state) => state.canvasReducer.mainCanvas);
@@ -343,7 +344,7 @@ function Booth() {
       ): (
         <>
 
-          <CamSetting toggleMic={toggleMic} onMic={onMic} position={position} setPosition={setPosition} sendPosition={sendPosition}/>
+          <CamSetting toggleMic={toggleMic} onMic={onMic} position={position} visibleCamSetting={visibleCamSetting} setPosition={setPosition} sendPosition={sendPosition}/>
           <Chat sendMessage={sendMessage} chatLists={chatLists} user={user} publisher={publisher} />
           {alertModal && (
             <HostAlertModal closeAlertModal={closeAlertModal}/>
@@ -389,6 +390,7 @@ function Booth() {
               subVideoRefs={subVideoRefs.current}
               sendBg={sendBg}
               tempBg={tempBg}
+              setVisibleCamSetting={setVisibleCamSetting}
             />
           )}
           {now === "MODIFING" && (

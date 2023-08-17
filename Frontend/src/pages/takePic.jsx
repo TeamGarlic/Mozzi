@@ -37,6 +37,7 @@ function TakePic({
         subVideoRefs,
         sendBg,
         tempBg,
+        setVisibleCamSetting,
     }) {
     const timers = [3, 5, 10];
     const MAX_CLIPS = 10;
@@ -105,6 +106,7 @@ function TakePic({
             // 녹화 종료
             mediaRecorder.stop();
             if (taken == MAX_CLIPS) {
+                setVisibleCamSetting(false);
                 goNext();
             } else {
                 finishTaking();
@@ -168,7 +170,10 @@ function TakePic({
             return;
         }
         // TODO : 이게 진짜 필요할까...??
-        confirm("정말로 촬영을 종료하고 편집 페이지로 넘어가시겠습니까?")?goNext():"";
+        if(confirm("정말로 촬영을 종료하고 편집 페이지로 넘어가시겠습니까?")){
+            goNext();
+            setVisibleCamSetting(false);
+        }
     }
 
     take = checkHost(take, user.isHost, setAlertModal);
@@ -216,10 +221,10 @@ function TakePic({
                     {/* <div className="float-right mr-10 text-2xl">taken : {taken}/10</div> */}
                 </div>
                 <BigCam myId={myId} updatePosition={updatePosition} setPosition={setPosition} isTaking={isTaking}/>
-                <div className="flex justify-center items-center gap-20 fixed bottom-10 ms-[calc(25%)] w-1/2">
+                <div className="flex justify-center items-center gap-20 fixed bottom-10 ms-[calc(25%)] w-1/2 z-50">
                     {!timerVisible && (
                         <div className="flex rounded-3xl bg-yellow-100 leading-10 border border-yellow-500">
-                            <div className="mr-1 px-3 bg-yellow-300 flex flex-wrap content-center rounded-l-3xl">
+                            <div className="mr-1 px-3 bg-yellow-300 flex flex-wrap content-center rounded-l-3xl z-50">
                                 <ClockIcon className="w-8 h-8"/>
                             </div>
                             {timers.map((item) => {
@@ -247,12 +252,12 @@ function TakePic({
                             })}
                         </div>
                     )}
-                    <div className="flex justify-center items-center px-5 rounded-3xl bg-red-300 leading-10 border border-red-500 whitespace-nowrap " onClick={take}>
+                    <div className="flex justify-center items-center px-5 rounded-3xl bg-red-300 leading-10 border border-red-500 whitespace-nowrap z-50" onClick={take}>
                         <CameraIcon className="w-8 h-8 pr-2"/>
                         {timerVisible ? <span>{isTaking?'촬영중':(count+'초 후 촬영 시작')}</span> : <span>촬영</span>}
                     </div>
                     {!timerVisible&&
-                        <div className="flex rounded-3xl bg-orange-100 leading-10 border border-orange-500">
+                        <div className="flex rounded-3xl bg-orange-100 leading-10 border border-orange-500 z-50">
                         <span className="px-4 ">{taken}/{MAX_CLIPS}</span>
                         <button
                             className={`w-full leading-10  px-4  bg-orange-300 rounded-3xl whitespace-nowrap `}
@@ -304,4 +309,5 @@ TakePic.propTypes = {
     subVideoRefs: PropTypes.any,
     sendBg: PropTypes.func,
     tempBg: PropTypes.any,
+    setVisibleCamSetting: PropTypes.bool,
 };
