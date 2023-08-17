@@ -143,8 +143,8 @@ const clipReducer = (state = clipState, action) => {
           ...state,
           frame: {
             ...state.frame,
-            [startIdx]: {...state.frame.startIdx, clipIdx: endClip.clipIdx, src: endClip.src},
-            [endIdx]: {...state.frame.endIdx, clipIdx: clip.clipIdx, src: clip.src}
+            [startIdx]: {...state.frame[startIdx], clipIdx: endClip.clipIdx, src: endClip.src},
+            [endIdx]: {...state.frame[endIdx], clipIdx: clip.clipIdx, src: clip.src}
           }
         }
       }
@@ -152,8 +152,8 @@ const clipReducer = (state = clipState, action) => {
         ...state,
         frame: {
           ...state.frame,
-          [startIdx]: {...state.frame.startIdx, clipIdx: 0, src: ""},
-          [endIdx]: {...state.frame.endIdx, clipIdx: clip.clipIdx, src: clip.src}
+          [startIdx]: {...state.frame[startIdx], clipIdx: 0, src: ""},
+          [endIdx]: {...state.frame[endIdx], clipIdx: clip.clipIdx, src: clip.src}
         }
       }
     }
