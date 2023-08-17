@@ -19,26 +19,27 @@ import com.oracle.bmc.auth.SimplePrivateKeySupplier;
 public class AuthentificationProvider implements AbstractAuthenticationDetailsProvider {
     /**
      * Oracle Cloud 연결 시 필요한 Authentication을 설정하는 함수
-     * @param ORACLE_CLOUD_PUBLIC_KEY String
+     * @param ORACLE_CLOUD_PRIVATE_KEY String
      * @return 저장한 파일의 index Id
      * @see AuthentificationProvider
      * @see ConfigFileReader
      * @see Supplier
      * @see SimpleAuthenticationDetailsProvider
      */
-    public AuthenticationDetailsProvider getAuthenticationDetailsProvider(final String ORACLE_CLOUD_PUBLIC_KEY) throws
+    public AuthenticationDetailsProvider getAuthenticationDetailsProvider(final String ORACLE_CLOUD_PRIVATE_KEY,
+        final String OCI_API_CONFIG_PATH) throws
         IOException {
 
         // OCI 구성 파일 읽기
 
-        InputStream configInputStream = new ClassPathResource("config/oci_api_config").getInputStream();
+        InputStream configInputStream = new ClassPathResource(OCI_API_CONFIG_PATH).getInputStream();
         File ConfigFileResource = File.createTempFile("oci_api_config", "");
 
         FileUtils.copyInputStreamToFile(configInputStream, ConfigFileResource);
         ConfigFile config = ConfigFileReader.parse(ConfigFileResource.getPath(), "DEFAULT");
 
-        InputStream keyInputStream = new ClassPathResource("config/" + ORACLE_CLOUD_PUBLIC_KEY).getInputStream();
-        File privateKeyResource = File.createTempFile(ORACLE_CLOUD_PUBLIC_KEY, ".pem");
+        InputStream keyInputStream = new ClassPathResource("config/" + ORACLE_CLOUD_PRIVATE_KEY).getInputStream();
+        File privateKeyResource = File.createTempFile(ORACLE_CLOUD_PRIVATE_KEY, ".pem");
 
         FileUtils.copyInputStreamToFile(keyInputStream, privateKeyResource);
         Supplier<InputStream> privateKeySupplier = new SimplePrivateKeySupplier(privateKeyResource.getPath());
