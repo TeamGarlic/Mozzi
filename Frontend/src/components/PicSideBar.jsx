@@ -17,6 +17,7 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
   const [file, setFile] = useState();
   const [idx, setIdx] = useState(0);
   const dispatch = useDispatch();
+  const [nowBg, setNowBg] = useState(false);
 
   function getImageFileObject(imageFile){
     // console.log(imageFile)
@@ -33,6 +34,7 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
       const date = new Date().toLocaleTimeString();
       uploadBg(res, `${shareCode}${idx}${date}`)
       setIdx((prev) => prev+1)
+      setNowBg(true);
     });
   }
 
@@ -49,13 +51,16 @@ export default function PicSideBar({user, bgList, changeBg, position, sendPositi
   }
 
   function imageDelete() {
+    setNowBg(false)
   }
 
   function setBg(){
     if (!tempBg) return;
+    if (!nowBg) return;
     changeBg("")
   }
   setBg = checkHost(setBg, user.isHost, setAlertModal)
+
   return (
       <>
         <div className={`fixed z-30 flex-col gap-3 h-fit top-5 ${menu === 0 ? "right-0" : "right-[calc(18rem)]"}`}>
