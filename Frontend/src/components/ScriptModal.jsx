@@ -24,21 +24,24 @@ function ScriptModal({scriptArray, closeScriptModal}) {
   return (
       <Rnd
           default={{
-            x: 20,
-            y: 20,
+            x: 5,
+            y: 60,
             width: 500,
             height: 20,
           }}
           minWidth="500"
-          minHeight="20"
+          minHeight="40"
+          maxWidth="500"
+          maxHeight="40"
           bounds="window"
           className="z-40"
+          enableResizing="false"
       >
       <div
-          className="w-[calc(50rem)] px-3 py-1 grid grid-cols-12 items-center align-middle content-center justify-center bg-orange-100 bg-opacity-90 border border-orange-500 text-orange-700 rounded-xl z-40"
+          className="w-[calc(50rem)] px-3 py-1 grid grid-cols-12 items-center align-middle content-center justify-center bg-yellow-100 bg-opacity-90 border border-yellow-500 text-yellow-700 rounded-xl z-40"
       >
         <div className="pr-5 text font-bold whitespace-nowrap col-span-9">
-        ({`${idx+1}/${scriptArray.length}`})  tip : {nowScript}
+        ({`${idx+1}/${scriptArray.length}`}) {nowScript}
       </div>
         <ChevronLeftIcon className={`w-8 h-8 z-50 col-span-1 `} onClick={beforeScript}/>
         <ChevronRightIcon className={`w-8 h-8 z-50 col-span-1 `} onClick={nextScript}/>

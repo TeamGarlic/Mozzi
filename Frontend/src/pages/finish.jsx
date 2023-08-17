@@ -19,7 +19,7 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
   const FFMpegStatus = useSelector((state) => state.clipReducer.FFMpegStatus);
   const clipNum = Array.from({length: clipList['n']}, (v, i) => i+1);
   const clipTypes = [{format:'webm',type:'', srcFormat:"webm"},{format:'mp4',type:'video/mp4', srcFormat:"webm"},{format:'gif',type:'image/gif', srcFormat:"webm"}]
-  const frameTypes = [{format:'webm',type:'', srcFormat:"mp4"},{format:'mp4',type:'video/mp4', srcFormat:"mp4"},{format:'gif',type:'image/gif', srcFormat:"mp4"}]
+  const frameTypes = [{format:'webm',type:'', srcFormat:"webm"},{format:'mp4',type:'video/mp4', srcFormat:"webm"},{format:'gif',type:'image/gif', srcFormat:"webm"}]
   const [onScript, setOnScript] = useState(true);
   const [scriptArray] = useState([
     "다운로드 버튼을 눌러 원하는 파일 형식으로 다운로드할 수 있습니다",
@@ -46,47 +46,34 @@ function Finish({ mozzi, subscribers, publisher, shareCode, isHost }) {
 
   const ffmpeg = createFFmpeg({log : false});
   const handleDownload = async (src, format, type, srcFormat) => {
-    if(!FFMpegStatus){
-      alert("이미 다른 파일을 다운로드 중입니다. 잠시 후에 다시 시도해주세요");
-      return;
-    }
     dispatch(setFFMpegStatusAction(false));
     let recUrl = src;
-    if(srcFormat!=format){
-      if(!ffmpeg.isLoaded()) await ffmpeg.load();
-      // TODO : download 파일명 바꿔야됨
-      ffmpeg.FS("writeFile","download."+srcFormat,await fetchFile(src));
-      await ffmpeg.run("-i","download."+srcFormat,"-filter:v", "fps=30","download."+format);
-      const recFile = ffmpeg.FS("readFile","download."+format);
-      const recBlob = new Blob([recFile.buffer], {type:type});
-      recUrl = URL.createObjectURL(recBlob);
+    try {
+      if (srcFormat != format) {
+
+        if (!FFMpegStatus) {
+          alert("이미 다른 파일을 다운로드 중입니다. 잠시 후에 다시 시도해주세요");
+          return;
+        }
+        if (!ffmpeg.isLoaded()) await ffmpeg.load();
+        // TODO : download 파일명 바꿔야됨
+        ffmpeg.FS("writeFile", "download." + srcFormat, await fetchFile(src));
+        await ffmpeg.run("-i", "download." + srcFormat, "-filter:v", "fps=30", "download." + format);
+        const recFile = ffmpeg.FS("readFile", "download." + format);
+        const recBlob = new Blob([recFile.buffer], { type: type });
+        recUrl = URL.createObjectURL(recBlob);
+      }
+      const a = document.createElement("a");
+      a.href = recUrl;
+      document.body.appendChild(a);
+      a.download = "download."+format;
+      a.target="_blank";
+      a.click();
+    }catch{
+      alert("변환 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요")
     }
-    const a = document.createElement("a");
-    a.href = recUrl;
-    document.body.appendChild(a);
-    a.download = "download."+format;
-    a.target="_blank";
-    a.click();
     dispatch(setFFMpegStatusAction(true));
   }
-
-  // function handleDownload(src, format, type, srcFormat){
-  //   if(FFMpegStatus) ffmpegDownload(src, format, type, srcFormat);
-  //   else{
-  //     alert("이미 다른 파일을 다운로드 중입니다. 잠시 후에 다시 시도해주세요");
-  //     return;
-  //   }
-  // }
-  // useEffect(() => {
-  //   handleDownload = (src, format, type, srcFormat)=>{
-  //     if(FFMpegStatus) ffmpegDownload(src, format, type, srcFormat);
-  //     else{
-  //       alert("이미 다른 파일을 다운로드 중입니다. 잠시 후에 다시 시도해주세요");
-  //       return;
-  //     }
-  //   };
-  // }, [FFMpegStatus]);
-
 
 
 

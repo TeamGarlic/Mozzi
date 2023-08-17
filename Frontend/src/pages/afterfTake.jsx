@@ -31,7 +31,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
     "방장이 좌측의 클립 중 원하는 클립을 클릭하거나 드래그해서 프레임에 추가하세요",
     "동시재생 버튼을 누르면 편집될 영상을 미리 확인할 수 있습니다",
     "프레임에 사용될 클립을 모두 선택하면 방장이 제목을 입력하세요",
-    "방장이 공유하기 버튼을 누르면 편집이 시작되고, 10~30초 정도 이후 결과를 확인할 수 있어요"
+    "방장이 만들기 버튼을 누르면 편집이 시작되고, 5~10초 정도 이후 결과를 확인할 수 있어요"
   ])
   const bg = new Image();
   bg.src = frame.src;
@@ -53,15 +53,9 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
     };
     mediaRecorder.onstop = async () => {
       const blob = new Blob(arrClipData);
-      await ffmpeg.load();
-      ffmpeg.FS("writeFile","temp.webm",new Uint8Array(await blob.arrayBuffer()));
-      await ffmpeg.run("-i","temp.webm","-filter:v", "fps=30","download.mp4");
-      const mp4Unit8 = ffmpeg.FS("readFile","download.mp4");
-      const mp4Blob = new Blob([mp4Unit8.buffer], {type:"video/mp4"});
-      const mp4File = new File([mp4Blob], "download.mp4", { type: "video/mp4" });
-      // Todo: webm file url => 백엔드와 통신해서 url 주소를 재설정 해야함
+      const ClipFile = new File([blob], "clip.webm", { type: "video/webm" });
       arrClipData.splice(0);
-      saveClip(mp4File, mozziTitle.value);
+      saveClip(ClipFile, mozziTitle.value);
       sendRecordingSignal(false);
       goNext();
     };
@@ -172,7 +166,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
                   className="w-1/2 h-10 rounded-3xl bg-blue-100 border border-blue-500 m-2"
                   onClick={makeClip}
               >
-                공유하기
+                만들기
               </button>
             </div>
             <div className="text-rose-600">{warnMsg}</div>
