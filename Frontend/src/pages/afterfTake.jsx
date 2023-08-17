@@ -31,7 +31,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
     "방장이 좌측의 클립 중 원하는 클립을 클릭하거나 드래그해서 프레임에 추가하세요",
     "동시재생 버튼을 누르면 편집될 영상을 미리 확인할 수 있습니다",
     "프레임에 사용될 클립을 모두 선택하면 방장이 제목을 입력하세요",
-    "방장이 공유하기 버튼을 누르면 편집이 시작되고, 5~10초 정도 이후 결과를 확인할 수 있어요"
+    "방장이 만들기 버튼을 누르면 편집이 시작되고, 5~10초 정도 이후 결과를 확인할 수 있어요"
   ])
   const bg = new Image();
   bg.src = frame.src;
