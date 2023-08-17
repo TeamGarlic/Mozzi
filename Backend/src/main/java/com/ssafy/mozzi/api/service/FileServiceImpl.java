@@ -99,8 +99,7 @@ public class FileServiceImpl implements FileService {
      * @throws CloudStorageSaveFailException
      */
     @Override
-    public ObjectFileItem downloadMozziroll(
-        String mozzirollId) { // TODO: 다운 받는 유저가 해당 모찌롤을 다운받을 권한이 있나 확인하는 로직 시간 나면 추가..
+    public ObjectFileItem downloadMozziroll(String mozzirollId) {
         Optional<Mozziroll> mozziroll = mozzirollRepository.findById(Long.parseLong(mozzirollId));
         GetObjectResponse getObjectResponse = fileRepository.getObject(client.getClient(),
             mozziroll.get().getObjectName());
