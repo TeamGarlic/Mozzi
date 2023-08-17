@@ -38,7 +38,7 @@ public class AuthentificationProvider implements AbstractAuthenticationDetailsPr
         FileUtils.copyInputStreamToFile(configInputStream, ConfigFileResource);
         ConfigFile config = ConfigFileReader.parse(ConfigFileResource.getPath(), "DEFAULT");
 
-        InputStream keyInputStream = new ClassPathResource("config/" + ORACLE_CLOUD_PRIVATE_KEY).getInputStream();
+        InputStream keyInputStream = new ClassPathResource(ORACLE_CLOUD_PRIVATE_KEY).getInputStream();
         File privateKeyResource = File.createTempFile(ORACLE_CLOUD_PRIVATE_KEY, ".pem");
 
         FileUtils.copyInputStreamToFile(keyInputStream, privateKeyResource);
