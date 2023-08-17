@@ -1,9 +1,7 @@
 package com.ssafy.mozzi.api.controller;
 
-import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -231,33 +229,4 @@ public class BoothController {
                     .build()
             );
     }
-
-    @Operation(ignoreJsonView = true)
-    // TODO: 배포시 삭제
-    @GetMapping("/testpath/{shareCode}")
-    public ResponseEntity<? extends BaseResponseBody<ConnectionPostRes>> testConnection(
-        @PathVariable String shareCode) throws Exception {
-        String sessionId;
-        try {
-            SessionPostReq req = new SessionPostReq();
-            req.setShareCode(shareCode);
-            sessionId = boothService.createBooth(req,
-                    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjkwOTU0NzYwLCJleHAiOjEyMTY5MDk1NDc2MH0.RF8qFqAwbcbDdS1jl9Q9vAb5RzOZ8j6xmjMqWAApKio")
-                .getSessionId();
-        } catch (Exception exception) {
-            sessionId = boothService.joinBooth(shareCode).getSessionId();
-        }
-
-        ConnectionPostReq connectionPostReq = new ConnectionPostReq();
-        connectionPostReq.setSessionId(sessionId);
-
-        return ResponseEntity.ok()
-            .cacheControl(CacheControl.noCache())
-            .body(BaseResponseBody.<ConnectionPostRes>builder()
-                .message("Connection Token created")
-                .data(boothService.getConnectionToken(connectionPostReq,
-                    "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNjkwOTU0NzYwLCJleHAiOjEyMTY5MDk1NDc2MH0.RF8qFqAwbcbDdS1jl9Q9vAb5RzOZ8j6xmjMqWAApKio"))
-                .build());
-    }
-
 }
