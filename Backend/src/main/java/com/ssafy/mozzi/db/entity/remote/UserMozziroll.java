@@ -1,10 +1,10 @@
 package com.ssafy.mozzi.db.entity.remote;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -14,10 +14,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,25 +38,25 @@ public class UserMozziroll extends BaseEntity {
     @Column(nullable = false)
     private Boolean deleted = false;
 
-    @NotNull
     @Size(max = 100)
-    private String title;
+    private String title = "default title";
 
     @Builder.Default
-    @ColumnDefault("true")
+    @ColumnDefault("false")
     @Column(nullable = false)
-    private Boolean posted = true; // 일단 모든 게시물을 보여주기 위해 default 값을 true로 해놓음
+    private Boolean posted = false;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "mozziroll_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Mozziroll mozziroll;
-
-    @OneToMany(mappedBy = "likedUserMozziroll")
-    private Set<MozzirollLike> likedUsers = new HashSet<>();
+    // @OneToMany(mappedBy = "likedUserMozziroll", cascade = CascadeType.ALL, orphanRemoval = true)
+    // private List<MozzirollLike> likedUsers = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

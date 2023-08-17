@@ -3,7 +3,6 @@ package com.ssafy.mozzi.api.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +22,6 @@ import com.ssafy.mozzi.api.response.ItemStickerGetRes;
 import com.ssafy.mozzi.api.service.ItemService;
 import com.ssafy.mozzi.common.dto.FrameClipItem;
 import com.ssafy.mozzi.common.model.APICacheControl;
-import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +35,6 @@ import lombok.RequiredArgsConstructor;
 /**
  * Item 관련 API 요청을 위한 Controller
  */
-@CrossOrigin("*")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/items")
@@ -57,8 +54,10 @@ public class ItemController {
     @Operation(summary = "배경 화면 가져오기", description = "배경 화면을 페이징 처리 하여 기져오기.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "배경 화면 fetch 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "401", description = "Invalid Access Token", content = @Content(schema = @Schema(ref = "#/components/schemas/InvalidAccessToken"))),
+        @ApiResponse(responseCode = "404", description = "존재하지 않는 User Id", content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
         @ApiResponse(responseCode = "500", description = "서버 에러",
-            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @GetMapping("/backgrounds")
     public ResponseEntity<? extends BaseResponseBody<ItemBackgroundGetRes>> getBackgrounds(
@@ -68,7 +67,7 @@ public class ItemController {
         @RequestParam(value = "isFavorite", defaultValue = "false") boolean isFavorite) {
 
         return ResponseEntity.ok()
-            .cacheControl(APICacheControl.usePublicCache)
+            .cacheControl(APICacheControl.noCache)
             .body(BaseResponseBody.<ItemBackgroundGetRes>builder()
                 .message((isFavorite ? "My" : "All") + " Background list. pageNum: " + pageNum)
                 .data(itemService.getBackgroundRes(authorization, pageNum, pageSize, isFavorite))
@@ -88,7 +87,7 @@ public class ItemController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "스티커 fetch 성공", useReturnTypeSchema = true),
         @ApiResponse(responseCode = "500", description = "서버 에러",
-            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @GetMapping("/stickers")
     public ResponseEntity<? extends BaseResponseBody<ItemStickerGetRes>> getStickers(
@@ -115,7 +114,7 @@ public class ItemController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "프레임 fetch 성공", useReturnTypeSchema = true),
         @ApiResponse(responseCode = "500", description = "서버 에러",
-            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @GetMapping("/frames")
     public ResponseEntity<? extends BaseResponseBody<FrameListGetRes>> getFrames() {
@@ -141,7 +140,7 @@ public class ItemController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "가상 배경 업로드 성공", useReturnTypeSchema = true),
         @ApiResponse(responseCode = "500", description = "서버 에러",
-            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @PostMapping(value = "/background", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<? extends BaseResponseBody<ItemBackgroundPostRes>> saveBackground(
@@ -169,7 +168,7 @@ public class ItemController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "프레임 업로드 성공", useReturnTypeSchema = true),
         @ApiResponse(responseCode = "500", description = "서버 에러",
-            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @PostMapping(value = "/frame", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<? extends BaseResponseBody<String>> saveFrame(
@@ -198,8 +197,9 @@ public class ItemController {
     @Operation(summary = "프레임 클립 업로드", description = "프레임에 속한 클립 정보를 업로드 합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "프레임 클립 업로드 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "404", description = "프레임 존재 X", content = @Content(schema = @Schema(ref = "#/components/schemas/FrameNotExists"))),
         @ApiResponse(responseCode = "500", description = "서버 에러",
-            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @PostMapping("/frame/{frameId}")
     public ResponseEntity<? extends BaseResponseBody<String>> saveFrameClips(
@@ -227,8 +227,9 @@ public class ItemController {
     @Operation(summary = "배경 즐겨찾기 추가", description = "선택한 배경을 즐겨찾기 추가합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "배경 즐겨찾기 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "400", description = "즐겨찾기할 정보 없음", content = @Content(schema = @Schema(ref = "#/components/schemas/NoData"))),
         @ApiResponse(responseCode = "500", description = "서버 에러",
-            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @PostMapping("/background/favorite")
     public ResponseEntity<? extends BaseResponseBody<BackgroundFavoritePostRes>> saveFavoriteBackground(

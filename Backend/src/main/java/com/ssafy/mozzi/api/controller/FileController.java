@@ -8,7 +8,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,9 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ssafy.mozzi.api.response.FileMozzirollPostRes;
 import com.ssafy.mozzi.api.service.FileService;
 import com.ssafy.mozzi.common.dto.ObjectFileItem;
-import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
 import com.ssafy.mozzi.common.model.APICacheControl;
-import com.ssafy.mozzi.common.model.response.BaseErrorResponse;
 import com.ssafy.mozzi.common.model.response.BaseResponseBody;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +31,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
-@CrossOrigin("*")
 @RestController
 @RequestMapping("/files")
 @RequiredArgsConstructor
@@ -53,15 +49,18 @@ public class FileController {
     @Operation(summary = "모찌롤 업로드", description = "방장에게 파일을 받아 Oracle Cloud에 모찌롤을 업로드 합니다.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "업로드 성공", useReturnTypeSchema = true),
+        @ApiResponse(responseCode = "401", description = "유효하지 않은 Access Token", content = @Content(schema = @Schema(ref = "#/components/schemas/InvalidAccessToken"))),
         @ApiResponse(responseCode = "404", description = "User Id 존재 X",
-            content = @Content(schema = @Schema(implementation = UserIdNotExistsException.UserIdNotExistsResponse.class))),
+            content = @Content(schema = @Schema(ref = "#/components/schemas/UserIdNotExists"))),
         @ApiResponse(responseCode = "500", description = "서버 에러",
-            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @PostMapping(value = "/mozziroll/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<? extends BaseResponseBody<FileMozzirollPostRes>> saveMozziroll(
         @RequestHeader("Authorization") String accessToken, @RequestParam("file") MultipartFile file,
-        @RequestParam("title") String title) {
+        @RequestParam("title") String title,
+        @RequestParam("width") int width,
+        @RequestParam("height") int height) {
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
@@ -69,7 +68,7 @@ public class FileController {
             .body(
                 BaseResponseBody.<FileMozzirollPostRes>builder()
                     .message("Save mozziroll success")
-                    .data(fileService.saveMozziroll(file, title, accessToken))
+                    .data(fileService.saveMozziroll(file, title, accessToken, width, height))
                     .build()
             );
     }
@@ -87,7 +86,7 @@ public class FileController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "모찌롤 다운로드 성공", useReturnTypeSchema = true),
         @ApiResponse(responseCode = "500", description = "서버 에러",
-            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @GetMapping(value = "/mozziroll/{mozzirollId}")
     public ResponseEntity<Resource> downloadMozziroll(@PathVariable("mozzirollId") String mozzirollId) {
@@ -115,7 +114,7 @@ public class FileController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "파일 다운로드 성공", useReturnTypeSchema = true),
         @ApiResponse(responseCode = "500", description = "서버 에러",
-            content = @Content(schema = @Schema(implementation = BaseErrorResponse.InternalServerErrorResponse.class)))
+            content = @Content(schema = @Schema(ref = "#/components/schemas/InternalError")))
     })
     @GetMapping(value = "/object/{objectName}")
     public ResponseEntity<Resource> getObject(
@@ -123,7 +122,7 @@ public class FileController {
         Resource resource = fileService.getObject(objectName);
 
         return ResponseEntity.ok()
-            .cacheControl(APICacheControl.usePrivateCache)
+            .cacheControl(APICacheControl.usePublicCache)
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .header(HttpHeaders.CONTENT_DISPOSITION, ContentDisposition.attachment() // (6)
                 .filename(resource.getFilename(), StandardCharsets.UTF_8)

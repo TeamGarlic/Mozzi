@@ -17,4 +17,6 @@ import com.ssafy.mozzi.db.entity.remote.UserMozziroll;
 @Repository
 public interface MozzirollLikeRepository extends JpaRepository<MozzirollLike, Long> {
     Optional<MozzirollLike> findByLikedUserAndLikedUserMozziroll(User user, UserMozziroll userMozziroll);
+
+    long countByLikedUserMozziroll(UserMozziroll userMozziroll);
 }

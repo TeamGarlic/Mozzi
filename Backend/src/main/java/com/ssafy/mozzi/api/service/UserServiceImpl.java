@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,12 +22,10 @@ import com.ssafy.mozzi.api.response.UserPasswordResetPostRes;
 import com.ssafy.mozzi.api.response.UserRegisterPostRes;
 import com.ssafy.mozzi.api.response.UserUpdateRes;
 import com.ssafy.mozzi.common.auth.JwtTokenProvider;
-import com.ssafy.mozzi.common.exception.handler.InvalidRefreshTokenException;
-import com.ssafy.mozzi.common.exception.handler.NoDataException;
-import com.ssafy.mozzi.common.exception.handler.UserEmailNotExists;
-import com.ssafy.mozzi.common.exception.handler.UserIdNotExistsException;
-import com.ssafy.mozzi.common.exception.handler.UserLoginFailException;
-import com.ssafy.mozzi.common.exception.handler.UserRegisterException;
+import com.ssafy.mozzi.common.exception.MozziAPIErrorCode;
+import com.ssafy.mozzi.common.exception.handler.BadRequestException;
+import com.ssafy.mozzi.common.exception.handler.NotFoundException;
+import com.ssafy.mozzi.common.exception.handler.UnAuthorizedException;
 import com.ssafy.mozzi.common.util.MozziUtil;
 import com.ssafy.mozzi.common.util.mapper.UserMapper;
 import com.ssafy.mozzi.db.datasource.RemoteDatasource;
@@ -57,7 +56,7 @@ public class UserServiceImpl implements UserService {
      *
      * @param request UserRegisterPostReq
      * @return UserRegisterPostRes
-     * @throws UserRegisterException (Mozzi code : 3, Http Status 400)
+     * @throws BadRequestException (UserRegisterFail, 3)
      * @see UserRepository
      */
     @Override
@@ -67,10 +66,9 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         try {
             userRepository.save(user);
-        } catch (
-            Exception e) {
-            log.error("[User Save error] : {}", e.getMessage());
-            throw new UserRegisterException(String.format("Duplicated user id(%s)", request.getUserId()));
+        } catch (Exception e) {
+            throw new BadRequestException(MozziAPIErrorCode.UserRegisterFail,
+                String.format("User Registration Fail on user id(%s)", request.getUserId()), e.getMessage());
         }
         return UserMapper.toRegistRes(user);
     }
@@ -80,26 +78,27 @@ public class UserServiceImpl implements UserService {
      *
      * @param request UserLoginPostReq
      * @return UserLoginPostRes
-     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
-     * @throws UserLoginFailException (Mozzi code : 4, Http Status 400)
+     * @throws BadRequestException (UserLoginFail, 4)
+     * @throws NotFoundException (UserIdNotExists, 1)
      * @see UserRepository
      */
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     @Override
     public UserLoginPostRes login(UserLoginPostReq request) {
-        Optional<User> user = userRepository.findByUserId(request.getUserId());
-        if (user.isPresent()) {
+        Optional<User> userCandidate = userRepository.findByUserId(request.getUserId());
+        if (userCandidate.isPresent()) {
+            User user = userCandidate.get();
             if (passwordEncoder.matches(
-                request.getPassword(), user.get().getPassword())) {
-                user.get().setRefreshToken(jwtTokenProvider.createRefreshToken());
-                return UserMapper.toLoginRes(user.get()
-                    , jwtTokenProvider.createToken(user.get().getId().toString())
-                    , jwtTokenProvider.createRefreshToken());
+                request.getPassword(), user.getPassword())) {
+                String refreshToken = jwtTokenProvider.createRefreshToken();
+                user.setRefreshToken(refreshToken);
+                return UserMapper.toLoginRes(user, jwtTokenProvider.createToken(user.getId().toString()), refreshToken);
             } else {
-                throw new UserLoginFailException(String.format("Login Fail on %s", request.getUserId()));
+                throw new BadRequestException(MozziAPIErrorCode.UserLoginFail,
+                    String.format("Login Fail on %s", request.getUserId()));
             }
         } else {
-            throw new UserIdNotExistsException("User ID not exist");
+            throw new NotFoundException(MozziAPIErrorCode.UserLoginFail, "User ID not exist");
         }
     }
 
@@ -120,18 +119,19 @@ public class UserServiceImpl implements UserService {
      *
      * @param reissueInfo reissuePostReq
      * @return reissuePostRes
-     * @throws InvalidRefreshTokenException (Mozzi code : 2, Http Status 400)
-     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
      * @see UserRepository
      * @see JwtTokenProvider
+     * @throws BadRequestException (InvalidRefreshToken, 2)
+     * @throws NotFoundException (UserIdNotExists, 1)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     public ReIssuePostRes reissue(ReIssuePostReq reissueInfo) {
-        User user = findUserByToken(reissueInfo.getAccessToken());
+        User user = findUserByToken(reissueInfo.getAccessToken(), false);
 
-        if (!user.getRefreshToken().equals(reissueInfo.getRefreshToken()))
-            throw new InvalidRefreshTokenException("refresh token is not validated");
+        if (!user.getRefreshToken().equals(reissueInfo.getRefreshToken())) {
+            throw new BadRequestException(MozziAPIErrorCode.InvalidRefreshToken, "refresh token is not validated");
+        }
 
         String accessToken = jwtTokenProvider.createToken(user.getId().toString());
         String refreshToken = jwtTokenProvider.createRefreshToken();
@@ -143,57 +143,59 @@ public class UserServiceImpl implements UserService {
     /**
      *  Token으로 User를 찾는 Service/비즈니스 로직
      * @param accessToken String
-     * @return User
-     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     * @return User (not null)
      * @see UserRepository
      * @see JwtTokenProvider
+     * @throws UnAuthorizedException (InvalidAccessToken, 17)
+     * @throws NotFoundException (UserIdNotExists, 1)
      */
-
     @Override
-    public User findUserByToken(String accessToken) {
-        Authentication auth = jwtTokenProvider.getAuthentication(accessToken);
-        UserDetails userDetails = (UserDetails)auth.getPrincipal();
-        String id = userDetails.getUsername();
-        Optional<User> user = userRepository.findById(Long.parseLong(id));
-        if (user.isEmpty()) {
-            throw new UserIdNotExistsException("Valid Access Token, No user matched");
+    public User findUserByToken(String accessToken, boolean validate) {
+        try {
+            if (validate) {
+                if (!jwtTokenProvider.validateTokenExceptExpiration(accessToken)) {
+                    throw new UnAuthorizedException(MozziAPIErrorCode.InvalidAccessToken, "Invalid Access Token");
+                }
+            }
+
+            Authentication auth = jwtTokenProvider.getAuthentication(accessToken);
+            UserDetails userDetails = (UserDetails)auth.getPrincipal();
+            String id = userDetails.getUsername();
+            Optional<User> user = userRepository.findById(Long.parseLong(id));
+            if (user.isEmpty()) {
+                throw new NotFoundException(MozziAPIErrorCode.UserIdNotExists, "Valid Access Token, No user matched");
+            }
+            return user.get();
+        } catch (UsernameNotFoundException exception) {
+            throw new NotFoundException(MozziAPIErrorCode.UserIdNotExists, "Valid Access Token, No user matched");
         }
-        return user.get();
     }
 
     /**
      *  헤더에서 입력받은 accessToken으로 유저 정보를 반환하는 로직
      * @param accessToken String
      * @return BaseResponseBody<UserInfoRes>
-     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     * @throws UnAuthorizedException (InvalidAccessToken, 17)
+     * @throws NotFoundException (UserIdNotExists, 1)
      * @see UserInfoRes
      */
     @Override
     public UserInfoRes getUserInfo(String accessToken) {
-        User user = findUserByToken(accessToken);
-
-        if (user == null) {
-            throw new UserIdNotExistsException("user not exists");
-        }
-
+        User user = findUserByToken(accessToken, true);
         return UserMapper.toUserInfoRes(user);
     }
 
     /**
-     *  헤더에서 입력받은 accessToken 으로 유저의 리프레쉬 토큰을 null 값으로 변경하는 로직
+     * 헤더에서 입력받은 accessToken 으로 유저의 리프레쉬 토큰을 null 값으로 변경하는 로직
      * @param accessToken String
      * @return BaseResponseBody<String>
-     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
+     * @throws UnAuthorizedException (InvalidAccessToken, 17)
+     * @throws NotFoundException (UserIdNotExists, 1)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     public void logout(String accessToken) {
-        User user = findUserByToken(accessToken);
-
-        if (user == null) {
-            throw new UserIdNotExistsException("user not exists");
-        }
-
+        User user = findUserByToken(accessToken, true);
         user.setRefreshToken(null);
     }
 
@@ -201,16 +203,17 @@ public class UserServiceImpl implements UserService {
      * 유저 데이터 변경 요청을 받아 유저 데이터를 수정합니다.
      * @param request
      * @return BaseResponseBody<Long> 성공시 User Id를 같이 반환합니다.
-     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
-     * @throws NoDataException (Mozzi code : 13, Http Status 400)
+     * @throws BadRequestException (NoData, 13)
+     * @throws UnAuthorizedException (InvalidAccessToken, 17)
+     * @throws NotFoundException (UserIdNotExists, 1)
      */
-    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     @Override
+    @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     public UserUpdateRes update(UserUpdatePutReq request) {
-        User user = findUserByToken(request.getAccessToken());
+        User user = findUserByToken(request.getAccessToken(), true);
 
         if (request.getEmail() == null && request.getNickname() == null && request.getPassword() == null) {
-            throw new NoDataException("There is no data for update");
+            throw new BadRequestException(MozziAPIErrorCode.NoData, "There is no data for update");
         }
 
         if (request.getPassword() != null && !request.getPassword().equals(user.getPassword())) {
@@ -230,8 +233,7 @@ public class UserServiceImpl implements UserService {
     /**
      * 사용자의 패스워드 초기화 요청을 받아서 새로운 패스워드를 메일로 보냅니다.
      * @param userId 초기화할 유저의 ID
-     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
-     * @throws com.ssafy.mozzi.common.exception.handler.UserEmailNotExists (Mozzi code : 14, Http Status 400)
+     * @throws NotFoundException (UserIdNotExists, 1), (UserEmailNotExists, 14)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
@@ -239,12 +241,13 @@ public class UserServiceImpl implements UserService {
         Optional<User> candidateUser = userRepository.findByUserId(userId);
 
         if (candidateUser.isEmpty()) {
-            throw new UserIdNotExistsException("User Id not exists");
+            throw new NotFoundException(MozziAPIErrorCode.UserIdNotExists, "User Id not exists");
         }
 
         User user = candidateUser.get();
-        if (user.getEmail() == null || user.getEmail().equals("")) {
-            throw new UserEmailNotExists(String.format("%s don't have email address.", userId));
+        if (user.getEmail() == null || user.getEmail().isEmpty()) {
+            throw new NotFoundException(MozziAPIErrorCode.UserEmailNotExists,
+                String.format("%s don't have email address.", userId));
         }
 
         String newPassword = mozziUtil.generateString(10, true);
@@ -252,21 +255,19 @@ public class UserServiceImpl implements UserService {
         userRepository.flush();
 
         emailService.passwordReset(user.getEmail(), newPassword);
-
         return new UserPasswordResetPostRes(user.getEmail());
     }
 
     /**
      * 사용자의 accessToken을 입력 받아서 해당 유저를 삭제합니다.
      * @param accessToekn 유저의 accessToken
-     * @throws UserIdNotExistsException (Mozzi code : 1, Http Status 404)
-     * @throws com.ssafy.mozzi.common.exception.handler.UserEmailNotExists (Mozzi code : 14, Http Status 400)
+     * @throws UnAuthorizedException (InvalidAccessToken, 17)
+     * @throws NotFoundException (UserIdNotExists, 1)
      */
     @Override
     @Transactional(transactionManager = RemoteDatasource.TRANSACTION_MANAGER)
     public UserInfoRes withdrawUser(String accessToekn) {
-
-        User user = findUserByToken(accessToekn);
+        User user = findUserByToken(accessToekn, true);
         userRepository.delete(user);
         return UserMapper.toUserInfoRes(user);
     }

@@ -6,13 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 모찌롤 좋아요 응답 Object
+ * 유저 모찌롤을 커뮤니티에 등록/해제하는 기능의 반환 Object
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MozzirollLikeRes {
-    private long likeCount;
-    private boolean isLiked;
+public class PostUserMozzirollPostRes {
+    long userMozzirollId;
+    boolean post;
 }

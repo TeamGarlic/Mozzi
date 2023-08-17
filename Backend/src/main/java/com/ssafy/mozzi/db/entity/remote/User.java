@@ -1,9 +1,7 @@
 package com.ssafy.mozzi.db.entity.remote;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,10 +12,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.ssafy.mozzi.db.entity.BaseEntity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -67,13 +63,6 @@ public class User extends BaseEntity {
     @ColumnDefault("false")
     @Column(nullable = false)
     private Boolean deleted = false;
-
-    // TODO: 양방향 관계를 이후에 삭제할 지 고민 해야 됨
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<UserMozziroll> userMozzirolls = new HashSet<>();
-
-    @OneToMany(mappedBy = "likedUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<MozzirollLike> likedMozzirolls = new HashSet<>();
 
     @Size(max = 150)
     @Column(name = "refresh_token")

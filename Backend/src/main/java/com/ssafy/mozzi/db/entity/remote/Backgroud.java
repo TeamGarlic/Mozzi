@@ -37,7 +37,7 @@ public class Backgroud extends BaseEntity {
     private String objectName;
 
     @Size(max = 20)
-    private String title;
+    private String title = "default title";
 
     @ColumnDefault("CURRENT_TIMESTAMP")
     @CreationTimestamp

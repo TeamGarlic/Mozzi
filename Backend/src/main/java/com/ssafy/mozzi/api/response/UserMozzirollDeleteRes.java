@@ -6,13 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 모찌롤 좋아요 응답 Object
+ *  유저 모찌롤 삭제 응답 Object
+ *
+ * @see com.ssafy.mozzi.api.service.MozzirollService
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MozzirollLikeRes {
-    private long likeCount;
-    private boolean isLiked;
+public class UserMozzirollDeleteRes {
+    private boolean deleted;
+    private String title;
+    private long id;
 }
