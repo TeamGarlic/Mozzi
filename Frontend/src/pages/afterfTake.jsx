@@ -95,7 +95,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
     ) {
       frameNum.forEach((i) => {
         if (videoRef.current[i]) {
-          videoRef.current[i].play();
+          videoRef.current[i].load();
         }
       });
       drawVid();
@@ -199,7 +199,7 @@ function AfterTake({ goNext, user, sendMozzi, updateMozzi, setAlertModal, record
                 id={`hidden${i}`}
                 className="hidden"
                 src={frame[i]["src"]}
-                autoPlay={true}
+                autoPlay
               ></video>
             );
           }
