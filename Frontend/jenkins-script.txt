@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+    stages {
+        stage('Git Clone') {
+            steps {
+                git branch: 'develop-front', credentialsId : 'GitLab_Personal_Access_Token' ,url: 'https://lab.ssafy.com/s09-webmobile1-sub2/S09P12A109.git'
+            }
+        }
+        stage('FE-build') {
+            steps {
+                dir("./Frontend") {
+                    sh 'npm install && npm run build'
+                }
+            }
+        }
+    }
+}
