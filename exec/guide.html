@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mozzi 포팅 가이드</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h2 id="introduction">1. Introduction</h2>
+<p>Mozzi 프로젝트를 설정하기 위해서는 총 3개의 도메인(FE, BE, Openvidu)이 필요합니다.<br>
+실제 Mozzi 프로젝트가 배포된 경로와, 가이드를 작성하는데 있어서 예시로써 사용 된 도메인과 환경은 다음과 같습니다. (가이드를 작성하는데 있어서, 실제 배포된 경로와 가이드 작성용 경로가 섞여 있을 수 있습니다.)</p>
+<h1 id="실제-배포">실제 배포</h1>
+
+<table>
+<thead>
+<tr>
+<th>종류</th>
+<th>도메인/버전</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FE(WEB)</td>
+<td><a href="https://mozzi.lol/">https://mozzi.lol/</a></td>
+</tr>
+<tr>
+<td>BE(API)</td>
+<td><a href="https://api.mozzi.lol/">https://api.mozzi.lol/</a></td>
+</tr>
+<tr>
+<td>Openvidu</td>
+<td><a href="https://vidu.mozzi.lol/">https://vidu.mozzi.lol/</a></td>
+</tr>
+<tr>
+<td>Ubuntu</td>
+<td>20.04 LTS</td>
+</tr>
+</tbody>
+</table><p><img src="https://i.imgur.com/yQbaKal.png" alt="image"></p>
+<h1 id="가이드-작성용">가이드 작성용</h1>
+
+<table>
+<thead>
+<tr>
+<th>종류</th>
+<th>도메인</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FE(WEB)</td>
+<td><a href="https://test.mozzi.lol/">https://test.mozzi.lol/</a></td>
+</tr>
+<tr>
+<td>BE(API)</td>
+<td><a href="https://api-test.mozzi.lol/">https://api-test.mozzi.lol/</a></td>
+</tr>
+<tr>
+<td>Openvidu</td>
+<td><a href="https://vidu-test.mozzi.lol/">https://vidu-test.mozzi.lol/</a></td>
+</tr>
+<tr>
+<td>Ubuntu</td>
+<td>18.04 LTS</td>
+</tr>
+</tbody>
+</table><p>그 외의 설정은 동일하며 아래와 같습니다.</p>
+<h1 id="frontend">Frontend</h1>
+
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Javascript</td>
+<td>ES6</td>
+</tr>
+<tr>
+<td>React, React-Dom</td>
+<td>18.2.0</td>
+</tr>
+<tr>
+<td>Node.js</td>
+<td>16.20.1</td>
+</tr>
+<tr>
+<td>npm</td>
+<td>8.19.4</td>
+</tr>
+<tr>
+<td>Redux</td>
+<td>8.1.1</td>
+</tr>
+<tr>
+<td>Tailwind CSS</td>
+<td>3.3.2</td>
+</tr>
+<tr>
+<td>Axios</td>
+<td>1.4.0</td>
+</tr>
+<tr>
+<td>Media Pipe Selfie Segmentation</td>
+<td>0.1.1675465747</td>
+</tr>
+<tr>
+<td>ffmepg</td>
+<td>0.10.0</td>
+</tr>
+</tbody>
+</table><h1 id="backend">Backend</h1>
+
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Java (Zulu)</td>
+<td>17.42.19</td>
+</tr>
+<tr>
+<td>Spring Boot</td>
+<td>3.1.1</td>
+</tr>
+<tr>
+<td>Gradle</td>
+<td>8.1.1</td>
+</tr>
+<tr>
+<td>MariaDB</td>
+<td>10.3.23</td>
+</tr>
+<tr>
+<td>H2</td>
+<td>2.1.214</td>
+</tr>
+<tr>
+<td>Hibernate</td>
+<td>6.2.5</td>
+</tr>
+<tr>
+<td>Oracle Cloud Object Storage SDK</td>
+<td>2.8.1</td>
+</tr>
+</tbody>
+</table><h1 id="common">Common</h1>
+
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Openvidu</td>
+<td>2.28.0</td>
+</tr>
+</tbody>
+</table><h1 id="infra">Infra</h1>
+
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ubuntu</td>
+<td>20.04 LTS</td>
+</tr>
+<tr>
+<td>Nginx</td>
+<td>1.18.0</td>
+</tr>
+<tr>
+<td>Docker</td>
+<td>24.0.5</td>
+</tr>
+<tr>
+<td>Jenkins</td>
+<td>2.401.3</td>
+</tr>
+<tr>
+<td>CloudFlare</td>
+<td>CDN, DNS</td>
+</tr>
+<tr>
+<td>Postfix(SMTP)</td>
+<td>3.4.13</td>
+</tr>
+</tbody>
+</table><h1 id="installing-java">2. Installing Java</h1>
+<h1 id="zulu-패키지-다운로드">1. Zulu 패키지 다운로드</h1>
+<p><a href="https://www.azul.com/downloads/#zulu">Zulu 공식 사이트</a>에서 배포할 서버에 맞는 Java 17 설치 파일을 다운로드합니다.<br>
+Mozzi.lol 배포 시에는 AMD64를 사용한 Ubuntu Server를 사용하여 Zulu 17.42.19 for Ubuntu x86-64bit JDK를 사용하였습니다.</p>
+<pre><code>wget https://cdn.azul.com/zulu/bin/zulu17.42.19-ca-jdk17.0.7-linux_amd64.deb?_gl=1*6n0lcv*_ga*OTU5Njc5NTgyLjE2OTAwNDExMDE.*_ga_42DEGWGYD5*MTY5MDIwMzg1MC4yLjEuMTY5MDIwNDEyOS41MC4wLjA
+</code></pre>
+<p>wget 또는 curl을 사용하여 zulu 패키지를 다운 받습니다.</p>
+<h1 id="zulu-패키지-설치">2. Zulu 패키지 설치</h1>
+<p><img src="https://i.imgur.com/mYck98H.png" alt="Zulu 패키지 다운로드"></p>
+<p><code>dpkg -i 다운받은_패키지명</code> 을 이용하여 Zulu 패키지를 설치합니다.</p>
+<p><img src="https://i.imgur.com/T9whjLq.png" alt="2.install"></p>
+<p>설치 과정에서 위와 같은 문제가 발생하는 경우 아래 방법을 통해 문제를 해결합니다.</p>
+<h1 id="troubleshooting">2-1. Troubleshooting</h1>
+<pre><code>apt install gnupg ca-certificates curl
+apt update
+apt --fix-broken install
+dpkg -i 다운받은_패키지명
+</code></pre>
+<p>위 명령어를 순서대로 입력하여, Zulu 설치에 필요한 의존성을 해결한 뒤 다시 Zulu 설치를 진행합니다.</p>
+<p><img src="https://i.imgur.com/UKpaoqp.png" alt="2.1.sovle-install"></p>
+<p>)</p>
+<p><img src="https://i.imgur.com/nmX6mWm.png" alt="2.2.sovle-update"></p>
+<p>)</p>
+<p><img src="https://i.imgur.com/XpZqlOL.png" alt="2.3.sovle-fix"></p>
+<p>)</p>
+<p><img src="https://i.imgur.com/21RN2KV.png" alt="2.4.solve-retry"></p>
+<h1 id="zulu-설치-확인">3. Zulu 설치 확인</h1>
+<p><img src="https://i.imgur.com/c2rHIJt.png" alt="3.check"></p>
+<p><code>java --version</code> 명령을 통하여 Zulu가 잘 설치 되었는지 확인합니다.</p>
+<h1 id="ufw-setting">3. UFW Setting</h1>
+<h1 id="ufw-상태-확인">1. UFW 상태 확인</h1>
+
+<table>
+<thead>
+<tr>
+<th align="center">Active</th>
+<th align="center">Inactive</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center"><img src="https://i.imgur.com/7NMhitz.png" alt="1.1.status-active"></td>
+<td align="center"><img src="https://i.imgur.com/CWELqPf.png" alt="1.1.status-disable"></td>
+</tr>
+</tbody>
+</table><p>UFW 방화벽의 상태를 먼저 확인해준다.</p>
+<h1 id="inbound-port-open">1. Inbound Port Open</h1>
+<pre><code>ufw default deny
+ufw alloww 22/tcp
+ufw allow 80/tcp
+ufw allow 443/tcp
+ufw allow 3478
+ufw allow 40000:65535/tcp
+ufw allow 40000:65535/udp
+</code></pre>
+<p>optional) Oracle Cloud와 같이 Cloud 제공 업체에서 기본적으로 iptables rule을 넣어 놓은 경우, cloud 업체에서 설정한 설정을 제거하지 않으면 docker network에서 문제가 발생할 수 있음으로 가이드에 맞게 세팅을 했는데 도커 컨테이너의 네트워크에 문제가 발생하는 경우 <code>iptables -F</code>를 먼저 사용한 뒤 UFW를 설정해서 iptables chain에 docker network가 올바르게 적용 될 수 있게 하자.</p>
+<p><img src="https://i.imgur.com/n6PmOmJ.png" alt="1.addRule"></p>
+<h1 id="ufw-enablereload">2. UFW Enable/Reload</h1>
+
+<table>
+<thead>
+<tr>
+<th align="center">Active</th>
+<th align="center">Inactive</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center"><img src="https://i.imgur.com/5hSmbU8.png" alt="2.reload"></td>
+<td align="center"><img src="https://i.imgur.com/VFLsKv4.png" alt="2.enable"></td>
+</tr>
+<tr>
+<td align="center"><code>ufw reload</code></td>
+<td align="center"><code>ufw enable</code></td>
+</tr>
+</tbody>
+</table><p>UFW 방화벽의 이전 상태에 따라 reload 또는 enable을 시켜준다.</p>
+<h1 id="ufw-status-확인">3. UFW Status 확인</h1>
+<p><img src="https://i.imgur.com/sa700Ce.png" alt="2.status"></p>
+<pre><code>ufw status verbose
+</code></pre>
+<p>UFW 방화벽 정책에 Incoming Port가 잘 적용 되어있는지 확인하여 준다.</p>
+<h2 id="cf-ufw-설정을-나중에-하게-되는-경우">cf) UFW 설정을 나중에 하게 되는 경우</h2>
+<p>UFW 방화벽 설정을 잊고 다른 세팅을 진행했다가 네트워크에 문제가 생긴 경우, 위에서 한번 언급한 것과 같이</p>
+<pre><code>iptables -F
+</code></pre>
+<p>iptables의 정책을 한번 날려주고, openvidu on premise(Docker compose 배포)를 restart 해주면 docker network가 갱신 되서 (다시 iptables chain에 docker가 설정을 해서) 정상적으로 사용 가능하다.<br>
+다만 혹시 모르니 restart 말고 stop, start로 나눠 실행해서 명확하게 docker container를 제거했다 다시 실행하여주자.</p>
+<pre><code>./openvidu stop
+./openvidu start
+</code></pre>
+<h1 id="nginx-installation--ssl-setting--openvidu-installation">4. Nginx Installation &amp; SSL Setting &amp; Openvidu Installation</h1>
+<p>페이지 내의 각 항목을 따로 분리할 수도 있지만, 세 항목이 모두 유기적으로 연결 되어 있어 한번에 서술하였습니다.</p>
+<h1 id="nginx-설치">1. Nginx 설치</h1>
+<pre><code>apt-get install nginx
+</code></pre>
+<p>Nginx를 설치하여 줍니다.</p>
+<p><img src="https://i.imgur.com/FjrKIRQ.png" alt="1.nginx_install"></p>
+<h1 id="ssl-인증서-발급">2. SSL 인증서 발급</h1>
+<h2 id="acme.sh-설치">1) <a href="http://ACME.sh">ACME.sh</a> 설치</h2>
+<p>SSL 인증서 발급/갱신을 자동화해주는 acme 프로그램에는 대표적으로는 CA로 Let’s Encrypt를 사용하는 CertBot이 존재하는데, Mozzi를 세팅하는데 있어서 Let’s Encrypt 외에도 다양한 CA를 지원하는 프로그램인 ACME.sh를 사용하였습니다.<br>
+Let’s Encrypt의 경우 일정 기간 내에 발급할 수 있는 횟수가 제한 되어 있어, SSL 인증서 발급에 제한을 두지 않는 ZeroSSL을 사용하였으며, RSA의 보안 강도와 거의 동일하나 조금 더 가벼운 타원 곡선 암호를 적용하였습니다.<br>
+acme challenge 방식으로는 Cloudflare DNS API를 활용하였습니다.(cf. Wild Card SSL 인증서를 발급하기 위해서는 Web Stand alone과 같은 일반적인 인증 방식 외에, DNS를 통해 해당 도메인에 대한 권한을 확인해야하는 것으로 알고 있고, Cloudflare는 API를 통한 DNS 관리를 지원하며 <a href="http://acme.sh">acme.sh</a> 역시 DNS API를 지원하기 때문에 해당 기능을 사용하였습니다.)</p>
+<pre><code>curl https://get.acme.sh | sh
+</code></pre>
+<p>curl을 이용하여 acme.sh를 다운 받아 준 뒤,</p>
+<p><img src="https://i.imgur.com/SZa9eZu.png" alt="2.acme_install"></p>
+<p>CloudFlare의 DNS API Key를 Server의 환경 변수로 export 해줍니다.</p>
+<pre><code>export CF_Key="클라우드 플레어 API 키"
+export CF_Email="이메일주소"
+</code></pre>
+<p><img src="https://i.imgur.com/LSICOTz.png" alt="3.1.1.cloudflare_api"></p>
+<p>)</p>
+<p><img src="https://i.imgur.com/Gp7bQ3A.png" alt="3.1.2.cloudflare_api"></p>
+<p>)</p>
+<p><img src="https://i.imgur.com/uQWB15P.png" alt="3.1.3.cloudflare_api"></p>
+<p>)</p>
+<p><img src="https://i.imgur.com/2WbP8Fa.png" alt="3.1.4.cloudflare_export"></p>
+<p>SSL 인증서를 저장할 디렉토리를 만든 뒤 (eg. /opt/mozzi/ssl) 도메인과 wild card 도메인을 option으로 지정하여 인증서를 생성해줍니다.</p>
+<pre><code>cd /root/.acme.sh
+./acme.sh --issue --dns dns_cf -d mozzi.lol -d *.mozzi.lol --key-file /opt/mozzi/ssl/privateKey.pem --fullchain-file /opt/mozzi/ssl/fullchain.pem --cert-file /opt/mozzi/ssl/chain.pem --reloadcmd "systemctl reload nginx.service"
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>옵션</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>–issue</td>
+<td>인증서 발급</td>
+</tr>
+<tr>
+<td>–dns dns_cf</td>
+<td>Cloud Flare DNS API를 사용하는 DNS 기반 acme challenge</td>
+</tr>
+<tr>
+<td>-d 도메인</td>
+<td>인증서를_발급할_도메인</td>
+</tr>
+<tr>
+<td>–cert-file 저장_경로</td>
+<td>SSL 인증서 정보</td>
+</tr>
+<tr>
+<td>–key-file 저장_경로</td>
+<td>SSL 개인키 정보</td>
+</tr>
+<tr>
+<td>–fullchain-file 저장_정보</td>
+<td>SSL 인증서 정보에 Chain 인증서를 합친 것</td>
+</tr>
+<tr>
+<td>–reloadcmd “systemctl reload nginx.service”</td>
+<td>인증서 갱신이 이루어졌을 때 nginx를 재기동</td>
+</tr>
+</tbody>
+</table><p>해당 명령을 실행하였을 때, 바로 인증서가 발급될 수도 있으나 acme를 처음 사용하는 것이기 때문에 아래와 같이 ZeroSSL 계정 정보가 없다 나올 수 있는데, 따로 ZeroSSL을 따로 가입할 필요 없이 해당 에러에서 안내하는 명령어를 이용하여 이메일 정보를 넣어준 뒤 다시 발급 시도를 하면 됩니다.</p>
+<p><img src="https://i.imgur.com/s41KicD.png" alt="3.2.try_issue"></p>
+<p>그 이후 다시 동일한 명령을 사용할 경우, 인증서 발급이 진행되고, 결과적으로 아래와 같은 SSL 인증서 생성 메세지를 확인할 수 있습니다.</p>
+<p><img src="https://i.imgur.com/Pw6mIxF.png" alt="3.3issue"></p>
+<h1 id="openvidu-on-premise-설치">3. Openvidu On Premise 설치</h1>
+<p>Docker Compose로 배포되는 Openvidu On Premise에는 Openvidu에서 사용하는 WebSocket 연결을 Reverse Proxy 기능을 이용하여 SSL/TLS로 처리해주기 위한 Nginx Container가 포함되어 있습니다.<br>
+Mozzi 프로젝트 역시 Front 단의 Web Page를 처리하기 위한 Web Server가 필요하고, Backend 단의 API Server 역시 Reverse Proxy 기능을 이용해 SSL/TLS로 처리해줄 필요성이 있으며, 이 역시 Nginx Web Server를 필요로 합니다.<br>
+단일한 서버 내에서 nginx를 여러개 사용하는 것은 비효율적이므로, Openvidu On Premise의 compose 파일에서 Nginx Container를 제거하고 서버에 설치된 Nginx에서 처리해주는 방식으로 구성하였습니다.</p>
+<p>Openvidu를 설치 할 디렉토리로 이동하고, curl을 이용하여 openvidu를 다운 받아줍니다.</p>
+<pre><code>curl https://s3-eu-west-1.amazonaws.com/aws.openvidu.io/install_openvidu_latest.sh | bash
+</code></pre>
+<p><img src="https://i.imgur.com/gP8vdxC.png" alt="1.curl"></p>
+<p>openvidu 디렉토리로 이동하여 nano와 같은 에디터로 .env 파일을 수정해줍니다.</p>
+<pre><code>cd openvidu
+nano .env
+</code></pre>
+<p><img src="https://i.imgur.com/TEo3spb.png" alt="2.env"></p>
+
+<table>
+<thead>
+<tr>
+<th>항목</th>
+<th>값</th>
+<th>비고</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DOMAIN_OR_PUBLIC_IP</td>
+<td>Openvidu에서 사용할 도메인 주소</td>
+<td></td>
+</tr>
+<tr>
+<td>OPENVIDU_SECRET</td>
+<td>Openvidu Client(SDK)와 공유할 키</td>
+<td></td>
+</tr>
+<tr>
+<td>CERTIFICATE</td>
+<td>owncert</td>
+<td>Wild Card로 미리 생성한 SSL 인증서 사용</td>
+</tr>
+<tr>
+<td>LETSENCRYPT</td>
+<td>주석 처리</td>
+<td>"</td>
+</tr>
+</tbody>
+</table><pre><code>cd owncert
+ln -s /opt/mozzi/ssl/privateKey.pem certificate.key
+ln -s /opt/mozzi/ssl/fullchain.pem certificate.cert
+</code></pre>
+<p>Openvidu에서 Self-Assign이나 Let’s Encrypt를 통한 방법이 아니라 직접 생성한 SSL 인증서를 사용할 경우, openvidu 디렉터리 내의 owncert에 개인키를 certificate.key로, 인증서 정보를 certificate.cert로 지정해두었음으로, acme.sh를 이용하여 생성한 인증서를 Symbolic Link 기능을 이용하여 설정해줍니다.<br>
+cf) Hard Link 기능을 이용할 경우 설정 당시에는 같은 I-Node를 가르키게 되어 문제 없으나, 인증서 갱신 이후에는 acme.sh를 통해 갱신된 인증서 파일은 다른 I-Node를 가지게 되어 인증서 갱신 이후에는 서로 다른 파일을 가르키게 됩니다. 이런 문제를 해결하기 위해 Symbolic Link를 사용하여 인증서를 갱신하더라도 Openvidu에서는 Symbolic Link를 따라가서 갱신된 인증서 파일을 접근함으로써 문제를 방지할 수 있습니다.</p>
+<p><img src="https://i.imgur.com/ILLLi1H.png" alt="3.ln"></p>
+<pre><code>cd ..
+nano docker-compose.yml
+</code></pre>
+<p>Docker-Compose로 배포되는 Openvidu On Premise에서 Nginx를 제외하기 위해, openvidu 디렉터리의 docker-compose.yml 파일을 nano와 같은 텍스트 에디터를 이용하여 nginx 블록을 전체 삭제 또는 주석 처리 합니다.</p>
+<p><img src="https://i.imgur.com/7atOMbP.png" alt="4.docker-compose"></p>
+<pre><code>./openvidu start
+</code></pre>
+<p>openvidu 디렉토리 내에서 해당 명령어를 이용하여 docker-compose 실행하면 Openvidu On Premise을 구동할 수 있습니다.</p>
+<p><img src="https://i.imgur.com/DvrwqSU.png" alt="5.start"></p>
+<p>)</p>
+<p><img src="https://i.imgur.com/8fFSQk6.png" alt="5.started"></p>
+<h1 id="nginx-세팅">4. Nginx 세팅</h1>
+<p>/etc/nginx/site-available/default 파일을 nano와 같은 텍스트 에디터로 아래와 같이 수정합니다. (<code>nano /etc/nginx/site-available/default</code>)</p>
+<pre><code>server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    listen 443 ssl default_server;
+    listen [::]:443 ssl default_server;
+
+    ssl on;
+    ssl_certificate /opt/mozzi/ssl/fullchain.pem;
+    ssl_certificate_key /opt/mozzi/ssl/privateKey.pem;
+
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+    server_name _;
+    location / {
+         return 301 https://test.mozzi.lol$request_uri;
+    }
+}
+</code></pre>
+<p>nano와 같은 텍스트 에디터를 이용해 아래와 같은 /etc/nginx/site-available/mozzi 을 생성해줍니다.</p>
+<pre><code>upstream yourapp {
+    server localhost:5442;
+}
+
+upstream openviduserver {
+    server localhost:5443;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+
+    server_name test.mozzi.lol;
+
+    location / {
+       return 301 https://test.mozzi.lol$request_uri;
+    }
+}
+
+server {
+    listen 443;
+    listen [::]:443;
+    server_name test.mozzi.lol;
+
+    ssl on;
+    ssl_certificate /opt/mozzi/ssl/fullchain.pem;
+    ssl_certificate_key /opt/mozzi/ssl/privateKey.pem;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH;
+
+    root /opt/mozzi/www;
+    index index.html;
+
+    location / {
+        add_header 'Cross-Origin-Opener-Policy' 'same-origin';
+        add_header 'Cross-Origin-Embedder-Policy' 'require-corp';
+        try_files $uri /index.html;
+    }
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name vidu-test.mozzi.lol;
+
+    location / {
+       return 301 https://vidu-test.mozzi.lol$request_uri;
+    }
+}
+
+server {
+    listen 443;
+    listen [::]:443;
+    server_name vidu-test.mozzi.lol;
+
+    ssl on;
+    ssl_certificate /opt/mozzi/ssl/fullchain.pem;
+    ssl_certificate_key /opt/mozzi/ssl/privateKey.pem;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384";
+    ssl_prefer_server_ciphers off;
+
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    add_header Strict-Transport-Security "max-age=63072000" always;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_headers_hash_bucket_size 512;
+    proxy_redirect off;
+
+    # Websockets
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+
+    # Your App
+    location / {
+        proxy_pass http://yourapp; # Openvidu call by default
+    }
+
+    # Dashboard rule
+    location /dashboard {
+        allow all;
+        deny all;
+        proxy_pass http://openviduserver;
+    }
+
+    # Websocket rule
+    location ~ /openvidu$ {
+        proxy_pass http://openviduserver;
+    }
+
+    location /openvidu/layouts {
+        rewrite ^/openvidu/layouts/(.*)$ /custom-layout/$1 break;
+        root /opt/openvidu;
+    }
+    location /openvidu/recordings {
+        proxy_pass http://openviduserver;
+    }
+
+    location /openvidu/api {
+        allow all;
+        deny all;
+        proxy_pass http://openviduserver;
+    }
+
+    location /openvidu/info {
+        allow all;
+        deny all;
+        proxy_pass http://openviduserver;
+    }
+
+    location /openvidu/accept-certificate {
+        proxy_pass http://openviduserver;
+    }
+
+    location /openvidu/cdr {
+        allow all;
+        deny all;
+        proxy_pass http://openviduserver;
+    }
+}
+
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name api-test.mozzi.lol;
+    location / {
+       return 301 https://api-test.mozzi.lol$request_uri;
+    }
+}
+
+server {
+    listen 443;
+    listen [::]:443;
+    server_name api-test.mozzi.lol;
+
+    ssl on;
+    ssl_certificate /opt/mozzi/ssl/fullchain.pem;
+    ssl_certificate_key /opt/mozzi/ssl/privateKey.pem;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_redirect off;
+        proxy_set_header X-Real_IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+    }
+}
+</code></pre>
+<p>위 설정에서 test.mozzi.lol을 웹페이지가 사용할 도메인, api-test.mozzi.lol를 API 서버가 사용할 도메인, vidu-test.mozzi.lol를 Openvidu가 사용할 도메인으로 변경하면 되며 Openvidu나 Spring에서 다른 부분을 변경하지 않았다면 도메인 주소들만 적절하게 바꿔주면 됩니다.</p>
+<h3 id="cf-nginx-설정-참고-사항">cf) Nginx 설정 참고 사항</h3>
+<pre><code>        add_header 'Cross-Origin-Opener-Policy' 'same-origin';
+        add_header 'Cross-Origin-Embedder-Policy' 'require-corp';
+        try_files $uri /index.html;
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>옵션</th>
+<th>설명</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>try_files $uri /index.html</td>
+<td>React Router를 위한 설정으로, 해당 도메인으로 오는 모든 요청에 대해 index.html을 반환합니다.</td>
+</tr>
+<tr>
+<td>add_header ‘Cross-Origin-Opener-Policy’ ‘same-origin’; add_header ‘Cross-Origin-Embedder-Policy’ ‘require-corp’;</td>
+<td>ffmpeg 모듈을 위한 세팅입니다.</td>
+</tr>
+</tbody>
+</table><pre><code>ln -s /etc/nginx/sites-available/mozzi /etc/nginx/sites-enabled/mozzi
+nginx -t
+service nginx restart
+</code></pre>
+<p>Symbolic Link 기능을 이용하여 sites-available에 작성한 conf 파일을 nginx가 실제 사용하도록 sites-enabled로 링크 시켜 줍니다. 그 이후 <code>nginx -t</code>를 이용하여 설정이 제대로 됐는지 확인하고, <code>service nginx restart</code> 를 이용하여 nginx를 재기동 해줍니다.</p>
+<p><img src="https://i.imgur.com/LkaaFRn.png" alt="6.nginx"></p>
+<h1 id="postfixsmtp-installation">5. Postfix(SMTP) Installation</h1>
+<h2 id="중요--프로젝트를-세팅할-때-oracle-cloud에서-postfix를-구축하여-사용하였으나-가이드-작성을-위해-다시-구축을-시도하던-중-가이드용-서버의-25포트smtp가-막힌-것을-확인하여-방법만을-담습니다.-클라우드-업체마다-다르지만-최근에-생성하는-인스턴스-또는-계정에-대해서는-outbound-smtp-25-port를-막아두는-경우가-많다하니-실제-구축-이전에-telnet과-같은-방법으로-outbound-25-port를-확인하기-바랍니다.">중요 : 프로젝트를 세팅할 때 Oracle Cloud에서 Postfix를 구축하여 사용하였으나, 가이드 작성을 위해 다시 구축을 시도하던 중 가이드용 서버의 25포트(SMTP)가 막힌 것을 확인하여 방법만을 담습니다. 클라우드 업체마다 다르지만 최근에 생성하는 인스턴스 또는 계정에 대해서는 Outbound SMTP 25 Port를 막아두는 경우가 많다하니 실제 구축 이전에 telnet과 같은 방법으로 Outbound 25 port를 확인하기 바랍니다.</h2>
+<h1 id="dns-설정">1. DNS 설정</h1>
+<p><img src="https://i.imgur.com/x5FCs4y.png" alt="DNS"></p>
+<p>DNS에 메일 서버 주소로 사용할 도메인을 실제 ip에 연결해줍니다.</p>
+<h1 id="postfix-설치">2. Postfix 설치</h1>
+<pre><code>apt-get install postfix
+</code></pre>
+<p><img src="https://i.imgur.com/yvcqTHG.png" alt="image"></p>
+<pre><code>nano main.cf
+
+myhostname = 메일서버주소 (e.g. mail.mozzi.lol)
+mydomain = 도메인주소 (e.g. mozzi.lol)
+myorigin = 메일발송주소 (e.g. mozzi.lol)
+mynetworks = 127.0.0.0/8
+
+milter_protocol = 6
+milter_default_action = accept
+smtpd_milters = inet:localhost:8891
+non_smtpd_milters = inet:localhost:8891
+
+smtp_tls_security_level = encrypt
+smtpd_tls_security_level = may
+
+smtpd_tls_protocols = &gt;=TLSv1, &lt;=TLSv1.3
+smtp_tls_protocols = !SSLv2, !SSLv3
+smtp_tls_ciphers = high
+smtpd_tls_ciphers = high
+smtp_tls_mandatory_ciphers = high
+smtpd_tls_mandatory_ciphers = high
+smtpd_tls_cert_file = fullchain_인증서_경로
+smtpd_tls_key_file = private_key_경로
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtpd_tls_mandatory_exclude_ciphers = MD5, aNULL
+smtpd_tls_exclude_ciphers = MD5, aNULL
+smtp_tls_mandatory_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
+smtp_tls_exclude_ciphers = MD5, DES, ADH, RC4, PSD, SRP, 3DES, eNULL, aNULL
+tls_preempt_cipherlist = yes
+append_dot_mydomain = no
+biff = no
+config_directory = /etc/postfix
+message_size_limit = 4194304
+smtpd_use_tls = yes
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+
+inet_interfaces = all
+</code></pre>
+<p>mynetworks는 해당 주소에서 들어오는 메일만 발송하는 옵션으로, Mozzi Project와 같이 메일 서버와 실제 API 서버가 분리되어 있는 경우 API 서버의 주소를 넣어주면 된다. (cf. CIDR 를 참조하자)<br>
+아래 부분에 sendmail_path를 비롯해서 값이 없는 것들은 다 주석 처리를 해주면 된다.</p>
+<p><img src="https://i.imgur.com/QgpXvtO.png" alt="image"></p>
+<p>)</p>
+<p><img src="https://i.imgur.com/oxE6nAZ.png" alt="image"></p>
+<pre><code>nano master.cf
+
+submission inet ~~~~~ 
+  -o syslog_name =postfix/submission
+  -o smtpd_tls_security_level=encrypt
+
+
+smtps inet net ~~~~~
+  -o syslog_name=postfix/smtps
+</code></pre>
+<p>해당 부분을 주석 해제해준다.</p>
+<pre><code>apt-get install opendkim opendkim-tools
+</code></pre>
+<p><img src="https://i.imgur.com/RxlOFy0.png" alt="image"></p>
+<pre><code>nano /etc/default/opendkim
+
+SOCKET="inet:8891@localhost"
+</code></pre>
+<p><img src="https://i.imgur.com/eZFSbcm.png" alt="image"></p>
+<pre><code>nano /etc/opendkim.conf
+
+SOCKET inet:8891@localhost
+
+Domain 도메인주소
+KeyFile /etc/postfix/dkim.key
+Selector 구분할 값(그냥 dkim을 넣어도 된다)
+</code></pre>
+<p><img src="https://i.imgur.com/juuUHdg.png" alt="image"></p>
+<pre><code>opendkim-genkey -t -s dkim -d 도메인주소
+
+mv dkim.private /etc/postfix/dkim.key
+chmod 660 /etc/postfix/dkim.key
+chown root:opendkim /etc/postfix/dkim.key
+service opendkim restart
+service postfix restart
+</code></pre>
+<p><img src="https://i.imgur.com/pIMKvdn.png" alt="image"></p>
+<p><code>cat dkim.txt</code>이나 <code>nano dkim.txt</code>를 이용해서 괄호 안의 dkim 값을 복사해서 DNS에 설정하도록 한다.</p>
+<p><img src="https://i.imgur.com/5uSeMJH.png" alt="image"></p>
+<p>)</p>
+<p><img src="https://i.imgur.com/RpT9eH0.png" alt="image"></p>
+<p>)</p>
+<p><img src="https://i.imgur.com/SKxq2b3.png" alt="image"></p>
+<p>)</p>
+<p><img src="https://i.imgur.com/heGU1gJ.png" alt="image"></p>
+<p>)</p>
+<p><img src="https://i.imgur.com/iHclmFP.png" alt="image"></p>
+<p>DKIM과 SPF를 설정해야 다른 메일 서버에서 스팸으로 걸러지지 않는다.</p>
+<p><img src="https://i.imgur.com/Bwtjbma.png" alt="image"></p>
+<p>Java에서는 pcks1 형태를 읽지 못 하고 pcks8 형태만 사용할 수 있다고 한다.<br>
+프로젝트에서 사용하는 Java dkim 라이브러리에서는 .der 포맷을 사용해야함으로, openssl을 이용해서 pcks1 형식의 private key를 .der 형식으로 바꾸어준다.</p>
+<h1 id="api-base-url-수정">1. API Base URL 수정</h1>
+<p><code>/src/api/BaseURL.js</code> 내에 존재하는 baseURL 값을 사용하고자하는 API 서버의 주소로 설정합니다.</p>
+<p><img src="https://i.imgur.com/DA8opge.png" alt="Base URL"></p>
+<h1 id="build">2. Build</h1>
+<p><img src="https://i.imgur.com/rX4UOXG.png" alt="Build"></p>
+<pre><code>cd Frontend
+npm install
+npm run build
+</code></pre>
+<p><code>npm install</code>로 빌드에 필요한 종속성/라이브러리를 설치한 이후 <code>npm run build</code>를 이용해 빌드를 진행합니다.</p>
+<h1 id="배포">3. 배포</h1>
+<p><img src="https://i.imgur.com/brTe5Ys.png" alt="mobaxterm"></p>
+<p>mobaxterm과 같은 파일 전송 기능이 있는 ssh terminal을 이용해 빌드된 dist 폴더를 서버에 올린 뒤,<br>
+nginx에 설정된 웹폴더 경로로 dist 폴더를 이동시켜줍니다.</p>
+<p><img src="https://i.imgur.com/LeoHDYO.png" alt="mv"></p>
+<h1 id="spring-setting">7. Spring Setting</h1>
+<p>1과 2는 Spring Project의 resource 내의 properties 중 필수적으로 수정/설정해야하는 값을 의미하며, 세팅에 필요한 파일/설정은 3부터 확인해주시면 됩니다.</p>
+<h1 id="application.properties">1. application.properties</h1>
+<pre><code>spring.mozzi.cors=프론트_웹페이지에서_사용할_도메인/포트
+spring.remote-source.hbm2ddl=사용할_JPA_모드(update or validate)
+spring.remote-source.driver-class-name=사용할_JDBC_Driver_Name
+spring.remote-source.dialect=사용할_DB_Dialect(JPA Dialect)
+</code></pre>
+<h1 id="application-keys.properties">2. application-keys.properties</h1>
+<pre><code># Openvidu
+OPENVIDU_URL=Openvidu_URL
+OPENVIDU_SECRET=Openvidu_On_Promise에_설정한_키
+# DB
+spring.remote-source.jdbc-url=jdbc경로+serverTimezone=UTC&amp;useUnicode=true&amp;characterEncoding=utf8
+spring.remote-source.username=DB_USER
+spring.remote-source.password=DB_PASSWORD
+# JWT
+JWT_SECRET=JWT에_사용할_랜덤한_문자열
+# Oracle Cloud
+ORACLE_CLOUD_PRIVATE_KEY=classpath기준_ORACLE에서_발급받은_Private_Key_경로
+ORACLE_NAMESPACE=Oracle_Object_Storage_Namespace
+ORACLE_BUCKET=Oracle_Object_Storage_BucketName
+OCI_API_CONFIG_PATH=classpath에서_Oralce_config_경로
+# SMTP
+SMTP_SENDER_EMAIL=발신자_주소
+SMTP_SENDER_ID=SMTP_계정_ID
+SMTP_SENDER_PW=SMTP_계정_Password
+SMTP_HOST=SMTP_서버_주소 (eg. mail.mozzi.lol)
+SMTP_PORT=SMTP_서버_포트
+SMTP_DKIM_SELECTOR=DKIM_이름
+SMTP_DOMAIN=실제_서버_도메인 (eg. mozzi.lol)
+SMTP_DKIM_CLASSPATH=classpath에서_dkim.der경로
+</code></pre>
+<h1 id="oracle-storage-설정법">3. Oracle Storage 설정법</h1>
+<p><a href="https://cloud.oracle.com/">Oracle Cloud</a>에 접속하여 <code>오브젝트 스토리지 및 아카이브 스토리지</code>를 선택하여 새로운 버킷을 생성해야합니다.</p>
+<p>표준 버킷을 만든 뒤, 해당 버킷 이름을 application-keys.properties의 ORACLE_BUCKET에 넣어줍니다.</p>
+<p><img src="https://i.imgur.com/uOFMD47.png" alt="1.bucket"></p>
+<p>버킷을 만든 이후, 버킷 정보에 보면 나오는 네임스페이스를 application-keys.properties의 ORACLE_NAMESPACE에 넣어줍니다.</p>
+<p><img src="https://i.imgur.com/XqDhtzJ.png" alt="1.bucket2"></p>
+<p>우측 상단의 프로필을 클릭 후 사용자 설정을 누른 뒤, 좌측의 API키를 클릭한 뒤 <code>API 키 추가</code>를 선택합니다.</p>
+<p><img src="https://i.imgur.com/KegBOGj.png" alt="2.api_key"></p>
+<p>API 키 쌍 생성을 선택한 뒤, 전용키와 공용키를 다운로드 받은 뒤, 전용키 파일을 프로젝트 resource에 넣어 준 뒤, 해당 경로를 application-keys.properties의 ORACLE_CLOUD_PRIVATE_KEY에 넣어줍니다.</p>
+<p><img src="https://i.imgur.com/eeW8CtQ.png" alt="3.keypair"></p>
+<p>추가를 누른 다음 나오는 구성 파일 미리 보기에서, region 부분까지 복사하여 resource에 파일로 만들어서 넣어 준 뒤, 해당 경로를 application-keys.properties의 OCI_API_CONFIG_PATH에 넣어줍니다.</p>
+<p><img src="https://i.imgur.com/uca5G6Z.png" alt="4.config"></p>
+<p>예시)</p>
+<p><img src="https://i.imgur.com/FNppD5J.png" alt="image"></p>
+<p>버킷 생성 후, com.ssafy.mozzi.common.auth.ObjectStorageClient 내의 28라인에 위치한 this.client.setRegion(Region.AP_CHUNCHEON_1); 의 Region을 실제<br>
+Oracle Cloud Storage가 위치한 Tentant Region으로 설정 합니다. (바로 직전에 설정한 config 파일에 같이 존재합니다.)</p>
+<p><img src="https://i.imgur.com/YIn5Ylf.png" alt="image"></p>
+<h1 id="smtp-설정법">4. SMTP 설정법</h1>
+<p>application-keys.properties에서 아래 값들을 설정해준다.</p>
+<pre><code>SMTP_SENDER_EMAIL=메일에_표시될_발신_메일_계정
+SMTP_SENDER_ID=메일_서버의_계정
+SMTP_SENDER_PW=해당_계정의_비밀번호
+SMTP_DOMAIN=도메인
+SMTP_HOST=메일서버_주소
+SMTP_PORT=포트
+SMTP_DKIM_SELECTOR=dkim선택자
+SMTP_DKIM_CLASSPATH=resource내에서의_der파일경로
+</code></pre>
+<p><img src="https://imgur.com/a/0cP0hsd" alt="image"></p>
+<h1 id="build-1">5. Build</h1>
+<p>IntelliJ의 Gradle build 기능을 이용해서 bootJar를 이용해 빌드를 하거나 Spring 프로젝트 내에서 <code>./gradlew clean bootJar</code>를 이용해 .jar를 빌드합니다.</p>
+<p><img src="https://i.imgur.com/GKkaajr.png" alt="image"><img src="https://i.imgur.com/5FMGTqN.png" alt="image"></p>
+<h1 id="배포-1">6. 배포</h1>
+<p><img src="https://i.imgur.com/fRg7NaO.png" alt="image"></p>
+<p>/build/libs 에 빌드된 .jar 파일을 Mobaxterm과 같이 파일 전송 기능이 있는 ssh terminal을 이용해 전송한 뒤, 아래와 같이<br>
+백그라운드로 실행합니다.</p>
+<pre><code>nohup java -jar mozzi-1.0.01.jar &gt; mozzi.log &amp;
+</code></pre>
+<h1 id="standard-data-setting">8. Standard Data Setting</h1>
+<h1 id="모찌-서비스를-위한-기본-데이터-셋팅">모찌 서비스를 위한 기본 데이터 셋팅</h1>
+<p>프로젝트에서 Oracle Cloud Object Storage를 사용하여 DB Dump 방식으로 데이터를 백업/복원 할 수 없고, 실제 사용할 데이터를 api를 이용하여 넣어주거나, Oracle Cloud Object Storage에 파일을 넣어주어야합니다.</p>
+<p>Oracle Cloud Object Storage를 이용하여 기본 설정을 하는 경우, dump.zip의 frame_background.zip 내의 파일을 모두 Object Storage의 버킷에 업로드 해준 뒤, DB 데이터를 넣어주면 됩니다.</p>
+<p><img src="https://i.imgur.com/bQcsLsE.png" alt="파일 업로드"></p>
+<p>데이터 복원을 시도해보았을 때 JPA의 설정 상의 문제인가 일반적인 data dump/restore를 진행하였을 때 constraint로 인한 문제가 발생하여, 에러가 발생하지 않는 가장 표준적인 방법은 mariadb에 utf8mb4_bin으로 Database를 생성한 이후 Spring에서 JPA Hibernate DDL 설정을 create 또는 update로 설정하여 JPA Hibernate에서 테이블을 생성하게 한 뒤, DataGrip 또는 DBeaver와 같은 툴을 이용하여 dump.zip 내에 존재하는 background, frame, frame_clip 정보를 넣어주면 됩니다.</p>
+<h2 id="기본-데이터-종류">기본 데이터 종류</h2>
+<ul>
+<li>클립을 넣을 “프레임” 데이터
+<ul>
+<li>프레임</li>
+<li>프레임 내 클립 좌표</li>
+</ul>
+</li>
+<li>“가상 배경” 데이터</li>
+</ul>
+<h2 id="데이터-setting-방법">데이터 Setting 방법</h2>
+<blockquote>
+<p>데이터를 넣을 때, <a href="https://www.postman.com/">Postman</a> 이나 Swagger를 사용해주세요❗<br>
+Postman의 기본 설명은 curl로 되어있으니 원하는 방식으로 바꿔서 실행해주세요❗</p>
+</blockquote>
+<h3 id="반드시-첫번째로-해야할-것❗">반드시 첫번째로 해야할 것❗</h3>
+<ul>
+<li>회원가입
+<ul>
+<li>Postman
+<ol>
+<li>[사용자 아이디], [사용자 닉네임], [사용자 이메일], [사용자 비밀번호] 를 넣어서 실행해주세요. 이메일은 비밀번호 찾기에 사용되니 사용하는 이메일을 적어주세요.</li>
+<li><code>curl --location 'http://localhost:8080/users/register' \ --header 'Content-Type: application/json' \ --data '{ "userId": "[사용자 아이디]", "nickname": "[사용자 닉네임]", "email": "[사용자 이메일]", "password": "[사용자 비밀번호]" }'</code></li>
+</ol>
+</li>
+<li>API Swagger
+<ol>
+<li>[사용자 아이디], [사용자 비밀번호], [사용자 이메일], [사용자 비밀번호] 를 넣어서 실행해주세요. 이메일은 비밀번호 찾기에 사용되니 사용하는 이메일을 적어주세요.</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://i.imgur.com/H8fcenf.png" alt="image"></p>
+<ul>
+<li>로그인
+<ul>
+<li>Postman
+<ol>
+<li>
+<p>아래에 [본인의 아이디], [본인의 비밀번호]를 적어서 실행해주세요.</p>
+</li>
+<li>
+<p><code>curl --location 'https://api.mozzi.lol/users/login' \ --header 'Content-Type: application/json' \ --data '{ "userId": [본인의 아이디], "password": [본인의 비밀번호] }'</code></p>
+</li>
+<li>
+<p>위의 결과로 나온 accessToken을 복사해서 이후 아래의 요청에서 Authorization으로 사용해주세요.</p>
+<pre><code> {
+     "message": "User login success",
+     "data": {
+         "id": 3,
+         "accessToken": [본인의 accessToken],
+         "refreshToken": [본인의 refreshToken]
+     }
+ }
+</code></pre>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<p>이 accessToken을 아래서 계속 사용하므로 꼭 복사해두세요</p>
+<ul>
+<li>
+<ul>
+<li>API Swagger
+<ol>
+<li>아래에 본인의 userId, password를 적은 후 실행해주세요.</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://i.imgur.com/zE3thgK.png" alt="image"></p>
+<ol start="3">
+<li>위의 결과로 나온 accessToken을 복사해주세요.</li>
+</ol>
+<p><img src="https://i.imgur.com/K0NNt6v.png" alt="image"></p>
+<ol start="4">
+<li>accessToken을 아래 value에 넣은 후, Authorize 버튼을 눌러주세요</li>
+</ol>
+<p><img src="https://i.imgur.com/M3sHRFm.png" alt="image"></p>
+<h3 id="프레임-데이터-setting">프레임 데이터 Setting</h3>
+<ul>
+<li>frame-info-tool
+<ul>
+<li>프레임에 들어갈 클립 위치 정보 구하기
+<ol>
+<li>tools/frameinfo 브랜치의 React 코드를 받고, src/assets 폴더에 원하는 프레임 이미지를 ‘frame.png’ 라는 파일명으로 저장하세요.</li>
+<li>tools/frameinfo 브랜치의 React 코드를 IDE(VSCode, Webstorm, etc…)에서 실행하고 <a href="http://localhost:4000/">http://localhost:4000/</a> 에 접속하세요.</li>
+<li>초록색 점선 사각형을 드래그해 클립 위치에 맞추고 ‘현재위치 추가’ 버튼을 누르세요.</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://i.imgur.com/ZFXtkYT.png" alt="image"></p>
+<ol start="4">
+<li>모든 클립 위치를 순서대로 추가했다면 아래쪽에 나타난 텍스트를 저장하세요.</li>
+</ol>
+<p><img src="https://i.imgur.com/BJbAmCb.png" alt="image"><br>
+데이터가 적절한지 확인하고 다음 ‘프레임 내 클립 좌표들 넣기’ 단계에서 사용하세요. 각 속성(width, height, x, y)은 전체 프레임 길이/너비 대비 비율을 나타냅니다. (0에서 1 사이의 실수형)</p>
+<ul>
+<li>Postman
+<ul>
+<li>프레임 사진 데이터 넣기
+<ol>
+<li>아래 코드에 [본인의 AccessToken], [프레임으로 할 이미지 파일], [파일의 제목]을 넣어 실행하세요.</li>
+<li><code>curl --location 'https://api.mozzi.lol/items/frame' \ --header 'Content-Type: application/json' \ --header 'Authorization: [본인의 AccessToken]' \ --form 'file=@"[프레임으로 할 이미지 파일]"' \ --form 'title="[파일의 제목]"'</code></li>
+<li>위의 결과로 나온 [프레임 id]를 복사해두세요.</li>
+<li><code>{ "message": "frame upload success", "data": "[프레임 id]" }</code></li>
+</ol>
+</li>
+<li>프레임 내 클립 좌표들 넣기
+<ol>
+<li>위에서 얻은 [프레임 id]와 클립 하나의 [클립 x], [클립 y], [클립 width], [클립 height] 들을 리스트로 넣어 실행해주세요.</li>
+<li><code>curl --location 'https://api.mozzi.lol/items/frame/[프레임 id]' \ --header 'Content-Type: application/json' \ --header 'Authorization: [본인의 AccessToken]' \ --data '[ { "width" : [클립 width], "height" : [클립 height], "x" : [클립 x], "y" : [클립 y] }, { "width" : [클립 width], "height" : [클립 height], "x" : [클립 x], "y" : [클립 y] } ], ... '</code></li>
+</ol>
+</li>
+</ul>
+</li>
+<li>API Swagger
+<ul>
+<li>
+<p>프레임 사진 데이터 구하기</p>
+<ol>
+<li>tool/frameinfo 브랜치의 코드를 IDE에서 실행 후 <a href="http://localhost:4000/">http://localhost:4000/</a> 에 접속하세요.</li>
+</ol>
+</li>
+<li>
+<p>프레임 사진 데이터 넣기</p>
+<ol>
+<li>아래 코드에 [프레임으로 할 이미지 파일], [파일의 제목]을 넣어 실행하세요.</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://i.imgur.com/2SyoUp3.png" alt="image"></p>
+<pre><code>    4.  위의 결과로 나온 \[프레임 id\]를 복사해두세요.
+    5.  `{ "message": "frame upload success", "data": "[프레임 id]" }`
+-   프레임 내 클립 좌표들 넣기
+    1.  위에서 얻은 \[프레임 id\]와 클립 하나의 \[클립 x\], \[클립 y\], \[클립 width\], \[클립 height\] 들을 리스트로 넣어 실행해주세요.
+</code></pre>
+<p><img src="https://i.imgur.com/7fsuAkC.png" alt="image"></p>
+<h3 id="배경-데이터-setting">배경 데이터 Setting</h3>
+<ul>
+<li>Postman
+<ol>
+<li>[본인의 AccessToken], [배경으로 할 이미지 파일], [파일의 제목] 을 넣어서 실행해주세요</li>
+<li><code>curl --location 'https://api.mozzi.lol/items/background' \ --header 'Content-Type: application/json' \ --header 'Authorization: [본인의 AccessToken]' \ --form 'file=@"[배경으로 할 이미지 파일]"' \ --form 'title="[파일의 제목]"'</code></li>
+</ol>
+</li>
+<li>API Swagger
+<ol>
+<li>[배경으로 할 이미지 파일], [파일의 제목] 을 넣어서 실행해주세요</li>
+</ol>
+</li>
+</ul>
+<p><img src="https://i.imgur.com/NtDMOZ9.png" alt="image"></p>
+</div>
+</body>
+
+</html>
