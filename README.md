@@ -1,4 +1,5 @@
 #### DB Dump, Default JWT Token 제외 등 소스 반출 사전 조치 완료
+#### SSAFY 9기 공통 프로젝트 우수상
 
 # 🎥 [Mozzi](https://mozzi.lol/)
 
