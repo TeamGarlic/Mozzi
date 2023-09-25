@@ -12,7 +12,7 @@
 - [곽민규](https://github.com/RookMG) : Frontend&Backend / Leader  
 - [김민정](https://github.com/kimminjeong05) : Backend / Backend Leader  
 - [박준홍](https://github.com/ssumthingood) : Frontend / Frontend Leader  
-- [유창재](https://github.com/zzangjae) : Backend  
+- [유창재](https://github.com/zzangjae) : Backend
 - [윤태영](https://github.com/yyytae0) : Frontend  
 - [정우정](https://github.com/ssafyWooJeong) : Backend / DevOps  
   
